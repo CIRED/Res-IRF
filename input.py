@@ -8,27 +8,35 @@ from function_pandas import linear2series
 
 # main language
 language_dict = dict()
-language_dict['occupancy_status_list'] = ['Homeowners', 'Landlords', 'Social Housing']
-language_dict['housing_type_list'] = ['Individual house', 'Collective housing', 'Social Housing']
-language_dict['decision_maker_list'] = list(product(language_dict['occupancy_status_list'], language_dict['housing_type_list']))
+language_dict['occupancy_status_list'] = ['Homeowners', 'Landlords', 'Social-housing']
+language_dict['housing_type_list'] = ['Single-family', 'Multi-family', 'Social-housing']
+language_dict['decision_maker_list'] = list(product(language_dict['occupancy_status_list'],
+                                                    language_dict['housing_type_list']))
 language_dict['energy_performance_list'] = ['G', 'F', 'E', 'D', 'C', 'B', 'A']
 language_dict['income_class_list'] = ['D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7', 'D8', 'D9', 'D10']
+
 language_dict['heating_energy_list'] = ['Power', 'Natural gas', 'Oil fuel', 'Wood fuel']
 
-language_dict['decision_maker_index'] = pd.MultiIndex.from_tuples(language_dict['decision_maker_list'], names=['Occupancy status', 'Housing type'])
-language_dict['properties_names'] = ['Occupancy status', 'Housing type', 'Energy performance', 'Income class', 'Heating energy']
+language_dict['decision_maker_index'] = pd.MultiIndex.from_tuples(language_dict['decision_maker_list'],
+                                                                  names=['Occupancy status', 'Housing type'])
+language_dict['properties_names'] = ['Occupancy status', 'Housing type', 'Energy performance', 'Heating energy',
+                                     'Income class', 'Income class owner']
 
 all_combination_list = list(product(language_dict['occupancy_status_list'],
                                     language_dict['housing_type_list'],
                                     language_dict['energy_performance_list'],
+                                    language_dict['heating_energy_list'],
                                     language_dict['income_class_list'],
-                                    language_dict['heating_energy_list']))
+                                    language_dict['income_class_list']
+                                    ))
+
+
 language_dict['all_combination_list'] = all_combination_list
 
 all_combination_index = pd.MultiIndex.from_tuples(all_combination_list, names=language_dict['properties_names'])
 language_dict['all_combination_index'] = all_combination_index
 
-dict_replace = {'PO': 'Owner-occupiers', 'P': 'Owner-occupiers', 'PB': 'Landlords', 'LP': 'Landlords',
+dict_replace = {'PO': 'Homeowners', 'P': 'Homeowners', 'PB': 'Landlords', 'LP': 'Landlords',
                 'LS': 'Social-housing', 'MI': 'Single-family', 'MA': 'Single-family',  'LC': 'Multi-family',
                 'AP': 'Multi-family', 'Electricité': 'Power', 'Gaz': 'Natural gas', 'Fioul': 'Oil fuel',
                 'Bois': 'Wood fuel'}
@@ -49,20 +57,22 @@ interest_rate_index = pd.MultiIndex.from_tuples(interest_rate_list, names=["Occu
 interest_rate_series = pd.Series(0.05, index=interest_rate_index)
 parameters_dict['interest_rate_series'] = interest_rate_series
 parameters_dict['investment_horizon_series'] = pd.Series(10, index=language_dict['decision_maker_index'])
-parameters_dict['energy_consumption_series'] = pd.Series(10, index=language_dict['energy_performance_list'])
-parameters_dict['income_series'] = pd.Series(30000, index=language_dict['income_class_list'])
+
+ds_income = pd.Series([13628, 20391, 24194, 27426, 31139, 35178, 39888, 45400, 54309, 92735],
+                      index=language_dict['income_class_list'][::-1])
+parameters_dict['income_series'] = ds_income
 
 ds_conso = pd.Series([596, 392, 280, 191, 125, 76, 39], index=language_dict['energy_performance_list'],
                      name='Conventional energy')
 ds_conso_heater = pd.Series([0.85, 0.82, 0.77, 0.74, 0.72, 0.77, 1.12], index=language_dict['energy_performance_list'])
 ds_conso = ds_conso * ds_conso_heater
-parameters_dict['conso_heater'] = ds_conso
+parameters_dict['energy_consumption_series'] = ds_conso
 
-surface_series = pd.Series([109.5, 74.3, 87.1, 53.5, 77.8, 63.3],
-                           index=[['Owner-occupiers', 'Owner-occupiers', 'Landlords', 'Landlords', 'Social-housing',
+ds_surface = pd.Series([109.5, 74.3, 87.1, 53.5, 77.8, 63.3],
+                           index=[['Homeowners', 'Homeowners', 'Landlords', 'Landlords', 'Social-housing',
                                    'Social-housing'], ['Single-family', 'Multi-family', 'Single-family', 'Multi-family',
                                                        'Single-family', 'Multi-family']])
-parameters_dict['surface'] = surface_series
+parameters_dict['surface'] = ds_surface
 
 # index_year
 calibration_year = 2018
@@ -80,13 +90,11 @@ folder['middle'] = os.path.join(os.getcwd(), 'middle')
 exogenous_dict = dict()
 energy_price_ini = {'Power': 0.171, 'Natural gas': 0.085, 'Wood fuel': 0.062, 'Oil fuel': 0.091}
 energy_price_rate = {'Power': 0.0179, 'Natural gas': 0.0273, 'Wood fuel': 0.0128, 'Oil fuel': 0.0438}
-
 energy_price_data = pd.DataFrame()
 for key, value in energy_price_ini.items():
     ds = linear2series(value, energy_price_rate[key], index_year)
     ds.name = key
     energy_price_data = pd.concat((energy_price_data, ds), axis=1)
-
 exogenous_dict['energy_price_data'] = energy_price_data
 
 population_ini = 50
@@ -105,7 +113,7 @@ name_file = 'CINV_existant.csv'
 df_cost_inv = pd.read_csv(os.path.join(folder['input'], name_file), sep=';', header=None, index_col=None)
 df_cost_inv.columns = sorted(language_dict['energy_performance_list'])[1:]
 df_cost_inv.index = sorted(language_dict['energy_performance_list'])[:-1]
-cost_dict['cost_inv'] = df_cost_inv
+cost_dict['cost_inv'] = df_cost_inv.T
 
 energy_list = ['Power', 'Natural gas', 'Oil fuel', 'Wood fuel']
 df_cost_switch_fuel = pd.DataFrame([(0, 70, 100, 120), (55, 0, 80, 100), (55, 50, 0 ,100), (55, 50, 80, 0)],
