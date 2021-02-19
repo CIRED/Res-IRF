@@ -1,7 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5a27c1bc-6d7f-41bf-89e9-22387bb7bdb3" name="Default Changelist" comment="" />
+    <list default="true" id="5a27c1bc-6d7f-41bf-89e9-22387bb7bdb3" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/func.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public_policy.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/definition.py" beforeDir="false" afterPath="$PROJECT_DIR$/definition.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/graphic.py" beforeDir="false" afterPath="$PROJECT_DIR$/graphic.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/input.py" beforeDir="false" afterPath="$PROJECT_DIR$/input.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/input/CINV_existant.csv" beforeDir="false" afterPath="$PROJECT_DIR$/input/CINV_existant.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/old_/old.py" beforeDir="false" afterPath="$PROJECT_DIR$/old_/old.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -14,7 +25,11 @@
       </list>
     </option>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="ProjectId" id="1nmWiZrsFYJUfflV92QUyyUg7En" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showExcludedFiles" value="true" />
@@ -22,6 +37,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
@@ -29,7 +45,7 @@
       <recent name="$PROJECT_DIR$/" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.parc">
+  <component name="RunManager" selected="Python.main">
     <configuration name="class_parc" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="Res-IRF" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -137,8 +153,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.parc" />
         <item itemvalue="Python.main" />
+        <item itemvalue="Python.parc" />
         <item itemvalue="Python.parc" />
         <item itemvalue="Python.class_parc" />
         <item itemvalue="Python.input" />
@@ -168,7 +184,20 @@
       <option name="presentableId" value="Default" />
       <updated>1611995873145</updated>
     </task>
+    <task id="LOCAL-00001" summary="major update - work still ongoing">
+      <created>1613665046411</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1613665046411</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="CHECK_NEW_TODO" value="false" />
+    <MESSAGE value="major update - work still ongoing" />
+    <option name="LAST_COMMIT_MESSAGE" value="major update - work still ongoing" />
   </component>
   <component name="WindowStateProjectService">
     <state x="184" y="101" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1612006593654">
@@ -179,50 +208,54 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="415" y="76" key="#parc_(1)/0.0.1440.900@0.0.1440.900" timestamp="1613132751538" />
-    <state width="1440" height="438" key="DebuggerActiveHint" timestamp="1613037062296">
+    <state x="344" y="52" key="CommitChangelistDialog2" timestamp="1613665046227">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1440" height="438" key="DebuggerActiveHint/0.0.1440.900@0.0.1440.900" timestamp="1613037062296" />
-    <state width="1419" height="248" key="GridCell.Tab.0.bottom" timestamp="1613636689531">
+    <state x="344" y="52" key="CommitChangelistDialog2/0.0.1440.900@0.0.1440.900" timestamp="1613665046227" />
+    <state width="1440" height="438" key="DebuggerActiveHint" timestamp="1613755118076">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1419" height="248" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1613636689531" />
+    <state width="1440" height="438" key="DebuggerActiveHint/0.0.1440.900@0.0.1440.900" timestamp="1613755118076" />
+    <state width="1419" height="330" key="GridCell.Tab.0.bottom" timestamp="1613778894467">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state width="1419" height="330" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1613778894467" />
     <state width="1419" height="312" key="GridCell.Tab.0.bottom/0.23.1440.832@0.23.1440.832" timestamp="1612801463871" />
-    <state width="1419" height="248" key="GridCell.Tab.0.center" timestamp="1613636689530">
+    <state width="1419" height="330" key="GridCell.Tab.0.center" timestamp="1613778894465">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1419" height="248" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1613636689530" />
+    <state width="1419" height="330" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1613778894465" />
     <state width="1419" height="312" key="GridCell.Tab.0.center/0.23.1440.832@0.23.1440.832" timestamp="1612801463870" />
-    <state width="1419" height="248" key="GridCell.Tab.0.left" timestamp="1613636689529">
+    <state width="1419" height="330" key="GridCell.Tab.0.left" timestamp="1613778894464">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1419" height="248" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1613636689529" />
+    <state width="1419" height="330" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1613778894464" />
     <state width="1419" height="312" key="GridCell.Tab.0.left/0.23.1440.832@0.23.1440.832" timestamp="1612801463870" />
-    <state width="1419" height="248" key="GridCell.Tab.0.right" timestamp="1613636689530">
+    <state width="1419" height="330" key="GridCell.Tab.0.right" timestamp="1613778894466">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1419" height="248" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1613636689530" />
+    <state width="1419" height="330" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1613778894466" />
     <state width="1419" height="312" key="GridCell.Tab.0.right/0.23.1440.832@0.23.1440.832" timestamp="1612801463870" />
-    <state width="1419" height="265" key="GridCell.Tab.1.bottom" timestamp="1613551242972">
+    <state width="1419" height="330" key="GridCell.Tab.1.bottom" timestamp="1613778895447">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1419" height="265" key="GridCell.Tab.1.bottom/0.0.1440.900@0.0.1440.900" timestamp="1613551242972" />
-    <state width="1419" height="312" key="GridCell.Tab.1.bottom/0.23.1440.832@0.23.1440.832" timestamp="1612801463872" />
-    <state width="1419" height="265" key="GridCell.Tab.1.center" timestamp="1613551242971">
+    <state width="1419" height="330" key="GridCell.Tab.1.bottom/0.0.1440.900@0.0.1440.900" timestamp="1613778895447" />
+    <state width="1419" height="374" key="GridCell.Tab.1.bottom/0.23.1440.832@0.23.1440.832" timestamp="1613663689272" />
+    <state width="1419" height="330" key="GridCell.Tab.1.center" timestamp="1613778895446">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1419" height="265" key="GridCell.Tab.1.center/0.0.1440.900@0.0.1440.900" timestamp="1613551242971" />
-    <state width="1419" height="312" key="GridCell.Tab.1.center/0.23.1440.832@0.23.1440.832" timestamp="1612801463871" />
-    <state width="1419" height="265" key="GridCell.Tab.1.left" timestamp="1613551242971">
+    <state width="1419" height="330" key="GridCell.Tab.1.center/0.0.1440.900@0.0.1440.900" timestamp="1613778895446" />
+    <state width="1419" height="374" key="GridCell.Tab.1.center/0.23.1440.832@0.23.1440.832" timestamp="1613663689271" />
+    <state width="1419" height="330" key="GridCell.Tab.1.left" timestamp="1613778895445">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1419" height="265" key="GridCell.Tab.1.left/0.0.1440.900@0.0.1440.900" timestamp="1613551242971" />
-    <state width="1419" height="312" key="GridCell.Tab.1.left/0.23.1440.832@0.23.1440.832" timestamp="1612801463871" />
-    <state width="1419" height="265" key="GridCell.Tab.1.right" timestamp="1613551242971">
+    <state width="1419" height="330" key="GridCell.Tab.1.left/0.0.1440.900@0.0.1440.900" timestamp="1613778895445" />
+    <state width="1419" height="374" key="GridCell.Tab.1.left/0.23.1440.832@0.23.1440.832" timestamp="1613663689270" />
+    <state width="1419" height="330" key="GridCell.Tab.1.right" timestamp="1613778895446">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1419" height="265" key="GridCell.Tab.1.right/0.0.1440.900@0.0.1440.900" timestamp="1613551242971" />
-    <state width="1419" height="312" key="GridCell.Tab.1.right/0.23.1440.832@0.23.1440.832" timestamp="1612801463872" />
+    <state width="1419" height="330" key="GridCell.Tab.1.right/0.0.1440.900@0.0.1440.900" timestamp="1613778895446" />
+    <state width="1419" height="374" key="GridCell.Tab.1.right/0.23.1440.832@0.23.1440.832" timestamp="1613663689271" />
     <state x="204" y="38" key="SettingsEditor" timestamp="1612272765213">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
@@ -232,14 +265,44 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state width="500" height="445" key="SwitcherDM/0.0.1440.900@0.0.1440.900" timestamp="1612195982154" />
-    <state width="700" height="396" key="XDebugger.FullValuePopup" timestamp="1612799625926">
-      <screen x="0" y="23" width="1440" height="832" />
+    <state x="320" y="190" key="Vcs.Push.Dialog.v2" timestamp="1613665063409">
+      <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="700" height="429" key="XDebugger.FullValuePopup/0.0.1440.900@0.0.1440.900" timestamp="1612263249568" />
+    <state x="320" y="190" key="Vcs.Push.Dialog.v2/0.0.1440.900@0.0.1440.900" timestamp="1613665063409" />
+    <state width="700" height="429" key="XDebugger.FullValuePopup" timestamp="1613732337028">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state width="700" height="429" key="XDebugger.FullValuePopup/0.0.1440.900@0.0.1440.900" timestamp="1613732337028" />
     <state width="700" height="396" key="XDebugger.FullValuePopup/0.23.1440.832@0.23.1440.832" timestamp="1612799625926" />
+    <state x="248" y="162" key="com.intellij.execution.console.ConsoleHistoryController$MyBrowseAction$1" timestamp="1613741109443">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state x="248" y="162" key="com.intellij.execution.console.ConsoleHistoryController$MyBrowseAction$1/0.0.1440.900@0.0.1440.900" timestamp="1613741109443" />
+    <state x="375" y="72" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1613746993911">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state x="375" y="72" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/0.0.1440.900@0.0.1440.900" timestamp="1613746993911" />
     <state x="385" y="196" width="670" height="676" key="search.everywhere.popup" timestamp="1613130907819">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="385" y="196" width="670" height="676" key="search.everywhere.popup/0.0.1440.900@0.0.1440.900" timestamp="1613130907819" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/func.py</url>
+          <line>74</line>
+          <option name="timeStamp" value="26" />
+        </line-breakpoint>
+      </breakpoints>
+      <default-breakpoints>
+        <breakpoint type="python-exception">
+          <properties notifyOnTerminate="true" exception="BaseException">
+            <option name="notifyOnTerminate" value="true" />
+          </properties>
+        </breakpoint>
+      </default-breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

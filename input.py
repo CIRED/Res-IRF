@@ -5,6 +5,10 @@ from itertools import product
 from function_pandas import linear2series
 
 # from input import language_dict, parameters_dict, index_year, folder, exogenous_dict
+# index_year
+calibration_year = 2018
+final_year = 2050
+index_year = range(calibration_year, final_year + 1, 1)
 
 # main language
 language_dict = dict()
@@ -43,6 +47,18 @@ dict_replace = {'PO': 'Homeowners', 'P': 'Homeowners', 'PB': 'Landlords', 'LP': 
 
 language_dict['dict_replace'] = dict_replace
 
+language_dict['list_all_scenarios'] = ['Full capitalization', 'Reference', 'No capitalization at resale',
+                                       'No capitalization in rents nor sales']
+
+
+dict_color = {'Homeowners': 'lightcoral', 'Landlords': 'chocolate', 'Social-housing': 'orange',
+              'Single-family': 'brown', 'Multi-family': 'darkolivegreen',
+              'G': 'black', 'F': 'maroon', 'E': 'darkred', 'D': 'firebrick', 'C': 'orangered', 'B': 'lightcoral',
+              'A': 'lightsalmon', 'D1': 'black', 'D2': 'maroon', 'D3': 'darkred', 'D4': 'brown', 'D5': 'firebrick',
+              'D6': 'orangered', 'D7': 'tomato', 'D8': 'lightcoral', 'D9': 'lightsalmon', 'D10': 'darksalmon',
+              'Power': 'darkorange', 'Natural gas': 'slategrey', 'Oil fuel': 'black', 'Wood fuel': 'saddlebrown'}
+language_dict['color'] = dict_color
+
 # main parameters
 parameters_dict = dict()
 parameters_dict['npv_min'] = -1000
@@ -50,17 +66,12 @@ parameters_dict['r'] = 1
 parameters_dict['rate_max'] = 0.2
 parameters_dict['rate_min'] = 0.00001
 
-interest_rate_list = list(product(language_dict['occupancy_status_list'], language_dict['housing_type_list'],
-                                  language_dict['income_class_list']))
-interest_rate_index = pd.MultiIndex.from_tuples(interest_rate_list, names=["Occupancy status", "Housing type",
-                                                                           "Income class"])
-interest_rate_series = pd.Series(0.05, index=interest_rate_index)
-parameters_dict['interest_rate_series'] = interest_rate_series
-parameters_dict['investment_horizon_series'] = pd.Series(10, index=language_dict['decision_maker_index'])
+parameters_dict['scenario'] = 'Reference'
 
-ds_income = pd.Series([13628, 20391, 24194, 27426, 31139, 35178, 39888, 45400, 54309, 92735],
+ds_income_ini = pd.Series([13628, 20391, 24194, 27426, 31139, 35178, 39888, 45400, 54309, 92735],
                       index=language_dict['income_class_list'][::-1])
-parameters_dict['income_series'] = ds_income
+household_income_rate = 0.012
+parameters_dict['income_series'] = ds_income_ini.apply(linear2series, args=(household_income_rate, index_year)).T
 
 ds_conso = pd.Series([596, 392, 280, 191, 125, 76, 39], index=language_dict['energy_performance_list'],
                      name='Conventional energy')
@@ -74,10 +85,26 @@ ds_surface = pd.Series([109.5, 74.3, 87.1, 53.5, 77.8, 63.3],
                                                        'Single-family', 'Multi-family']])
 parameters_dict['surface'] = ds_surface
 
-# index_year
-calibration_year = 2018
-final_year = 2050
-index_year = range(calibration_year, final_year + 1, 1)
+
+df_discount_rate = pd.DataFrame([[0.15, 0.37, 0.04], [0.15, 0.37, 0.04], [0.1, 0.25, 0.04], [0.1, 0.25, 0.04],
+                                 [0.07, 0.15, 0.04], [0.07, 0.15, 0.04], [0.05, 0.07, 0.04], [0.05, 0.07, 0.04],
+                                 [0.04, 0.05, 0.04], [0.04, 0.05, 0.04]], columns=language_dict['housing_type_list'],
+                                index=language_dict['income_class_list'])
+parameters_dict['interest_rate_series'] = df_discount_rate.stack()
+
+df_investment_horizon = pd.DataFrame([[30, 30, 30], [30, 30, 3], [30, 7, 7], [30, 7, 3]],
+                                     columns=['Social-housing', 'Homeowners', 'Landlords'],
+                                     index=language_dict['list_all_scenarios'])
+parameters_dict['investment_horizon_series'] = df_investment_horizon.loc[parameters_dict['scenario'], :]
+
+parameters_dict['lifetime_investment'] = pd.DataFrame({'enveloppe': [30, 30, 3, 3, 30, 30],
+                                                       'heater': [20, 20, 3, 3, 20, 20],
+                                                       'new': [25, 25, 25, 25, 25, 25]})
+
+
+
+lifetime_enveloppe_ini= [30,30,3,3,30,30];
+
 
 # folder
 folder = dict()
@@ -85,11 +112,13 @@ folder['working_directory'] = os.getcwd()
 folder['input'] = os.path.join(os.getcwd(), 'input')
 folder['output'] = os.path.join(os.getcwd(), 'output')
 folder['middle'] = os.path.join(os.getcwd(), 'middle')
+folder['calibration'] = os.path.join(folder['input'], 'calibration')
 
 # exogenous variable
 exogenous_dict = dict()
 energy_price_ini = {'Power': 0.171, 'Natural gas': 0.085, 'Wood fuel': 0.062, 'Oil fuel': 0.091}
-energy_price_rate = {'Power': 0.0179, 'Natural gas': 0.0273, 'Wood fuel': 0.0128, 'Oil fuel': 0.0438}
+energy_price_rate = {'Power': 0.011, 'Natural gas': 0.0142, 'Wood fuel': 0.0120, 'Oil fuel': 0.0222}
+# energy_price_rate = {'Power': 0.0179, 'Natural gas': 0.0142, 'Wood fuel': 0.0128, 'Oil fuel': 0.0428}
 energy_price_data = pd.DataFrame()
 for key, value in energy_price_ini.items():
     ds = linear2series(value, energy_price_rate[key], index_year)
@@ -98,26 +127,87 @@ for key, value in energy_price_ini.items():
 exogenous_dict['energy_price_data'] = energy_price_data
 
 population_ini = 50
-population_rate = 0.02
+population_rate = 0.003
 population_series = linear2series(population_ini, population_rate, index_year)
 exogenous_dict['population_series'] = population_series
-
-national_income_ini = 50
-national_income_rate = 0.2
-national_income_series = linear2series(national_income_ini, national_income_rate, index_year)
-exogenous_dict['national_income_series'] = national_income_series
 
 # cost
 cost_dict = dict()
 name_file = 'CINV_existant.csv'
-df_cost_inv = pd.read_csv(os.path.join(folder['input'], name_file), sep=';', header=None, index_col=None)
-df_cost_inv.columns = sorted(language_dict['energy_performance_list'])[1:]
-df_cost_inv.index = sorted(language_dict['energy_performance_list'])[:-1]
-cost_dict['cost_inv'] = df_cost_inv.T
+df_cost_inv = pd.read_csv(os.path.join(folder['input'], name_file), sep=',', header=[0], index_col=[0])
+cost_dict['cost_inv'] = df_cost_inv
 
 energy_list = ['Power', 'Natural gas', 'Oil fuel', 'Wood fuel']
 df_cost_switch_fuel = pd.DataFrame([(0, 70, 100, 120), (55, 0, 80, 100), (55, 50, 0 ,100), (55, 50, 80, 0)],
                                    index=energy_list, columns=energy_list)
 cost_dict['cost_switch_fuel'] = df_cost_switch_fuel
 
-print('pause')
+
+def decile_to_quintile(ds):
+    ds_quintile = pd.Series(dtype='float64')
+    ds_quintile['C1'] = ds.loc[['D1', 'D2']].sum()
+    ds_quintile['C2'] = ds.loc[['D3', 'D4']].sum()
+    ds_quintile['C3'] = ds.loc[['D5', 'D6']].sum()
+    ds_quintile['C4'] = ds.loc[['D7', 'D8']].sum()
+    ds_quintile['C5'] = ds.loc[['D9', 'D10']].sum()
+    return ds_quintile
+
+
+# for calibration
+number_housing_calibration = 0.03
+calibration_file = ['market_share', 'renovation_rate_decision_maker', 'renovation_rate_energy_performance']
+calibration_dict = dict()
+file = 'market_share'
+name_file = os.path.join(folder['calibration'], file + '.csv')
+calibration_dict[file] = pd.read_csv(name_file, index_col=[0], header=[0])
+
+file = 'renovation_rate_decision_maker'
+name_file = os.path.join(folder['calibration'], file + '.csv')
+calibration_dict[file] = pd.read_csv(name_file, index_col=[0, 1], header=[0])
+
+file = 'renovation_rate_energy_performance'
+name_file = os.path.join(folder['calibration'], file + '.csv')
+calibration_dict[file] = pd.read_csv(name_file, index_col=[0], header=[0])
+
+
+# public policy
+
+public_policy_list = ['carbon_tax', 'CITE', 'EPTZ', 'CEE']
+
+# TODO: Calculate public policy by surface with the average surface for decision-maker or for all.
+
+# EPTZ
+interest_rate_ini = 0.03
+lifetime_eptz_ini = 5
+discount_factor_eptz = (1 - (1 + interest_rate_ini) ** -lifetime_eptz_ini) / interest_rate_ini
+max_eptz_ini = 21000
+coef_eptz_ini = pd.Series([0.8, 0.8, 0.85, 0.85, 0.9, 0.9, 0.95, 0.95, 1, 1], index=language_dict['income_class_list'])
+
+# CITE
+rate_invest_cite = 0.17
+max_cite = 16000
+
+Part_conso_chauffage_neuf = 0.4
+
+# On convertit en énergie finale (seule électricité est concernée)
+pd.Series([1/2.58, 1, 1, 1], index=language_dict['heating_energy_list'])
+
+# Lors du calibrage, il faudra faire coïncider à l'année initiale les consommations observées par énergie
+# avec le calcul fourni par Res-IRF --> Pour chaque énergie, calcul de coefficients de conversion pour faire coïncider
+
+conso_bois_ini = 11.55 # Conso de bois à l'année réf (source ADEME) (en Mm3)// A mettre à jour
+conso_2018 = [33.163 * 10**9, 105.582 * 10**9, 36.138 * 10**9, 79.554 * 10**9] # Données 2018 (CEREN climat normal), en TWh
+conso_2019 = [33.8 * 10**9,  103.7 * 10**9,  34.2 * 10**9,  78.16 * 10**9] # 2019 CEREN climat normal TWh
+
+# calcul surface moyenne pondérée
+# ds_surface.reindex(dfp.index) * dfp / dfp.sum()
+
+
+destruction_rate = 0.0035
+# rotation concerne les
+rotation_rate = pd.Series([0.03, 0.18, 0.08], index=['Landlords', 'Homeowners', 'Social-housing'])
+mutation_rate = pd.Series([0.035, 0.018, 0.003], index=['Landlords', 'Homeowners', 'Social-housing'])
+
+"""stock_residuel = stock_existant_ini2*tx_destruction_residuel
+stock_mobile_ini = stock_existant_ini2-stock_residue"""
+

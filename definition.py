@@ -19,17 +19,17 @@ class Housing:
         self.decision_maker = (self.housing_type, self.occupancy_status)
 
         self.income_class = income_class
-        self.income = parameters_dict['income_series'].loc[income_class]
+        self.income_ts = parameters_dict['income_series'].loc[:, income_class]
         self.income_class_owner = income_class_owner
-        self.income_owner = parameters_dict['income_series'].loc[income_class]
+        self.income_ts_owner = parameters_dict['income_series'].loc[:, income_class]
 
         self.energy_performance = energy_performance
         self.energy_consumption_theoretical = parameters_dict['energy_consumption_series'].loc[self.energy_performance]
 
         self.heating_energy = heating_energy
 
-        self.investment_horizon = parameters_dict['investment_horizon_series'].loc[self.decision_maker]
-        self.interest_rate = parameters_dict['interest_rate_series'].loc[(self.housing_type, self.occupancy_status, self.income_class)]
+        self.investment_horizon = parameters_dict['investment_horizon_series'].loc[self.housing_type]
+        self.interest_rate = parameters_dict['interest_rate_series'].loc[self.income_class, self.occupancy_status]
         self.discount_factor = (1 - (1 + self.interest_rate)**-self.investment_horizon) / self.interest_rate
 
         self.surface = parameters_dict['surface'].loc[self.housing_type, self.occupancy_status]
@@ -61,7 +61,7 @@ class Housing:
         else:
             raise
 
-        budget_share = (energy_price_series * self.surface * energy_consumption_theoretical) / self.income
+        budget_share = (energy_price_series * self.surface * energy_consumption_theoretical) / self.income_ts
         use_intensity = -0.191 * budget_share.apply(log) + 0.1105
         energy_consumption_actual = use_intensity * energy_consumption_theoretical
         energy_cost = energy_consumption_actual * energy_price_series
