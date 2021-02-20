@@ -38,7 +38,8 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(message)s')
     logging.debug('Start Res-IRF')
 
-    investment_cost_data = cost_dict['cost_inv']
+    cost_transition_df = cost_dict['cost_inv']
+    cost_switch_fuel_df = cost_dict['cost_switch_fuel']
     intangible_cost_data = pd.DataFrame(0, index=language_dict['energy_performance_list'],
                                         columns=language_dict['energy_performance_list'])
 
@@ -52,11 +53,11 @@ if __name__ == '__main__':
 
     logging.debug('Total number of housing in this study {:,}'.format(dsp.sum()))
 
-    # all_segments = pd.MultiIndex.from_tuples(dsp.index.tolist())
-    segments = dsp.droplevel('Income class owner').index[~dsp.droplevel('Income class owner').index.duplicated(keep='first')].tolist()
+    segments = pd.MultiIndex.from_tuples(dsp.index.tolist())
+    """segments = dsp.droplevel('Income class owner').index[~dsp.droplevel('Income class owner').index.duplicated(keep='first')].tolist()
     segments = [i + ('income_owner', ) for i in segments]
     segments = segments[700:-700]
-    segments = pd.MultiIndex.from_tuples(segments)
+    segments = pd.MultiIndex.from_tuples(segments)"""
 
     energy_prices_df = exogenous_dict['energy_price_data']
 
@@ -64,11 +65,25 @@ if __name__ == '__main__':
     energy_cost_df = energy_cost_func(segments, energy_prices_df)[3]
     energy_lcc_ds = energy_cost_df.sum(axis=1)
     energy_discount_lcc_ds = pd.DataFrame(discount_factor.values * energy_lcc_ds.values, index=segments)
+    # energy_discount_lcc_ds.index.names = language_dict['properties_names']
     energy_discount_lcc_ds.index.names = language_dict['properties_names']
+
     energy_discount_lcc_ds.columns = ['Values']
 
-    market_share_df, pv_df = market_share_func(energy_discount_lcc_ds, investment_cost_data)
-    npv_df = pd.DataFrame(energy_discount_lcc_ds.values - pv_df.values)
+    market_share_df, pv_df = market_share_func(energy_discount_lcc_ds, cost_transition_df, cost_switch_fuel_df)
+    npv_df = pd.DataFrame(energy_discount_lcc_ds.values - pv_df.values, index=pv_df.index, columns=pv_df.columns)
+
+
+    def func(ds):
+        return logistic(ds - parameters_dict['npv_min'],
+                 a=parameters_dict['rate_max'] / parameters_dict['rate_min'] - 1,
+                 r=parameters_dict['r'],
+                 K=parameters_dict['rate_max'])
+
+
+    renovation_rate_df = npv_df.apply(func)
+
+
     print('pause')
 
     end = time.time()

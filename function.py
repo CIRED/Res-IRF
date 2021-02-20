@@ -1,4 +1,4 @@
-from math import exp
+from numpy import exp
 
 
 def logistic(x, a=1, r=1, K=1):

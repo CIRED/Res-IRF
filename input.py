@@ -101,10 +101,7 @@ parameters_dict['lifetime_investment'] = pd.DataFrame({'enveloppe': [30, 30, 3, 
                                                        'heater': [20, 20, 3, 3, 20, 20],
                                                        'new': [25, 25, 25, 25, 25, 25]})
 
-
-
 lifetime_enveloppe_ini= [30,30,3,3,30,30];
-
 
 # folder
 folder = dict()
