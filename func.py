@@ -1,16 +1,17 @@
 from input import parameters_dict, language_dict
-# from math import log
 import pandas as pd
-from numpy import log
-['Occupancy status', 'Housing type', 'Energy performance', 'Heating energy', 'Income class', 'Income class owner']
+import numpy as np
+from input import calibration_dict
 
-"""occupancy_status = segment[0]
+"""
+['Occupancy status', 'Housing type', 'Energy performance', 'Heating energy', 'Income class', 'Income class owner']
+occupancy_status = segment[0]
 housing_type = segment[1]
 energy_performance = segment[2]
 heating_energy = segment[3]
 income_class = segment[4]
-income_class_owner = segment[5]"""
-# exogenous_dict['energy_price_data']
+income_class_owner = segment[5]
+"""
 
 # TODO: check reindex like
 
@@ -58,7 +59,7 @@ def energy_cost_func(segments, energy_prices_df):
     budget_share_df = (energy_prices_df.values.T * surface.values * energy_consumption_theoretical.values) / income_ts.values.T
     budget_share_df = pd.DataFrame(budget_share_df.T, index=segments)
 
-    use_intensity_df = -0.191 * budget_share_df.apply(log) + 0.1105
+    use_intensity_df = -0.191 * budget_share_df.apply(np.log) + 0.1105
 
     energy_consumption_actual_df = pd.DataFrame((use_intensity_df.values.T * energy_consumption_theoretical.values).T, index=segments)
     energy_cost_df = pd.DataFrame(energy_consumption_actual_df.values * energy_prices_df.values, index=segments)
@@ -66,37 +67,61 @@ def energy_cost_func(segments, energy_prices_df):
     return budget_share_df, use_intensity_df, energy_consumption_actual_df, energy_cost_df
 
 
-def market_share_func(energy_discount_lcc_ds, cost_invest_df, cost_switch_fuel_df):
+def lcc_func(energy_discount_lcc_ds, cost_invest_df, cost_switch_fuel_df, intangible_cost):
+    # TODO check why 'nan' from invest_cost doesn't affect lcc_transition
 
     pivot = pd.pivot_table(energy_discount_lcc_ds, values='Values', columns=['Energy performance', 'Heating energy'],
                            index=['Occupancy status', 'Housing type', 'Income class', 'Income class owner'])
 
-    transition_discount_lcc_df = pd.concat([pivot] * len(language_dict['energy_performance_list']),
+    lcc_transition_df = pd.concat([pivot] * len(language_dict['energy_performance_list']),
                                            keys=language_dict['energy_performance_list'], names=['Energy performance'])
 
-    transition_discount_lcc_df = pd.concat([transition_discount_lcc_df] * len(language_dict['heating_energy_list']),
+    lcc_transition_df = pd.concat([lcc_transition_df] * len(language_dict['heating_energy_list']),
                                            keys=language_dict['heating_energy_list'], names=['Heating energy'])
 
-    invest_cost = cost_invest_df.reindex(transition_discount_lcc_df.index.get_level_values('Energy performance'), axis=0)
-    invest_cost = invest_cost.reindex(transition_discount_lcc_df.columns.get_level_values('Energy performance'), axis=1)
+    invest_cost = cost_invest_df.reindex(lcc_transition_df.index.get_level_values('Energy performance'), axis=0)
+    invest_cost = invest_cost.reindex(lcc_transition_df.columns.get_level_values('Energy performance'), axis=1)
 
-    switch_fuel_cost = cost_switch_fuel_df.reindex(transition_discount_lcc_df.index.get_level_values('Heating energy'), axis=0)
-    switch_fuel_cost = switch_fuel_cost.reindex(transition_discount_lcc_df.columns.get_level_values('Heating energy'), axis=1)
+    switch_fuel_cost = cost_switch_fuel_df.reindex(lcc_transition_df.index.get_level_values('Heating energy'), axis=0)
+    switch_fuel_cost = switch_fuel_cost.reindex(lcc_transition_df.columns.get_level_values('Heating energy'), axis=1)
 
-    transition_discount_lcc_df.update(transition_discount_lcc_df.values + invest_cost.values + switch_fuel_cost.values)
+    intangible_cost = intangible_cost.reindex(lcc_transition_df.index.get_level_values('Energy performance'), axis=0)
+    intangible_cost = intangible_cost.reindex(lcc_transition_df.columns.get_level_values('Energy performance'), axis=1)
 
-    def func(series):
-        return series * (series.name[1] > series.index.get_level_values(0))
+    lcc_transition_df.update(lcc_transition_df.values + invest_cost.values + switch_fuel_cost.values + intangible_cost.values)
 
-    transition_discount_lcc_df = transition_discount_lcc_df.apply(func, axis=1)
-    transition_discount_lcc_df.replace({0: float('nan')}, inplace=True)
+    return lcc_transition_df
 
-    # intangible_cost = pd.DataFrame(index=invest_cost.index, columns=invest_cost.columns)
+parameters_dict['nu_intangible_cost']
 
-    market_share_df = pd.DataFrame((transition_discount_lcc_df.values.T / transition_discount_lcc_df.sum(axis=1).values).T,
-                                   index=transition_discount_lcc_df.index, columns=transition_discount_lcc_df.columns)
-    pv_df = market_share_df * transition_discount_lcc_df
-    return market_share_df, pv_df
+def market_share_func(lcc_df):
+
+    if isinstance(lcc_df, pd.DataFrame):
+        def to_apply(series):
+            return series * (series.name[1] > series.index.get_level_values(0))
+
+        lcc_df = lcc_df.apply(to_apply, axis=1)
+        lcc_df.replace({0: float('nan')}, inplace=True)
+        lcc_reverse_df = lcc_df.apply(lambda x: x**-parameters_dict['nu_intangible_cost'])
+        market_share_df = pd.DataFrame((lcc_reverse_df.values.T / lcc_reverse_df.sum(axis=1).values).T,
+                                       index=lcc_reverse_df.index, columns=lcc_reverse_df.columns)
+        return market_share_df
+
+    elif isinstance(lcc_df, pd.Series):
+        # TODO: calculate market share of the average lcc which is not the same than the average of market share
+        def to_apply(ds):
+            return ds * (ds.name > ds.index)
+
+        lcc_ds = to_apply(lcc_df)
+        lcc_ds.replace({0: float('nan')}, inplace=True)
+        lcc_reverse_ds = lcc_ds.apply(lambda x: x**-parameters_dict['nu_intangible_cost'])
+        market_share_ds = lcc_reverse_ds / lcc_reverse_ds.sum()
+        return market_share_ds
+
+    else:
+        raise
 
 
 
+
+# market_share_func(intangible_cost, energy_discount_lcc_ds, cost_invest_df, cost_switch_fuel_df)

@@ -26,7 +26,7 @@ language_dict['decision_maker_index'] = pd.MultiIndex.from_tuples(language_dict[
 language_dict['properties_names'] = ['Occupancy status', 'Housing type', 'Energy performance', 'Heating energy',
                                      'Income class', 'Income class owner']
 
-all_combination_list = list(product(language_dict['occupancy_status_list'],
+"""all_combination_list = list(product(language_dict['occupancy_status_list'],
                                     language_dict['housing_type_list'],
                                     language_dict['energy_performance_list'],
                                     language_dict['heating_energy_list'],
@@ -38,7 +38,7 @@ all_combination_list = list(product(language_dict['occupancy_status_list'],
 language_dict['all_combination_list'] = all_combination_list
 
 all_combination_index = pd.MultiIndex.from_tuples(all_combination_list, names=language_dict['properties_names'])
-language_dict['all_combination_index'] = all_combination_index
+language_dict['all_combination_index'] = all_combination_index"""
 
 dict_replace = {'PO': 'Homeowners', 'P': 'Homeowners', 'PB': 'Landlords', 'LP': 'Landlords',
                 'LS': 'Social-housing', 'MI': 'Single-family', 'MA': 'Single-family',  'LC': 'Multi-family',
@@ -97,11 +97,16 @@ df_investment_horizon = pd.DataFrame([[30, 30, 30], [30, 30, 3], [30, 7, 7], [30
                                      index=language_dict['list_all_scenarios'])
 parameters_dict['investment_horizon_series'] = df_investment_horizon.loc[parameters_dict['scenario'], :]
 
+parameters_dict['nu_intangible_cost'] = 8
+parameters_dict['nu_new'] = 8
+parameters_dict['nu_label'] = 8
+parameters_dict['nu_heating'] = 8
+
+
 parameters_dict['lifetime_investment'] = pd.DataFrame({'enveloppe': [30, 30, 3, 3, 30, 30],
                                                        'heater': [20, 20, 3, 3, 20, 20],
                                                        'new': [25, 25, 25, 25, 25, 25]})
 
-lifetime_enveloppe_ini= [30,30,3,3,30,30];
 
 # folder
 folder = dict()
@@ -154,6 +159,7 @@ def decile_to_quintile(ds):
 number_housing_calibration = 0.03
 calibration_file = ['market_share', 'renovation_rate_decision_maker', 'renovation_rate_energy_performance']
 calibration_dict = dict()
+
 file = 'market_share'
 name_file = os.path.join(folder['calibration'], file + '.csv')
 calibration_dict[file] = pd.read_csv(name_file, index_col=[0], header=[0])

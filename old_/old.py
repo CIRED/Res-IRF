@@ -89,3 +89,18 @@ def market_share_func_bis(energy_price_df, all_segments, intangible_cost_data):
         market_share_data.update(ms)
         k += 1
     return life_cycle_cost_data, market_share_data
+
+
+def renovation_rate_func(data, all_segments, energy_price_df):
+    logging.debug('Calculation of renovation rate for each segment')
+    npv = pd.Series(index=all_segments, dtype='float64')
+    renovation_rate = pd.Series(index=all_segments, dtype='float64')
+    for segment in all_segments:
+        discounted_energy_price = Housing(*segment).discounted_energy_prices(energy_price_df)
+        npv.loc[segment] = discounted_energy_price - data[segment]
+
+        renovation_rate.loc[segment] = logistic(npv.loc[segment] - parameters_dict['npv_min'],
+                                                    a=parameters_dict['rate_max'] / parameters_dict['rate_min'] - 1,
+                                                    r=parameters_dict['r'],
+                                                    K=parameters_dict['rate_max'])
+    return renovation_rate, npv
