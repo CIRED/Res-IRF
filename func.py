@@ -42,6 +42,8 @@ def energy_cost_func(segments, energy_prices_df):
     pandas DataFrame index = segments, columns = index_year
     """
 
+    # TODO: use energy_prices_df.columns to return time indexed data.
+
     idx_occ = pd.MultiIndex.from_tuples(segments).get_level_values(0)
     idx_housing = pd.MultiIndex.from_tuples(segments).get_level_values(1)
     idx_surface = pd.MultiIndex.from_tuples(list(zip(list(idx_occ), list(idx_housing))))
@@ -51,9 +53,10 @@ def energy_cost_func(segments, energy_prices_df):
     income_ts = parameters_dict['income_series'].T.reindex(idx_income)
 
     idx_performance = pd.MultiIndex.from_tuples(segments).get_level_values(2)
-    energy_consumption_theoretical = parameters_dict['energy_consumption_series'].reindex(idx_performance)
-
     idx_energy = pd.MultiIndex.from_tuples(segments).get_level_values(3)
+    idx_consumption = pd.MultiIndex.from_tuples(list(zip(list(idx_energy), list(idx_performance))))
+    energy_consumption_theoretical = parameters_dict['energy_consumption_df'].reindex(idx_consumption)
+
     energy_prices_df = energy_prices_df.T.reindex(idx_energy)
 
     budget_share_df = (energy_prices_df.values.T * surface.values * energy_consumption_theoretical.values) / income_ts.values.T
@@ -61,14 +64,17 @@ def energy_cost_func(segments, energy_prices_df):
 
     use_intensity_df = -0.191 * budget_share_df.apply(np.log) + 0.1105
 
-    energy_consumption_actual_df = pd.DataFrame((use_intensity_df.values.T * energy_consumption_theoretical.values).T, index=segments)
+    energy_consumption_actual_df = pd.DataFrame((use_intensity_df.values.T * energy_consumption_theoretical.values).T,
+                                                index=segments)
     energy_cost_df = pd.DataFrame(energy_consumption_actual_df.values * energy_prices_df.values, index=segments)
 
     return budget_share_df, use_intensity_df, energy_consumption_actual_df, energy_cost_df
 
 
 def lcc_func(energy_discount_lcc_ds, cost_invest_df, cost_switch_fuel_df, intangible_cost):
-    # TODO check why 'nan' from invest_cost doesn't affect lcc_transition
+    """
+    Calculate life cycle cost of energy consumption for every segment and for every possible transition.
+    """
 
     pivot = pd.pivot_table(energy_discount_lcc_ds, values='Values', columns=['Energy performance', 'Heating energy'],
                            index=['Occupancy status', 'Housing type', 'Income class', 'Income class owner'])
@@ -92,7 +98,6 @@ def lcc_func(energy_discount_lcc_ds, cost_invest_df, cost_switch_fuel_df, intang
 
     return lcc_transition_df
 
-parameters_dict['nu_intangible_cost']
 
 def market_share_func(lcc_df):
 
@@ -122,6 +127,7 @@ def market_share_func(lcc_df):
         raise
 
 
-
+def logistic(x, a=1, r=1, K=1):
+    return K / (1 + a * np.exp(- r * x))
 
 # market_share_func(intangible_cost, energy_discount_lcc_ds, cost_invest_df, cost_switch_fuel_df)

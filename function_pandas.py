@@ -135,3 +135,27 @@ def add_level_nan(ds, level):
 def linear2series(value, rate, index):
     temp = [value * (1 + rate) ** (i - index[0]) for i in index]
     return pd.Series(temp, index=index)
+
+
+def get_levels_values(multiindex, levels):
+    tuple_idx = tuple()
+    for level in levels:
+        idx = list(multiindex.get_level_values(level))
+        tuple_idx = tuple_idx + (idx,)
+    idx_return = pd.MultiIndex.from_tuples(list(zip(*tuple_idx)))
+    idx_return.names = levels
+    return idx_return
+
+
+def miiindex_loc(ds, slicing_midx):
+    """
+    Select multiindex slices based on slice_midx when all levels must not be sliced.
+    """
+    # The levels to slice on, in sorted order
+    slicing_levels = list(slicing_midx.names)
+    # The levels not to slice on
+    non_slicing_levels = [level for level in ds.index.names if level not in slicing_levels]
+
+    # Reset the unneeded index
+    res = ds.reset_index(non_slicing_levels).loc[slicing_midx].set_index(non_slicing_levels, append=True)
+    return res

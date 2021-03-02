@@ -104,3 +104,13 @@ def renovation_rate_func(data, all_segments, energy_price_df):
                                                     r=parameters_dict['r'],
                                                     K=parameters_dict['rate_max'])
     return renovation_rate, npv
+
+    """segments = dsp.droplevel('Income class owner').index[~dsp.droplevel('Income class owner').index.duplicated(keep='first')].tolist()
+    segments = [i + ('income_owner', ) for i in segments]
+    segments = segments[700:-700]
+    segments = pd.MultiIndex.from_tuples(segments)"""
+
+    """dsp_idx = dsp.index.names
+    dsp = dsp.reset_index().replace(language_dict['dict_replace']).set_index(dsp_idx).iloc[:, 0]
+    dsp.index = dsp.index.set_names('Income class owner', 'DECILE_PB')
+    dsp = dsp.reorder_levels(language_dict['properties_names'])"""
