@@ -1,0 +1,9 @@
+﻿Housing type,Heating energy,Distribution new
+Single-family,Power,0.753
+Single-family,Natural gas,0.185
+Single-family,Oil fuel,0.005
+Single-family,Wood fuel,0.058
+Multi-family,Power,0.195
+Multi-family,Natural gas,0.795
+Multi-family,Oil fuel,0
+Multi-family,Wood fuel,0.01
