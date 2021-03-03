@@ -1,3 +1,4 @@
+"""
 def add_multiindex(data, new_index_level, name):
     """
     Function that add all indexes of new_index_level in data, copying the value.
@@ -114,3 +115,40 @@ def renovation_rate_func(data, all_segments, energy_price_df):
     dsp = dsp.reset_index().replace(language_dict['dict_replace']).set_index(dsp_idx).iloc[:, 0]
     dsp.index = dsp.index.set_names('Income class owner', 'DECILE_PB')
     dsp = dsp.reorder_levels(language_dict['properties_names'])"""
+
+renovation calibration
+file = 'renovation_rate_energy_performance'
+name_file = os.path.join(folder['calibration'], file + '.csv')
+calibration_dict[file] = pd.read_csv(name_file, index_col=[0], header=[0])
+
+# concatenate energy performance and decision market renovation rate
+logging.debug('Calibration of rho by renovation rate')
+renovation_rate_calibration = calibration_dict['renovation_rate_decision_maker'].copy()
+renovation_rate_calibration = pd.concat(
+    [renovation_rate_calibration] * len(calibration_dict['renovation_rate_energy_performance'].index),
+    keys=calibration_dict['renovation_rate_energy_performance'].index, names=['Energy performance'])
+
+temp = calibration_dict['renovation_rate_energy_performance'].reindex(
+    renovation_rate_calibration.index.get_level_values('Energy performance'))
+temp.index = renovation_rate_calibration.index
+renovation_rate_calibration = pd.concat((renovation_rate_calibration, temp), axis=1)
+len(language_dict['energy_performance_list'])
+
+housing_number = dsp.groupby(['Occupancy status', 'Housing type', 'Energy performance']).sum()
+housing_number = housing_number.reorder_levels(renovation_rate_calibration.index.names)
+
+housing_number_sum = dsp.groupby(['Occupancy status', 'Housing type']).sum()
+idx_occ = renovation_rate_calibration.index.get_level_values('Occupancy status')
+idx_housing = renovation_rate_calibration.index.get_level_values('Housing type')
+idx = pd.MultiIndex.from_tuples(list(zip(list(idx_occ), list(idx_housing))))
+housing_number_sum = housing_number_sum.reindex(idx)
+housing_number_sum.index = renovation_rate_calibration.index
+
+test = (renovation_rate_calibration.iloc[:, 0] * renovation_rate_calibration.iloc[:,
+                                                 1] * housing_number_sum) / housing_number
+test = pd.concat((test, housing_number), axis=1)
+test.groupby('Energy performance').sum()
+
+a = test.groupby(['Occupancy status', 'Housing type']).sum()
+a['Renovation'] / a['Housing number']
+"""

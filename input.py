@@ -4,7 +4,15 @@ from itertools import product
 
 from function_pandas import linear2series
 
-# from input import language_dict, parameters_dict, index_year, folder, exogenous_dict
+# folder
+folder = dict()
+folder['working_directory'] = os.getcwd()
+folder['input'] = os.path.join(os.getcwd(), 'input')
+folder['output'] = os.path.join(os.getcwd(), 'output')
+folder['middle'] = os.path.join(os.getcwd(), 'middle')
+folder['calibration'] = os.path.join(folder['input'], 'calibration')
+folder['calibration_middle'] = os.path.join(folder['middle'], 'calibration_middle')
+
 # index_year
 calibration_year = 2018
 final_year = 2050
@@ -20,7 +28,9 @@ language_dict['energy_performance_list'] = ['G', 'F', 'E', 'D', 'C', 'B', 'A']
 language_dict['energy_performance_new_list'] = ['BBC', 'BEPOS']
 language_dict['income_class_list'] = ['D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7', 'D8', 'D9', 'D10']
 language_dict['income_class_quintile_list'] = ['C1', 'C2', 'C3', 'C4', 'C5']
-
+language_dict['decision_maker_income_list'] = list(product(language_dict['occupancy_status_list'],
+                                                           language_dict['housing_type_list'],
+                                                           language_dict['income_class_list']))
 
 language_dict['heating_energy_list'] = ['Power', 'Natural gas', 'Oil fuel', 'Wood fuel']
 
@@ -81,7 +91,6 @@ language_dict['english_to_french'] = dict_english_to_french
 # main parameters
 parameters_dict = dict()
 parameters_dict['npv_min'] = -1000
-parameters_dict['r'] = 1
 parameters_dict['rate_max'] = 0.2
 parameters_dict['rate_min'] = 0.00001
 
@@ -124,17 +133,28 @@ ds_consumption_heater = pd.Series([0.4, 0.4], index=language_dict['energy_perfor
 ds_consumption_new = ds_consumption_new * ds_consumption_heater
 parameters_dict['energy_consumption_new_series'] = ds_consumption_new
 
-# TODO: surface totale initiale du parc, surface moyenne initiale d'un logment
 ds_surface = pd.Series([109.5, 74.3, 87.1, 53.5, 77.8, 63.3],
                        index=[['Homeowners', 'Homeowners', 'Landlords', 'Landlords', 'Social-housing',
                                'Social-housing'], ['Single-family', 'Multi-family', 'Single-family', 'Multi-family',
                                                    'Single-family', 'Multi-family']])
+ds_surface.index.names = ['Occupancy status', 'Housing type']
 parameters_dict['surface'] = ds_surface
 ds_surface_new = pd.Series([132, 81, 90, 60, 84, 71],
                            index=[['Homeowners', 'Homeowners', 'Landlords', 'Landlords', 'Social-housing',
                                    'Social-housing'], ['Single-family', 'Multi-family', 'Single-family', 'Multi-family',
                                                        'Single-family', 'Multi-family']])
+ds_surface_new.index.names = ['Occupancy status', 'Housing type']
 parameters_dict['surface_new'] = ds_surface_new
+
+surface_new_max = pd.DataFrame([[160, 101, 90], [89, 76, 76]],
+                               columns=['Homeowners', 'Landlords', 'Social-housing'],
+                               index=['Single-family', 'Multi-family'])
+surface_new_max = surface_new_max.unstack()
+surface_new_max.index.names = ['Occupancy status', 'Housing type']
+parameters_dict['surface_new_max'] = surface_new_max
+
+elasticity_surface_new = pd.Series([0.2, 0.01, 0.01], index=['Single-family', 'Multi-family', 'Social-housing'])
+parameters_dict['elasticity_surface_new'] = elasticity_surface_new
 
 
 df_discount_rate = pd.DataFrame([[0.15, 0.37, 0.04], [0.15, 0.37, 0.04], [0.1, 0.25, 0.04], [0.1, 0.25, 0.04],
@@ -157,15 +177,36 @@ parameters_dict['nu_heating'] = 8
 parameters_dict['lifetime_investment'] = pd.DataFrame({'enveloppe': [30, 30, 3, 3, 30, 30],
                                                        'heater': [20, 20, 3, 3, 20, 20],
                                                        'new': [25, 25, 25, 25, 25, 25]})
+parameters_dict['destruction_rate'] = 0.0035
+
+distribution_performance_new = pd.Series([0.9, 0.1], index=language_dict['energy_performance_new_list'])
+
+name_file = 'distribution_heating_energy_new.csv'
+distribution_heating_energy_new = pd.read_csv(os.path.join(folder['input'], name_file), sep=',', header=[0], index_col=[0, 1])
+
+parameters_dict['distribution_housing'] = pd.Series([0.39, 0.61], index=['Multi-family', 'Single family'])
+
+parameters_dict['factor_evolution_distribution'] = 0.87
+
+distribution_type = pd.DataFrame([[0.308, 0.397, 0.295], [0.803, 0.144, 0.053]], index=['Multi-family', 'Single-family'],
+                                columns=['Homeowners', 'Landlords', 'Social-housing'])
+distribution_type = distribution_type.unstack()
+distribution_type.index.names = ['Occupancy status', 'Housing type']
+parameters_dict['distribution_type'] = distribution_type
 
 
-# folder
-folder = dict()
-folder['working_directory'] = os.getcwd()
-folder['input'] = os.path.join(os.getcwd(), 'input')
-folder['output'] = os.path.join(os.getcwd(), 'output')
-folder['middle'] = os.path.join(os.getcwd(), 'middle')
-folder['calibration'] = os.path.join(folder['input'], 'calibration')
+parameters_dict['factor_population_housing_ini'] = -0.007
+
+parameters_dict['nb_population_housing_min'] = 2
+
+technical_progress_dict = dict()
+technical_progress_dict['learning-by-doing-new'] = -0.15
+technical_progress_dict['learning-by-doing-remaining'] = -0.1
+technical_progress_dict['learning-by-doing-information'] = -0.25
+parameters_dict['technical_progress_dict'] = technical_progress_dict
+
+
+rate_growth = 0.012
 
 # exogenous variable
 exogenous_dict = dict()
@@ -179,33 +220,41 @@ for key, value in energy_price_ini.items():
     energy_price_data = pd.concat((energy_price_data, ds), axis=1)
 exogenous_dict['energy_price_data'] = energy_price_data
 
-# TODO: population
-population_ini = 29037000
-population_rate = 0.003
-population_series = linear2series(population_ini, population_rate, index_year)
-exogenous_dict['population_series'] = population_series
+
+exogenous_dict['stock_ini'] = 29037000
+# population_rate = 0.003
+# population_series = linear2series(population_ini, population_rate, index_year)
+
+name_file = 'projection_population_insee.csv'
+population_total_series = pd.read_csv(os.path.join(folder['input'], name_file), sep=',', header=None, index_col=[0],
+                                      squeeze=True)
+exogenous_dict['population_total_series'] = population_total_series
+
 
 # cost
 cost_dict = dict()
-name_file = 'CINV_existant.csv'
+name_file = 'cost_existing.csv'
 df_cost_inv = pd.read_csv(os.path.join(folder['input'], name_file), sep=',', header=[0], index_col=[0])
 cost_dict['cost_inv'] = df_cost_inv
 
 energy_list = ['Power', 'Natural gas', 'Oil fuel', 'Wood fuel']
-df_cost_switch_fuel = pd.DataFrame([(0, 70, 100, 120), (55, 0, 80, 100), (55, 50, 0 ,100), (55, 50, 80, 0)],
+df_cost_switch_fuel = pd.DataFrame([(0, 70, 100, 120), (55, 0, 80, 100), (55, 50, 0, 100), (55, 50, 80, 0)],
                                    index=energy_list, columns=energy_list)
 cost_dict['cost_switch_fuel'] = df_cost_switch_fuel
 
+df_intangible_cost = pd.DataFrame(
+    [(0, 162, 65, 66, 21, 215, 289), (0, 0, 141, 172, 15, 39, 330), (0, 0, 0, 125, 31, 58, 313),
+     (0, 0, 0, 0, 88, 62, 216), (0, 0, 0, 0, 0, 134, 77), (0, 0, 0, 0, 0, 0, 0), (0, 0, 0, 0, 0, 0, 0)],
+    index=language_dict['energy_performance_list'], columns=language_dict['energy_performance_list'])
+cost_dict['cost_intangible'] = df_intangible_cost
 
-def decile_to_quintile(ds):
-    ds_quintile = pd.Series(dtype='float64')
-    ds_quintile['C1'] = ds.loc[['D1', 'D2']].sum()
-    ds_quintile['C2'] = ds.loc[['D3', 'D4']].sum()
-    ds_quintile['C3'] = ds.loc[['D5', 'D6']].sum()
-    ds_quintile['C4'] = ds.loc[['D7', 'D8']].sum()
-    ds_quintile['C5'] = ds.loc[['D9', 'D10']].sum()
-    return ds_quintile
+name_file = 'cost_new.csv'
+ds_cost_new = pd.read_csv(os.path.join(folder['input'], name_file), sep=',', header=[0], index_col=[0, 1, 2], squeeze=True)
+cost_dict['cost_new'] = ds_cost_new
 
+df_cost_new_lim = pd.DataFrame([[700, 750], [800, 850]], index=['Single-family', 'Multi-family'], columns=['Homeowners', 'Landlords'])
+cost_dict['cost_new_lim'] = df_cost_new_lim.unstack()
+cost_dict['cost_new_lim'].index.names = ['Occupancy status', 'Housing type']
 
 # for calibration
 number_housing_calibration = 0.03
@@ -220,12 +269,7 @@ file = 'renovation_rate_decision_maker'
 name_file = os.path.join(folder['calibration'], file + '.csv')
 calibration_dict[file] = pd.read_csv(name_file, index_col=[0, 1], header=[0])
 
-file = 'renovation_rate_energy_performance'
-name_file = os.path.join(folder['calibration'], file + '.csv')
-calibration_dict[file] = pd.read_csv(name_file, index_col=[0], header=[0])
 
-
-rate_new_ini = pd.Series([0.9, 0.1], index=language_dict['energy_performance_new_list'])
 
 
 # public policy
@@ -259,7 +303,6 @@ conso_2019 = [33.8 * 10**9,  103.7 * 10**9,  34.2 * 10**9,  78.16 * 10**9] # 201
 # ds_surface.reindex(dfp.index) * dfp / dfp.sum()
 
 
-destruction_rate = 0.0035
 # rotation concerne les
 rotation_rate = pd.Series([0.03, 0.18, 0.08], index=['Landlords', 'Homeowners', 'Social-housing'])
 mutation_rate = pd.Series([0.035, 0.018, 0.003], index=['Landlords', 'Homeowners', 'Social-housing'])

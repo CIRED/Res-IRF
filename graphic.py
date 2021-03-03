@@ -1,10 +1,30 @@
 import matplotlib.pyplot as plt
 import seaborn
+import pandas as pd
+
+
 from input import language_dict
+
+
 dict_color = language_dict['dict_color']
 
 seaborn.set(style='ticks')
 seaborn.set_palette("rocket")
+
+
+SMALL_SIZE = 20
+MEDIUM_SIZE = 25
+BIGGER_SIZE = 30
+
+plt.rc('font', size=SMALL_SIZE) # controls default text sizes
+plt.rc('axes', titlesize=BIGGER_SIZE) # fontsize of the axes title
+plt.rc('axes', labelsize=MEDIUM_SIZE) # fontsize of the x and y labels
+plt.rc('xtick', labelsize=MEDIUM_SIZE) # fontsize of the tick labels
+plt.rc('ytick', labelsize=MEDIUM_SIZE) # fontsize of the tick labels
+plt.rc('legend', fontsize=MEDIUM_SIZE) # legend fontsize
+plt.rc('figure', titlesize=BIGGER_SIZE) # fontsize of the figure title
+plt.rc('legend', title_fontsize=MEDIUM_SIZE)
+
 
 
 def format_ax(ax, format_xaxis=None, format_yaxis=None, legend=True, ylim=False, option=0):
@@ -81,10 +101,8 @@ def make_plot(df_dict, title, ylabel=None, format_xaxis=None, format_yaxis=None,
 
     linestyle_list = ['solid', 'dotted', 'dashed', 'dashed', 'dashed', 'dashed'] * 10
     marker_list = [None, None, None, "o", ".", ","] * 10
-
     linewidth = 2
     markersize = 3
-
     k = 0
     for _, df in df_dict.items():
 
@@ -97,10 +115,8 @@ def make_plot(df_dict, title, ylabel=None, format_xaxis=None, format_yaxis=None,
 
         k += 1
 
-    ax = format_ax(ax, format_xaxis=format_xaxis, format_yaxis=format_yaxis, legend=legend, ylim=ylim)
-
+    format_ax(ax, format_xaxis=format_xaxis, format_yaxis=format_yaxis, legend=legend, ylim=ylim)
     plt.legend(title=legendtitle)
-    # plt.savefig(title)
     plt.show()
 
     return None
@@ -127,3 +143,92 @@ def make_stacked_barplot(dsp, labels, source=None, format_yaxis='million', rotat
     plt.setp(ax.xaxis.get_majorticklabels(), rotation=rotation)
     plt.show()
     return ax
+
+
+def graph_parc(dsp, dsp2=None):
+    width = 0.2
+    format_yaxis = 'percent'
+
+    legend = True
+    fig, axes = plt.subplots(2, 2, figsize=[12.8, 9.6])
+    """fig.suptitle('Description of the housing stock: {} // Total housing stock: {:,.0f}'.format(dsp.name, dsp.sum()))
+    if isinstance(dsp2, pd.Series):
+        fig.suptitle('Description of the housing stocks: [////]:: {} &  {} '.format(dsp2.name, dsp.name))"""
+
+    fig.tight_layout()
+    labels = list(dsp.index.names)
+    labels.remove('DPE')
+
+    for k, ax in enumerate(axes.flat):
+        try:
+            label = labels[k]
+        except IndexError:
+            ax.remove()
+            break
+        ds = dsp.groupby(label).sum()
+        if isinstance(dsp2, pd.Series):
+            ds2 = dsp2.groupby(label).sum()
+
+        if format_yaxis == 'percent':
+            ds = ds / dsp.groupby(label).sum().sum()
+            if isinstance(dsp2, pd.Series):
+                ds2 = ds2 / dsp2.groupby(label).sum().sum()
+
+        ds.plot.bar(ax=ax, position=0, width=width, color=[dict_color[key] for key in ds.index])
+
+        if isinstance(dsp2, pd.Series):
+            ds2.plot.bar(ax=ax, position=1, width=width, hatch='/////', color=[dict_color[key] for key in ds.index])
+
+        plt.setp(ax.xaxis.get_majorticklabels(), rotation=0)
+
+        if k > 0:
+            legend = False
+        ax = format_ax(ax, format_yaxis=format_yaxis, legend=legend)
+        if legend:
+            ax.legend(prop=dict(size=10))
+        ax.xaxis.label.set_size(15)
+        ax.tick_params(axis='both', which='major', labelsize=12)
+    plt.show()
+
+
+def graph_parc_label(dsp, dsp2=None):
+
+    label = 'DPE'
+    width = 0.2
+    format_yaxis = 'percent'
+
+    fig, axes = plt.subplots(1, 1, figsize=[12.8, 9.6])
+    fig.tight_layout()
+
+    ds = dsp.groupby(label).sum()
+    if isinstance(dsp2, pd.Series):
+        ds2 = dsp2.groupby(label).sum()
+    if isinstance(dsp2, pd.Series):
+        ds2 = dsp2.groupby(label).sum()
+
+    if format_yaxis == 'percent':
+        ds = ds / dsp.groupby(label).sum().sum()
+        if isinstance(dsp2, pd.Series):
+            ds2 = ds2 / dsp2.groupby(label).sum().sum()
+
+    ax = ds.plot.bar(position=0, width=width, color=[dict_color[key] for key in ds.index])
+    # ds.plot(ax=ax, linewidth=1, color='black')
+
+    if isinstance(dsp2, pd.Series):
+        ds2.plot.bar(ax=ax, position=1, width=width, hatch='/////', color=[dict_color[key] for key in ds.index])
+        # ds2.plot(ax=ax, linewidth=1, linestyle='dashed', color='black')
+
+    plt.setp(ax.xaxis.get_majorticklabels(), rotation=0)
+
+    ax = format_ax(ax, format_yaxis=format_yaxis, legend=True)
+    plt.show()
+
+
+"""
+labels = ['Revenu ménages', "Statut d'occupation"]
+make_stacked_barplot(dsp, labels, source='SDES-2018', trad=False)
+
+labels = ['DPE', 'Energie de chauffage']
+make_stacked_barplot(dsp, labels, source='SDES-2018', trad=False)
+
+"""

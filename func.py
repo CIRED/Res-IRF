@@ -94,7 +94,9 @@ def lcc_func(energy_discount_lcc_ds, cost_invest_df, cost_switch_fuel_df, intang
     intangible_cost = intangible_cost.reindex(lcc_transition_df.index.get_level_values('Energy performance'), axis=0)
     intangible_cost = intangible_cost.reindex(lcc_transition_df.columns.get_level_values('Energy performance'), axis=1)
 
-    lcc_transition_df.update(lcc_transition_df.values + invest_cost.values + switch_fuel_cost.values + intangible_cost.values)
+    lcc_transition_df = pd.DataFrame(
+        lcc_transition_df.values + invest_cost.values + switch_fuel_cost.values + intangible_cost.values,
+        index=lcc_transition_df.index, columns=lcc_transition_df.columns)
 
     return lcc_transition_df
 

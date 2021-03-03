@@ -49,3 +49,12 @@ def switch_fuel(df, plot=True):
     if plot:
         make_stacked_barplot(df_switching_fuel, ['Heating energy', 'Heating energy final'], format_yaxis='comma')
     return df_switching_fuel
+
+
+def routine_payback():
+
+    pass
+
+def routine_co2_cost():
+
+    pass
