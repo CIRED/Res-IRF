@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5a27c1bc-6d7f-41bf-89e9-22387bb7bdb3" name="Default Changelist" comment="work still on going - stock.sce">
+    <list default="true" id="5a27c1bc-6d7f-41bf-89e9-22387bb7bdb3" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/func.py" beforeDir="false" afterPath="$PROJECT_DIR$/func.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/function_pandas.py" beforeDir="false" afterPath="$PROJECT_DIR$/function_pandas.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/graphic.py" beforeDir="false" afterPath="$PROJECT_DIR$/graphic.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/input.py" beforeDir="false" afterPath="$PROJECT_DIR$/input.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/middle/calibration_middle/rho.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/middle/calibration_middle/rho.pkl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/middle/language_dict.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/middle/language_dict.pkl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/middle/parameter_dict.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/middle/parameter_dict.pkl" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,22 +31,24 @@
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
-    <option name="showExcludedFiles" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/old_" />
       <recent name="$PROJECT_DIR$/" />
+      <recent name="$PROJECT_DIR$/old_" />
     </key>
   </component>
   <component name="RunManager" selected="Python.main">
-    <configuration name="class_parc" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="func_ad_hoc" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Res-IRF" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -50,7 +60,8 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/old_/class_parc.py" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/func_ad_hoc.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -59,7 +70,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="input" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="func_co2_cost" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Res-IRF" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -71,7 +82,52 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/func_co2_cost.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="input" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Res-IRF" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/input.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="input_payback" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Res-IRF" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/input_payback.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -92,49 +148,8 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="parc" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="Res-IRF" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/parc.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="parc" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="Res-IRF" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/old_parc.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -146,10 +161,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.main" />
-        <item itemvalue="Python.parc" />
-        <item itemvalue="Python.parc" />
-        <item itemvalue="Python.class_parc" />
         <item itemvalue="Python.input" />
+        <item itemvalue="Python.func_co2_cost" />
+        <item itemvalue="Python.func_ad_hoc" />
+        <item itemvalue="Python.input_payback" />
       </list>
     </recent_temporary>
   </component>
@@ -165,6 +180,7 @@
       </list>
     </option>
   </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
     <configuration>$USER_HOME$/.subversion</configuration>
   </component>
@@ -175,6 +191,22 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1611995873145</updated>
+      <workItem from="1614966602856" duration="247000" />
+      <workItem from="1615194072262" duration="831000" />
+      <workItem from="1615398170666" duration="766000" />
+      <workItem from="1615444404553" duration="831000" />
+      <workItem from="1616141968759" duration="32488000" />
+      <workItem from="1616507330939" duration="172000" />
+      <workItem from="1616575036868" duration="157000" />
+      <workItem from="1617040795404" duration="14000" />
+      <workItem from="1617113358836" duration="6004000" />
+      <workItem from="1617201213434" duration="4651000" />
+      <workItem from="1617260050289" duration="185000" />
+      <workItem from="1617288662805" duration="450000" />
+      <workItem from="1617711400564" duration="358000" />
+      <workItem from="1617784731560" duration="16216000" />
+      <workItem from="1617867051224" duration="17566000" />
+      <workItem from="1617950302798" duration="1540000" />
     </task>
     <task id="LOCAL-00001" summary="major update - work still ongoing">
       <created>1613665046411</created>
@@ -239,8 +271,25 @@
       <option name="project" value="LOCAL" />
       <updated>1614779664485</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="work still on going - stock.sce">
+      <created>1614780100748</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1614780100748</updated>
+    </task>
+    <task id="LOCAL-00011" summary="work still on going - stock.sce">
+      <created>1614780135167</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1614780135168</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_NEW_TODO" value="false" />
@@ -250,147 +299,15 @@
     <MESSAGE value="work still on going - stock.sce" />
     <option name="LAST_COMMIT_MESSAGE" value="work still on going - stock.sce" />
   </component>
-  <component name="WindowStateProjectService">
-    <state x="184" y="101" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1612006593654">
-      <screen x="0" y="23" width="1440" height="832" />
-    </state>
-    <state x="184" y="101" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.23.1440.832@0.23.1440.832" timestamp="1612006593654" />
-    <state x="442" y="249" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1614779986187">
-      <screen x="0" y="23" width="1440" height="832" />
-    </state>
-    <state x="442" y="249" key="#com.intellij.fileTypes.FileTypeChooser/0.23.1440.832@0.23.1440.832" timestamp="1614779986187" />
-    <state x="415" y="76" key="#parc_(1)" timestamp="1613132751538">
-      <screen x="0" y="0" width="1440" height="900" />
-    </state>
-    <state x="415" y="76" key="#parc_(1)/0.0.1440.900@0.0.1440.900" timestamp="1613132751538" />
-    <state x="608" y="160" key="#xdebugger.evaluate" timestamp="1614002844641">
-      <screen x="0" y="0" width="1440" height="900" />
-    </state>
-    <state x="608" y="160" key="#xdebugger.evaluate/0.0.1440.900@0.0.1440.900" timestamp="1614002844641" />
-    <state x="344" y="60" key="CommitChangelistDialog2" timestamp="1614780100644">
-      <screen x="0" y="23" width="1440" height="832" />
-    </state>
-    <state x="344" y="60" key="CommitChangelistDialog2/-1920.-400.1920.1057/0.23.1440.832@0.23.1440.832" timestamp="1614778971075" />
-    <state x="344" y="52" key="CommitChangelistDialog2/0.0.1440.900@0.0.1440.900" timestamp="1613947962205" />
-    <state x="344" y="60" key="CommitChangelistDialog2/0.23.1440.832@0.23.1440.832" timestamp="1614780100644" />
-    <state width="1440" height="405" key="DebuggerActiveHint" timestamp="1614694536446">
-      <screen x="0" y="23" width="1440" height="832" />
-    </state>
-    <state width="1440" height="438" key="DebuggerActiveHint/0.0.1440.900@0.0.1440.900" timestamp="1613755118076" />
-    <state width="1440" height="405" key="DebuggerActiveHint/0.23.1440.832@0.23.1440.832" timestamp="1614694536446" />
-    <state width="1419" height="229" key="GridCell.Tab.0.bottom" timestamp="1614779200462">
-      <screen x="0" y="23" width="1440" height="832" />
-    </state>
-    <state width="1419" height="311" key="GridCell.Tab.0.bottom/-1920.-400.1920.1057/0.23.1440.832@0.23.1440.832" timestamp="1614778924173" />
-    <state width="1899" height="410" key="GridCell.Tab.0.bottom/-1920.-423.1920.1080/0.0.1440.900@-1920.-423.1920.1080" timestamp="1614686983073" />
-    <state width="1419" height="67" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1614150939017" />
-    <state width="1419" height="229" key="GridCell.Tab.0.bottom/0.23.1440.832@0.23.1440.832" timestamp="1614779200462" />
-    <state width="1419" height="321" key="GridCell.Tab.0.bottom/1440.-433.1920.1080/0.0.1440.900@0.0.1440.900" timestamp="1614005572912" />
-    <state width="1899" height="67" key="GridCell.Tab.0.bottom/1440.-433.1920.1080/0.0.1440.900@1440.-433.1920.1080" timestamp="1614173045580" />
-    <state width="1419" height="229" key="GridCell.Tab.0.center" timestamp="1614779200461">
-      <screen x="0" y="23" width="1440" height="832" />
-    </state>
-    <state width="1419" height="311" key="GridCell.Tab.0.center/-1920.-400.1920.1057/0.23.1440.832@0.23.1440.832" timestamp="1614778924172" />
-    <state width="1899" height="410" key="GridCell.Tab.0.center/-1920.-423.1920.1080/0.0.1440.900@-1920.-423.1920.1080" timestamp="1614686983072" />
-    <state width="1419" height="67" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1614150939016" />
-    <state width="1419" height="229" key="GridCell.Tab.0.center/0.23.1440.832@0.23.1440.832" timestamp="1614779200461" />
-    <state width="1419" height="321" key="GridCell.Tab.0.center/1440.-433.1920.1080/0.0.1440.900@0.0.1440.900" timestamp="1614005572911" />
-    <state width="1899" height="67" key="GridCell.Tab.0.center/1440.-433.1920.1080/0.0.1440.900@1440.-433.1920.1080" timestamp="1614173045577" />
-    <state width="1419" height="229" key="GridCell.Tab.0.left" timestamp="1614779200461">
-      <screen x="0" y="23" width="1440" height="832" />
-    </state>
-    <state width="1419" height="311" key="GridCell.Tab.0.left/-1920.-400.1920.1057/0.23.1440.832@0.23.1440.832" timestamp="1614778924172" />
-    <state width="1899" height="410" key="GridCell.Tab.0.left/-1920.-423.1920.1080/0.0.1440.900@-1920.-423.1920.1080" timestamp="1614686983071" />
-    <state width="1419" height="67" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1614150939015" />
-    <state width="1419" height="229" key="GridCell.Tab.0.left/0.23.1440.832@0.23.1440.832" timestamp="1614779200461" />
-    <state width="1419" height="321" key="GridCell.Tab.0.left/1440.-433.1920.1080/0.0.1440.900@0.0.1440.900" timestamp="1614005572911" />
-    <state width="1899" height="67" key="GridCell.Tab.0.left/1440.-433.1920.1080/0.0.1440.900@1440.-433.1920.1080" timestamp="1614173045576" />
-    <state width="1419" height="229" key="GridCell.Tab.0.right" timestamp="1614779200462">
-      <screen x="0" y="23" width="1440" height="832" />
-    </state>
-    <state width="1419" height="311" key="GridCell.Tab.0.right/-1920.-400.1920.1057/0.23.1440.832@0.23.1440.832" timestamp="1614778924172" />
-    <state width="1899" height="410" key="GridCell.Tab.0.right/-1920.-423.1920.1080/0.0.1440.900@-1920.-423.1920.1080" timestamp="1614686983072" />
-    <state width="1419" height="67" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1614150939016" />
-    <state width="1419" height="229" key="GridCell.Tab.0.right/0.23.1440.832@0.23.1440.832" timestamp="1614779200462" />
-    <state width="1419" height="321" key="GridCell.Tab.0.right/1440.-433.1920.1080/0.0.1440.900@0.0.1440.900" timestamp="1614005572912" />
-    <state width="1899" height="67" key="GridCell.Tab.0.right/1440.-433.1920.1080/0.0.1440.900@1440.-433.1920.1080" timestamp="1614173045579" />
-    <state width="1419" height="311" key="GridCell.Tab.1.bottom" timestamp="1614779200459">
-      <screen x="0" y="23" width="1440" height="832" />
-    </state>
-    <state width="1419" height="311" key="GridCell.Tab.1.bottom/-1920.-400.1920.1057/0.23.1440.832@0.23.1440.832" timestamp="1614778924175" />
-    <state width="1899" height="410" key="GridCell.Tab.1.bottom/-1920.-423.1920.1080/0.0.1440.900@-1920.-423.1920.1080" timestamp="1614686983075" />
-    <state width="1419" height="301" key="GridCell.Tab.1.bottom/0.0.1440.900@0.0.1440.900" timestamp="1613983505761" />
-    <state width="1419" height="311" key="GridCell.Tab.1.bottom/0.23.1440.832@0.23.1440.832" timestamp="1614779200459" />
-    <state width="1419" height="195" key="GridCell.Tab.1.bottom/1440.-410.1920.1057/0.23.1440.832@0.23.1440.832" timestamp="1613999265579" />
-    <state width="1419" height="321" key="GridCell.Tab.1.bottom/1440.-433.1920.1080/0.0.1440.900@0.0.1440.900" timestamp="1614005572914" />
-    <state width="1419" height="311" key="GridCell.Tab.1.center" timestamp="1614779200459">
-      <screen x="0" y="23" width="1440" height="832" />
-    </state>
-    <state width="1419" height="311" key="GridCell.Tab.1.center/-1920.-400.1920.1057/0.23.1440.832@0.23.1440.832" timestamp="1614778924174" />
-    <state width="1899" height="410" key="GridCell.Tab.1.center/-1920.-423.1920.1080/0.0.1440.900@-1920.-423.1920.1080" timestamp="1614686983074" />
-    <state width="1419" height="301" key="GridCell.Tab.1.center/0.0.1440.900@0.0.1440.900" timestamp="1613983505760" />
-    <state width="1419" height="311" key="GridCell.Tab.1.center/0.23.1440.832@0.23.1440.832" timestamp="1614779200459" />
-    <state width="1419" height="195" key="GridCell.Tab.1.center/1440.-410.1920.1057/0.23.1440.832@0.23.1440.832" timestamp="1613999265576" />
-    <state width="1419" height="321" key="GridCell.Tab.1.center/1440.-433.1920.1080/0.0.1440.900@0.0.1440.900" timestamp="1614005572913" />
-    <state width="1419" height="311" key="GridCell.Tab.1.left" timestamp="1614779200459">
-      <screen x="0" y="23" width="1440" height="832" />
-    </state>
-    <state width="1419" height="311" key="GridCell.Tab.1.left/-1920.-400.1920.1057/0.23.1440.832@0.23.1440.832" timestamp="1614778924173" />
-    <state width="1899" height="410" key="GridCell.Tab.1.left/-1920.-423.1920.1080/0.0.1440.900@-1920.-423.1920.1080" timestamp="1614686983074" />
-    <state width="1419" height="301" key="GridCell.Tab.1.left/0.0.1440.900@0.0.1440.900" timestamp="1613983505759" />
-    <state width="1419" height="311" key="GridCell.Tab.1.left/0.23.1440.832@0.23.1440.832" timestamp="1614779200459" />
-    <state width="1419" height="195" key="GridCell.Tab.1.left/1440.-410.1920.1057/0.23.1440.832@0.23.1440.832" timestamp="1613999265574" />
-    <state width="1419" height="321" key="GridCell.Tab.1.left/1440.-433.1920.1080/0.0.1440.900@0.0.1440.900" timestamp="1614005572912" />
-    <state width="1419" height="311" key="GridCell.Tab.1.right" timestamp="1614779200459">
-      <screen x="0" y="23" width="1440" height="832" />
-    </state>
-    <state width="1419" height="311" key="GridCell.Tab.1.right/-1920.-400.1920.1057/0.23.1440.832@0.23.1440.832" timestamp="1614778924174" />
-    <state width="1899" height="410" key="GridCell.Tab.1.right/-1920.-423.1920.1080/0.0.1440.900@-1920.-423.1920.1080" timestamp="1614686983075" />
-    <state width="1419" height="301" key="GridCell.Tab.1.right/0.0.1440.900@0.0.1440.900" timestamp="1613983505760" />
-    <state width="1419" height="311" key="GridCell.Tab.1.right/0.23.1440.832@0.23.1440.832" timestamp="1614779200459" />
-    <state width="1419" height="195" key="GridCell.Tab.1.right/1440.-410.1920.1057/0.23.1440.832@0.23.1440.832" timestamp="1613999265578" />
-    <state width="1419" height="321" key="GridCell.Tab.1.right/1440.-433.1920.1080/0.0.1440.900@0.0.1440.900" timestamp="1614005572913" />
-    <state x="204" y="58" key="SettingsEditor" timestamp="1614779369513">
-      <screen x="0" y="23" width="1440" height="832" />
-    </state>
-    <state x="204" y="38" key="SettingsEditor/0.0.1440.900@0.0.1440.900" timestamp="1613903615264" />
-    <state x="204" y="58" key="SettingsEditor/0.23.1440.832@0.23.1440.832" timestamp="1614779369513" />
-    <state x="1712" y="-387" key="SettingsEditor/1440.-433.1920.1080/0.0.1440.900@1440.-433.1920.1080" timestamp="1614089901466" />
-    <state width="500" height="412" key="SwitcherDM" timestamp="1614710511030">
-      <screen x="0" y="23" width="1440" height="832" />
-    </state>
-    <state width="500" height="445" key="SwitcherDM/0.0.1440.900@0.0.1440.900" timestamp="1612195982154" />
-    <state width="500" height="412" key="SwitcherDM/0.23.1440.832@0.23.1440.832" timestamp="1614710511030" />
-    <state x="320" y="199" key="Vcs.Push.Dialog.v2" timestamp="1614779669051">
-      <screen x="0" y="23" width="1440" height="832" />
-    </state>
-    <state x="320" y="190" key="Vcs.Push.Dialog.v2/0.0.1440.900@0.0.1440.900" timestamp="1613947975844" />
-    <state x="320" y="199" key="Vcs.Push.Dialog.v2/0.23.1440.832@0.23.1440.832" timestamp="1614779669051" />
-    <state width="700" height="429" key="XDebugger.FullValuePopup" timestamp="1613920704386">
-      <screen x="0" y="0" width="1440" height="900" />
-    </state>
-    <state width="700" height="429" key="XDebugger.FullValuePopup/0.0.1440.900@0.0.1440.900" timestamp="1613920704386" />
-    <state width="700" height="396" key="XDebugger.FullValuePopup/0.23.1440.832@0.23.1440.832" timestamp="1612799625926" />
-    <state x="248" y="162" key="com.intellij.execution.console.ConsoleHistoryController$MyBrowseAction$1" timestamp="1613934343963">
-      <screen x="0" y="0" width="1440" height="900" />
-    </state>
-    <state x="248" y="162" key="com.intellij.execution.console.ConsoleHistoryController$MyBrowseAction$1/0.0.1440.900@0.0.1440.900" timestamp="1613934343963" />
-    <state x="375" y="72" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1613746993911">
-      <screen x="0" y="0" width="1440" height="900" />
-    </state>
-    <state x="375" y="72" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/0.0.1440.900@0.0.1440.900" timestamp="1613746993911" />
-    <state x="369" y="193" width="700" height="490" key="recent.locations.popup" timestamp="1614701596020">
-      <screen x="0" y="23" width="1440" height="832" />
-    </state>
-    <state x="369" y="184" width="700" height="530" key="recent.locations.popup/0.0.1440.900@0.0.1440.900" timestamp="1614003025384" />
-    <state x="369" y="193" width="700" height="490" key="recent.locations.popup/0.23.1440.832@0.23.1440.832" timestamp="1614701596020" />
-    <state x="385" y="196" width="670" height="676" key="search.everywhere.popup" timestamp="1613130907819">
-      <screen x="0" y="0" width="1440" height="900" />
-    </state>
-    <state x="385" y="196" width="670" height="676" key="search.everywhere.popup/0.0.1440.900@0.0.1440.900" timestamp="1613130907819" />
-  </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/main.py</url>
+          <line>188</line>
+          <option name="timeStamp" value="45" />
+        </line-breakpoint>
+      </breakpoints>
       <default-breakpoints>
         <breakpoint type="python-exception">
           <properties notifyOnTerminate="true" exception="BaseException">
@@ -399,5 +316,13 @@
         </breakpoint>
       </default-breakpoints>
     </breakpoint-manager>
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/Res_IRF$input.coverage" NAME="input Coverage Results" MODIFIED="1616575154885" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Res_IRF$input_payback.coverage" NAME="input_payback Coverage Results" MODIFIED="1616175154626" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Res_IRF$payback_project.coverage" NAME="payback_project Coverage Results" MODIFIED="1616162554355" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Res_IRF$func_payback.coverage" NAME="func_payback Coverage Results" MODIFIED="1616402049977" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Res_IRF$func_co2_cost.coverage" NAME="func_co2_cost Coverage Results" MODIFIED="1616424071313" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Res_IRF$main.coverage" NAME="main Coverage Results" MODIFIED="1617951254908" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

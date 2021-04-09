@@ -15,8 +15,13 @@ folder['calibration_middle'] = os.path.join(folder['middle'], 'calibration_middl
 
 # index_year
 calibration_year = 2018
-final_year = 2050
+final_year = 2030
 index_year = range(calibration_year, final_year + 1, 1)
+
+# years for input time series
+start_year = calibration_year
+last_year = 2080
+index_input_year = range(calibration_year, last_year + 1, 1)
 
 # main language
 language_dict = dict()
@@ -36,22 +41,9 @@ language_dict['heating_energy_list'] = ['Power', 'Natural gas', 'Oil fuel', 'Woo
 
 language_dict['decision_maker_index'] = pd.MultiIndex.from_tuples(language_dict['decision_maker_list'],
                                                                   names=['Occupancy status', 'Housing type'])
+
 language_dict['properties_names'] = ['Occupancy status', 'Housing type', 'Energy performance', 'Heating energy',
                                      'Income class', 'Income class owner']
-
-"""all_combination_list = list(product(language_dict['occupancy_status_list'],
-                                    language_dict['housing_type_list'],
-                                    language_dict['energy_performance_list'],
-                                    language_dict['heating_energy_list'],
-                                    language_dict['income_class_list'],
-                                    language_dict['income_class_list']
-                                    ))
-
-
-language_dict['all_combination_list'] = all_combination_list
-
-all_combination_index = pd.MultiIndex.from_tuples(all_combination_list, names=language_dict['properties_names'])
-language_dict['all_combination_index'] = all_combination_index"""
 
 dict_replace = {'PO': 'Homeowners', 'P': 'Homeowners', 'PB': 'Landlords', 'LP': 'Landlords',
                 'LS': 'Social-housing', 'MI': 'Single-family', 'MA': 'Single-family', 'LC': 'Multi-family',
@@ -66,7 +58,7 @@ language_dict['list_all_scenarios'] = ['Full capitalization', 'Reference', 'No c
 
 dict_color = {'Homeowners': 'lightcoral', 'Landlords': 'chocolate', 'Social-housing': 'orange',
               'Single-family': 'brown', 'Multi-family': 'darkolivegreen',
-              'G': 'black', 'F': 'maroon', 'E': 'darkred', 'D': 'firebrick', 'C': 'orangered', 'B': 'lightcoral',
+              'G': 'black', 'F': 'darkmagenta', 'E': 'rebeccapurple', 'D': 'red', 'C': 'orangered', 'B': 'lightcoral',
               'A': 'lightsalmon', 'D1': 'black', 'D2': 'maroon', 'D3': 'darkred', 'D4': 'brown', 'D5': 'firebrick',
               'D6': 'orangered', 'D7': 'tomato', 'D8': 'lightcoral', 'D9': 'lightsalmon', 'D10': 'darksalmon',
               'Power': 'darkorange', 'Natural gas': 'slategrey', 'Oil fuel': 'black', 'Wood fuel': 'saddlebrown',
@@ -108,11 +100,11 @@ parameters_dict['scenario'] = 'Reference'
 household_income_rate = 0.012
 ds_income_ini = pd.Series([13628, 20391, 24194, 27426, 31139, 35178, 39888, 45400, 54309, 92735],
                           index=language_dict['income_class_list'])
-parameters_dict['income_series'] = ds_income_ini.apply(linear2series, args=(household_income_rate, index_year)).T
+parameters_dict['income_series'] = ds_income_ini.apply(linear2series, args=(household_income_rate, index_input_year)).T
 
 ds_income_ini = pd.Series([17009, 25810, 33159, 42643, 73523],
                           index=language_dict['income_class_quintile_list'])
-parameters_dict['income_quintile_series'] = ds_income_ini.apply(linear2series, args=(household_income_rate, index_year)).T
+parameters_dict['income_quintile_series'] = ds_income_ini.apply(linear2series, args=(household_income_rate, index_input_year)).T
 
 
 ds_consumption = pd.Series([596, 392, 280, 191, 125, 76, 39], index=language_dict['energy_performance_list'],
@@ -163,6 +155,13 @@ df_discount_rate = pd.DataFrame([[0.15, 0.37, 0.04], [0.15, 0.37, 0.04], [0.1, 0
                                 index=language_dict['income_class_list'])
 parameters_dict['interest_rate_series'] = df_discount_rate.stack()
 
+parameters_dict['interest_rate_new'] = 0.07
+parameters_dict['investment_horizon'] = 35
+
+
+parameters_dict['interest_rate_new_series'] = pd.Series([0.07, 0.1, 0.04], index=language_dict['housing_type_list'])
+
+
 df_investment_horizon = pd.DataFrame([[30, 30, 30], [30, 30, 3], [30, 7, 7], [30, 7, 3]],
                                      columns=['Social-housing', 'Homeowners', 'Landlords'],
                                      index=language_dict['list_all_scenarios'])
@@ -178,6 +177,7 @@ parameters_dict['lifetime_investment'] = pd.DataFrame({'enveloppe': [30, 30, 3, 
                                                        'heater': [20, 20, 3, 3, 20, 20],
                                                        'new': [25, 25, 25, 25, 25, 25]})
 parameters_dict['destruction_rate'] = 0.0035
+parameters_dict['residual_destruction_rate'] = 0.05
 
 distribution_performance_new = pd.Series([0.9, 0.1], index=language_dict['energy_performance_new_list'])
 
@@ -215,7 +215,7 @@ energy_price_rate = {'Power': 0.011, 'Natural gas': 0.0142, 'Wood fuel': 0.0120,
 # energy_price_rate = {'Power': 0.0179, 'Natural gas': 0.0142, 'Wood fuel': 0.0128, 'Oil fuel': 0.0428}
 energy_price_data = pd.DataFrame()
 for key, value in energy_price_ini.items():
-    ds = linear2series(value, energy_price_rate[key], index_year)
+    ds = linear2series(value, energy_price_rate[key], index_input_year)
     ds.name = key
     energy_price_data = pd.concat((energy_price_data, ds), axis=1)
 exogenous_dict['energy_price_data'] = energy_price_data
@@ -307,6 +307,5 @@ conso_2019 = [33.8 * 10**9,  103.7 * 10**9,  34.2 * 10**9,  78.16 * 10**9] # 201
 rotation_rate = pd.Series([0.03, 0.18, 0.08], index=['Landlords', 'Homeowners', 'Social-housing'])
 mutation_rate = pd.Series([0.035, 0.018, 0.003], index=['Landlords', 'Homeowners', 'Social-housing'])
 
-"""stock_residuel = stock_existant_ini2*tx_destruction_residuel
-stock_mobile_ini = stock_existant_ini2-stock_residue"""
+
 

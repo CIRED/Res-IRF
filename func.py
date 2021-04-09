@@ -1,6 +1,7 @@
-from input import parameters_dict, language_dict
+from input import parameters_dict, language_dict, index_year
 import pandas as pd
 import numpy as np
+from function_pandas import reindex_mi
 from input import calibration_dict
 
 """
@@ -18,21 +19,37 @@ income_class_owner = segment[5]
 
 def discount_factor_func(segments):
     """
-    segments pd MultiIndex
+    Calculate discount factor for all segments.
+    :param segments: pandas MultiIndex
+    :return:
     """
-    idx_occ = pd.MultiIndex.from_tuples(segments).get_level_values(0)
-    investment_horizon = parameters_dict['investment_horizon_series'].reindex(idx_occ)
-    idx_income = pd.MultiIndex.from_tuples(segments).get_level_values(4)
-    idx_housing = pd.MultiIndex.from_tuples(segments).get_level_values(1)
-    idx_interest = pd.MultiIndex.from_tuples(list(zip(list(idx_income), list(idx_housing))))
-    interest_rate = parameters_dict['interest_rate_series'].reindex(idx_interest)
-    discount_factor = (1 - (1 + interest_rate.values) ** -investment_horizon.values) / interest_rate.values
-    idx_discount = pd.MultiIndex.from_tuples(list(zip(list(idx_occ), list(idx_housing), list(idx_income))))
-    discount_factor = pd.Series(discount_factor, index=idx_discount)
+    investment_horizon = reindex_mi(parameters_dict['investment_horizon_series'], segments, ['Occupancy status'])
+    interest_rate = reindex_mi(parameters_dict['interest_rate_series'], segments, ['Income class', 'Housing type'])
+    discount_factor = (1 - (1 + interest_rate) ** -investment_horizon) / interest_rate
+
     return discount_factor
 
 
-def energy_cost_func(segments, energy_prices_df):
+def discount_rate_series_func(index_year, kind='existing'):
+    """
+    Return pd DataFrame - partial segments in index and years in column - corresponding to discount rate.
+    :param index_year:
+    :return:
+    """
+    def interest_rate2series(interest_rate, index_yr):
+        return [(1 + interest_rate) ** -(yr - index_yr[0]) for yr in index_yr]
+
+    interest_rate_ds = parameters_dict['interest_rate_series']
+    if kind == 'new':
+        interest_rate_ds = parameters_dict['interest_rate_new_series']
+
+    discounted_df = interest_rate_ds.apply(interest_rate2series, args=[index_year])
+    discounted_df = pd.DataFrame.from_dict(dict(zip(discounted_df.index, discounted_df.values))).T
+    discounted_df.columns = index_year
+    return discounted_df
+
+
+def segments2energy_func(segments, energy_prices_df, kind='existing'):
     """
     Calculate for all segments:
     - budget_share_df
@@ -42,33 +59,89 @@ def energy_cost_func(segments, energy_prices_df):
     pandas DataFrame index = segments, columns = index_year
     """
 
-    # TODO: use energy_prices_df.columns to return time indexed data.
+    surface = reindex_mi(parameters_dict['surface'], segments, ['Occupancy status', 'Housing type'])
 
-    idx_occ = pd.MultiIndex.from_tuples(segments).get_level_values(0)
-    idx_housing = pd.MultiIndex.from_tuples(segments).get_level_values(1)
-    idx_surface = pd.MultiIndex.from_tuples(list(zip(list(idx_occ), list(idx_housing))))
-    surface = parameters_dict['surface'].reindex(idx_surface)
+    income_ts = parameters_dict['income_series'].T.reindex(segments.get_level_values('Income class'))
+    income_ts.index = segments
 
-    idx_income = pd.MultiIndex.from_tuples(segments).get_level_values(4)
-    income_ts = parameters_dict['income_series'].T.reindex(idx_income)
+    energy_consumption_conventional = reindex_mi(parameters_dict['energy_consumption_df'], segments,
+                                                 ['Heating energy', 'Energy performance'])
+    if kind == 'new':
+        energy_consumption_conventional = reindex_mi(parameters_dict['energy_consumption_new_series'], segments,
+                                                     ['Energy performance'])
 
-    idx_performance = pd.MultiIndex.from_tuples(segments).get_level_values(2)
-    idx_energy = pd.MultiIndex.from_tuples(segments).get_level_values(3)
-    idx_consumption = pd.MultiIndex.from_tuples(list(zip(list(idx_energy), list(idx_performance))))
-    energy_consumption_theoretical = parameters_dict['energy_consumption_df'].reindex(idx_consumption)
+    energy_prices_df = energy_prices_df.T.reindex(segments.get_level_values('Heating energy'))
+    energy_prices_df.index = segments
 
-    energy_prices_df = energy_prices_df.T.reindex(idx_energy)
-
-    budget_share_df = (energy_prices_df.values.T * surface.values * energy_consumption_theoretical.values) / income_ts.values.T
-    budget_share_df = pd.DataFrame(budget_share_df.T, index=segments)
-
+    budget_share_df = (energy_prices_df.values.T * surface.values * energy_consumption_conventional.values) / income_ts.values.T
+    budget_share_df = pd.DataFrame(budget_share_df.T, index=segments, columns=energy_prices_df.columns)
     use_intensity_df = -0.191 * budget_share_df.apply(np.log) + 0.1105
 
-    energy_consumption_actual_df = pd.DataFrame((use_intensity_df.values.T * energy_consumption_theoretical.values).T,
-                                                index=segments)
-    energy_cost_df = pd.DataFrame(energy_consumption_actual_df.values * energy_prices_df.values, index=segments)
+    energy_consumption_actual = pd.DataFrame((use_intensity_df.values.T * energy_consumption_conventional.values).T,
+                                                index=segments, columns=use_intensity_df.columns)
+    energy_cost_conventional = pd.DataFrame((energy_prices_df.T.values * energy_consumption_conventional.values).T,
+                                            index=segments)
+    energy_cost_actual = energy_prices_df * energy_consumption_actual
 
-    return budget_share_df, use_intensity_df, energy_consumption_actual_df, energy_cost_df
+    result_dict = {'Budget share': budget_share_df,
+                   'Use intensity': use_intensity_df,
+                   'Consumption-conventional': energy_consumption_conventional,
+                   'Consumption-actual': energy_consumption_actual,
+                   'Energy cost-conventional': energy_cost_conventional,
+                   'Energy cost-actual': energy_cost_actual,
+                   }
+
+    return result_dict
+
+
+def segments2energy_lcc(segments, energy_prices_df, year, kind='existing'):
+    """
+    Return energy life cycle cost discounted from segments, and energy prices.
+    :param segments:
+    :param energy_prices_df:
+    :param calibration_year:
+    :return:
+    """
+
+    energy_cost_ts_df = segments2energy_func(segments, energy_prices_df, kind=kind)['Energy cost-actual']
+    discounted_df = discount_rate_series_func(index_year, kind=kind)
+    if kind == 'existing':
+        discounted_df_reindex = reindex_mi(discounted_df, energy_cost_ts_df.index, ['Income class', 'Housing type'])
+    elif kind == 'new':
+        discounted_df_reindex = reindex_mi(discounted_df, energy_cost_ts_df.index, ['Housing type'])
+
+    energy_cost_discounted_ts_df = discounted_df_reindex * energy_cost_ts_df
+
+    invest_horizon_reindex = reindex_mi(parameters_dict['investment_horizon_series'], energy_cost_ts_df.index, ['Occupancy status'])
+
+    def horizon2years(num, start_yr):
+        """
+        Return list of years based on a number of years and starting year.
+        :param num:
+        :param start_yr:
+        :return:
+        """
+        return [start_yr + k for k in range(num)]
+
+    invest_years = invest_horizon_reindex.apply(horizon2years, args=[year])
+
+    def time_series2sum(ds, invest_years):
+        """
+        Return sum of ds for each segment based on list of years in invest years.
+        :param ds: segments as index, time series as column
+        :param invest_years: pandas Series with list of years to use for each segment
+        :return:
+        """
+        idx_invest = [ds[label] for label in ['Occupancy status', 'Housing type', 'Energy performance', 'Heating energy', 'Income class', 'Income class owner']]
+        idx_years = invest_years.loc[tuple(idx_invest)]
+        return ds.loc[idx_years].sum()
+
+    energy_lcc_ds = energy_cost_discounted_ts_df.reset_index().apply(time_series2sum, args=[invest_years], axis=1)
+    energy_lcc_ds.index = energy_cost_discounted_ts_df.index
+    energy_lcc_ds = energy_lcc_ds.to_frame()
+    energy_lcc_ds.columns = ['Values']
+
+    return energy_lcc_ds
 
 
 def lcc_func(energy_discount_lcc_ds, cost_invest_df, cost_switch_fuel_df, intangible_cost):
@@ -131,5 +204,48 @@ def market_share_func(lcc_df):
 
 def logistic(x, a=1, r=1, K=1):
     return K / (1 + a * np.exp(- r * x))
+
+
+def segments2renovation_rate(segments, yr, energy_prices_df, cost_invest_df, cost_switch_fuel_df, cost_intangible_df, rho):
+    """
+    Routine calculating renovation rate from segments for a particular yr.
+    Cost (energy, investment) & rho parameter are also required.
+    :param segments:
+    :param energy_prices_df:
+    :param yr:
+    :param cost_invest_df:
+    :param cost_switch_fuel_df:
+    :param cost_intangible_df:
+    :return:
+    """
+    energy_lcc_ds = segments2energy_lcc(segments, energy_prices_df, yr)
+    lcc_df = lcc_func(energy_lcc_ds, cost_invest_df, cost_switch_fuel_df, cost_intangible_df)
+    lcc_df = lcc_df.reorder_levels(energy_lcc_ds.index.names)
+    market_share_df = market_share_func(lcc_df)
+    pv_df = (market_share_df * lcc_df).sum(axis=1)
+
+    segments_initial = pv_df.index
+    energy_initial_lcc_ds = segments2energy_lcc(segments_initial, energy_prices_df, yr)
+    npv_df = energy_initial_lcc_ds.iloc[:, 0] - pv_df
+
+    def func(ds, rho):
+        if isinstance(rho, pd.Series):
+            rho_f = rho.loc[tuple(ds.iloc[:-1].tolist())]
+        else:
+            rho_f = rho
+
+        if np.isnan(rho_f):
+            return float('nan')
+        else:
+            return logistic(ds.loc[0] - parameters_dict['npv_min'],
+                            a=parameters_dict['rate_max'] / parameters_dict['rate_min'] - 1,
+                            r=rho_f,
+                            K=parameters_dict['rate_max'])
+
+    renovation_rate_df = npv_df.reset_index().apply(func, rho=rho, axis=1)
+    renovation_rate_df.index = npv_df.index
+
+    return {'Market share': market_share_df, 'NPV': pv_df, 'Renovation rate': renovation_rate_df}
+
 
 # market_share_func(intangible_cost, energy_discount_lcc_ds, cost_invest_df, cost_switch_fuel_df)

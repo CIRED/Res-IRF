@@ -12,19 +12,18 @@ seaborn.set(style='ticks')
 seaborn.set_palette("rocket")
 
 
-SMALL_SIZE = 20
-MEDIUM_SIZE = 25
-BIGGER_SIZE = 30
+small_size = 20
+medium_size = 25
+bigger_size = 30
 
-plt.rc('font', size=SMALL_SIZE) # controls default text sizes
-plt.rc('axes', titlesize=BIGGER_SIZE) # fontsize of the axes title
-plt.rc('axes', labelsize=MEDIUM_SIZE) # fontsize of the x and y labels
-plt.rc('xtick', labelsize=MEDIUM_SIZE) # fontsize of the tick labels
-plt.rc('ytick', labelsize=MEDIUM_SIZE) # fontsize of the tick labels
-plt.rc('legend', fontsize=MEDIUM_SIZE) # legend fontsize
-plt.rc('figure', titlesize=BIGGER_SIZE) # fontsize of the figure title
-plt.rc('legend', title_fontsize=MEDIUM_SIZE)
-
+plt.rc('font', size=small_size)
+plt.rc('axes', titlesize=bigger_size)
+plt.rc('axes', labelsize=medium_size)
+plt.rc('xtick', labelsize=medium_size)
+plt.rc('ytick', labelsize=medium_size)
+plt.rc('legend', fontsize=medium_size)
+plt.rc('figure', titlesize=bigger_size)
+plt.rc('legend', title_fontsize=medium_size)
 
 
 def format_ax(ax, format_xaxis=None, format_yaxis=None, legend=True, ylim=False, option=0):

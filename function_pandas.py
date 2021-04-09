@@ -149,7 +149,9 @@ def get_levels_values(multiindex, levels):
 
 def miiindex_loc(ds, slicing_midx):
     """
-    Select multiindex slices based on slice_midx when all levels must not be sliced.
+    Select multiindex slices based on slice_midx when all levels are not passed.
+    Example:
+        miiindex_loc(ds, slicing_midx)
     """
     # The levels to slice on, in sorted order
     slicing_levels = list(slicing_midx.names)
@@ -159,3 +161,21 @@ def miiindex_loc(ds, slicing_midx):
     # Reset the unneeded index
     res = ds.reset_index(non_slicing_levels).loc[slicing_midx].set_index(non_slicing_levels, append=True)
     return res
+
+
+def reindex_mi(df, miindex, labels):
+    """
+    Return reindexed dataframe based on miindex using only few labels.
+    Example:
+        reindex_mi(surface_ds, segments, ['Occupancy status', 'Housing type']))
+        reindex_mi(cost_invest_ds, segments, ['Heating energy final', 'Heating energy']))
+    """
+    if len(labels) > 1:
+        tuple_index = (miindex.get_level_values(label).tolist() for label in labels)
+        new_miindex = pd.MultiIndex.from_tuples(list(zip(*tuple_index)))
+    else:
+        new_miindex = miindex.get_level_values(labels[0])
+    df_reindex = df.reindex(new_miindex)
+    df_reindex.index = miindex
+    return df_reindex
+
