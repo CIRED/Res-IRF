@@ -1,9 +1,9 @@
-import pandas as pd
-import numpy as np
+
 import logging
 import os
 import time
 import pickle
+
 from scipy.optimize import fsolve
 
 from input import language_dict, parameters_dict, index_year, folder, exogenous_dict, cost_dict, calibration_dict
@@ -12,6 +12,7 @@ from function_pandas import *
 
 
 if __name__ == '__main__':
+
     start = time.time()
     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(message)s')
     logging.debug('Start Res-IRF')
@@ -29,11 +30,13 @@ if __name__ == '__main__':
     with open(name_file, 'wb') as file:
         pickle.dump(language_dict, file)
 
+    # loading cost
     cost_invest_df = cost_dict['cost_inv']
     cost_invest_df.replace({0: float('nan')}, inplace=True)
     cost_switch_fuel_df = cost_dict['cost_switch_fuel']
     cost_intangible_df = cost_dict['cost_intangible']
 
+    # loading parc
     name_file = os.path.join(folder['middle'], 'parc.pkl')
     logging.debug('Loading parc pickle file {}'.format(name_file))
     dsp = pd.read_pickle(name_file)
@@ -46,45 +49,44 @@ if __name__ == '__main__':
     distribution_decision_maker = nb_decision_maker / dsp.sum()
 
     # recalibrating number of housing based on total population
-    population_series = exogenous_dict['population_total_series'] * (dsp.sum() / exogenous_dict['stock_ini'])
-    nb_population_housing_ini = population_series.at[calibration_year] / dsp.sum()
+    nb_population = exogenous_dict['population_total_series'] * (dsp.sum() / exogenous_dict['stock_ini'])
+    nb_population_housing_ini = nb_population.loc[calibration_year] / dsp.sum()
 
     # surface
     surface = reindex_mi(parameters_dict['surface'], segments, ['Occupancy status', 'Housing type'])
-    surface_total_ds = surface * dsp
-    surface_total_ini = surface_total_ds.sum()
-    surface_average_ini = surface_total_ini / dsp.sum()
+    stock_surface_ds = surface * dsp
+    stock_surface_ini = stock_surface_ds.sum()
+    average_surface_ini = stock_surface_ini / dsp.sum()
 
-    # to initialize knowledge
+    # initializing knowledge
     dsp_new = pd.concat((dsp.xs('A', level='Energy performance'), dsp.xs('B', level='Energy performance')))
     surface = reindex_mi(parameters_dict['surface'], dsp_new.index, ['Occupancy status', 'Housing type'])
     knowledge_ini = pd.Series([2.5 * (surface * dsp_new).sum(), 2 * (surface * dsp_new).sum()],
                               index=['BBC', 'BEPOS'])
-
     technical_progress_dict = parameters_dict['technical_progress_dict']
 
     # initializing investment cost new
     cost_new_ds = pd.concat([cost_dict['cost_new']] * 2, keys=['Homeowners', 'Landlords'], names=['Occupancy status'])
-
+    cost_new_ds.sort_index(inplace=True)
     cost_new_lim_ds = pd.concat([cost_dict['cost_new_lim']] * len(language_dict['energy_performance_new_list']),
                                            keys=language_dict['energy_performance_new_list'], names=['Energy performance'])
     cost_new_lim_ds = pd.concat([cost_new_lim_ds] * len(language_dict['heating_energy_list']),
                                            keys=language_dict['heating_energy_list'], names=['Heating energy'])
     cost_new_lim_ds = cost_new_lim_ds.reorder_levels(cost_new_ds.index.names)
+    cost_new_lim_ds.sort_index(inplace=True)
 
     energy_prices_df = exogenous_dict['energy_price_data']
 
     logging.debug('Calculate life cycle cost for each possible transition')
-
     energy_lcc_ds = segments2energy_lcc(segments, energy_prices_df, calibration_year)
-    lcc_df = lcc_func(energy_lcc_ds, cost_invest_df, cost_switch_fuel_df, cost_intangible_df)
+    lcc_df = lcc_func(energy_lcc_ds, cost_invest_df, cost_switch_fuel_df, cost_intangible_df, transition='label')
     lcc_df = lcc_df.reorder_levels(energy_lcc_ds.index.names)
 
     if False:
         for occ_status, housing_type, decile in language_dict['decision_maker_income_list']:
             break
 
-        market_share_temp = market_share_func(lcc_df)
+        market_share_temp = lcc2market_share(lcc_df)
         market_share_temp_grouped = market_share_df.groupby(by='Energy performance', axis=0).mean().groupby(
             by='Energy performance', axis=1).mean()
 
@@ -98,7 +100,7 @@ if __name__ == '__main__':
 
             def func(intangible_cost_np, lcc_ds, factor):
                 intangible_cost_ds = pd.Series(intangible_cost_np, index=lcc_ds.index, name=lcc_ds.name)
-                market_share_ds = market_share_func(lcc_ds + intangible_cost_ds**2)
+                market_share_ds = lcc2market_share(lcc_ds + intangible_cost_ds**2)
                 result0 = market_share_ds - calibration_dict['market_share'].loc[market_share_ds.name, market_share_ds.index]
                 result1 = (intangible_cost_ds**2).sum() / (lcc_ds + intangible_cost_ds**2).sum() - factor
                 result0.iloc[-1] = result1
@@ -117,7 +119,7 @@ if __name__ == '__main__':
                 # checking if solution solve the system
                 intangible_cost_ds = pd.Series(root, index=lcc_ds.index, name=lcc_ds.name)
                 # print(lcc_ds.sum() / (lcc_ds + intangible_cost_ds).sum())
-                # print(market_share_func(lcc_ds + intangible_cost_ds))
+                # print(lcc2market_share(lcc_ds + intangible_cost_ds))
                 # print(calibration_dict['market_share'].loc[lcc_ds.name, :])
                 return ier, intangible_cost_ds
 
@@ -136,11 +138,11 @@ if __name__ == '__main__':
         lcc_ds = lcc_ds[lcc_ds.index < lcc_ds.name]
 
     logging.debug('Calculate market share for each possible transition')
-    market_share_df = market_share_func(lcc_df)
-    market_share_grouped_df = market_share_df.groupby(by='Energy performance', axis=1).sum().groupby(by='Energy performance', axis=0).mean()
+    market_share_label = lcc2market_share(lcc_df)
 
     logging.debug('Calculate net present value for each segment')
-    pv_df = (market_share_df * lcc_df).sum(axis=1)
+    pv_df = (market_share_label * lcc_df).sum(axis=1)
+    pv_df = pv_df.replace({0: float('nan')})
 
     segments_initial = pv_df.index
     energy_initial_lcc_ds = segments2energy_lcc(segments_initial, energy_prices_df, calibration_year)
@@ -160,7 +162,6 @@ if __name__ == '__main__':
         rho.to_pickle(os.path.join(folder['calibration_middle'], 'rho.pkl'))
         logging.debug('End of calibration and dumping rho.pkl')
 
-
     def func(ds, rho):
         if isinstance(rho, pd.Series):
             rho_f = rho.loc[tuple(ds.iloc[:-1].tolist())]
@@ -178,29 +179,45 @@ if __name__ == '__main__':
     logging.debug('Calculate renovation rate for each segment')
     renovation_rate_df = npv_df.reset_index().apply(func, rho=rho, axis=1)
     renovation_rate_df.index = npv_df.index
+    stock_renovation = renovation_rate_df * dsp
+    logging.debug('Nombre total de rénovations: {:,.0f}'.format(stock_renovation.sum()))
 
-    logging.debug('New')
+    stock_renovation_label = ds_mul_df(stock_renovation, market_share_label)
+    logging.debug('Nombre total de rénovations: {:,.0f}'.format(stock_renovation_label.sum().sum()))
+
+    logging.debug('Heating energy renovation')
+    lcc_energy_transition = lcc_func(energy_lcc_ds, cost_invest_df, cost_switch_fuel_df, cost_intangible_df, transition='energy')
+    lcc_energy_transition = lcc_energy_transition.reorder_levels(energy_lcc_ds.index.names)
+    market_share_energy = lcc2market_share(lcc_energy_transition)
+    ms_temp = pd.concat([market_share_energy.T] * len(language_dict['energy_performance_list']),
+                                  keys=language_dict['energy_performance_list'], names=['Energy performance'])
+    sr_temp = pd.concat([stock_renovation_label.T] * len(language_dict['heating_energy_list']),
+                                  keys=language_dict['heating_energy_list'], names=['Heating energy'])
+    stock_renovation_label_energy = (sr_temp * ms_temp).T
+    logging.debug('Nombre total de rénovations: {:,.0f}'.format(stock_renovation_label_energy.sum().sum()))
+
+    logging.debug('New construction')
     segments_new = segments.droplevel('Energy performance')
     segments_new = segments_new.drop_duplicates()
     segments_new = pd.concat([pd.Series(index=segments_new, dtype='float64')] * len(language_dict['energy_performance_new_list']),
                                            keys=language_dict['energy_performance_new_list'], names=['Energy performance'])
     segments_new = segments_new.reorder_levels(language_dict['properties_names']).index
 
-    energy_lcc_new_ds = segments2energy_lcc(segments_new, energy_prices_df, calibration_year, kind='new').iloc[:, 0]
-    cost_new_reindex = reindex_mi(cost_dict['cost_new'], energy_lcc_new_ds.index, ['Heating energy', 'Housing type', 'Energy performance'])
-    lcc_new_ds = energy_lcc_new_ds + cost_new_reindex
+    lcc_new_ds = segments_new2lcc(segments_new, calibration_year, energy_prices_df, cost_new=cost_dict['cost_new'])
+
+    construction_share_new = val2share(lcc_new_ds, ['Occupancy status', 'Housing type'], func=lambda x: x**-parameters_dict['nu_new'])
 
     logging.debug('Initialization of variables')
-    nb_population_housing, nb_total_housing, nb_existing_housing, nb_new_housing, nb_type_remaining = dict(), dict(), dict(), dict(), dict()
+    nb_population_housing, nb_housing_need, stock_housing_remaining, stock_housing_new, type_housing_remaining = dict(), dict(), dict(), dict(), dict()
     nb_population_housing[calibration_year] = nb_population_housing_ini
-    nb_total_housing[calibration_year] = dsp.sum()
-    nb_existing_housing[calibration_year] = dsp.sum()
-    nb_new_housing[calibration_year] = 0
+    nb_housing_need[calibration_year] = dsp.sum()
+    stock_housing_remaining[calibration_year] = dsp.sum()
+    stock_housing_new[calibration_year] = 0
 
-    surface_total, surface_total_new, surface_average_new = dict(), dict(), dict()
-    surface_total[calibration_year] = parameters_dict['surface'] * nb_decision_maker
-    surface_total_new[calibration_year] = 0
-    surface_average_new[calibration_year] = parameters_dict['surface_new']
+    stock_surface, stock_surface_new, average_surface_new = dict(), dict(), dict()
+    stock_surface[calibration_year] = parameters_dict['surface'] * nb_decision_maker
+    stock_surface_new[calibration_year] = 0
+    average_surface_new[calibration_year] = parameters_dict['surface_new']
 
     elasticity_surface_new = dict()
     temp = parameters_dict['elasticity_surface_new'].reindex(
@@ -218,198 +235,163 @@ if __name__ == '__main__':
     cost_new = dict()
     cost_new[calibration_year] = cost_new_ds
 
-    nb_construction, nb_type_construction = dict(), dict()
+    nb_housing_construction, type_housing_construction = dict(), dict()
     eps_nb_population_housing, factor_population_housing = dict(), dict()
-    nb_destruction, nb_type_destruction = dict(), dict()
-    evolution_housing = dict()
+    nb_housing_destroyed, type_housing_destroyed = dict(), dict()
+    trend_housing = dict()
 
     dsp_ts = dsp
 
-    stock_mobile, stock_existing = dict(), dict()
-    dsp_woowner = dsp_ts.groupby(
-        ['Occupancy status', 'Housing type', 'Energy performance', 'Heating energy', 'Income class']).sum()
-    stock_residual = dsp_woowner * parameters_dict['destruction_rate']
+    stock_mobile, stock_remaining, stock_renovation, stock_renovation_df = dict(), dict(), dict(), dict()
 
-    stock_existing[calibration_year] = dsp_woowner
-    stock_mobile[calibration_year] = stock_existing[calibration_year] - stock_residual
+    stock_residual = dsp_ts * parameters_dict['destruction_rate']
+
+    stock_remaining[calibration_year] = dsp_ts
+    stock_mobile[calibration_year] = stock_remaining[calibration_year] - stock_residual
 
     renovation_rate = dict()
     renovation_rate[calibration_year] = renovation_rate_df
-
-    stock_renovation = dict()
 
     logging.debug('Start of dynamic evolution of housing from year {} to year {}'.format(index_year[0], index_year[-1]))
     for year in index_year[1:4]:
         logging.debug('Year: {}'.format(year))
 
-        # number of persons by housing
         logging.debug('Number of persons by housing')
-        nb_population_housing[year] = population_series.loc[year] / nb_total_housing[year - 1]
-
+        nb_population_housing[year] = nb_population.loc[year] / nb_housing_need[year - 1]
         eps_nb_population_housing[year] = (nb_population_housing[year] - parameters_dict[
             'nb_population_housing_min']) / (nb_population_housing_ini - parameters_dict['nb_population_housing_min'])
         eps_nb_population_housing[year] = max(0, min(1, eps_nb_population_housing[year]))
-
         factor_population_housing[year] = parameters_dict['factor_population_housing_ini'] * eps_nb_population_housing[year]
         nb_population_housing[year] = max(parameters_dict['nb_population_housing_min'], nb_population_housing[year] * (
                     1 + factor_population_housing[year]))
 
-        # number of housing
         logging.debug('Number of housing')
-        nb_total_housing[year] = population_series.loc[year] / nb_population_housing[year]
-        nb_destruction[year] = nb_existing_housing[year - 1] * parameters_dict['destruction_rate']
-        nb_existing_housing[year] = nb_existing_housing[year - 1] - nb_destruction[year]
-        nb_construction[year] = (nb_total_housing[year] - nb_existing_housing[year]) - nb_destruction[year]
-        nb_new_housing[year] = nb_new_housing[year - 1] + nb_construction[year]
+        nb_housing_need[year] = nb_population.loc[year] / nb_population_housing[year]
+        nb_housing_destroyed[year] = stock_housing_remaining[year - 1] * parameters_dict['destruction_rate']
+        stock_housing_remaining[year] = stock_housing_remaining[year - 1] - nb_housing_destroyed[year]
+        nb_housing_construction[year] = nb_housing_need[year] - stock_housing_remaining[year]
+        stock_housing_new[year] = stock_housing_new[year - 1] + nb_housing_construction[year]
 
-        # type of housing
         logging.debug('Type of housing')
-        # remaining
-        nb_type_destruction[year] = distribution_decision_maker * nb_destruction[year]
-        nb_type_remaining[year] = distribution_decision_maker * nb_existing_housing[year]
+        type_housing_destroyed[year] = distribution_decision_maker * nb_housing_destroyed[year]
+        type_housing_remaining[year] = distribution_decision_maker * stock_housing_remaining[year]
 
-        # new
-        evolution_housing[year] = (nb_total_housing[year] - nb_total_housing[calibration_year]) / nb_total_housing[
+        trend_housing[year] = (nb_housing_need[year] - nb_housing_need[calibration_year]) / nb_housing_need[
             calibration_year] * 100
-        share_multi_family[year] = 0.1032 * np.log(10.22 * evolution_housing[year] / 10 + 79.43) * parameters_dict[
+        share_multi_family[year] = 0.1032 * np.log(10.22 * trend_housing[year] / 10 + 79.43) * parameters_dict[
             'factor_evolution_distribution']
-        share_multi_family_construction = (nb_total_housing[year] * share_multi_family[year] - nb_total_housing[
-            year - 1] * share_multi_family[year - 1]) / nb_construction[year]
-        share_housing_type_new = pd.Series([share_multi_family_construction, 1 - share_multi_family_construction],
+        share_multi_family_construction = (nb_housing_need[year] * share_multi_family[year] - nb_housing_need[
+            year - 1] * share_multi_family[year - 1]) / nb_housing_construction[year]
+        share_type_housing_new = pd.Series([share_multi_family_construction, 1 - share_multi_family_construction],
                                            index=['Multi-family', 'Single-family'])
-        share_housing_type_new = share_housing_type_new.reindex(
-            parameters_dict['distribution_type'].index.get_level_values('Housing type'))
-        share_housing_type_new.index = parameters_dict['distribution_type'].index
-        share_type_new = parameters_dict['distribution_type'] * share_housing_type_new
+        share_type_housing_new = reindex_mi(share_type_housing_new, parameters_dict['distribution_type'].index,
+                                            ['Housing type'])
+        share_type_new = parameters_dict['distribution_type'] * share_type_housing_new
+        type_housing_construction[year] = share_type_new * nb_housing_construction[year]
 
-        nb_type_construction[year] = share_type_new * nb_construction[year]
-
-        # surface housing
         logging.debug('Surface housing')
-        # remaining
-        surface_type_remaining = nb_type_remaining[year] * parameters_dict['surface']
-        surface_type_destruction = nb_type_destruction[year] * parameters_dict['surface']
+        type_surface_remaining = type_housing_remaining[year] * parameters_dict['surface']
+        type_surface_destroyed = type_housing_destroyed[year] * parameters_dict['surface']
 
-        # new
-        eps_surface_new = (parameters_dict['surface_new_max'] - surface_average_new[year - 1]) / (
-                    parameters_dict['surface_new_max'] - surface_average_new[calibration_year])
+        eps_surface_new = (parameters_dict['surface_new_max'] - average_surface_new[year - 1]) / (
+                    parameters_dict['surface_new_max'] - average_surface_new[calibration_year])
         eps_surface_new = eps_surface_new.apply(lambda x: max(0, min(1, x)))
 
         elasticity_surface_new[year] = eps_surface_new.multiply(elasticity_surface_new[calibration_year])
         # TODO factor_surface
         factor_surface_new = elasticity_surface_new[year] * 0
 
-        surface_average_new[year] = pd.concat(
-            [parameters_dict['surface_new_max'], surface_average_new[year - 1] * (1 + factor_surface_new)], axis=1).min(
+        average_surface_new[year] = pd.concat(
+            [parameters_dict['surface_new_max'], average_surface_new[year - 1] * (1 + factor_surface_new)], axis=1).min(
             axis=1)
-        surface_construction = surface_average_new[year] * nb_type_construction[year]
-        surface_total_new[year] = surface_construction + surface_total_new[year - 1]
-        surface_total[year] = surface_type_remaining + surface_total_new[year]
-        surface_average = surface_total[year].sum() / nb_total_housing[year]
-        surface_population_housing = surface_total[year].sum() / population_series.loc[year]
+        type_surface_construction = average_surface_new[year] * type_housing_construction[year]
+        stock_surface_new[year] = type_surface_construction + stock_surface_new[year - 1]
+        stock_surface[year] = type_surface_remaining + stock_surface_new[year]
+        average_surface = stock_surface[year].sum() / nb_housing_need[year]
+        surface_population_housing = stock_surface[year].sum() / nb_population.loc[year]
 
-        # technical progress
         logging.debug('Technical progress: Learning by doing - New stock')
-        knowledge_stock_new[year] = knowledge_stock_new[year - 1] + surface_construction.sum()
-        factor_lbd_new = knowledge_stock_new[year] / knowledge_stock_new[calibration_year]
-        learning_by_doing_new = factor_lbd_new ** (np.log(1 + technical_progress_dict['learning-by-doing-new']) / np.log(2))
-        learning_by_doing_new_reindex = learning_by_doing_new.reindex(
-            cost_new_lim_ds.index.get_level_values('Energy performance'))
-        learning_by_doing_new_reindex.index = cost_new_lim_ds.index
-        cost_new[year] = (cost_new[calibration_year] - cost_new_lim_ds) * learning_by_doing_new_reindex + cost_new_lim_ds
+        knowledge_stock_new[year] = knowledge_stock_new[year - 1] + type_surface_construction.sum()
+        knowledge_normalize_new = knowledge_stock_new[year] / knowledge_stock_new[calibration_year]
 
-        # information acceleration
+        def learning_by_doing_func(knowledge_normalize, learning_rate, yr, cost_new):
+
+            learning_by_doing_new = knowledge_normalize ** (np.log(1 + learning_rate) / np.log(2))
+            learning_by_doing_new_reindex = reindex_mi(learning_by_doing_new, cost_new_lim_ds.index, ['Energy performance'])
+            cost_new[yr] = cost_new[calibration_year] * learning_by_doing_new_reindex + cost_new_lim_ds * (
+                        1 - learning_by_doing_new_reindex)
+            return cost_new
+
+        learning_rate = technical_progress_dict['learning-by-doing-new']
+        cost_new = learning_by_doing_func(knowledge_normalize_new, learning_rate, year, cost_new)
+
         logging.debug('Information acceleration - New stock')
 
-        # TODO information acceleration for new (stock.sce)
-        def information_rate_func(knowldege, ):
+        def information_rate_func(knowldege_normalize, kind='remaining'):
             """
-            Calibration of information rate.
+            Ref: Res-IRF Scilab
+            Returns information rate. More info_rate big, more intangible_cost small.
+            intangible_cost[yr] = intangible_cost[calibration_year] * info_rate with info rate [1-info_rate_max ; 1]
+            Calibration of information rate logistic function.
             """
-            pass
+            sh = technical_progress_dict['information_rate_max']
+            if kind == 'new':
+                sh = technical_progress_dict['information_rate_max_new']
 
-        # TODO technical progress & information acceleration for existing stock
-        logging.debug('Technical progress: Learning by doing - Existing stock')
-        logging.debug('Information acceleration - Existing stock')
+            alpha = technical_progress_dict['information_rate_intangible']
+            if kind == 'new':
+                alpha = technical_progress_dict['information_rate_intangible_new']
 
-        logging.debug('Destruction process')
-        stock_mobile[year] = stock_existing[year - 1] - stock_residual
+            def equations(p, sh=sh, alpha=alpha):
+                a, r = p
+                return (1 + a * np.exp(-r)) ** -1 - sh, (1 + a * np.exp(-2 * r)) ** -1 - sh - (1 - alpha) * sh + 1
+
+            a, r = fsolve(equations, (1, -1))
+
+            return logistic(knowldege_normalize, a=a, r=r) + 1 - sh
+
+        information_rate_new = information_rate_func(knowledge_normalize_new, kind='new')
+        knowledge_stock_remaining[year] = knowledge_stock_remaining[year - 1] + type_surface_construction.sum()
+
+        # TODO calculate knowledge_normalize_remaining based on renovation previous year
+        logging.debug('Technical progress: Learning by doing - remaining stock')
+        logging.debug('Information acceleration - remaining stock')
+        information_rate = information_rate_func(knowledge_normalize_new, kind='remaining')
+
+        logging.debug('destroyed process')
+        stock_mobile[year] = stock_remaining[year - 1] - stock_residual
 
         logging.debug('Catching less efficient label for each segment')
 
-        idx_worst_label_list = []
-        worst_label_list = dict()
-        segments_mobile = stock_mobile[year].index
-        segments_mobile = get_levels_values(segments_mobile, ['Occupancy status', 'Housing type', 'Heating energy', 'Income class'])
-        segments_mobile = segments_mobile.drop_duplicates()
-        for segment in segments_mobile:
-            for label in language_dict['energy_performance_list']:
-                idx = (segment[0], segment[1], label, segment[2], segment[3])
-                if stock_mobile[year - 1].loc[idx] > 1:
-                    idx_worst_label_list.append(idx)
-                    worst_label_list[segment] = label
-                    break
+        stock_destroyed = stock_mobile2stock_destroyed(stock_mobile[year], stock_mobile[calibration_year],
+                                                       stock_remaining[year - 1],
+                                                       type_housing_destroyed[year], logging)
 
-        # Calculating number of destruction for a group based on 'Occupancy status', 'Housing type', 'Heating energy', 'Income class'
-        # TODO: def proportion Serie from proportion value
-        num = stock_existing[year - 1].groupby(
-            ['Occupancy status', 'Housing type', 'Heating energy', 'Income class']).sum()
-        denum = stock_existing[year - 1].groupby(['Occupancy status', 'Housing type']).sum()
-        denum = reindex_mi(denum, num.index, ['Occupancy status', 'Housing type'])
-        prop = num / denum
-        nb_type_destruction_reindex = reindex_mi(nb_type_destruction[year], prop.index, ['Occupancy status', 'Housing type'])
-        nb_destruction_ini = nb_type_destruction_reindex * prop
-        prop_stock_worst_label = stock_mobile[year].loc[idx_worst_label_list] / stock_mobile[calibration_year].loc[
-            idx_worst_label_list]
-
-        logging.debug('Desaggregate destruction by labels')
-        # nb_destruction_ini --> stock_destruction
-        nb_destruction_ini_reindex = reindex_mi(nb_destruction_ini, prop_stock_worst_label.index,
-                                                ['Occupancy status', 'Housing type', 'Heating energy', 'Income class'])
-        nb_destruction_theo = prop_stock_worst_label * nb_destruction_ini_reindex
-        stock_destruction = pd.Series(0, index=stock_mobile[year].index, dtype='float64')
-
-        logging.debug('Start while loop!')
-        for segment in segments_mobile:
-            worst_label = worst_label_list[segment]
-            num = language_dict['energy_performance_list'].index(worst_label)
-            label = worst_label
-            idx_tot = (segment[0], segment[1], label, segment[2], segment[3])
-
-            while nb_destruction_theo.loc[idx_tot] != 0:
-                stock_destruction.loc[idx_tot] = min(stock_mobile[year].loc[idx_tot], nb_destruction_theo.loc[idx_tot])
-
-                if label != 'A':
-                    num += 1
-                    label = language_dict['energy_performance_list'][num]
-                    labels = language_dict['energy_performance_list'][:num + 1]
-                    idx = (segment[0], segment[1], segment[2], segment[3])
-                    idx_tot = (segment[0], segment[1], label, segment[2], segment[3])
-                    idxs_tot = [(segment[0], segment[1], label, segment[2], segment[3]) for label in labels]
-
-                    nb_destruction_theo[idx_tot] = nb_destruction_ini.loc[idx] - stock_destruction.loc[idxs_tot].sum()
-
-                else:
-                    nb_destruction_theo[idx_tot] = 0
-        logging.debug('End while loop!')
-        stock_existing[year] = stock_mobile[year] - stock_destruction
+        stock_remaining[year] = stock_mobile[year] - stock_destroyed
         logging.debug('Renovation choice')
-
-        logging.debug('Test')
-
         result_dict = segments2renovation_rate(segments, year, energy_prices_df, cost_invest_df, cost_switch_fuel_df,
-                                 cost_intangible_df, rho)
+                                 cost_intangible_df, rho, transition='label')
         renovation_rate[year] = result_dict['Renovation rate']
-        renovation_rate[year] = renovation_rate[year].groupby(
-            ['Occupancy status', 'Housing type', 'Energy performance', 'Heating energy', 'Income class']).sum()
-        stock_renovation[year] = renovation_rate[year] * stock_existing[year]
+        """renovation_rate[year] = renovation_rate[year].groupby(
+            ['Occupancy status', 'Housing type', 'Energy performance', 'Heating energy', 'Income class']).sum()"""
+        stock_renovation[year] = renovation_rate[year] * stock_remaining[year]
         nb_renovation = stock_renovation[year].sum()
-        nb_renovation / stock_existing[calibration_year].sum()
+        nb_renovation / stock_remaining[calibration_year].sum()
+
+        market_share = result_dict['Market share']
+        """"market_share = market_share.groupby(
+            ['Occupancy status', 'Housing type', 'Energy performance', 'Heating energy', 'Income class']).sum()"""
+
+        stock_renovation_df[year] = pd.DataFrame(market_share.values.T * stock_renovation[year].values,
+                                                 index=market_share.columns, columns=market_share.index).T
+
+        nb_renovation_label = dict()
+        for column in stock_renovation_df[year].columns:
+            nb_renovation_label[column] = stock_renovation_df[year].loc[:, column].sum()
+
+        print('pause')
 
         logging.debug('Dynamic of new')
-
-
-
 
 
     end = time.time()

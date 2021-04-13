@@ -86,13 +86,7 @@ parameters_dict['npv_min'] = -1000
 parameters_dict['rate_max'] = 0.2
 parameters_dict['rate_min'] = 0.00001
 
-# learning
-parameters_dict['information_rate_intangible'] = 0.25
-parameters_dict['information_rate_intangible_new'] = 0.25
 
-parameters_dict['learning_rate'] = 0.1
-parameters_dict['learning_rate_new'] = 0.15
-parameters_dict['learning_year'] = 10
 
 
 parameters_dict['scenario'] = 'Reference'
@@ -153,6 +147,7 @@ df_discount_rate = pd.DataFrame([[0.15, 0.37, 0.04], [0.15, 0.37, 0.04], [0.1, 0
                                  [0.07, 0.15, 0.04], [0.07, 0.15, 0.04], [0.05, 0.07, 0.04], [0.05, 0.07, 0.04],
                                  [0.04, 0.05, 0.04], [0.04, 0.05, 0.04]], columns=language_dict['housing_type_list'],
                                 index=language_dict['income_class_list'])
+# TODO: income class owner
 parameters_dict['interest_rate_series'] = df_discount_rate.stack()
 
 parameters_dict['interest_rate_new'] = 0.07
@@ -162,15 +157,20 @@ parameters_dict['investment_horizon'] = 35
 parameters_dict['interest_rate_new_series'] = pd.Series([0.07, 0.1, 0.04], index=language_dict['housing_type_list'])
 
 
-df_investment_horizon = pd.DataFrame([[30, 30, 30], [30, 30, 3], [30, 7, 7], [30, 7, 3]],
+df_investment_horizon_enveloppe = pd.DataFrame([[30, 30, 30], [30, 30, 3], [30, 7, 7], [30, 7, 3]],
                                      columns=['Social-housing', 'Homeowners', 'Landlords'],
                                      index=language_dict['list_all_scenarios'])
-parameters_dict['investment_horizon_series'] = df_investment_horizon.loc[parameters_dict['scenario'], :]
+df_investment_horizon_heater = pd.DataFrame([[16, 16, 16], [16, 16, 3], [16, 7, 7], [15, 7, 3]],
+                                     columns=['Social-housing', 'Homeowners', 'Landlords'],
+                                     index=language_dict['list_all_scenarios'])
+parameters_dict['investment_horizon_enveloppe_ds'] = df_investment_horizon_enveloppe.loc[parameters_dict['scenario'], :]
+parameters_dict['investment_horizon_heater_ds'] = df_investment_horizon_heater.loc[parameters_dict['scenario'], :]
+
 
 parameters_dict['nu_intangible_cost'] = 8
 parameters_dict['nu_new'] = 8
 parameters_dict['nu_label'] = 8
-parameters_dict['nu_heating'] = 8
+parameters_dict['nu_energy'] = 8
 
 
 parameters_dict['lifetime_investment'] = pd.DataFrame({'enveloppe': [30, 30, 3, 3, 30, 30],
@@ -203,7 +203,23 @@ technical_progress_dict = dict()
 technical_progress_dict['learning-by-doing-new'] = -0.15
 technical_progress_dict['learning-by-doing-remaining'] = -0.1
 technical_progress_dict['learning-by-doing-information'] = -0.25
+
+technical_progress_dict['learning_year'] = 10
+
+technical_progress_dict['information_rate_intangible'] = 0.25
+technical_progress_dict['information_rate_max'] = 0.8
+
+technical_progress_dict['information_rate_intangible_new'] = 0.25
+technical_progress_dict['information_rate_max_new'] = 0.95
+
+
 parameters_dict['technical_progress_dict'] = technical_progress_dict
+
+
+#
+
+
+
 
 
 rate_growth = 0.012

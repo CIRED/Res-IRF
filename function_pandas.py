@@ -126,6 +126,9 @@ def add_level_prop(ds, ds_prop, level):
 
 
 def add_level_nan(ds, level):
+    """
+    Add level with 'nan' as value
+    """
     ds_index_names = ds.index.names
     ds = pd.concat([ds], keys=['nan'], names=[level])
     ds = ds.reorder_levels(ds_index_names + [level])
@@ -179,3 +182,25 @@ def reindex_mi(df, miindex, labels):
     df_reindex.index = miindex
     return df_reindex
 
+
+def ds_mul_df(ds, df):
+    """
+    Multiply pd Series to each columns of pd Dataframe.
+    """
+    if isinstance(df.index, pd.MultiIndex):
+        ds = ds.reorder_levels(df.index.names)
+    ds.sort_index(inplace=True)
+    df.sort_index(inplace=True)
+    assert (ds.index == df.index).all(), "indexes don't match"
+    ds = pd.concat([ds] * len(df.columns), axis=1)
+    ds.columns = df.columns
+    return ds * df
+
+
+def val2share(ds, labels, func=lambda x: x):
+    """
+    Returns a share of value based on labels.
+    """
+    denum = reindex_mi(ds.apply(func).groupby(labels).sum(), ds.index, labels)
+    num = ds.apply(func)
+    return num/denum

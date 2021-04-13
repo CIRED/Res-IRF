@@ -52,9 +52,7 @@ ds_income.set_index(index_names + ['DECILE_PB'], inplace=True)
 logging.debug('Desagregate Others to Wood fuel and Oil fuel using the proportionnal table')
 ds_income = ds_income.loc[:, 'NB_LOG']
 ds_income = de_aggregate_value(ds_income, df_fuel.copy(), 'Autres', 'Heating energy', fuel_list, 'Housing type')
-
 ds_income_prop = serie_to_prop(ds_income, 'DECILE_PB')
-
 replace_dict = {'.?lectricit.*': 'Power', 'Gaz': 'Natural gas', 'Bois\*': 'Wood fuel', 'Fioul domestique': 'Oil fuel',
                 'MA': 'Individual house', 'AP': 'Collective housing'}
 ds_income_prop = replace_strings(ds_income_prop, replace_dict)
@@ -65,7 +63,6 @@ ds_lp = df_parc[df_parc.index.get_level_values('Occupancy status') == 'LP']
 ds_lp = add_level_prop(ds_lp, ds_income_prop, 'DECILE_PB')
 d_temp = remove_rows(df_parc, 'Occupancy status', 'LP')
 d_temp = add_level_nan(d_temp, 'DECILE_PB')
-
 df_parc = pd.concat((ds_lp, d_temp), axis=0)
 logging.debug('Total number of housing at this point {:,}'.format(df_parc.sum()))
 
@@ -73,6 +70,18 @@ df_index = df_parc.index.names
 df_parc = df_parc.reset_index().replace(language_dict['dict_replace']).set_index(df_index, drop=True).iloc[:, 0]
 df_parc.index = df_parc.index.set_names('Income class owner', 'DECILE_PB')
 df_parc = df_parc.reorder_levels(language_dict['properties_names'])
+
+df_parc = df_parc.reset_index()
+# setting income class owner = income class occupant when occupancy status = 'Homeowners'
+df_parc.loc[df_parc.loc[:, 'Occupancy status'] == 'Homeowners', 'Income class owner'] = df_parc.loc[df_parc.loc[:, 'Occupancy status'] == 'Homeowners', 'Income class']
+
+# setting income class owner = D10 when occupancy status = 'Social-housing'
+temp = df_parc.loc[df_parc.loc[:, 'Occupancy status'] == 'Social-housing', 'Income class owner']
+df_parc.loc[df_parc.loc[:, 'Occupancy status'] == 'Social-housing', 'Income class owner'] = ['D10'] * len(temp)
+
+df_parc = df_parc.set_index(language_dict['properties_names']).iloc[:, 0]
+df_parc.name = 'Housing numbers'
+
 
 logging.debug('Saving df_parc as pickle in '.format(os.path.join(folder['middle'], 'parc.pkl')))
 df_parc.to_pickle(os.path.join(folder['middle'], 'parc.pkl'))

@@ -1,20 +1,7 @@
-from input import parameters_dict, language_dict, index_year
-import pandas as pd
 import numpy as np
-from function_pandas import reindex_mi
-from input import calibration_dict
 
-"""
-['Occupancy status', 'Housing type', 'Energy performance', 'Heating energy', 'Income class', 'Income class owner']
-occupancy_status = segment[0]
-housing_type = segment[1]
-energy_performance = segment[2]
-heating_energy = segment[3]
-income_class = segment[4]
-income_class_owner = segment[5]
-"""
-
-# TODO: check reindex like
+from input import parameters_dict, language_dict, cost_dict, index_year
+from function_pandas import *
 
 
 def discount_factor_func(segments):
@@ -23,14 +10,14 @@ def discount_factor_func(segments):
     :param segments: pandas MultiIndex
     :return:
     """
-    investment_horizon = reindex_mi(parameters_dict['investment_horizon_series'], segments, ['Occupancy status'])
+    investment_horizon = reindex_mi(parameters_dict['investment_horizon_enveloppe_ds'], segments, ['Occupancy status'])
     interest_rate = reindex_mi(parameters_dict['interest_rate_series'], segments, ['Income class', 'Housing type'])
     discount_factor = (1 - (1 + interest_rate) ** -investment_horizon) / interest_rate
 
     return discount_factor
 
 
-def discount_rate_series_func(index_year, kind='existing'):
+def discount_rate_series_func(index_year, kind='remaining'):
     """
     Return pd DataFrame - partial segments in index and years in column - corresponding to discount rate.
     :param index_year:
@@ -49,7 +36,7 @@ def discount_rate_series_func(index_year, kind='existing'):
     return discounted_df
 
 
-def segments2energy_func(segments, energy_prices_df, kind='existing'):
+def segments2energy_func(segments, energy_prices_df, kind='remaining'):
     """
     Calculate for all segments:
     - budget_share_df
@@ -94,7 +81,7 @@ def segments2energy_func(segments, energy_prices_df, kind='existing'):
     return result_dict
 
 
-def segments2energy_lcc(segments, energy_prices_df, year, kind='existing'):
+def segments2energy_lcc(segments, energy_prices_df, yr, kind='remaining'):
     """
     Return energy life cycle cost discounted from segments, and energy prices.
     :param segments:
@@ -105,14 +92,14 @@ def segments2energy_lcc(segments, energy_prices_df, year, kind='existing'):
 
     energy_cost_ts_df = segments2energy_func(segments, energy_prices_df, kind=kind)['Energy cost-actual']
     discounted_df = discount_rate_series_func(index_year, kind=kind)
-    if kind == 'existing':
-        discounted_df_reindex = reindex_mi(discounted_df, energy_cost_ts_df.index, ['Income class', 'Housing type'])
+    if kind == 'remaining':
+        discounted_df_reindex = reindex_mi(discounted_df, energy_cost_ts_df.index, ['Income class owner', 'Housing type'])
     elif kind == 'new':
         discounted_df_reindex = reindex_mi(discounted_df, energy_cost_ts_df.index, ['Housing type'])
 
     energy_cost_discounted_ts_df = discounted_df_reindex * energy_cost_ts_df
-
-    invest_horizon_reindex = reindex_mi(parameters_dict['investment_horizon_series'], energy_cost_ts_df.index, ['Occupancy status'])
+    invest_horizon_reindex = reindex_mi(parameters_dict['investment_horizon_enveloppe_ds'], energy_cost_ts_df.index,
+                                        ['Occupancy status'])
 
     def horizon2years(num, start_yr):
         """
@@ -123,7 +110,7 @@ def segments2energy_lcc(segments, energy_prices_df, year, kind='existing'):
         """
         return [start_yr + k for k in range(num)]
 
-    invest_years = invest_horizon_reindex.apply(horizon2years, args=[year])
+    invest_years = invest_horizon_reindex.apply(horizon2years, args=[yr])
 
     def time_series2sum(ds, invest_years):
         """
@@ -144,69 +131,78 @@ def segments2energy_lcc(segments, energy_prices_df, year, kind='existing'):
     return energy_lcc_ds
 
 
-def lcc_func(energy_discount_lcc_ds, cost_invest_df, cost_switch_fuel_df, intangible_cost):
+def lcc_func(energy_discount_lcc_ds, cost_invest_df, cost_switch_fuel_df, intangible_cost, transition='label'):
     """
     Calculate life cycle cost of energy consumption for every segment and for every possible transition.
+    Transition can be defined as label transition, 
+    param: option - 'label-energy', 'label', 'energy'
     """
 
-    pivot = pd.pivot_table(energy_discount_lcc_ds, values='Values', columns=['Energy performance', 'Heating energy'],
-                           index=['Occupancy status', 'Housing type', 'Income class', 'Income class owner'])
+    if transition == 'label-energy':
+        pivot = pd.pivot_table(energy_discount_lcc_ds, values='Values', columns=['Energy performance', 'Heating energy'],
+                               index=['Occupancy status', 'Housing type', 'Income class', 'Income class owner'])
+        lcc_transition_df = pd.concat([pivot] * len(language_dict['energy_performance_list']),
+                                      keys=language_dict['energy_performance_list'], names=['Energy performance'])
+        lcc_transition_df = pd.concat([lcc_transition_df] * len(language_dict['heating_energy_list']),
+                                               keys=language_dict['heating_energy_list'], names=['Heating energy'])
 
-    lcc_transition_df = pd.concat([pivot] * len(language_dict['energy_performance_list']),
-                                           keys=language_dict['energy_performance_list'], names=['Energy performance'])
+    elif transition == 'label':
+        pivot = pd.pivot_table(energy_discount_lcc_ds, values='Values', columns=['Energy performance'],
+                               index=['Occupancy status', 'Housing type', 'Heating energy', 'Income class', 'Income class owner'])
+        lcc_transition_df = pd.concat([pivot] * len(language_dict['energy_performance_list']),
+                                      keys=language_dict['energy_performance_list'], names=['Energy performance'])
 
-    lcc_transition_df = pd.concat([lcc_transition_df] * len(language_dict['heating_energy_list']),
-                                           keys=language_dict['heating_energy_list'], names=['Heating energy'])
+    elif transition == 'energy':
+        pivot = pd.pivot_table(energy_discount_lcc_ds, values='Values', columns=['Heating energy'],
+                               index=['Occupancy status', 'Housing type', 'Energy performance', 'Income class', 'Income class owner'])
+        lcc_transition_df = pd.concat([pivot] * len(language_dict['heating_energy_list']),
+                                               keys=language_dict['heating_energy_list'], names=['Heating energy'])
 
-    invest_cost = cost_invest_df.reindex(lcc_transition_df.index.get_level_values('Energy performance'), axis=0)
-    invest_cost = invest_cost.reindex(lcc_transition_df.columns.get_level_values('Energy performance'), axis=1)
+    if 'label' in transition:
+        invest_cost = cost_invest_df.reindex(lcc_transition_df.index.get_level_values('Energy performance'), axis=0)
+        invest_cost = invest_cost.reindex(lcc_transition_df.columns.get_level_values('Energy performance'), axis=1)
 
-    switch_fuel_cost = cost_switch_fuel_df.reindex(lcc_transition_df.index.get_level_values('Heating energy'), axis=0)
-    switch_fuel_cost = switch_fuel_cost.reindex(lcc_transition_df.columns.get_level_values('Heating energy'), axis=1)
+        intangible_cost = intangible_cost.reindex(lcc_transition_df.index.get_level_values('Energy performance'),
+                                                  axis=0)
+        intangible_cost = intangible_cost.reindex(lcc_transition_df.columns.get_level_values('Energy performance'),
+                                                  axis=1)
+    if 'energy' in transition:
+        switch_fuel_cost = cost_switch_fuel_df.reindex(lcc_transition_df.index.get_level_values('Heating energy'), axis=0)
+        switch_fuel_cost = switch_fuel_cost.reindex(lcc_transition_df.columns.get_level_values('Heating energy'), axis=1)
 
-    intangible_cost = intangible_cost.reindex(lcc_transition_df.index.get_level_values('Energy performance'), axis=0)
-    intangible_cost = intangible_cost.reindex(lcc_transition_df.columns.get_level_values('Energy performance'), axis=1)
-
-    lcc_transition_df = pd.DataFrame(
-        lcc_transition_df.values + invest_cost.values + switch_fuel_cost.values + intangible_cost.values,
-        index=lcc_transition_df.index, columns=lcc_transition_df.columns)
+    if transition == 'label-energy':
+        lcc_transition_df = pd.DataFrame(
+            lcc_transition_df.values + invest_cost.values + switch_fuel_cost.values + intangible_cost.values,
+            index=lcc_transition_df.index, columns=lcc_transition_df.columns)
+    elif transition == 'label':
+        lcc_transition_df = pd.DataFrame(
+            lcc_transition_df.values + invest_cost.values + intangible_cost.values,
+            index=lcc_transition_df.index, columns=lcc_transition_df.columns)
+    elif transition == 'energy':
+        # TODO: energy transition intangible cost
+        lcc_transition_df = pd.DataFrame(
+            lcc_transition_df.values + switch_fuel_cost.values,
+            index=lcc_transition_df.index, columns=lcc_transition_df.columns)
 
     return lcc_transition_df
 
 
-def market_share_func(lcc_df):
+def lcc2market_share(lcc_df, nu=8):
+    """
+    Returns market share for each segment based on lcc_df.
+    """
 
-    if isinstance(lcc_df, pd.DataFrame):
-        def to_apply(series):
-            return series * (series.name[1] > series.index.get_level_values(0))
-
-        lcc_df = lcc_df.apply(to_apply, axis=1)
-        lcc_df.replace({0: float('nan')}, inplace=True)
-        lcc_reverse_df = lcc_df.apply(lambda x: x**-parameters_dict['nu_intangible_cost'])
-        market_share_df = pd.DataFrame((lcc_reverse_df.values.T / lcc_reverse_df.sum(axis=1).values).T,
-                                       index=lcc_reverse_df.index, columns=lcc_reverse_df.columns)
-        return market_share_df
-
-    elif isinstance(lcc_df, pd.Series):
-        # TODO: calculate market share of the average lcc which is not the same than the average of market share
-        def to_apply(ds):
-            return ds * (ds.name > ds.index)
-
-        lcc_ds = to_apply(lcc_df)
-        lcc_ds.replace({0: float('nan')}, inplace=True)
-        lcc_reverse_ds = lcc_ds.apply(lambda x: x**-parameters_dict['nu_intangible_cost'])
-        market_share_ds = lcc_reverse_ds / lcc_reverse_ds.sum()
-        return market_share_ds
-
-    else:
-        raise
+    lcc_reverse_df = lcc_df.apply(lambda x: x**-nu)
+    market_share_df = pd.DataFrame((lcc_reverse_df.values.T / lcc_reverse_df.sum(axis=1).values).T,
+                                   index=lcc_reverse_df.index, columns=lcc_reverse_df.columns)
+    return market_share_df
 
 
 def logistic(x, a=1, r=1, K=1):
     return K / (1 + a * np.exp(- r * x))
 
 
-def segments2renovation_rate(segments, yr, energy_prices_df, cost_invest_df, cost_switch_fuel_df, cost_intangible_df, rho):
+def segments2renovation_rate(segments, yr, energy_prices_df, cost_invest_df, cost_switch_fuel_df, cost_intangible_df, rho, transition='label'):
     """
     Routine calculating renovation rate from segments for a particular yr.
     Cost (energy, investment) & rho parameter are also required.
@@ -219,9 +215,9 @@ def segments2renovation_rate(segments, yr, energy_prices_df, cost_invest_df, cos
     :return:
     """
     energy_lcc_ds = segments2energy_lcc(segments, energy_prices_df, yr)
-    lcc_df = lcc_func(energy_lcc_ds, cost_invest_df, cost_switch_fuel_df, cost_intangible_df)
+    lcc_df = lcc_func(energy_lcc_ds, cost_invest_df, cost_switch_fuel_df, cost_intangible_df, transition=transition)
     lcc_df = lcc_df.reorder_levels(energy_lcc_ds.index.names)
-    market_share_df = market_share_func(lcc_df)
+    market_share_df = lcc2market_share(lcc_df)
     pv_df = (market_share_df * lcc_df).sum(axis=1)
 
     segments_initial = pv_df.index
@@ -248,4 +244,98 @@ def segments2renovation_rate(segments, yr, energy_prices_df, cost_invest_df, cos
     return {'Market share': market_share_df, 'NPV': pv_df, 'Renovation rate': renovation_rate_df}
 
 
-# market_share_func(intangible_cost, energy_discount_lcc_ds, cost_invest_df, cost_switch_fuel_df)
+def segments_new2lcc(segments_new, yr, energy_prices_df, cost_new=cost_dict['cost_new']):
+    energy_lcc_new_ds = segments2energy_lcc(segments_new, energy_prices_df, yr, kind='new').iloc[:, 0]
+    cost_new_reindex = reindex_mi(cost_new, energy_lcc_new_ds.index, ['Heating energy', 'Housing type', 'Energy performance'])
+    lcc_new_ds = energy_lcc_new_ds + cost_new_reindex
+    return lcc_new_ds
+
+
+def stock_mobile2stock_destroyed(stock_mobile, stock_mobile_ini, stock_remaining, type_housing_destroyed, logging):
+    """
+    Returns stock_destroyed -  housing number destroyed this year for each segment.
+    Houses to destroy are chosen in stock_mobile.
+    1. type_housing_destroyed is respected to match decision-maker proportion; - type_housing_destroyed_reindex
+    2. income_class, income_class_owner, heating_energy match stock_remaining proportion; - type_housing_destroyed_wo_performance
+    3. worst energy_performance_label for each segment are targeted. - stock_destroyed
+    """
+
+    segments_mobile = stock_mobile.index
+    segments_mobile = segments_mobile.droplevel('Energy performance')
+    segments_mobile = segments_mobile.drop_duplicates()
+
+    def worst_label(segments_mobile):
+        """
+        Returns worst label for each segment.
+        Dictionary that returns the worst
+        """
+        idx_worst_label_list = []
+        worst_label_dict = dict()
+        for segment in segments_mobile:
+            for label in language_dict['energy_performance_list']:
+                idx = (segment[0], segment[1], label, segment[2], segment[3], segment[4])
+                if stock_mobile.loc[idx] > 1:
+                    idx_worst_label_list.append(idx)
+                    worst_label_dict[segment] = label
+                    break
+        return idx_worst_label_list, worst_label_dict
+
+    idx_worst_label_list, worst_label_dict = worst_label(segments_mobile)
+
+    # we know type_destroyed, then we calculate nb_housing_destroyed_ini based on proportion of stock remaining
+    levels = ['Occupancy status', 'Housing type']
+    levels_wo_performance = [l for l in language_dict['properties_names'] if l != 'Energy performance']
+    stock_remaining_woperformance = stock_remaining.groupby(levels_wo_performance).sum()
+    prop_housing_remaining_decision = val2share(stock_remaining_woperformance, levels)
+    logging.debug('Number of destroyed houses {:,.0f}'.format(type_housing_destroyed.sum()))
+    type_housing_destroyed_reindex = reindex_mi(type_housing_destroyed,
+                                                prop_housing_remaining_decision.index, levels)
+    type_housing_destroyed_wo_performance = type_housing_destroyed_reindex * prop_housing_remaining_decision
+    logging.debug('Number of destroyed houses {:,.0f}'.format(type_housing_destroyed_wo_performance.sum()))
+
+    logging.debug('De-aggregate destroyed houses by labels')
+    # we don't have the information about which labels are going to be destroyed first
+    prop_stock_worst_label = stock_mobile.loc[idx_worst_label_list] / stock_mobile_ini.loc[
+        idx_worst_label_list]
+    nb_housing_destroyed_ini = reindex_mi(type_housing_destroyed_wo_performance, prop_stock_worst_label.index,
+                                          levels_wo_performance)
+
+    # initialize nb_housing_destroyed_theo for worst label based on how much have been destroyed so far
+    nb_housing_destroyed_theo = prop_stock_worst_label * nb_housing_destroyed_ini
+    stock_destroyed = pd.Series(0, index=stock_mobile.index, dtype='float64')
+
+    logging.debug('Start while loop!')
+    # TODO clean these lines, and create a function that returns stock_destroyed
+
+    # Returns stock_destroyed for each segment
+    # we start with the worst label and we stop when nb_housing_destroyed_theo == 0
+    for segment in segments_mobile:
+        label = worst_label_dict[segment]
+        num = language_dict['energy_performance_list'].index(label)
+        idx_tot = (segment[0], segment[1], label, segment[2], segment[3], segment[4])
+
+        while nb_housing_destroyed_theo.loc[idx_tot] != 0:
+            # stock_destroyed cannot be sup to stock_mobile and to nb_housing_destroyed_theo
+            stock_destroyed.loc[idx_tot] = min(stock_mobile.loc[idx_tot], nb_housing_destroyed_theo.loc[idx_tot])
+            if label != 'A':
+                num += 1
+                label = language_dict['energy_performance_list'][num]
+                labels = language_dict['energy_performance_list'][:num + 1]
+                idx = (segment[0], segment[1], segment[2], segment[3], segment[4])
+                idx_tot = (segment[0], segment[1], label, segment[2], segment[3], segment[4])
+                idxs_tot = [(segment[0], segment[1], label, segment[2], segment[3], segment[4]) for label in labels]
+
+                # nb_housing_destroyed_theo is the remaining number of housing that need to be destroyed for this segment
+                nb_housing_destroyed_theo[idx_tot] = type_housing_destroyed_wo_performance.loc[idx] - \
+                                                     stock_destroyed.loc[idxs_tot].sum()
+
+            else:
+                nb_housing_destroyed_theo[idx_tot] = 0
+
+    logging.debug('Number of destroyed houses {:,.0f}'.format(stock_destroyed.sum()))
+    # check if nb_housing_destroyed is constant
+    logging.debug('End while loop!')
+
+    return stock_destroyed
+
+# lcc2market_share(intangible_cost, energy_discount_lcc_ds, cost_invest_df, cost_switch_fuel_df)
