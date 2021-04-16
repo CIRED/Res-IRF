@@ -56,11 +56,16 @@ ds_income_prop = serie_to_prop(ds_income, 'DECILE_PB')
 replace_dict = {'.?lectricit.*': 'Power', 'Gaz': 'Natural gas', 'Bois\*': 'Wood fuel', 'Fioul domestique': 'Oil fuel',
                 'MA': 'Individual house', 'AP': 'Collective housing'}
 ds_income_prop = replace_strings(ds_income_prop, replace_dict)
+
 df_parc = replace_strings(df_parc, replace_dict)
 logging.debug('Total number of housing at this point {:,}'.format(df_parc.sum()))
 
 ds_lp = df_parc[df_parc.index.get_level_values('Occupancy status') == 'LP']
-ds_lp = add_level_prop(ds_lp, ds_income_prop, 'DECILE_PB')
+logging.debug('Number of landlords buildings {:,.0f}'.format(ds_lp.sum()))
+
+ds_lp = de_aggregating_series(ds_lp, ds_income_prop, 'DECILE_PB')
+logging.debug('Number of landlords buildings {:,.0f}'.format(ds_lp.sum()))
+
 d_temp = remove_rows(df_parc, 'Occupancy status', 'LP')
 d_temp = add_level_nan(d_temp, 'DECILE_PB')
 df_parc = pd.concat((ds_lp, d_temp), axis=0)
@@ -69,7 +74,7 @@ logging.debug('Total number of housing at this point {:,}'.format(df_parc.sum())
 df_index = df_parc.index.names
 df_parc = df_parc.reset_index().replace(language_dict['dict_replace']).set_index(df_index, drop=True).iloc[:, 0]
 df_parc.index = df_parc.index.set_names('Income class owner', 'DECILE_PB')
-df_parc = df_parc.reorder_levels(language_dict['properties_names'])
+df_parc = df_parc.reorder_levels(language_dict['levels_names'])
 
 df_parc = df_parc.reset_index()
 # setting income class owner = income class occupant when occupancy status = 'Homeowners'
@@ -79,13 +84,18 @@ df_parc.loc[df_parc.loc[:, 'Occupancy status'] == 'Homeowners', 'Income class ow
 temp = df_parc.loc[df_parc.loc[:, 'Occupancy status'] == 'Social-housing', 'Income class owner']
 df_parc.loc[df_parc.loc[:, 'Occupancy status'] == 'Social-housing', 'Income class owner'] = ['D10'] * len(temp)
 
-df_parc = df_parc.set_index(language_dict['properties_names']).iloc[:, 0]
+df_parc = df_parc.set_index(language_dict['levels_names']).iloc[:, 0]
 df_parc.name = 'Housing numbers'
 
 
 logging.debug('Saving df_parc as pickle in '.format(os.path.join(folder['middle'], 'parc.pkl')))
 df_parc.to_pickle(os.path.join(folder['middle'], 'parc.pkl'))
 
+ds_income_prop = replace_strings(ds_income_prop, replace_dict)
+ds_income_prop.index = ds_income_prop.index.set_names('Income class owner', 'DECILE_PB')
+logging.debug('Saving ds_income_prop as pickle in '.format(os.path.join(folder['middle'], 'ds_income_prop.pkl')))
+ds_income_prop.to_pickle(os.path.join(folder['middle'], 'ds_income_prop.pkl'))
+
 end = time.time()
-logging.debug('Temps du module {} secondes.'.format(end - start))
+logging.debug('Module time {:.1f} secondes.'.format(end - start))
 logging.debug('End')

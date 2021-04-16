@@ -109,20 +109,27 @@ def replace_strings(ds, replace_dict):
     return df.iloc[:, 0]
 
 
-def add_level_prop(ds, ds_prop, level):
+def de_aggregating_series(ds, ds_prop, level):
+    """
+    De-aggregate ds based on ds_prop by adding level.
+    ds_prop can be independent of ds, or some levels can match.
+    """
     ds_index_names = ds.index.names
     new_indexes = list(set(ds_prop.index.get_level_values(level)))
     d_temp = pd.Series(dtype='float64')
     for new_index in new_indexes:
         d_temp = d_temp.append(pd.concat([ds], keys=[new_index], names=[level]))
 
-    ds = d_temp
-    ds.index = pd.MultiIndex.from_tuples(ds.index)
-    ds.index.names = [level] + ds_index_names
-    ds = ds.reorder_levels(ds_index_names + [level])
+    d_temp.index = pd.MultiIndex.from_tuples(d_temp.index)
+    d_temp.index.names = [level] + ds_index_names
+    # d_temp = d_temp.reorder_levels(ds_index_names + [level])
 
-    ds_prop = ds_prop.reindex(ds.index)
-    return ds.multiply(ds_prop)
+    # ds_prop = ds_prop.reindex(d_temp.index)
+    levels_shared = [n for n in ds_prop.index.names if n in ds_index_names]
+    ds_prop = ds_prop.reorder_levels([level] + levels_shared)
+    ds_prop = reindex_mi(ds_prop, d_temp.index, [level] + levels_shared)
+
+    return d_temp.multiply(ds_prop)
 
 
 def add_level_nan(ds, level):
@@ -166,18 +173,19 @@ def miiindex_loc(ds, slicing_midx):
     return res
 
 
-def reindex_mi(df, miindex, labels):
+def reindex_mi(df, miindex, levels):
     """
     Return reindexed dataframe based on miindex using only few labels.
+    Levels order must match df.levels order.
     Example:
         reindex_mi(surface_ds, segments, ['Occupancy status', 'Housing type']))
         reindex_mi(cost_invest_ds, segments, ['Heating energy final', 'Heating energy']))
     """
-    if len(labels) > 1:
-        tuple_index = (miindex.get_level_values(label).tolist() for label in labels)
+    if len(levels) > 1:
+        tuple_index = (miindex.get_level_values(level).tolist() for level in levels)
         new_miindex = pd.MultiIndex.from_tuples(list(zip(*tuple_index)))
     else:
-        new_miindex = miindex.get_level_values(labels[0])
+        new_miindex = miindex.get_level_values(levels[0])
     df_reindex = df.reindex(new_miindex)
     df_reindex.index = miindex
     return df_reindex
@@ -197,10 +205,23 @@ def ds_mul_df(ds, df):
     return ds * df
 
 
-def val2share(ds, labels, func=lambda x: x):
+def val2share(ds, levels, func=lambda x: x, option='row'):
     """
-    Returns a share of value based on labels.
+    Returns the share of value based on levels.
+    Get the proportion for every other levels than levels in ds.index.names.
+    If option = 'columns', return pd DataFrame with levels in index. Sum of each row is equal to 1.
     """
-    denum = reindex_mi(ds.apply(func).groupby(labels).sum(), ds.index, labels)
+    denum = reindex_mi(ds.apply(func).groupby(levels).sum(), ds.index, levels)
     num = ds.apply(func)
-    return num/denum
+    prop = num/denum
+    if option == 'row':
+        return prop
+    elif option == 'column':
+        values = prop.name
+        columns = [l for l in ds.index.names if l not in levels]
+        prop = prop.reset_index()
+        prop = pd.pivot_table(prop, values=values, index=levels,  columns=columns)
+        # prop.droplevel(prop.columns.names[0], axis=1)
+        return prop
+
+

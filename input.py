@@ -15,7 +15,7 @@ folder['calibration_middle'] = os.path.join(folder['middle'], 'calibration_middl
 
 # index_year
 calibration_year = 2018
-final_year = 2030
+final_year = 2080
 index_year = range(calibration_year, final_year + 1, 1)
 
 # years for input time series
@@ -42,7 +42,7 @@ language_dict['heating_energy_list'] = ['Power', 'Natural gas', 'Oil fuel', 'Woo
 language_dict['decision_maker_index'] = pd.MultiIndex.from_tuples(language_dict['decision_maker_list'],
                                                                   names=['Occupancy status', 'Housing type'])
 
-language_dict['properties_names'] = ['Occupancy status', 'Housing type', 'Energy performance', 'Heating energy',
+language_dict['levels_names'] = ['Occupancy status', 'Housing type', 'Energy performance', 'Heating energy',
                                      'Income class', 'Income class owner']
 
 dict_replace = {'PO': 'Homeowners', 'P': 'Homeowners', 'PB': 'Landlords', 'LP': 'Landlords',
@@ -86,9 +86,6 @@ parameters_dict['npv_min'] = -1000
 parameters_dict['rate_max'] = 0.2
 parameters_dict['rate_min'] = 0.00001
 
-
-
-
 parameters_dict['scenario'] = 'Reference'
 
 household_income_rate = 0.012
@@ -119,42 +116,40 @@ ds_consumption_heater = pd.Series([0.4, 0.4], index=language_dict['energy_perfor
 ds_consumption_new = ds_consumption_new * ds_consumption_heater
 parameters_dict['energy_consumption_new_series'] = ds_consumption_new
 
-ds_surface = pd.Series([109.5, 74.3, 87.1, 53.5, 77.8, 63.3],
+ds_area = pd.Series([109.5, 74.3, 87.1, 53.5, 77.8, 63.3],
                        index=[['Homeowners', 'Homeowners', 'Landlords', 'Landlords', 'Social-housing',
                                'Social-housing'], ['Single-family', 'Multi-family', 'Single-family', 'Multi-family',
                                                    'Single-family', 'Multi-family']])
-ds_surface.index.names = ['Occupancy status', 'Housing type']
-parameters_dict['surface'] = ds_surface
-ds_surface_new = pd.Series([132, 81, 90, 60, 84, 71],
+ds_area.index.names = ['Occupancy status', 'Housing type']
+parameters_dict['area'] = ds_area
+ds_area_new = pd.Series([132, 81, 90, 60, 84, 71],
                            index=[['Homeowners', 'Homeowners', 'Landlords', 'Landlords', 'Social-housing',
                                    'Social-housing'], ['Single-family', 'Multi-family', 'Single-family', 'Multi-family',
                                                        'Single-family', 'Multi-family']])
-ds_surface_new.index.names = ['Occupancy status', 'Housing type']
-parameters_dict['surface_new'] = ds_surface_new
+ds_area_new.index.names = ['Occupancy status', 'Housing type']
+parameters_dict['area_new'] = ds_area_new
 
-surface_new_max = pd.DataFrame([[160, 101, 90], [89, 76, 76]],
+area_new_max = pd.DataFrame([[160, 101, 90], [89, 76, 76]],
                                columns=['Homeowners', 'Landlords', 'Social-housing'],
                                index=['Single-family', 'Multi-family'])
-surface_new_max = surface_new_max.unstack()
-surface_new_max.index.names = ['Occupancy status', 'Housing type']
-parameters_dict['surface_new_max'] = surface_new_max
+area_new_max = area_new_max.unstack()
+area_new_max.index.names = ['Occupancy status', 'Housing type']
+parameters_dict['area_new_max'] = area_new_max
 
-elasticity_surface_new = pd.Series([0.2, 0.01, 0.01], index=['Single-family', 'Multi-family', 'Social-housing'])
-parameters_dict['elasticity_surface_new'] = elasticity_surface_new
+elasticity_area_new = pd.Series([0.2, 0.01, 0.01], index=['Single-family', 'Multi-family', 'Social-housing'])
+temp = elasticity_area_new.reindex(area_new_max.index.get_level_values('Housing type'))
+temp.index = area_new_max.index
+parameters_dict['elasticity_area_new_ini'] = temp
 
 
 df_discount_rate = pd.DataFrame([[0.15, 0.37, 0.04], [0.15, 0.37, 0.04], [0.1, 0.25, 0.04], [0.1, 0.25, 0.04],
                                  [0.07, 0.15, 0.04], [0.07, 0.15, 0.04], [0.05, 0.07, 0.04], [0.05, 0.07, 0.04],
                                  [0.04, 0.05, 0.04], [0.04, 0.05, 0.04]], columns=language_dict['housing_type_list'],
                                 index=language_dict['income_class_list'])
-# TODO: income class owner
+
 parameters_dict['interest_rate_series'] = df_discount_rate.stack()
-
+# parameters_dict['interest_rate_new_series'] = pd.Series([0.07, 0.1, 0.04], index=language_dict['housing_type_list'])
 parameters_dict['interest_rate_new'] = 0.07
-parameters_dict['investment_horizon'] = 35
-
-
-parameters_dict['interest_rate_new_series'] = pd.Series([0.07, 0.1, 0.04], index=language_dict['housing_type_list'])
 
 
 df_investment_horizon_enveloppe = pd.DataFrame([[30, 30, 30], [30, 30, 3], [30, 7, 7], [30, 7, 3]],
@@ -165,6 +160,7 @@ df_investment_horizon_heater = pd.DataFrame([[16, 16, 16], [16, 16, 3], [16, 7, 
                                      index=language_dict['list_all_scenarios'])
 parameters_dict['investment_horizon_enveloppe_ds'] = df_investment_horizon_enveloppe.loc[parameters_dict['scenario'], :]
 parameters_dict['investment_horizon_heater_ds'] = df_investment_horizon_heater.loc[parameters_dict['scenario'], :]
+parameters_dict['investment_horizon_construction'] = 35
 
 
 parameters_dict['nu_intangible_cost'] = 8
@@ -194,35 +190,19 @@ distribution_type = distribution_type.unstack()
 distribution_type.index.names = ['Occupancy status', 'Housing type']
 parameters_dict['distribution_type'] = distribution_type
 
-
 parameters_dict['factor_population_housing_ini'] = -0.007
-
 parameters_dict['nb_population_housing_min'] = 2
 
 technical_progress_dict = dict()
 technical_progress_dict['learning-by-doing-new'] = -0.15
 technical_progress_dict['learning-by-doing-remaining'] = -0.1
 technical_progress_dict['learning-by-doing-information'] = -0.25
-
 technical_progress_dict['learning_year'] = 10
-
 technical_progress_dict['information_rate_intangible'] = 0.25
 technical_progress_dict['information_rate_max'] = 0.8
-
 technical_progress_dict['information_rate_intangible_new'] = 0.25
 technical_progress_dict['information_rate_max_new'] = 0.95
-
-
 parameters_dict['technical_progress_dict'] = technical_progress_dict
-
-
-#
-
-
-
-
-
-rate_growth = 0.012
 
 # exogenous variable
 exogenous_dict = dict()
@@ -236,7 +216,7 @@ for key, value in energy_price_ini.items():
     energy_price_data = pd.concat((energy_price_data, ds), axis=1)
 exogenous_dict['energy_price_data'] = energy_price_data
 
-
+# total buildings stock that is bigger than segmented stock data
 exogenous_dict['stock_ini'] = 29037000
 # population_rate = 0.003
 # population_series = linear2series(population_ini, population_rate, index_year)
@@ -244,8 +224,21 @@ exogenous_dict['stock_ini'] = 29037000
 name_file = 'projection_population_insee.csv'
 population_total_series = pd.read_csv(os.path.join(folder['input'], name_file), sep=',', header=None, index_col=[0],
                                       squeeze=True)
-exogenous_dict['population_total_series'] = population_total_series
+# TODO decrease population to reflect population based on building stock - change stock_segmented_sum
+stock_segmented_sum = exogenous_dict['stock_ini']
+factor_population = stock_segmented_sum / exogenous_dict['stock_ini']
+exogenous_dict['population_total_ds'] = population_total_series * factor_population
 
+# available income is in Md€ = aggregated income of the population
+exogenous_dict['available_income_ini'] = 14210000000000 * factor_population
+exogenous_dict['available_income_rate'] = 0.012
+exogenous_dict['available_income_ds'] = linear2series(exogenous_dict['available_income_ini'],
+                                                      exogenous_dict['available_income_rate'], index_input_year)
+
+# inflation
+exogenous_dict['price_index_ds'] = pd.Series(1, index=index_input_year)
+exogenous_dict['available_income_real_ds'] = exogenous_dict['available_income_ds'] / exogenous_dict['price_index_ds']
+exogenous_dict['available_income_real_pop_ds'] = exogenous_dict['available_income_real_ds'] / exogenous_dict['population_total_ds']
 
 # cost
 cost_dict = dict()
@@ -292,7 +285,7 @@ calibration_dict[file] = pd.read_csv(name_file, index_col=[0, 1], header=[0])
 
 public_policy_list = ['carbon_tax', 'CITE', 'EPTZ', 'CEE']
 
-# TODO: Calculate public policy by surface with the average surface for decision-maker or for all.
+# TODO: Calculate public policy by area with the average area for decision-maker or for all.
 
 # EPTZ
 interest_rate_ini = 0.03
@@ -315,8 +308,8 @@ conso_bois_ini = 11.55 # Conso de bois à l'année réf (source ADEME) (en Mm3)/
 conso_2018 = [33.163 * 10**9, 105.582 * 10**9, 36.138 * 10**9, 79.554 * 10**9] # Données 2018 (CEREN climat normal), en TWh
 conso_2019 = [33.8 * 10**9,  103.7 * 10**9,  34.2 * 10**9,  78.16 * 10**9] # 2019 CEREN climat normal TWh
 
-# calcul surface moyenne pondérée
-# ds_surface.reindex(dfp.index) * dfp / dfp.sum()
+# calcul area moyenne pondérée
+# ds_area.reindex(dfp.index) * dfp / dfp.sum()
 
 
 # rotation concerne les
