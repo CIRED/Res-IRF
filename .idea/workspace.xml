@@ -1,18 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5a27c1bc-6d7f-41bf-89e9-22387bb7bdb3" name="Default Changelist" comment="work still on going - stock.sce">
+    <list default="true" id="5a27c1bc-6d7f-41bf-89e9-22387bb7bdb3" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/License.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/graphic_parc.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/func.py" beforeDir="false" afterPath="$PROJECT_DIR$/func.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/function_pandas.py" beforeDir="false" afterPath="$PROJECT_DIR$/function_pandas.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/input.py" beforeDir="false" afterPath="$PROJECT_DIR$/input.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/middle/calibration_middle/rho.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/middle/calibration_middle/rho.pkl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/middle/language_dict.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/middle/language_dict.pkl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/middle/parameter_dict.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/middle/parameter_dict.pkl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/middle/parc.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/middle/parc.pkl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/parc.py" beforeDir="false" afterPath="$PROJECT_DIR$/parc.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/func.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/func.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/function_pandas.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/function_pandas.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/graphic.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/graphic.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/input.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/input.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/input/calibration/market_share.csv" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/calibration/market_share.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/input/calibration/old/renovation_rate_decision_maker.csv" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/calibration/old/renovation_rate_decision_maker.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/input/calibration/old/renovation_rate_energy_performance.csv" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/calibration/old/renovation_rate_energy_performance.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/input/calibration/renovation_rate_decision_maker.csv" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/calibration/renovation_rate_decision_maker.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/input/cost_existing.csv" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/cost_existing.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/input/cost_new.csv" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/cost_new.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/input/distribution_heating_energy_new.csv" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/distribution_heating_energy_new.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/input/ds_parc/comptages_DPE.csv" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/ds_parc/comptages_DPE.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/input/ds_parc/fuel_oil_wood_2018.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/ds_parc/fuel_oil_wood_2018.xlsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/input/ds_parc/fuel_oil_wood_2019.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/ds_parc/fuel_oil_wood_2019.xlsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/input/ds_parc/parclocatifprive_post48_revenusPB.csv" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/ds_parc/parclocatifprive_post48_revenusPB.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/input/old/Parc_2018 (original).csv" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/old/Parc_2018 (original).csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/input/old/Parc_2018_ResIRF.csv" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/old/Parc_2018_ResIRF.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/input/old/comptages_DPE.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/old/comptages_DPE.xlsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/input/old/parc_logement.csv" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/old/parc_logement.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/input/old/parclocatifprive_post48_revenusPB.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/old/parclocatifprive_post48_revenusPB.xlsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/input/old/revenu_logement.csv" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/old/revenu_logement.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/input/projection_population_insee.csv" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/projection_population_insee.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/middle/calibration_middle/rho.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/project/intermediate/calibration_intermediate/rho.pkl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/middle/language_dict.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/project/intermediate/language_dict.pkl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/middle/parameter_dict.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/project/intermediate/parameter_dict.pkl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/middle/parc.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/project/intermediate/parc.pkl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/middle/parc_2018.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/project/intermediate/parc_2018.pkl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/parc.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/parc.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/to_keep.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/to_keep.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,6 +47,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Python Script" />
+        <option value="Setup Script" />
       </list>
     </option>
   </component>
@@ -43,6 +68,8 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/project" />
+      <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/old_" />
       <recent name="$PROJECT_DIR$/" />
     </key>
@@ -83,7 +110,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/input.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/project/input.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -105,7 +132,7 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/project/main.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -127,7 +154,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/parc.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/project/parc.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -170,7 +197,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/project/test.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -221,6 +248,9 @@
       <workItem from="1618435090577" duration="183000" />
       <workItem from="1618480294423" duration="17139000" />
       <workItem from="1618562003093" duration="14721000" />
+      <workItem from="1618594141507" duration="71000" />
+      <workItem from="1618738150286" duration="1369000" />
+      <workItem from="1618814995316" duration="61963000" />
     </task>
     <task id="LOCAL-00001" summary="major update - work still ongoing">
       <created>1613665046411</created>
@@ -292,7 +322,14 @@
       <option name="project" value="LOCAL" />
       <updated>1618328987621</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="work still on going - stock.sce">
+      <created>1618594148111</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1618594148111</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -322,14 +359,14 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/parc.py</url>
+          <url>file://$PROJECT_DIR$/project/parc.py</url>
           <line>94</line>
           <option name="timeStamp" value="21" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/main.py</url>
-          <line>299</line>
-          <option name="timeStamp" value="30" />
+          <url>file://$PROJECT_DIR$/project/main.py</url>
+          <line>280</line>
+          <option name="timeStamp" value="45" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
@@ -349,6 +386,6 @@
     <SUITE FILE_PATH="coverage/Res_IRF$func_payback.coverage" NAME="func_payback Coverage Results" MODIFIED="1616402049977" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$func_co2_cost.coverage" NAME="func_co2_cost Coverage Results" MODIFIED="1616424071313" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$test.coverage" NAME="test Coverage Results" MODIFIED="1618423504844" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/Res_IRF$main.coverage" NAME="main Coverage Results" MODIFIED="1618593647534" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Res_IRF$main.coverage" NAME="main Coverage Results" MODIFIED="1619033788058" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

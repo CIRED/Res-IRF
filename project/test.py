@@ -1,10 +1,10 @@
 import os
 import pandas as pd
-from input import folder
+from project.input import folder
 
-from function_pandas import de_aggregating_series
+from project.function_pandas import de_aggregating_series
 
-name_file = os.path.join(folder['middle'], 'parc.pkl')
+name_file = os.path.join(folder['intermediate'], 'parc.pkl')
 dsp = pd.read_pickle(name_file)
 
 # test add_level_prop

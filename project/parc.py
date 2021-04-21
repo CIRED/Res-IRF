@@ -2,8 +2,8 @@ import os
 import logging
 import time
 
-from input import folder, language_dict
-from function_pandas import *
+from project.input import folder, language_dict
+from project.function_pandas import *
 
 
 start = time.time()
@@ -88,13 +88,13 @@ df_parc = df_parc.set_index(language_dict['levels_names']).iloc[:, 0]
 df_parc.name = 'Housing numbers'
 
 
-logging.debug('Saving df_parc as pickle in '.format(os.path.join(folder['middle'], 'parc.pkl')))
-df_parc.to_pickle(os.path.join(folder['middle'], 'parc.pkl'))
+logging.debug('Saving df_parc as pickle in '.format(os.path.join(folder['intermediate'], 'parc.pkl')))
+df_parc.to_pickle(os.path.join(folder['intermediate'], 'parc.pkl'))
 
 ds_income_prop = replace_strings(ds_income_prop, replace_dict)
 ds_income_prop.index = ds_income_prop.index.set_names('Income class owner', 'DECILE_PB')
-logging.debug('Saving ds_income_prop as pickle in '.format(os.path.join(folder['middle'], 'ds_income_prop.pkl')))
-ds_income_prop.to_pickle(os.path.join(folder['middle'], 'ds_income_prop.pkl'))
+logging.debug('Saving ds_income_prop as pickle in '.format(os.path.join(folder['intermediate'], 'ds_income_prop.pkl')))
+ds_income_prop.to_pickle(os.path.join(folder['intermediate'], 'ds_income_prop.pkl'))
 
 end = time.time()
 logging.debug('Module time {:.1f} secondes.'.format(end - start))
