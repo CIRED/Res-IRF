@@ -3,6 +3,7 @@ import logging
 import os
 import time
 import pickle
+import datetime
 
 from itertools import product
 
@@ -20,6 +21,10 @@ if __name__ == '__main__':
     start = time.time()
     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(message)s')
     logging.debug('Start Res-IRF')
+
+    folder['output'] = os.path.join(folder['output'], datetime.datetime.today().strftime('%Y%m%d_%H%M%S'))
+    if not os.path.isdir(folder['output']):
+        os.mkdir(folder['output'])
 
     # output is a dict storing data useful for the end-user but not necessary for the script.
     output = dict()
@@ -152,19 +157,14 @@ if __name__ == '__main__':
 
     logging.debug('Initialization of variables')
     nb_population_housing = dict()
-    # TODO: nb_population_housing can be exogeneous
     nb_population_housing[calibration_year] = nb_population_housing_ini
 
     flow_needed = dict()
-    # TODO: flow_needed may not need to be a dict
     flow_needed[calibration_year] = stock_ini_seg.sum()
 
     stock_constructed_seg, stock_constructed, flow_constructed, flow_constructed_dm = dict(), dict(), dict(), dict()
-    # TODO: flow_constructed may be unuseful
-    # TODO: flow_constructed_dm may not need to be a dict
     segments_new = segments2segments_new(segments)
     stock_constructed[calibration_year] = 0
-    stock_constructed_seg[calibration_year] = pd.Series(0, index=segments_new)
     flow_constructed[calibration_year] = 0
 
     flow_destroyed, flow_destroyed_seg_dm = dict(), dict()
@@ -178,18 +178,18 @@ if __name__ == '__main__':
     stock_mobile_seg = dict()
     stock_mobile_seg[calibration_year] = stock_remained_seg[calibration_year] - stock_residual_seg
 
-    stock_area, stock_area_constructed, dict_area_avg_new_dm = dict(), dict(), dict()
-    stock_area[calibration_year] = parameters_dict['area'] * stock_ini_dm
-    stock_area_constructed[calibration_year] = 0
+    stock_area_dm, stock_area_constructed_dm, dict_area_avg_new_dm = dict(), dict(), dict()
+    stock_area_dm[calibration_year] = parameters_dict['area'] * stock_ini_dm
+    stock_area_constructed_dm[calibration_year] = 0
     dict_area_avg_new_dm[calibration_year] = parameters_dict['area_new']
 
     share_multi_family = dict()
     share_multi_family[calibration_year] = parameters_dict['ht_share_tot'].loc['Multi-family']
 
     # knowledge is learnt at the end of the year i.e. for first dynamic year knowledge initialization
-    stock_knowledge_construction, stock_knowledge_renovation = dict(), dict()
-    # stock_knowledge_construction[calibration_year] = knowledge_construction
-    flow_area_renovation_seg, flow_area_constructed_ep_he = dict(), dict()
+    stock_knowledge_construction_he_ep, stock_knowledge_renovation = dict(), dict()
+    # stock_knowledge_construction_he_ep[calibration_year] = knowledge_construction
+    flow_area_renovation_seg, flow_area_constructed_he_ep = dict(), dict()
     flow_area_renovation_seg[calibration_year] = stock_area_seg
 
     flow_area_constructed_ep = pd.Series(
@@ -197,14 +197,16 @@ if __name__ == '__main__':
     flow_area_constructed_ep.index.names = ['Energy performance']
     temp = add_level(flow_area_constructed_ep,
                      pd.Index(language_dict['heating_energy_list'], name='Heating energy'))
-    flow_area_constructed_ep_he[calibration_year] = temp
+    flow_area_constructed_he_ep[calibration_year] = temp
 
     cost_new = dict()
     cost_new[calibration_year] = cost_new_seg
 
     output['Intangible cost construction'], output['Investment cost envelope'] = dict(), dict()
     output['Intangible cost renovation'] = dict()
-
+    output['Intangible cost construction'][calibration_year] = intangible_cost_construction
+    output['Intangible cost renovation'][calibration_year] = cost_intangible_seg
+    output['Investment cost envelope'][calibration_year] = cost_invest_df
 
     logging.debug('Start  dynamic evolution of buildings stock from year {} to year {}'.format(index_year[0], index_year[-1]))
     for year in index_year[1:3]:
@@ -229,51 +231,59 @@ if __name__ == '__main__':
                                                                                           share_multi_family,
                                                                                           year,
                                                                                           calibration_year)
+
         logging.debug('Dynamic area')
         flow_area_remained_seg_dm = flow_remained_seg_dm[year] * parameters_dict['area']
         flow_area_destroyed_seg_dm = flow_destroyed_seg_dm[year] * parameters_dict['area']
         dict_area_avg_new_dm = area_new_dynamic(dict_area_avg_new_dm, year, calibration_year)
         flow_area_constructed_dm = flow_constructed_dm[year] * dict_area_avg_new_dm[year]
-        stock_area_constructed[year] = flow_area_constructed_dm + stock_area_constructed[year - 1]
-        stock_area[year] = flow_area_remained_seg_dm + stock_area_constructed[year]
-        # average_area = stock_area[year].sum() / flow_needed[year]
-        # area_population_housing = stock_area[year].sum() / stock_population.loc[year]
+        stock_area_constructed_dm[year] = flow_area_constructed_dm + stock_area_constructed_dm[year - 1]
+        stock_area_dm[year] = flow_area_remained_seg_dm + stock_area_constructed_dm[year]
 
-        logging.debug('Technical progress: Learning by doing - New stock')
-        if stock_knowledge_construction != {}:
-            stock_knowledge_construction[year] = stock_knowledge_construction[year - 1] + flow_area_constructed_ep_he[year - 1]
+        logging.debug('Knowledge dynamic construction')
+        #
+        if stock_knowledge_construction_he_ep != {}:
+            stock_knowledge_construction_he_ep[year] = stock_knowledge_construction_he_ep[year - 1] + \
+                                                       flow_area_constructed_he_ep[year - 1]
         else:
-            stock_knowledge_construction[year] = flow_area_constructed_ep_he[year - 1]
-        
-        knowledge_norm_new = stock_knowledge_construction[year] / stock_knowledge_construction[calibration_year + 1]
+            stock_knowledge_construction_he_ep[year] = flow_area_constructed_he_ep[year - 1]
+        knowledge_norm_new = stock_knowledge_construction_he_ep[year] / stock_knowledge_construction_he_ep[
+            calibration_year + 1]
+
+        logging.debug('Learning by doing - construction')
         learning_rate = technical_progress_dict['learning-by-doing-new']
         cost_new = learning_by_doing_func(knowledge_norm_new, learning_rate, year, cost_new, cost_new_lim_seg,
                                           calibration_year)
-        logging.debug('Information acceleration - New stock')
+        logging.debug('Information acceleration - construction')
         information_rate_new = information_rate_func(knowledge_norm_new, kind='new')
         intangible_cost_construction = ds_mul_df(information_rate_new, intangible_cost_construction.T).T
 
-        logging.debug('Technical progress: Learning by doing - remaining renovation')
+        logging.debug('Knowledge dynamic renovation')
         knowledge_norm_renovation, stock_knowledge_renovation = area2knowledge_renovation(flow_area_renovation_seg[year - 1],
                                                                                           stock_knowledge_renovation,
                                                                                           year,
                                                                                           calibration_year)
+
+        logging.debug('Learning by doing - renovation')
         learning_rate = technical_progress_dict['learning-by-doing-renovation']
         learning_by_doing_construction = knowledge_norm_renovation ** (np.log(1 + learning_rate) / np.log(2))
         cost_invest_df = cost_invest_df * learning_by_doing_construction
 
-        logging.debug('Information acceleration - remaining stock')
+        logging.debug('Information acceleration - renovation')
         information_rate = information_rate_func(knowledge_norm_renovation, kind='remaining')
         cost_intangible_seg = ds_mul_df(information_rate, cost_intangible_seg.T).T
 
         logging.debug('Demolition dynamic')
         stock_mobile_seg[year] = stock_remained_seg[year - 1] - stock_residual_seg
         logging.debug('Catching less efficient label for each segment')
-        stock_destroyed_seg = stock_mobile2stock_destroyed(stock_mobile_seg[year], stock_mobile_seg[calibration_year],
-                                                           stock_remained_seg[year - 1],
-                                                           flow_destroyed_seg_dm[year], logging)
+        flow_destroyed_seg = stock_mobile2flow_destroyed(stock_mobile_seg[year], stock_mobile_seg[calibration_year],
+                                                         stock_remained_seg[year - 1],
+                                                         flow_destroyed_seg_dm[year], logging)
+        np.testing.assert_almost_equal(flow_destroyed_seg_dm[year].sum(), flow_destroyed_seg.sum(),
+                                       err_msg='Not normal')
         # stock remained segmented before renovation
-        stock_remained_seg[year] = stock_mobile_seg[year] - stock_destroyed_seg
+        stock_remained_seg[year] = stock_remained_seg[year - 1] - flow_destroyed_seg
+        logging.debug('Stock remained buildings: {:,.0f}'.format(stock_remained_seg[year].sum()))
 
         logging.debug('Renovation dynamic')
         result_dict = segments2renovation_rate(segments, year, cost_invest_df, cost_intangible_seg, rho_seg)
@@ -292,7 +302,8 @@ if __name__ == '__main__':
 
         flow_remained_seg = flow_renovation2flow_remained(flow_renovation_label_energy_seg)
         # stock remained segmented after renovation
-        stock_remained_seg[year] = stock_remained_seg[year - 1] + flow_remained_seg
+        stock_remained_seg[year] = stock_remained_seg[year] + flow_remained_seg
+        logging.debug('Stock remained buildings: {:,.0f}'.format(stock_remained_seg[year].sum()))
 
         # flow area renovation seg used to determine flow knowledge
         flow_area_renovation_seg[year] = buildings_number2area(flow_renovation_label_energy_seg)
@@ -303,12 +314,15 @@ if __name__ == '__main__':
                                                              year, cost_intangible=intangible_cost_construction)
         flow_constructed_seg = flow_constructed_seg.reorder_levels(language_dict['levels_names'])
         logging.debug('Constructed buildings: {}'.format(flow_constructed_seg))
-        stock_constructed_seg[year] = stock_constructed_seg[year - 1] + flow_constructed_seg
+        if stock_constructed_seg == {}:
+            stock_constructed_seg[year] = flow_constructed_seg
+        else:
+            stock_constructed_seg[year] = stock_constructed_seg[year - 1] + flow_constructed_seg
 
         # variable used to determine construction knowledge in the learning-by-doing process.
-        flow_area_constructed_ep_he[year] = flow_constructed_seg.groupby(['Energy performance', 'Heating energy']).sum()
+        flow_area_constructed_he_ep[year] = flow_constructed_seg.groupby(['Energy performance', 'Heating energy']).sum()
 
-        logging.debug('Storing interesting data in output dict')
+        logging.debug('Output: storing important results')
         output['Renovation rate seg'][year] = renovation_rate_seg
         output['Intangible cost construction'][year] = intangible_cost_construction
         output['Intangible cost renovation'][year] = cost_intangible_seg
@@ -316,6 +330,58 @@ if __name__ == '__main__':
 
         logging.debug('End of YEAR: {}'.format(year))
 
+    for key in output.keys():
+        output2csv(output, key, logging)
+
+    # write csv file from dict pd Series
+    to_output = {'Investment_cost_construction.csv': cost_new,
+                 'Stock_remained_segmented.csv': stock_remained_seg,
+                 'Stock_constructed_segmented.csv': stock_constructed_seg}
+    for name_file, item in to_output.items():
+        name_file = os.path.join(folder['output'], name_file)
+        pd.concat(item, axis=1).to_csv(name_file)
+        logging.debug('Output: {}'.format(name_file))
+
+    # write csv file from dict float - concatenate all data in output_detailed.csv
+    to_output = {'Population': stock_population,
+                 'Population by buildings': nb_population_housing,
+                 'Buildings needed': flow_needed,
+                 'Buildings destroyed': flow_destroyed,
+                 'Stock buildings remained': stock_remained,
+                 'Buildings constructed': flow_constructed,
+                 'Stock constructed': stock_constructed}
+
+    output_detailed = pd.concat([pd.Series(item, name=val) for val, item in to_output.items()], axis=1)
+
+    stock_remained_seg_ts = pd.concat(stock_remained_seg, axis=1)
+    result = segments2energy_consumption(stock_remained_seg_ts.index, exogenous_dict['energy_price_forecast'],
+                                         kind='remaining')
+    lst = []
+    for key in result.keys():
+        name_file = os.path.join(folder['output'], key.replace(' ', '_') + '.csv')
+        logging.debug('Output: {}'.format(name_file))
+        if key == 'Consumption-actual':
+            temp = result[key] * stock_remained_seg_ts
+            temp.to_csv(name_file)
+            lst += [pd.Series(temp.sum(axis=0) / stock_remained_seg_ts.sum(), name='Average {}'.format(key))]
+            lst += [pd.Series(temp.sum(axis=0), name='Total {}'.format(key))]
+        elif key == 'Consumption-conventional':
+            temp = ds_mul_df(result[key], stock_remained_seg_ts)
+            temp.to_csv(name_file)
+            lst += [pd.Series(temp.sum(axis=0) / stock_remained_seg_ts.sum(), name='Average {}'.format(key))]
+            lst += [pd.Series(temp.sum(axis=0), name='Total {}'.format(key))]
+        elif key == 'Budget share':
+            result[key].to_csv(name_file)
+            lst += [pd.Series((result[key] * stock_remained_seg_ts).sum(axis=0) / stock_remained_seg_ts.sum(), name=key)]
+        elif key == 'Use intensity':
+            result[key].to_csv(name_file)
+            lst += [pd.Series((result[key] * stock_remained_seg_ts).sum(axis=0) / stock_remained_seg_ts.sum(), name=key)]
+    name_file = os.path.join(folder['output'], 'output_detailed.csv')
+    output_detailed = pd.concat((output_detailed, pd.concat(lst, axis=1)), axis=1)
+    output_detailed.to_csv(name_file)
+    logging.debug('Output: {}'.format(name_file))
+
+
     end = time.time()
-    logging.debug('Time for the module: {} seconds.'.format(end - start))
+    logging.debug('Time for the module: {:,.0f} seconds.'.format(end - start))
     logging.debug('End')

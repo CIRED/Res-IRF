@@ -94,37 +94,41 @@ language_dict['english_to_french'] = dict_english_to_french
 ########################################################################################################################
 # main parameters
 parameters_dict = dict()
-parameters_dict['npv_min'] = -1000
-parameters_dict['rate_max'] = 0.4
-parameters_dict['rate_min'] = 0.00001
 
-parameters_dict['scenario'] = 'Reference'
+# STOCK DYNAMIC
+parameters_dict['destruction_rate'] = 0.0035
+parameters_dict['residual_destruction_rate'] = 0.05
 
-ds_consumption = pd.Series([596, 392, 280, 191, 125, 76, 39], index=language_dict['energy_performance_list'],
+# CONSUMPTION
+########################################################################################################################
+consumption_ep = pd.Series([596, 392, 280, 191, 125, 76, 39], index=language_dict['energy_performance_list'],
                            name='Conventional energy')
-ds_consumption_heater = pd.Series([0.85, 0.82, 0.77, 0.74, 0.72, 0.77, 1.12],
+consumption_ep.index.set_names('Energy performance', inplace=True)
+consumption_heater_ep = pd.Series([0.85, 0.82, 0.77, 0.74, 0.72, 0.77, 1.12],
                                   index=language_dict['energy_performance_list'])
-ds_consumption = ds_consumption * ds_consumption_heater
-ds_consumption.index.set_names('Energy performance', inplace=True)
+consumption_heater_ep.index.set_names('Energy performance', inplace=True)
 
-ds_consumption_conversion = pd.Series([1/2.58, 1, 1, 1], index=language_dict['heating_energy_list'])
-df_consumption = pd.concat([ds_consumption] * len(language_dict['heating_energy_list']),
-                           keys=language_dict['heating_energy_list'], names=['Heating energy'])
-ds_consumption_conversion = ds_consumption_conversion.reindex(df_consumption.index.get_level_values('Heating energy'))
-df_consumption = pd.Series(df_consumption.values * ds_consumption_conversion.values, index=df_consumption.index)
-parameters_dict['energy_consumption_df'] = df_consumption
+consumption_new_ep = pd.Series([50, 40], index=language_dict['energy_performance_new_list'])
+consumption_new_ep.index.set_names('Energy performance', inplace=True)
+consumption_heater_new_ep = pd.Series([0.4, 0.4], index=language_dict['energy_performance_new_list'])
+consumption_heater_new_ep.index.set_names('Energy performance', inplace=True)
 
-ds_consumption_new = pd.Series([50, 40], index=language_dict['energy_performance_new_list'])
-ds_consumption_heater = pd.Series([0.4, 0.4], index=language_dict['energy_performance_new_list'])
-ds_consumption_new = ds_consumption_new * ds_consumption_heater
-ds_consumption_new.index.set_names('Energy performance', inplace=True)
-ds_consumption_conversion = pd.Series([1/2.58, 1, 1, 1], index=language_dict['heating_energy_list'])
-ds_consumption_new = pd.concat([ds_consumption_new] * len(language_dict['heating_energy_list']),
-                           keys=language_dict['heating_energy_list'], names=['Heating energy'])
-ds_consumption_conversion = ds_consumption_conversion.reindex(ds_consumption_new.index.get_level_values('Heating energy'))
-ds_consumption_new = pd.Series(ds_consumption_new.values * ds_consumption_conversion.values, index=ds_consumption_new.index)
-parameters_dict['energy_consumption_new_series'] = ds_consumption_new
 
+def final_2heater_consumption(ds_consumption, ds_consumption_heater):
+    ds_consumption = ds_consumption * ds_consumption_heater
+    ds_consumption_conversion = pd.Series([1/2.58, 1, 1, 1], index=language_dict['heating_energy_list'])
+    df_consumption = pd.concat([ds_consumption] * len(language_dict['heating_energy_list']),
+                               keys=language_dict['heating_energy_list'], names=['Heating energy'])
+    ds_consumption_conversion = ds_consumption_conversion.reindex(df_consumption.index.get_level_values('Heating energy'))
+    df_consumption = pd.Series(df_consumption.values * ds_consumption_conversion.values, index=df_consumption.index)
+    return df_consumption
+
+
+parameters_dict['energy_consumption_df'] = final_2heater_consumption(consumption_ep, consumption_heater_ep)
+parameters_dict['energy_consumption_new_series'] = final_2heater_consumption(consumption_new_ep, consumption_heater_new_ep)
+
+# AREA
+########################################################################################################################
 ds_area = pd.Series([109.5, 74.3, 87.1, 53.5, 77.8, 63.3],
                     index=[['Homeowners', 'Homeowners', 'Landlords', 'Landlords', 'Social-housing',
                             'Social-housing'], ['Single-family', 'Multi-family', 'Single-family', 'Multi-family',
@@ -150,45 +154,47 @@ temp = elasticity_area_new.reindex(area_new_max.index.get_level_values('Housing 
 temp.index = area_new_max.index
 parameters_dict['elasticity_area_new_ini'] = temp
 
+# INVESTMENT PARAMETERS
+########################################################################################################################
 
+# INTEREST RATE
 interest_rate_seg = pd.DataFrame([[0.15, 0.37, 0.04], [0.15, 0.37, 0.04], [0.1, 0.25, 0.04], [0.1, 0.25, 0.04],
                                  [0.07, 0.15, 0.04], [0.07, 0.15, 0.04], [0.05, 0.07, 0.04], [0.05, 0.07, 0.04],
                                  [0.04, 0.05, 0.04], [0.04, 0.05, 0.04]], columns=language_dict['housing_type_list'],
                                  index=language_dict['income_class_list']).stack()
 interest_rate_seg.index.names = ['Income class owner', 'Housing type']
-
 parameters_dict['interest_rate_seg'] = interest_rate_seg
+
 temp = pd.Series([0.07, 0.1, 0.04], index=language_dict['housing_type_list'])
 temp.index.set_names('Housing type', inplace=True)
 parameters_dict['interest_rate_new'] = temp
 
+# INVESTMENT HORIZON
+parameters_dict['scenario'] = 'Reference'
 invest_hrz_envelope_seg = pd.DataFrame([[30, 30, 30], [30, 30, 3], [30, 7, 7], [30, 7, 3]],
                                        columns=['Social-housing', 'Homeowners', 'Landlords'],
                                        index=language_dict['list_all_scenarios'])
 invest_hrz_envelope_seg.columns.set_names('Housing type')
-
 invest_hrz_heater_seg = pd.DataFrame([[16, 16, 16], [16, 16, 3], [16, 7, 7], [15, 7, 3]],
                                      columns=['Social-housing', 'Homeowners', 'Landlords'],
                                      index=language_dict['list_all_scenarios'])
 invest_hrz_heater_seg.columns.set_names('Housing type')
-
-
 parameters_dict['investment_horizon_envelope_ds'] = invest_hrz_envelope_seg.loc[parameters_dict['scenario'], :]
 parameters_dict['investment_horizon_heater_ds'] = invest_hrz_heater_seg.loc[parameters_dict['scenario'], :]
 parameters_dict['investment_horizon_construction'] = 35
 
-
+# MARKET SHARE
 parameters_dict['nu_intangible_cost'] = 8
 parameters_dict['nu_new'] = 8.0
 parameters_dict['nu_label'] = 8
 parameters_dict['nu_energy'] = 8
 
 
-parameters_dict['lifetime_investment'] = pd.DataFrame({'envelope': [30, 30, 3, 3, 30, 30],
-                                                       'heater': [20, 20, 3, 3, 20, 20],
-                                                       'new': [25, 25, 25, 25, 25, 25]})
-parameters_dict['destruction_rate'] = 0.0035
-parameters_dict['residual_destruction_rate'] = 0.05
+# RENOVATION RATE
+parameters_dict['npv_min'] = -1000
+parameters_dict['rate_max'] = 0.4
+parameters_dict['rate_min'] = 0.00001
+
 
 # SHARE
 ########################################################################################################################
@@ -222,8 +228,6 @@ temp.index.set_names('Housing type', inplace=True)
 temp.columns.set_names('Heating energy', inplace=True)
 parameters_dict['he_share_ht_construction'] = temp
 
-
-
 # TECHNICAL PROGRESS
 ########################################################################################################################
 
@@ -253,7 +257,6 @@ ds_income_ini = pd.Series([17009, 25810, 33159, 42643, 73523],
                           index=language_dict['income_class_quintile_list'])
 parameters_dict['income_quintile_series'] = ds_income_ini.apply(linear2series, args=(household_income_rate, index_input_year)).T
 
-
 exogenous_dict = dict()
 energy_price_ini = {'Power': 0.171, 'Natural gas': 0.085, 'Wood fuel': 0.062, 'Oil fuel': 0.091}
 energy_price_rate = {'Power': 0.011, 'Natural gas': 0.0142, 'Wood fuel': 0.0120, 'Oil fuel': 0.0222}
@@ -268,6 +271,10 @@ temp = pd.concat([pd.Series(energy_price_ini)] * len(index_input_year), axis=1)
 temp.index.set_names('Heating energy', inplace=True)
 temp.columns = index_input_year
 exogenous_dict['energy_price_myopic'] = temp.T
+
+# co2_content is in gCO2/kWh
+co2_content = {'Power': 147, 'Natural gas': 227, 'Oil fuel': 324, 'Wood fuel': 30}
+
 # total buildings stock that is bigger than segmented stock data sum
 exogenous_dict['stock_ini'] = 29037000
 # population_rate = 0.003
@@ -347,7 +354,7 @@ calibration_dict['renovation_rate_dm_ep'] = de_aggregating_series(calibration_di
                                                                   'Energy performance')"""
 
 # parameter that explicit where to find the variable or if it's need to be calculated
-parameters_dict['intangible_cost_source'] = 'pickle'
+parameters_dict['intangible_cost_source'] = 'function'
 
 # PUBLIC POLICY
 ########################################################################################################################

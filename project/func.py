@@ -349,7 +349,7 @@ def segments2renovation_rate(segments, yr, cost_invest_df, cost_intangible_df, r
             'Energy LCC': energy_lcc_ds}
 
 
-def stock_mobile2stock_destroyed(stock_mobile, stock_mobile_ini, stock_remaining, type_housing_destroyed, logging):
+def stock_mobile2flow_destroyed(stock_mobile, stock_mobile_ini, stock_remaining, type_housing_destroyed, logging):
     """ Returns stock_destroyed -  segmented housing number demolition.
 
     Buildings to destroy are chosen in stock_mobile.
@@ -411,12 +411,12 @@ def stock_mobile2stock_destroyed(stock_mobile, stock_mobile_ini, stock_remaining
 
     # initialize nb_housing_destroyed_theo for worst label based on how much have been destroyed so far
     nb_housing_destroyed_theo = prop_stock_worst_label * nb_housing_destroyed_ini
-    stock_destroyed = pd.Series(0, index=stock_mobile.index, dtype='float64')
+    flow_destroyed = pd.Series(0, index=stock_mobile.index, dtype='float64')
 
     logging.debug('Start while loop!')
-    # TODO clean these lines, and create a function that returns stock_destroyed
+    # TODO clean these lines, and create a function that returns flow_destroyed
 
-    # Returns stock_destroyed for each segment
+    # Returns flow_destroyed for each segment
     # we start with the worst label and we stop when nb_housing_destroyed_theo == 0
     for segment in segments_mobile:
         label = worst_label_dict[segment]
@@ -425,7 +425,7 @@ def stock_mobile2stock_destroyed(stock_mobile, stock_mobile_ini, stock_remaining
 
         while nb_housing_destroyed_theo.loc[idx_tot] != 0:
             # stock_destroyed cannot be sup to stock_mobile and to nb_housing_destroyed_theo
-            stock_destroyed.loc[idx_tot] = min(stock_mobile.loc[idx_tot], nb_housing_destroyed_theo.loc[idx_tot])
+            flow_destroyed.loc[idx_tot] = min(stock_mobile.loc[idx_tot], nb_housing_destroyed_theo.loc[idx_tot])
             if label != 'A':
                 num += 1
                 label = language_dict['energy_performance_list'][num]
@@ -436,16 +436,16 @@ def stock_mobile2stock_destroyed(stock_mobile, stock_mobile_ini, stock_remaining
 
                 # nb_housing_destroyed_theo is the remaining number of housing that need to be destroyed for this segment
                 nb_housing_destroyed_theo[idx_tot] = type_housing_destroyed_wo_performance.loc[idx] - \
-                                                     stock_destroyed.loc[idxs_tot].sum()
+                                                     flow_destroyed.loc[idxs_tot].sum()
 
             else:
                 nb_housing_destroyed_theo[idx_tot] = 0
 
-    logging.debug('Number of destroyed houses {:,.0f}'.format(stock_destroyed.sum()))
+    logging.debug('Number of buildings demolition {:,.0f}'.format(flow_destroyed.sum()))
     # check if nb_housing_destroyed is constant
     logging.debug('End while loop!')
 
-    return stock_destroyed
+    return flow_destroyed
 
 
 def renovation_label2renovation_label_energy(energy_lcc_ds, cost_switch_fuel_df, flow_renovation_label):
@@ -893,3 +893,17 @@ def area2knowledge_renovation(flow_area_seg, stock_knowledge_ep, yr, yr_ini):
     knowledge = stock_knowledge_ep[yr] / stock_knowledge_ep[yr_ini + 1]
 
     return knowledge, stock_knowledge_ep
+
+
+def output2csv(dict_output, val, logging):
+    name_file = os.path.join(folder['output'], val.replace(' ', '_') + '.csv')
+    first_element = list(dict_output[val].items())[0][1]
+    if isinstance(first_element, pd.Series):
+        pd.concat(dict_output[val], axis=1).to_csv(name_file)
+        logging.debug('Output: {}'.format(name_file))
+    elif isinstance(first_element, pd.DataFrame):
+        temp = [item.stack(item.columns.names) for key, item in dict_output[val].items()]
+        temp = pd.concat(temp, axis=1)
+        temp.columns = dict_output[val].keys()
+        temp.to_csv(name_file)
+        logging.debug('Output: {}'.format(name_file))
