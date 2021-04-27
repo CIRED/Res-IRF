@@ -140,7 +140,7 @@ def add_level_nan(ds, level):
     return ds
 
 
-def de_aggregating_series(ds, ds_prop, level):
+def de_aggregating_series(ds_val, level_share_tot, level):
     """De-aggregate ds based on ds_prop by adding level.
 
     ds_prop can be independent of ds, or some levels can match.
@@ -148,23 +148,26 @@ def de_aggregating_series(ds, ds_prop, level):
     Example:
 
     """
-    ds_index_names = ds.index.names
-    new_indexes = list(set(ds_prop.index.get_level_values(level)))
-    d_temp = pd.Series(dtype='float64')
-    for new_index in new_indexes:
-        d_temp = d_temp.append(pd.concat([ds], keys=[new_index], names=[level]))
+    ds_index_names = ds_val.index.names
+    levels_shared = [n for n in level_share_tot.index.names if n in ds_index_names]
 
-    d_temp.index = pd.MultiIndex.from_tuples(d_temp.index)
-    d_temp.index.names = [level] + ds_index_names
-    # d_temp = d_temp.reorder_levels(ds_index_names + [level])
+    # unique values in level that need to be added to ds_val
+    new_indexes = list(set(level_share_tot.index.get_level_values(level)))
+    # ds_added append identical Series for each unique value
+    ds_added = pd.Series(dtype='float64')
+    for new_index in new_indexes:
+        ds_added = ds_added.append(pd.concat([ds_val], keys=[new_index], names=[level]))
+
+    ds_added.index = pd.MultiIndex.from_tuples(ds_added.index)
+    ds_added.index.names = [level] + ds_index_names
 
     # ds_prop = ds_prop.reindex(d_temp.index)
-    levels_shared = [n for n in ds_prop.index.names if n in ds_index_names]
-    if isinstance(ds_prop.index, pd.MultiIndex):
-        ds_prop = ds_prop.reorder_levels([level] + levels_shared)
-    ds_prop = reindex_mi(ds_prop, d_temp.index, [level] + levels_shared)
+    # TODO: no need to reorder as reindex_mi do it now
+    if isinstance(level_share_tot.index, pd.MultiIndex):
+        level_share_tot = level_share_tot.reorder_levels([level] + levels_shared)
+    level_share_tot = reindex_mi(level_share_tot, ds_added.index, [level] + levels_shared)
 
-    return d_temp.multiply(ds_prop)
+    return ds_added.multiply(level_share_tot)
 
 
 def de_aggregate_columns(df1, df2):
@@ -179,6 +182,22 @@ def de_aggregate_columns(df1, df2):
     df1_r = df1.reindex(df_temp.columns.get_level_values(level1), axis=1)
     df1_r.columns = df_temp.columns
     return df1_r * df_temp
+
+
+def de_aggregate_series(ds_val, df_share):
+    """Add new levels to ds_val using df_share.
+
+    df_share has segment in index and share of new level in columns.
+    ds_val has segment in index.
+    ds_share and ds_val segment share some levels.
+
+    Example:
+        Function used to add Income class owner to a stock or a flow.
+    """
+    levels_shared = [n for n in df_share.index.names if n in ds_val.index.names]
+    # reindex_mi add missing levels to df_share
+    df_share_r = reindex_mi(df_share, ds_val.index, levels_shared)
+    return ds_mul_df(ds_val, df_share_r).stack()
 
 
 def serie_to_prop(serie, level):
@@ -247,5 +266,21 @@ def val2share(ds, levels, func=lambda x: x, option='row'):
         prop = pd.pivot_table(prop, values=values, index=levels,  columns=columns)
         # prop.droplevel(prop.columns.names[0], axis=1)
         return prop
+    else:
+        raise ValueError
 
+
+def add_level(ds, index):
+    """Add index as a new level for ds index.
+
+    Value of ds does not depend on the new level (i.e. only defined by other levels).
+    """
+    # ds_added append identical Series for each unique value
+    ds_added = pd.Series(dtype='float64')
+    for new_index in index:
+        ds_added = ds_added.append(pd.concat([ds], keys=[new_index], names=[index.names[0]]))
+
+    ds_added.index = pd.MultiIndex.from_tuples(ds_added.index)
+    ds_added.index.names = [index.names[0]] + ds.index.names
+    return ds_added
 

@@ -2,7 +2,7 @@ import pandas as pd
 import os
 from itertools import product
 
-from function_pandas import linear2series, de_aggregate_columns, ds_mul_df
+from function_pandas import linear2series, de_aggregate_columns, ds_mul_df, de_aggregating_series
 
 # FOLDERS
 ########################################################################################################################
@@ -41,6 +41,7 @@ language_dict['decision_maker_income_list'] = list(product(language_dict['occupa
                                                            language_dict['income_class_list']))
 
 language_dict['heating_energy_list'] = ['Power', 'Natural gas', 'Oil fuel', 'Wood fuel']
+
 
 language_dict['decision_maker_index'] = pd.MultiIndex.from_tuples(language_dict['decision_maker_list'],
                                                                   names=['Occupancy status', 'Housing type'])
@@ -94,7 +95,7 @@ language_dict['english_to_french'] = dict_english_to_french
 # main parameters
 parameters_dict = dict()
 parameters_dict['npv_min'] = -1000
-parameters_dict['rate_max'] = 0.2
+parameters_dict['rate_max'] = 0.4
 parameters_dict['rate_min'] = 0.00001
 
 parameters_dict['scenario'] = 'Reference'
@@ -157,8 +158,9 @@ interest_rate_seg = pd.DataFrame([[0.15, 0.37, 0.04], [0.15, 0.37, 0.04], [0.1, 
 interest_rate_seg.index.names = ['Income class owner', 'Housing type']
 
 parameters_dict['interest_rate_seg'] = interest_rate_seg
-parameters_dict['interest_rate_new'] = 0.07
-# parameters_dict['interest_rate_new_series'] = pd.Series([0.07, 0.1, 0.04], index=language_dict['housing_type_list'])
+temp = pd.Series([0.07, 0.1, 0.04], index=language_dict['housing_type_list'])
+temp.index.set_names('Housing type', inplace=True)
+parameters_dict['interest_rate_new'] = temp
 
 invest_hrz_envelope_seg = pd.DataFrame([[30, 30, 30], [30, 30, 3], [30, 7, 7], [30, 7, 3]],
                                        columns=['Social-housing', 'Homeowners', 'Landlords'],
@@ -177,7 +179,7 @@ parameters_dict['investment_horizon_construction'] = 35
 
 
 parameters_dict['nu_intangible_cost'] = 8
-parameters_dict['nu_new'] = 8
+parameters_dict['nu_new'] = 8.0
 parameters_dict['nu_label'] = 8
 parameters_dict['nu_energy'] = 8
 
@@ -227,7 +229,7 @@ parameters_dict['he_share_ht_construction'] = temp
 
 technical_progress_dict = dict()
 technical_progress_dict['learning-by-doing-new'] = -0.15
-technical_progress_dict['learning-by-doing-remaining'] = -0.1
+technical_progress_dict['learning-by-doing-renovation'] = -0.1
 technical_progress_dict['learning-by-doing-information'] = -0.25
 technical_progress_dict['learning_year'] = 10
 technical_progress_dict['information_rate_intangible'] = 0.25
@@ -261,9 +263,12 @@ for key, value in energy_price_ini.items():
     ds = linear2series(value, energy_price_rate[key], index_input_year)
     ds.name = key
     energy_price_data = pd.concat((energy_price_data, ds), axis=1)
-exogenous_dict['energy_price_data'] = energy_price_data
-
-# total buildings stock that is bigger than segmented stock data
+exogenous_dict['energy_price_forecast'] = energy_price_data
+temp = pd.concat([pd.Series(energy_price_ini)] * len(index_input_year), axis=1)
+temp.index.set_names('Heating energy', inplace=True)
+temp.columns = index_input_year
+exogenous_dict['energy_price_myopic'] = temp.T
+# total buildings stock that is bigger than segmented stock data sum
 exogenous_dict['stock_ini'] = 29037000
 # population_rate = 0.003
 # population_series = linear2series(population_ini, population_rate, index_year)
@@ -317,9 +322,12 @@ cost_dict['cost_new_lim'].index.names = ['Occupancy status', 'Housing type']
 
 # CALIBRATION
 ########################################################################################################################
-number_housing_calibration = 0.03
+
 calibration_file = ['market_share', 'renovation_rate_decision_maker', 'renovation_rate_energy_performance']
 calibration_dict = dict()
+
+renovation_rate_calibration = 0.03
+calibration_dict['renovation_rate_calibration'] = renovation_rate_calibration
 
 file = 'market_share'
 name_file = os.path.join(folder['calibration'], file + '.csv')
@@ -327,7 +335,16 @@ calibration_dict[file] = pd.read_csv(name_file, index_col=[0], header=[0])
 
 file = 'renovation_rate_decision_maker'
 name_file = os.path.join(folder['calibration'], file + '.csv')
-calibration_dict[file] = pd.read_csv(name_file, index_col=[0, 1], header=[0])
+calibration_dict[file] = pd.read_csv(name_file, index_col=[0, 1], header=[0], squeeze=True)
+
+"""file = 'renovation_share_energy_performance'
+name_file = os.path.join(folder['calibration'], file + '.csv')
+calibration_dict[file] = pd.read_csv(name_file, index_col=[0], header=[0], squeeze=True)
+
+calibration_dict['renovation_rate_dm_ep'] = de_aggregating_series(calibration_dict['renovation_rate_decision_maker'],
+                                                                  calibration_dict[
+                                                                      'renovation_share_energy_performance'],
+                                                                  'Energy performance')"""
 
 # parameter that explicit where to find the variable or if it's need to be calculated
 parameters_dict['intangible_cost_source'] = 'pickle'
