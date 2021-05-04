@@ -1,0 +1,46 @@
+{
+  "input": {
+    "source": "project/input"
+  },
+  "output": {
+    "source": "project/output"
+  },
+  "intermediate": {
+    "source": "project/intermediate"
+  },
+  "calibration": {
+    "source": "project/input/calibration"
+  },
+  "stock_buildings": {
+    "source": "project/intermediate/parc.pkl",
+    "year": 2018,
+    "index_names": ["Housing type", "Occupancy status", "Heating energy", "Energy performance", "Income class"],
+    "type": "pd.Series"
+  },
+  "intangible_cost": {
+    "source_type": "file",
+    "source": "project/intermediate/intangible_cost_seg.pkl"
+  },
+  "rho": {
+    "source_type": "file",
+    "source": "project/intermediate/rho.pkl"
+  },
+  "renovation_cost": {
+    "type": "file",
+    "source": "project/input/cost_renovation.csv",
+    "index_names": ["Energy performance"],
+    "columns_names": ["Energy performance final"]
+  },
+  "construction_cost": {
+    "type": "file",
+    "source": "project/input/cost_construction.csv"
+  },
+  "switch_fuel_cost": {
+    "type": "file",
+    "source": "project/input/cost_switch_fuel.csv"
+  },
+  "energy_prices": {
+    "type": "file",
+    "source": "project/input/energy_prices.json"
+  }
+}

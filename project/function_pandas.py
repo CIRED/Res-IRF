@@ -116,18 +116,28 @@ def reindex_mi(df, miindex, levels):
     return df_reindex
 
 
-def ds_mul_df(ds, df):
+def ds_mul_df(ds, df, option='columns'):
+    """Multiply pd.Series to each columns (or rows) of pd.Dataframe.
+
     """
-    Multiply pd Series to each columns of pd Dataframe.
-    """
-    if isinstance(df.index, pd.MultiIndex):
-        ds = ds.reorder_levels(df.index.names)
-    ds.sort_index(inplace=True)
-    df.sort_index(inplace=True)
-    assert (ds.index == df.index).all(), "indexes don't match"
-    ds = pd.concat([ds] * len(df.columns), axis=1)
-    ds.columns = df.columns
-    return ds * df
+    if option == 'columns':
+        if isinstance(df.index, pd.MultiIndex):
+            ds = ds.reorder_levels(df.index.names)
+        ds.sort_index(inplace=True)
+        df.sort_index(inplace=True)
+        assert (ds.index == df.index).all(), "indexes don't match"
+        ds = pd.concat([ds] * len(df.columns), axis=1)
+        ds.columns = df.columns
+        return ds * df
+    elif option == 'rows':
+        if isinstance(df.columns, pd.MultiIndex):
+            ds = ds.reorder_levels(df.columns.names)
+        ds.sort_index(inplace=True)
+        df.sort_index(inplace=True, axis=1)
+        assert (ds.index == df.columns).all(), "indexes don't match"
+        ds = pd.concat([ds] * len(df.index), axis=1).T
+        ds.index = df.index
+        return ds * df
 
 
 def add_level_nan(ds, level):
@@ -270,7 +280,7 @@ def val2share(ds, levels, func=lambda x: x, option='row'):
         raise ValueError
 
 
-def add_level(ds, index):
+def add_level(ds, index, axis=0):
     """Add index as a new level for ds index.
 
     Value of ds does not depend on the new level (i.e. only defined by other levels).
@@ -278,9 +288,11 @@ def add_level(ds, index):
     # ds_added append identical Series for each unique value
     ds_added = pd.Series(dtype='float64')
     for new_index in index:
-        ds_added = ds_added.append(pd.concat([ds], keys=[new_index], names=[index.names[0]]))
+        ds_added = ds_added.append(pd.concat([ds], keys=[new_index], names=[index.names[0]], axis=axis))
 
-    ds_added.index = pd.MultiIndex.from_tuples(ds_added.index)
-    ds_added.index.names = [index.names[0]] + ds.index.names
+    if axis == 0:
+        ds_added.index = pd.MultiIndex.from_tuples(ds_added.index)
+        ds_added.index.names = [index.names[0]] + ds.index.names
+
     return ds_added
 

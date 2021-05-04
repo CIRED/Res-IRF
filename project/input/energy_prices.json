@@ -1,0 +1,20 @@
+{
+  "price_w_taxes": {
+    "Power": 0.171,
+    "Natural gas": 0.085,
+    "Wood fuel": 0.062,
+    "Oil fuel": 0.091
+  },
+  "price_rate": {
+    "Power": 0.011,
+    "Natural gas": 0.0142,
+    "Wood fuel": 0.0120,
+    "Oil fuel": 0.0222
+  },
+  "co2_content": {
+    "Power": 147,
+    "Natural gas": 227,
+    "Oil fuel": 324,
+    "Wood fuel": 30
+  }
+}

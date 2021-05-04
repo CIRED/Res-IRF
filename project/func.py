@@ -2,8 +2,8 @@ import numpy as np
 from scipy.optimize import fsolve
 import os
 
-from input import parameters_dict, language_dict, technical_progress_dict, cost_dict, exogenous_dict, calibration_dict, index_year, folder
-from function_pandas import *
+from project.input import parameters_dict, language_dict, technical_progress_dict, cost_dict, exogenous_dict, calibration_dict, index_year, folder
+from project.function_pandas import *
 
 
 def logistic(x, a=1, r=1, k=1):
@@ -23,10 +23,9 @@ def buildings_number2area(ds):
 
 
 def discount_factor_func(segments):
-    """
-    Calculate discount factor for all segments.
-    :param segments: pandas MultiIndex
-    :return:
+    """Calculate discount factor for all segments.
+
+    Discount factor can be used when agents doesn't anticipate prices evolution.
     """
     investment_horizon = reindex_mi(parameters_dict['investment_horizon_envelope_ds'], segments, ['Occupancy status'])
     interest_rate = reindex_mi(parameters_dict['interest_rate_seg'], segments, ['Income class', 'Housing type'])
@@ -138,6 +137,7 @@ def segments2energy_lcc(segments, yr, kind='remaining', transition='label', cons
     energy_prices = exogenous_dict['energy_price_' + e_prices]
     energy_consumption_seg = segments2energy_consumption(segments, energy_prices, kind=kind)['Consumption-' + consumption]
     energy_cost_ts_df = energy_consumption2cost(energy_consumption_seg, energy_prices)
+    # TODO: index_year is not in function namespace
     discounted_df = discount_rate_series_func(index_year, kind=kind)
 
     if isinstance(discounted_df, pd.DataFrame):
@@ -349,6 +349,36 @@ def segments2renovation_rate(segments, yr, cost_invest_df, cost_intangible_df, r
             'Energy LCC': energy_lcc_ds}
 
 
+def renovation_label2renovation_label_energy(energy_lcc_ds, cost_switch_fuel_df, flow_renovation_label):
+    """De-aggregate stock_renovation_label by final heating energy.
+
+    stock_renovation columns segmented by final label and final heating energy.
+
+    Parameters
+    ----------
+    energy_lcc_ds : pd.DataFrame
+        The
+
+    cost_switch_fuel_df: pd.DataFrame
+
+    stock_renovation_label: pd.DataFrame
+
+    Returns
+    -------
+    pd.DataFrame
+    """
+
+    lcc_energy_transition = cost2lcc(energy_lcc_ds, cost_switch_fuel=cost_switch_fuel_df, transition='energy')
+    lcc_energy_transition = lcc_energy_transition.reorder_levels(energy_lcc_ds.index.names)
+    market_share_energy = lcc2market_share(lcc_energy_transition)
+    ms_temp = pd.concat([market_share_energy.T] * len(language_dict['energy_performance_list']),
+                        keys=language_dict['energy_performance_list'], names=['Energy performance'])
+    sr_temp = pd.concat([flow_renovation_label.T] * len(language_dict['heating_energy_list']),
+                        keys=language_dict['heating_energy_list'], names=['Heating energy'])
+    flow_renovation_label_energy = (sr_temp * ms_temp).T
+    return flow_renovation_label_energy
+
+
 def stock_mobile2flow_destroyed(stock_mobile, stock_mobile_ini, stock_remaining, type_housing_destroyed, logging):
     """ Returns stock_destroyed -  segmented housing number demolition.
 
@@ -446,36 +476,6 @@ def stock_mobile2flow_destroyed(stock_mobile, stock_mobile_ini, stock_remaining,
     logging.debug('End while loop!')
 
     return flow_destroyed
-
-
-def renovation_label2renovation_label_energy(energy_lcc_ds, cost_switch_fuel_df, flow_renovation_label):
-    """De-aggregate stock_renovation_label by final heating energy.
-
-    stock_renovation columns segmented by final label and final heating energy.
-
-    Parameters
-    ----------
-    energy_lcc_ds : pd.DataFrame
-        The
-
-    cost_switch_fuel_df: pd.DataFrame
-
-    stock_renovation_label: pd.DataFrame
-
-    Returns
-    -------
-    pd.DataFrame
-    """
-
-    lcc_energy_transition = cost2lcc(energy_lcc_ds, cost_switch_fuel=cost_switch_fuel_df, transition='energy')
-    lcc_energy_transition = lcc_energy_transition.reorder_levels(energy_lcc_ds.index.names)
-    market_share_energy = lcc2market_share(lcc_energy_transition)
-    ms_temp = pd.concat([market_share_energy.T] * len(language_dict['energy_performance_list']),
-                        keys=language_dict['energy_performance_list'], names=['Energy performance'])
-    sr_temp = pd.concat([flow_renovation_label.T] * len(language_dict['heating_energy_list']),
-                        keys=language_dict['heating_energy_list'], names=['Heating energy'])
-    flow_renovation_label_energy = (sr_temp * ms_temp).T
-    return flow_renovation_label_energy
 
 
 def flow_renovation2flow_remained(flow_renovation_label_energy_seg):

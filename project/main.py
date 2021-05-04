@@ -7,9 +7,9 @@ import datetime
 
 from itertools import product
 
-from input import folder
-from func import *
-from function_pandas import *
+# from project.input import folder
+from project.func import *
+from project.function_pandas import *
 
 
 # TODO: calibration, adding public policies, documentation, unittest
@@ -44,13 +44,15 @@ if __name__ == '__main__':
 
     # loading cost
     cost_invest_df = cost_dict['cost_inv']
-    cost_invest_df.replace({0: float('nan')}, inplace=True)
     cost_switch_fuel_df = cost_dict['cost_switch_fuel']
 
     # loading parc
     name_file = os.path.join(folder['intermediate'], 'parc.pkl')
     logging.debug('Loading parc pickle file {}'.format(name_file))
     stock_ini_seg = pd.read_pickle(name_file)
+    name_file = os.path.join(folder['output'], 'parc.csv')
+    stock_ini_seg.to_csv(name_file)
+    logging.debug('Writing parc in .csv file: {}'.format(name_file))
     logging.debug('Total number of housing in this study {:,.0f}'.format(stock_ini_seg.sum()))
     segments = stock_ini_seg.index
     logging.debug('Total number of segments in this study {:,}'.format(len(segments)))
@@ -83,6 +85,7 @@ if __name__ == '__main__':
     technical_progress_dict = parameters_dict['technical_progress_dict']
 
     # initializing investment cost new
+    # TODO understand why do we have to do that
     cost_new_seg = pd.concat([cost_dict['cost_new']] * 2, keys=['Homeowners', 'Landlords'], names=['Occupancy status'])
     cost_new_seg.sort_index(inplace=True)
     cost_new_lim_seg = pd.concat([cost_dict['cost_new_lim']] * len(language_dict['energy_performance_new_list']),

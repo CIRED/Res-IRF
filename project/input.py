@@ -304,7 +304,7 @@ exogenous_dict['available_income_real_pop_ds'] = exogenous_dict['available_incom
 # COST
 ########################################################################################################################
 cost_dict = dict()
-name_file = 'cost_existing.csv'
+name_file = 'cost_renovation.csv'
 df_cost_inv = pd.read_csv(os.path.join(folder['input'], name_file), sep=',', header=[0], index_col=[0])
 cost_dict['cost_inv'] = df_cost_inv
 
@@ -319,7 +319,7 @@ df_intangible_cost = pd.DataFrame(
     index=language_dict['energy_performance_list'], columns=language_dict['energy_performance_list'])
 cost_dict['cost_intangible'] = df_intangible_cost
 
-name_file = 'cost_new.csv'
+name_file = 'cost_construction.csv'
 ds_cost_new = pd.read_csv(os.path.join(folder['input'], name_file), sep=',', header=[0], index_col=[0, 1, 2], squeeze=True)
 cost_dict['cost_new'] = ds_cost_new
 
@@ -354,43 +354,15 @@ calibration_dict['renovation_rate_dm_ep'] = de_aggregating_series(calibration_di
                                                                   'Energy performance')"""
 
 # parameter that explicit where to find the variable or if it's need to be calculated
-parameters_dict['intangible_cost_source'] = 'function'
+parameters_dict['intangible_cost_source'] = 'pickle'
 
 # PUBLIC POLICY
 ########################################################################################################################
-"""
 public_policy_list = ['carbon_tax', 'CITE', 'EPTZ', 'CEE']
 
-# TODO: Calculate public policy by area with the average area for decision-maker or for all.
-
-# EPTZ
-interest_rate_ini = 0.03
-lifetime_eptz_ini = 5
-discount_factor_eptz = (1 - (1 + interest_rate_ini) ** -lifetime_eptz_ini) / interest_rate_ini
-max_eptz_ini = 21000
-coef_eptz_ini = pd.Series([0.8, 0.8, 0.85, 0.85, 0.9, 0.9, 0.95, 0.95, 1, 1], index=language_dict['income_class_list'])
-
-# CITE
-rate_invest_cite = 0.17
-max_cite = 16000
-
-Part_conso_chauffage_neuf = 0.4
-
-
-# Lors du calibrage, il faudra faire coïncider à l'année initiale les consommations observées par énergie
-# avec le calcul fourni par Res-IRF --> Pour chaque énergie, calcul de coefficients de conversion pour faire coïncider
-
-conso_bois_ini = 11.55 # Conso de bois à l'année réf (source ADEME) (en Mm3)// A mettre à jour
-conso_2018 = [33.163 * 10**9, 105.582 * 10**9, 36.138 * 10**9, 79.554 * 10**9] # Données 2018 (CEREN climat normal), en TWh
-conso_2019 = [33.8 * 10**9,  103.7 * 10**9,  34.2 * 10**9,  78.16 * 10**9] # 2019 CEREN climat normal TWh
-
-# calcul area moyenne pondérée
-# ds_area.reindex(dfp.index) * dfp / dfp.sum()
-
-
-# rotation concerne les
 rotation_rate = pd.Series([0.03, 0.18, 0.08], index=['Landlords', 'Homeowners', 'Social-housing'])
 mutation_rate = pd.Series([0.035, 0.018, 0.003], index=['Landlords', 'Homeowners', 'Social-housing'])
-"""
+
+
 
 

@@ -1,0 +1,29 @@
+{
+    "Destruction rate": 0.0035,
+    "Residual destruction rate": 0.05,
+
+    "Household income rate": 0.012,
+    "Factor population housing ini": -0.007,
+    "Population housing min": 2,
+    "Available income rate": 0.012,
+    "Available income ini": 14210000000000,
+
+    "Learning by doing construction": -0.15,
+    "Learning by doing renovation": -0.1,
+    "Learning years renovation": 10,
+    "Information rate renovation": 0.25,
+    "Information rate max renovation": 0.8,
+    "Information rate construction": 0.25,
+    "Information rate max construction": 0.95,
+
+    "NPV min": -1000,
+    "Renovation rate max": 0.4,
+    "Renovation rate min": 0.00001,
+
+    "Nu intangible cost": 8.0,
+    "Nu construction": 8.0,
+    "Nu label": 8.0,
+    "Nu energy": 8.0
+
+  }
+
