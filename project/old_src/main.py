@@ -163,6 +163,7 @@ if __name__ == '__main__':
     nb_population_housing[calibration_year] = nb_population_housing_ini
 
     flow_needed = dict()
+    # TODO absurd
     flow_needed[calibration_year] = stock_ini_seg.sum()
 
     stock_constructed_seg, stock_constructed, flow_constructed, flow_constructed_dm = dict(), dict(), dict(), dict()
@@ -323,6 +324,7 @@ if __name__ == '__main__':
             stock_constructed_seg[year] = stock_constructed_seg[year - 1] + flow_constructed_seg
 
         # variable used to determine construction knowledge in the learning-by-doing process.
+        # TODO: area? doesn't use dynamic at all
         flow_area_constructed_he_ep[year] = flow_constructed_seg.groupby(['Energy performance', 'Heating energy']).sum()
 
         logging.debug('Output: storing important results')

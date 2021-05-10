@@ -96,7 +96,7 @@ def miiindex_loc(ds, slicing_midx):
     return res
 
 
-def reindex_mi(df, miindex, levels):
+def reindex_mi(df, miindex, levels, axis=0):
     """Return re-indexed DataFrame based on miindex using only few labels.
 
     Levels order must match df.levels order.
@@ -108,11 +108,20 @@ def reindex_mi(df, miindex, levels):
     if len(levels) > 1:
         tuple_index = (miindex.get_level_values(level).tolist() for level in levels)
         new_miindex = pd.MultiIndex.from_tuples(list(zip(*tuple_index)))
-        df = df.reorder_levels(levels)
+        if axis == 0:
+            df = df.reorder_levels(levels)
+        else:
+            df = df.reorder_levels(levels, axis=1)
     else:
         new_miindex = miindex.get_level_values(levels[0])
-    df_reindex = df.reindex(new_miindex)
-    df_reindex.index = miindex
+    df_reindex = df.reindex(new_miindex, axis=axis)
+    if axis == 0:
+        df_reindex.index = miindex
+    elif axis == 1:
+        df_reindex.columns = miindex
+    else:
+        raise AttributeError('Axis can only be 0 or 1')
+
     return df_reindex
 
 
@@ -286,13 +295,22 @@ def add_level(ds, index, axis=0):
     Value of ds does not depend on the new level (i.e. only defined by other levels).
     """
     # ds_added append identical Series for each unique value
-    ds_added = pd.Series(dtype='float64')
-    for new_index in index:
-        ds_added = ds_added.append(pd.concat([ds], keys=[new_index], names=[index.names[0]], axis=axis))
+    if isinstance(ds, pd.Series):
+        ds_added = pd.Series(dtype='float64')
+        for new_index in index:
+            ds_added = ds_added.append(pd.concat([ds], keys=[new_index], names=[index.names[0]], axis=axis))
 
-    if axis == 0:
-        ds_added.index = pd.MultiIndex.from_tuples(ds_added.index)
-        ds_added.index.names = [index.names[0]] + ds.index.names
+        if axis == 0:
+            ds_added.index = pd.MultiIndex.from_tuples(ds_added.index)
+            ds_added.index.names = [index.names[0]] + ds.index.names
 
-    return ds_added
+        return ds_added
+
+    elif isinstance(ds, pd.DataFrame):
+        # only works for axis=1 for now
+        df_temp = pd.DataFrame(dtype='float64')
+        for column in index:
+            df_temp = pd.concat((df_temp, pd.concat([ds], keys=[column], names=[index.names[0]], axis=1)), axis=1)
+
+        return df_temp
 

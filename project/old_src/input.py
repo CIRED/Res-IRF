@@ -8,9 +8,9 @@ from function_pandas import linear2series, de_aggregate_columns, ds_mul_df, de_a
 ########################################################################################################################
 folder = dict()
 folder['working_directory'] = os.getcwd()
-folder['input'] = os.path.join(os.getcwd(), 'project', 'input')
-folder['output'] = os.path.join(os.getcwd(), 'project', 'output')
-folder['intermediate'] = os.path.join(os.getcwd(), 'project', 'intermediate')
+folder['input'] = os.path.join(os.getcwd(), 'project', '../input')
+folder['output'] = os.path.join(os.getcwd(), 'project', '../output')
+folder['intermediate'] = os.path.join(os.getcwd(), 'project', '../intermediate')
 folder['calibration'] = os.path.join(folder['input'], 'calibration')
 folder['calibration_intermediate'] = os.path.join(folder['intermediate'], 'calibration_intermediate')
 
@@ -199,9 +199,6 @@ parameters_dict['rate_min'] = 0.00001
 # SHARE
 ########################################################################################################################
 
-name_file = 'distribution_heating_energy_new.csv'
-distribution_heating_energy_new = pd.read_csv(os.path.join(folder['input'], name_file), sep=',', header=[0],
-                                              index_col=[0, 1])
 
 parameters_dict['ht_share_tot'] = pd.Series([0.39, 0.61], index=['Multi-family', 'Single family'])
 parameters_dict['factor_evolution_distribution'] = 0.87
@@ -312,12 +309,6 @@ energy_list = ['Power', 'Natural gas', 'Oil fuel', 'Wood fuel']
 df_cost_switch_fuel = pd.DataFrame([(0, 70, 100, 120), (55, 0, 80, 100), (55, 50, 0, 100), (55, 50, 80, 0)],
                                    index=energy_list, columns=energy_list)
 cost_dict['cost_switch_fuel'] = df_cost_switch_fuel
-
-df_intangible_cost = pd.DataFrame(
-    [(0, 162, 65, 66, 21, 215, 289), (0, 0, 141, 172, 15, 39, 330), (0, 0, 0, 125, 31, 58, 313),
-     (0, 0, 0, 0, 88, 62, 216), (0, 0, 0, 0, 0, 134, 77), (0, 0, 0, 0, 0, 0, 0), (0, 0, 0, 0, 0, 0, 0)],
-    index=language_dict['energy_performance_list'], columns=language_dict['energy_performance_list'])
-cost_dict['cost_intangible'] = df_intangible_cost
 
 name_file = 'cost_construction.csv'
 ds_cost_new = pd.read_csv(os.path.join(folder['input'], name_file), sep=',', header=[0], index_col=[0, 1, 2], squeeze=True)

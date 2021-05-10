@@ -2,7 +2,7 @@ import os
 import logging
 import time
 
-from project.input import folder, language_dict
+from project.old_src.input import folder, language_dict
 from project.function_pandas import *
 
 

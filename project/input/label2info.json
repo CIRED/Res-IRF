@@ -60,27 +60,29 @@
     "index": [
       "Occupancy status",
       "Housing type"
-    ]
+    ],
+    "type": "pd.Series"
   },
   "label2area_construction": {
     "val": {
       "Homeowners": {
-        "Single-family": 160,
-        "Multi-family": 89
+        "Single-family": 132,
+        "Multi-family": 81
       },
       "Landlords": {
-        "Single-family": 101,
-        "Multi-family": 76
+        "Single-family": 90,
+        "Multi-family": 60
       },
       "Social-housing": {
-        "Single-family": 90,
-        "Multi-family": 76
+        "Single-family": 84,
+        "Multi-family": 71
       }
     },
     "index": [
       "Occupancy status",
       "Housing type"
-    ]
+    ],
+    "type": "pd.Series"
   },
   "label2primary_consumption": {
     "val": {
@@ -94,7 +96,8 @@
     },
     "index": [
       "Energy performance"
-    ]
+    ],
+    "type": "pd.Series"
   },
   "label2primary_consumption_construction": {
     "val": {
@@ -103,7 +106,8 @@
     },
     "index": [
       "Energy performance"
-    ]
+    ],
+    "type": "pd.Series"
   },
   "label2horizon_envelope": {
     "Green value": 30,
@@ -115,7 +119,8 @@
       },
       "index": [
         "Occupancy status"
-      ]
+      ],
+    "type": "pd.Series"
     },
     "No green value": {
       "val": {
@@ -125,7 +130,8 @@
       },
       "index": [
         "Occupancy status"
-      ]
+      ],
+    "type": "pd.Series"
     },
     "No green value and rent": {
       "val": {
@@ -135,7 +141,8 @@
       },
       "index": [
         "Occupancy status"
-      ]
+      ],
+    "type": "pd.Series"
     }
   },
   "label2horizon_heater": {
@@ -148,7 +155,8 @@
       },
       "index": [
         "Occupancy status"
-      ]
+      ],
+    "type": "pd.Series"
     },
     "No green value": {
       "val": {
@@ -158,7 +166,8 @@
       },
       "index": [
         "Occupancy status"
-      ]
+      ],
+    "type": "pd.Series"
     },
     "No green value and rent": {
       "val": {
@@ -168,7 +177,8 @@
       },
       "index": [
         "Occupancy status"
-      ]
+      ],
+    "type": "pd.Series"
     }
   },
   "label2horizon_construction": 35,
@@ -184,7 +194,8 @@
     },
     "index": [
       "Energy performance"
-    ]
+    ],
+    "type": "pd.Series"
   },
   "label2heater_construction": {
     "val": {
@@ -193,7 +204,8 @@
     },
     "index": [
       "Energy performance"
-    ]
+    ],
+    "type": "pd.Series"
   },
   "label2discount": {
     "val": {
@@ -269,7 +281,8 @@
     "index": [
       "Housing type",
       "Occupancy status"
-    ]
+    ],
+    "type": "pd.Series"
   },
   "label2income": {
     "val": {
@@ -286,7 +299,8 @@
     },
     "index": [
       "Income class"
-    ]
+    ],
+    "type": "pd.Series"
   },
   "label2final_energy": {
     "val": {
@@ -297,7 +311,8 @@
     },
     "index": [
       "Heating energy"
-    ]
+    ],
+    "type": "pd.Series"
   }
 }
 

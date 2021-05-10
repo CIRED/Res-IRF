@@ -1,0 +1,19 @@
+from setuptools import setup
+
+with open("README.md", 'r') as f:
+    long_description = f.read()
+
+setup(
+   name='Res-IRF',
+   version='1.0',
+   description='Building Energy Model',
+   license="MIT",
+   long_description=long_description,
+   author='L.G. Giraudet, L. Vivier',
+   author_email='vivier@centre-cired.fr',
+   url="https://github.com/lucas-vivier/Res-IRF",
+   packages=['project'],
+   install_requires=['pandas', 'numpy', 'scipy'],
+   scripts=[
+           ]
+)

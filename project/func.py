@@ -2,7 +2,7 @@ import numpy as np
 from scipy.optimize import fsolve
 import os
 
-from project.input import parameters_dict, language_dict, technical_progress_dict, cost_dict, exogenous_dict, calibration_dict, index_year, folder
+from project.old_src.input import parameters_dict, language_dict, technical_progress_dict, cost_dict, exogenous_dict, calibration_dict, index_year, folder
 from project.function_pandas import *
 
 
@@ -64,7 +64,6 @@ def population_housing_dynamic(nb_population_housing_prev, nb_population_housing
     """Returns number of people by building for year.
 
     Number of people by housing decrease over the time.
-    TODO: It seems we could get the number of people by buildings exogeneously.
     """
     eps_pop_housing = (nb_population_housing_prev - parameters_dict['nb_population_housing_min']) / (
             nb_population_housing_ini - parameters_dict['nb_population_housing_min'])

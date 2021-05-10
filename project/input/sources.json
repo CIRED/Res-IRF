@@ -17,30 +17,42 @@
     "index_names": ["Housing type", "Occupancy status", "Heating energy", "Energy performance", "Income class"],
     "type": "pd.Series"
   },
-  "intangible_cost": {
+  "cost_intangible": {
     "source_type": "file",
     "source": "project/intermediate/intangible_cost_seg.pkl"
+  },
+  "cost_intangible_construction": {
+    "source_type": "function",
+    "source": "project/intermediate/cost_intangible_construction.pkl"
   },
   "rho": {
     "source_type": "file",
     "source": "project/intermediate/rho.pkl"
   },
-  "renovation_cost": {
+  "cost_renovation": {
     "type": "file",
     "source": "project/input/cost_renovation.csv",
     "index_names": ["Energy performance"],
     "columns_names": ["Energy performance final"]
   },
-  "construction_cost": {
+  "cost_construction": {
     "type": "file",
     "source": "project/input/cost_construction.csv"
   },
-  "switch_fuel_cost": {
+  "cost_switch_fuel": {
     "type": "file",
     "source": "project/input/cost_switch_fuel.csv"
   },
   "energy_prices": {
     "type": "file",
     "source": "project/input/energy_prices.json"
+  },
+  "parameters": {
+    "type": "file",
+    "source": "project/input/parameters.json"
+  },
+  "population": {
+    "type": "file",
+    "source": "project/input/projection_population_insee.csv"
   }
 }

@@ -1,17 +1,4 @@
-﻿Heating energy,Housing type,Energy performance,Cost
-Power,Single-family,BBC,979
-Power,Single-family,BEPOS,1112
-Power,Multi-family,BBC,1199
-Power,Multi-family,BEPOS,1308
-Natural gas,Single-family,BBC,1032
-Natural gas,Single-family,BEPOS,1059
-Natural gas,Multi-family,BBC,1242
-Natural gas,Multi-family,BEPOS,1252
-Oil fuel,Single-family,BBC,1032
-Oil fuel,Single-family,BEPOS,1059
-Oil fuel,Multi-family,BBC,1242
-Oil fuel,Multi-family,BEPOS,1253
-Wood fuel,Single-family,BBC,1094
-Wood fuel,Single-family,BEPOS,1121
-Wood fuel,Multi-family,BBC,1323
-Wood fuel,Multi-family,BEPOS,1350
+﻿Heating energy final,Power,Power,Natural gas,Natural gas,Oil fuel,Oil fuel,Wood fuel,Wood fuel
+Energy performance final,BBC,BEPOS,BBC,BEPOS,BBC,BEPOS,BBC,BEPOS
+Single-family,979,1112,1032,1059,1032,1059,1094,1121
+Multi-family,1199,1308,1242,1252,1242,1253,1323,1350

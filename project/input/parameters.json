@@ -1,0 +1,105 @@
+{
+  "Destruction rate": 0.0035,
+  "Residual destruction rate": 0.05,
+  "Household income rate": 0.012,
+  "Factor population housing ini": -0.007,
+  "Population housing min": 2,
+  "Available income rate": 0.012,
+  "Available income ini": 14210000000000,
+  "Stock total ini": 29037000,
+  "Factor share multi-family": 0.87,
+  "Learning by doing construction": -0.15,
+  "Learning by doing renovation": -0.1,
+  "Learning years renovation": 10,
+  "Information rate renovation": 0.25,
+  "Information rate max renovation": 0.8,
+  "Information rate construction": 0.25,
+  "Information rate max construction": 0.95,
+  "NPV min": -1000,
+  "Renovation rate max": 0.4,
+  "Renovation rate min": 0.00001,
+  "Nu intangible cost": 8.0,
+  "Nu construction": 8.0,
+  "Nu label": 8.0,
+  "Nu energy": 8.0,
+  "Elasticity area construction": {
+    "val": {
+      "Single-family": {
+        "Homeowners": 0.2,
+        "Landlords": 0.2,
+        "Social-housing": 0.01
+      },
+      "Multi-family": {
+        "Homeowners": 0.01,
+        "Landlords": 0.01,
+        "Social-housing": 0.01
+      }
+    },
+    "index": [
+      "Housing type",
+      "Occupancy status"
+    ],
+    "type": "pd.Series"
+  },
+  "Area max construction": {
+    "val": {
+      "Single-family": {
+        "Homeowners": 160,
+        "Landlords": 101,
+        "Social-housing": 90
+      },
+      "Multi-family": {
+        "Homeowners": 89,
+        "Landlords": 76,
+        "Social-housing": 76
+      }
+    },
+    "index": [
+      "Housing type",
+      "Occupancy status"
+    ],
+    "type": "pd.Series"
+  },
+  "Cost construction lim": {
+    "val": {
+      "Single-family": {
+        "BBC": 700,
+        "BEPOS": 750
+      },
+      "Multi-family": {
+        "BBC": 800,
+        "BEPOS": 850
+      }
+    },
+    "index": [
+      "Housing type",
+      "Energy performance final"
+    ],
+    "type": "pd.Series"
+  },
+  "Rotation rate": {
+    "val": {
+      "Landlords": 0.03,
+      "Homeowners": 0.18,
+      "Social-housing": 0.08
+    },
+    "index": [
+      "Housing type"
+    ],
+    "type": "pd.Series"
+  },
+  "Mutation rate": {
+    "val": {
+      "Landlords": 0.035,
+      "Homeowners": 0.018,
+      "Social-housing": 0.003
+    },
+    "index": [
+      "Housing type"
+    ],
+    "type": "pd.Series"
+  }
+}
+
+
+
