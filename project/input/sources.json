@@ -8,9 +8,6 @@
   "intermediate": {
     "source": "project/intermediate"
   },
-  "calibration": {
-    "source": "project/input/calibration"
-  },
   "stock_buildings": {
     "source": "project/intermediate/parc.pkl",
     "year": 2018,
@@ -54,5 +51,9 @@
   "population": {
     "type": "file",
     "source": "project/input/projection_population_insee.csv"
+  },
+  "colors": {
+    "type": "file",
+    "source": "project/input/colors.json"
   }
 }

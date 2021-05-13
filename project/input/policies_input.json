@@ -1,0 +1,61 @@
+{
+  "CITE":
+  {
+    "name": "CITE",
+    "kind": "subsidies",
+    "start": 2012,
+    "end": 2050,
+    "values": 0.17,
+    "minimum_costs": 0,
+    "maximum_costs": 16000,
+    "minimum_values": 0.3,
+    "maximum_values": 0.3
+  },
+  "EcoPTZ-1":
+  {
+    "name": "EcoPTZ-1",
+    "kind": "subsidies",
+    "start": 2012,
+    "end": 2050,
+    "values": 0.03,
+    "minimum_costs": 5000,
+    "maximum_costs": 21000,
+    "targets_segments": [["G", "C"], ["G", "B"],["G", "A"]],
+    "targets_coefficient":
+    {
+      "D1": 0.8,
+      "D2": 0.8,
+      "D3": 0.85,
+      "D4": 0.85,
+      "D5": 0.9,
+      "D6": 0.9,
+      "D7": 0.95,
+      "D8": 0.95,
+      "D9": 1,
+      "D10": 1
+    }
+  },
+  "EcoPTZ-2":
+  {
+     "name": "EcoPTZ-2",
+     "kind": "subsidies",
+     "start": 2012,
+     "end": 2050,
+     "values": 0.03,
+     "minimum_costs": 5000,
+     "maximum_costs": 21000,
+     "targets_coefficient":
+     {
+       "D1": 0.8,
+       "D2": 0.8,
+       "D3": 0.85,
+       "D4": 0.85,
+       "D5": 0.9,
+       "D6": 0.9,
+       "D7": 0.95,
+       "D8": 0.95,
+       "D9": 1,
+       "D10": 1
+     }
+   }
+}

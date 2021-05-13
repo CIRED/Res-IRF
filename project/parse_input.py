@@ -1,10 +1,8 @@
 import pandas as pd
 import os
 import json
-from function_pandas import linear2series, reindex_mi
-import logging
 
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(message)s')
+from project.utils import linear2series, reindex_mi
 
 
 def dict2series(item_dict):
@@ -60,6 +58,27 @@ def final2consumption(consumption, conversion):
     return consumption * conversion
 
 
+def population_housing_dynamic(population_housing_prev, population_housing_min, population_housing_ini, factor):
+    """Returns number of people by building for year.
+
+    Number of people by housing decrease over the time.
+    TODO: It seems we could get the number of people by buildings exogeneously.
+    """
+    eps_pop_housing = (population_housing_prev - population_housing_min) / (
+            population_housing_ini - population_housing_min)
+    eps_pop_housing = max(0, min(1, eps_pop_housing))
+    factor_pop_housing = factor * eps_pop_housing
+    return max(population_housing_min, population_housing_prev * (1 + factor_pop_housing))
+
+
+def forecast2myopic(forecast_price, yr):
+    val = forecast_price.loc[:, yr]
+    columns_year = forecast_price.columns[forecast_price.columns >= yr]
+    myopic = pd.concat([val] * len(columns_year), axis=1)
+    myopic.columns = columns_year
+    myopic.index.set_names('Heating energy', inplace=True)
+    return myopic
+
 # FOLDERS
 ####################################################################################################################
 folder = dict()
@@ -83,12 +102,16 @@ last_year = 2080
 index_input_year = range(calibration_year, last_year + 1, 1)
 
 name_file = os.path.join(os.getcwd(), sources_dict['stock_buildings']['source'])
-logging.debug('Loading parc pickle file {}'.format(name_file))
+# logging.debug('Loading parc pickle file {}'.format(name_file))
 stock_ini_seg = pd.read_pickle(name_file)
 
 name_file = os.path.join(folder['input'], 'scenario.json')
 with open(name_file) as file:
     scenario_dict = json.load(file)
+
+name_file = os.path.join(os.getcwd(), sources_dict['colors']['source'])
+with open(name_file) as file:
+    colors_dict = json.load(file)
 
 dict_parameters = {}
 name_file = os.path.join(folder['input'], 'parameters.json')
@@ -116,21 +139,7 @@ dict_parameters['Available income real'] = dict_parameters['Available income'] /
 dict_parameters['Available income real population'] = dict_parameters['Available income real'] / dict_parameters[
     'Population total']
 
-
-def population_housing_dynamic(population_housing_prev, population_housing_min, population_housing_ini, factor):
-    """Returns number of people by building for year.
-
-    Number of people by housing decrease over the time.
-    TODO: It seems we could get the number of people by buildings exogeneously.
-    """
-    eps_pop_housing = (population_housing_prev - population_housing_min) / (
-            population_housing_ini - population_housing_min)
-    eps_pop_housing = max(0, min(1, eps_pop_housing))
-    factor_pop_housing = factor * eps_pop_housing
-    return max(population_housing_min, population_housing_prev * (1 + factor_pop_housing))
-
-
-population_housing_min = dict_parameters["Population housing min"]
+population_housing_min = dict_parameters['Population housing min']
 population_housing = {}
 population_housing[calibration_year] = dict_parameters['Population'].loc[calibration_year] / stock_ini_seg.sum()
 max_year = max(dict_parameters['Population'].index)
@@ -148,8 +157,8 @@ for year in index_input_year[1:]:
                                                           dict_parameters['Factor population housing ini'])
     flow_needed[year] = dict_parameters['Population'].loc[year] / population_housing[year]
 
-dict_parameters['Population housing'] = population_housing
-dict_parameters['Flow needed'] = flow_needed
+dict_parameters['Population housing'] = pd.Series(population_housing)
+dict_parameters['Flow needed'] = pd.Series(flow_needed)
 
 name_file = os.path.join(folder['input'], 'label2info.json')
 dict_label = {}
@@ -222,17 +231,17 @@ for key, value in file_dict['price_w_taxes'].items():
     ds = linear2series(value, file_dict['price_rate'][key], index_input_year)
     ds.name = key
     energy_price_data = pd.concat((energy_price_data, ds), axis=1)
-energy_prices_dict['energy_price_forecast'] = energy_price_data
+energy_prices_dict['energy_price_forecast'] = energy_price_data.T
 
 temp = pd.concat([pd.Series(file_dict['price_w_taxes'])] * len(index_input_year), axis=1)
 temp.index.set_names('Heating energy', inplace=True)
 temp.columns = index_input_year
 energy_prices_dict['energy_price_myopic'] = temp
 
-file = 'renovation_rate_decision_maker'
-name_file = os.path.join(folder['calibration'], file + '.csv')
-renovation_obj = pd.read_csv(name_file, index_col=[0, 1], header=[0], squeeze=True)
+name_file = os.path.join(folder['input'], 'rate_renovation_ini.csv')
+rate_renovation_ini = pd.read_csv(name_file, index_col=[0, 1], header=[0], squeeze=True)
 
-name_file = os.path.join(folder['calibration'], 'market_share.csv')
-marker_share_obj = pd.read_csv(name_file, index_col=[0], header=[0])
-marker_share_obj.index.set_names(['Energy performance'], inplace=True)
+name_file = os.path.join(folder['input'], 'ms_renovation_ini.csv')
+ms_renovation_ini = pd.read_csv(name_file, index_col=[0], header=[0])
+ms_renovation_ini.index.set_names(['Energy performance'], inplace=True)
+

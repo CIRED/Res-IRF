@@ -2,29 +2,28 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5a27c1bc-6d7f-41bf-89e9-22387bb7bdb3" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/project/input/colors.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/input/parameters.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/input/share.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/parse_output.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/input/policies_input.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/read_pkl.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/buildings_class.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/buildings_class.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/func.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/func.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/function_pandas.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/function_pandas.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/graphic.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/old_src/graphic.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/graphic_parc.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/old_src/graphic_parc.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/old_src/input.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/cost_construction.csv" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/cost_construction.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/distribution_heating_energy_new.csv" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/old/distribution_heating_energy_new.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/financial.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/func.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/old_src/func.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/function_pandas.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/input/calibration/market_share.csv" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/ms_renovation_ini.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/input/calibration/old/renovation_rate_decision_maker.csv" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/old/old/renovation_rate_decision_maker.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/input/calibration/old/renovation_share_energy_performance.csv" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/old/old/renovation_share_energy_performance.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/input/calibration/renovation_rate_decision_maker.csv" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/rate_renovation_ini.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/input/colors.json" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/colors.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/input/label2info.json" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/label2info.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/input/parameters.json" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/parameters.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/input/sources.json" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/sources.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/old_src/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/main_class.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/main_class.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/parc.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/parc.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/old_src/graphic.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/graphic.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/old_src/graphic_parc.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/old_src/graphic_parc.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/old_src/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/old_src/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/parse_input.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/parse_input.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/temp.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/to_keep.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/old_src/to_keep.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/parse_output.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/parse_output.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/tests/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/tests/test.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,6 +50,9 @@
       <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
     </file-type-list>
   </component>
+  <component name="ProblemsViewState">
+    <option name="selectedIndex" value="1" />
+  </component>
   <component name="ProjectId" id="1nmWiZrsFYJUfflV92QUyyUg7En" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
@@ -58,6 +60,7 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
@@ -65,17 +68,20 @@
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="settings.editor.selected.configurable" value="preferences.keymap" />
   </component>
+  <component name="PyCoverageOptionsProvider">
+    <option name="myUseBundledCoveragePy" value="true" />
+  </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/project/input" />
       <recent name="$PROJECT_DIR$/project/tests/input" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$" />
-      <recent name="$PROJECT_DIR$/project/old_src" />
       <recent name="$PROJECT_DIR$/project" />
-      <recent name="$PROJECT_DIR$/project/tests" />
       <recent name="$PROJECT_DIR$/project/input/old" />
+      <recent name="$PROJECT_DIR$/project/old_src" />
+      <recent name="$PROJECT_DIR$/project/input" />
+      <recent name="$PROJECT_DIR$" />
     </key>
   </component>
   <component name="RunManager" selected="Python.main_class">
@@ -101,7 +107,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="input" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="graphic" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Res-IRF" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -114,7 +120,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/project/old_src/input.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/project/graphic.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -191,18 +197,18 @@
     </configuration>
     <list>
       <item itemvalue="Python.buildings_class" />
-      <item itemvalue="Python.input" />
       <item itemvalue="Python.main_class" />
       <item itemvalue="Python.parse_input" />
       <item itemvalue="Python.main" />
+      <item itemvalue="Python.graphic" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Python.main_class" />
+        <item itemvalue="Python.graphic" />
         <item itemvalue="Python.parse_input" />
-        <item itemvalue="Python.main" />
         <item itemvalue="Python.buildings_class" />
-        <item itemvalue="Python.input" />
+        <item itemvalue="Python.main" />
       </list>
     </recent_temporary>
   </component>
@@ -253,7 +259,10 @@
       <workItem from="1620214658529" duration="12096000" />
       <workItem from="1620280772198" duration="36201000" />
       <workItem from="1620549908014" duration="453000" />
-      <workItem from="1620626611781" duration="11097000" />
+      <workItem from="1620626611781" duration="20464000" />
+      <workItem from="1620713589387" duration="28850000" />
+      <workItem from="1620833216801" duration="7407000" />
+      <workItem from="1620897113460" duration="2579000" />
     </task>
     <task id="LOCAL-00001" summary="major update - work still ongoing">
       <created>1613665046411</created>
@@ -360,7 +369,14 @@
       <option name="project" value="LOCAL" />
       <updated>1620141541483</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="using oop - wo public policies">
+      <created>1620642133824</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1620642133824</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -387,7 +403,8 @@
     <MESSAGE value="first version" />
     <MESSAGE value="first version working" />
     <MESSAGE value="using oop - work on-going" />
-    <option name="LAST_COMMIT_MESSAGE" value="using oop - work on-going" />
+    <MESSAGE value="using oop - wo public policies" />
+    <option name="LAST_COMMIT_MESSAGE" value="using oop - wo public policies" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -414,8 +431,8 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/project/main_class.py</url>
-          <line>159</line>
-          <option name="timeStamp" value="135" />
+          <line>250</line>
+          <option name="timeStamp" value="174" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
@@ -434,12 +451,13 @@
     <SUITE FILE_PATH="coverage/Res_IRF$main.coverage" NAME="main Coverage Results" MODIFIED="1620303825521" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$public_policy.coverage" NAME="public_policy Coverage Results" MODIFIED="1619601806334" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/project" />
     <SUITE FILE_PATH="coverage/Res_IRF$input.coverage" NAME="input Coverage Results" MODIFIED="1619704973353" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/Res_IRF$buildings_class.coverage" NAME="buildings_class Coverage Results" MODIFIED="1620046994934" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/Res_IRF$parse_input.coverage" NAME="parse_input Coverage Results" MODIFIED="1620316342412" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Res_IRF$buildings_class.coverage" NAME="buildings_class Coverage Results" MODIFIED="1620739724250" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Res_IRF$parse_input.coverage" NAME="parse_input Coverage Results" MODIFIED="1620741632318" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$parc.coverage" NAME="parc Coverage Results" MODIFIED="1618577530414" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Res_IRF$graphic.coverage" NAME="graphic Coverage Results" MODIFIED="1620836570610" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$input_payback.coverage" NAME="input_payback Coverage Results" MODIFIED="1616175154626" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$func_payback.coverage" NAME="func_payback Coverage Results" MODIFIED="1616402049977" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/Res_IRF$main_class.coverage" NAME="main_class Coverage Results" MODIFIED="1620639184300" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Res_IRF$main_class.coverage" NAME="main_class Coverage Results" MODIFIED="1620900292202" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$test.coverage" NAME="test Coverage Results" MODIFIED="1618423504844" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$func.coverage" NAME="func Coverage Results" MODIFIED="1619541825677" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/project" />
   </component>

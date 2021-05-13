@@ -1,4 +1,4 @@
-from graphic import *
+from project.graphic import *
 
 
 def graph_parc(dsp, dsp2=None):

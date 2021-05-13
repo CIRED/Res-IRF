@@ -1,4 +1,9 @@
 import pandas as pd
+import numpy as np
+
+
+def logistic(x, a=1, r=1, k=1):
+    return k / (1 + a * np.exp(- r * x))
 
 
 def multi_index2tuple(ds, list_levels):
@@ -280,10 +285,11 @@ def val2share(ds, levels, func=lambda x: x, option='row'):
         return prop
     elif option == 'column':
         values = prop.name
-        columns = [l for l in ds.index.names if l not in levels]
+        columns = [lvl for lvl in ds.index.names if lvl not in levels]
         prop = prop.reset_index()
         prop = pd.pivot_table(prop, values=values, index=levels,  columns=columns)
-        # prop.droplevel(prop.columns.names[0], axis=1)
+        if None in prop.columns.names:
+            prop = prop.droplevel(list(prop.columns.names).index(None), axis=1)
         return prop
     else:
         raise ValueError

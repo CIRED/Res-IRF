@@ -1,14 +1,11 @@
 
 import logging
-import os
 import time
 import pickle
 import datetime
 
-from itertools import product
-
 # from project.input import folder
-from project.func import *
+from project.old_src.func import *
 from project.function_pandas import *
 
 

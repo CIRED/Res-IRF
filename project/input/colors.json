@@ -8,7 +8,7 @@
   "F": "darkmagenta",
   "E": "rebeccapurple",
   "D": "red",
-  "C": "orangered",s
+  "C": "orangered",
   "B": "lightcoral",
   "A": "lightsalmon",
   "D1": "black",
@@ -31,5 +31,5 @@
   "C4": "tomato",
   "C5": "lightsalmon",
   "BBC": "black",
-  "BEPOS": "red"
+  "BEPOS": "lightsalmon"
 }
