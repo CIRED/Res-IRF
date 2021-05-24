@@ -1,61 +1,207 @@
 {
+  "CITE +":
+  {
+    "name": "cite_plus",
+    "policy": "subsidies",
+    "start": 2012,
+    "end": 2050,
+    "value": {
+      "val": {
+        "G": {
+          "F": 0,
+          "E": 0,
+          "D": 0.17,
+          "C": 0.17,
+          "B": 0.17,
+          "A": 0.17
+        },
+        "F": {
+          "F": 0,
+          "E": 0,
+          "D": 0.17,
+          "C": 0.17,
+          "B": 0.17,
+          "A": 0.17
+        },
+        "E": {
+          "F": 0,
+          "E": 0,
+          "D": 0.17,
+          "C": 0.17,
+          "B": 0.17,
+          "A": 0.17
+        },
+        "D": {
+          "F": 0,
+          "E": 0,
+          "D": 0,
+          "C": 0,
+          "B": 0.17,
+          "A": 0.17
+        },
+        "C": {
+          "F": 0,
+          "E": 0,
+          "D": 0,
+          "C": 0,
+          "B": 0.17,
+          "A": 0.17
+        }
+      },
+      "index": [
+        "Energy performance",
+        "Energy performance final"
+      ],
+      "type": "pd.DataFrame"
+    },
+    "kind": "%",
+    "transition": [
+      "Energy performance"
+    ],
+    "type": "dict_to_parse"
+  },
   "CITE":
   {
-    "name": "CITE",
-    "kind": "subsidies",
+    "name": "cite",
+    "policy": "subsidies",
     "start": 2012,
     "end": 2050,
-    "values": 0.17,
-    "minimum_costs": 0,
-    "maximum_costs": 16000,
-    "minimum_values": 0.3,
-    "maximum_values": 0.3
+    "value": 0.17,
+    "kind": "%",
+    "transition": ["Energy performance"],
+    "type": "dict_to_parse"
   },
-  "EcoPTZ-1":
+  "CEE-subsidy":
   {
-    "name": "EcoPTZ-1",
-    "kind": "subsidies",
+    "name": "cee_subsidy",
+    "policy": "subsidies",
     "start": 2012,
     "end": 2050,
-    "values": 0.03,
-    "minimum_costs": 5000,
-    "maximum_costs": 21000,
-    "targets_segments": [["G", "C"], ["G", "B"],["G", "A"]],
-    "targets_coefficient":
-    {
-      "D1": 0.8,
-      "D2": 0.8,
-      "D3": 0.85,
-      "D4": 0.85,
-      "D5": 0.9,
-      "D6": 0.9,
-      "D7": 0.95,
-      "D8": 0.95,
-      "D9": 1,
-      "D10": 1
-    }
+    "value": 0.004,
+    "kind": "€/kWh",
+    "transition": ["Energy performance"],
+    "type": "dict_to_parse"
   },
-  "EcoPTZ-2":
+  "CEE-taxes":
   {
-     "name": "EcoPTZ-2",
-     "kind": "subsidies",
-     "start": 2012,
-     "end": 2050,
-     "values": 0.03,
-     "minimum_costs": 5000,
-     "maximum_costs": 21000,
-     "targets_coefficient":
-     {
-       "D1": 0.8,
-       "D2": 0.8,
-       "D3": 0.85,
-       "D4": 0.85,
-       "D5": 0.9,
-       "D6": 0.9,
-       "D7": 0.95,
-       "D8": 0.95,
-       "D9": 1,
-       "D10": 1
-     }
-   }
+    "name": "cee_taxes",
+    "policy": "energy_taxes",
+    "start": 2012,
+    "end": 2050,
+    "value": 0.004,
+    "kind": "€/kWh",
+    "transition": ["Energy performance"],
+    "type": "dict_to_parse"
+  },
+  "Carbon tax":
+  {
+    "name": "carbon_tax",
+    "policy": "energy_taxes",
+    "start": 2012,
+    "end": 2050,
+    "value": "project/input/carbon_tax.csv",
+    "kind": "€/gCO2",
+    "type": "dict_to_parse"
+  },
+  "Reduced VTA":
+  {
+    "name": "reduced_vta",
+    "policy": "subsidies",
+    "start": 2012,
+    "end": 2050,
+    "value": 0.045,
+    "kind": "%",
+    "transition": ["Energy performance"],
+    "type": "dict_to_parse"
+  },
+  "EPTZ":
+  {
+    "name": "eptz",
+    "policy": "regulated_loan",
+    "start": 2012,
+    "end": 2050,
+    "principal_max": {
+      "val": {
+        "D1": 16800,
+        "D2": 16800,
+        "D3": 21000,
+        "D4": 21000,
+        "D5": 21000,
+        "D6": 21000,
+        "D7": 21000,
+        "D8": 21000,
+        "D9": 21000,
+        "D10": 21000
+      },
+      "index": [
+        "Income class"
+      ],
+      "type": "pd.Series"
+    },
+    "principal_min": 5000,
+    "ir_regulated": 0.0,
+    "horizon": 5,
+    "ir_market": 0.03,
+    "targets": {
+      "val": {
+        "G": {
+          "F": 0,
+          "E": 0,
+          "D": 1,
+          "C": 1,
+          "B": 1,
+          "A": 1
+        },
+        "F": {
+          "F": 0,
+          "E": 0,
+          "D": 1,
+          "C": 1,
+          "B": 1,
+          "A": 1
+        },
+        "E": {
+          "F": 0,
+          "E": 0,
+          "D": 1,
+          "C": 1,
+          "B": 1,
+          "A": 1
+        },
+        "D": {
+          "F": 0,
+          "E": 0,
+          "D": 0,
+          "C": 0,
+          "B": 1,
+          "A": 1
+        },
+        "C": {
+          "F": 0,
+          "E": 0,
+          "D": 0,
+          "C": 0,
+          "B": 1,
+          "A": 1
+        }
+      },
+      "index": [
+        "Energy performance",
+        "Energy performance final"
+      ],
+      "type": "pd.DataFrame"
+    },
+    "type": "dict_to_parse"},
+  "EPTZ +":
+  {
+    "name": "eptz",
+    "policy": "regulated_loan",
+    "start": 2012,
+    "end": 2050,
+    "ir_regulated": 0.0,
+    "ir_market": 0.04,
+    "principal_max": 30000,
+    "horizon": 10,
+    "type": "dict_to_parse"
+  }
 }

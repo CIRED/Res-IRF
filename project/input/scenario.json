@@ -1,7 +1,17 @@
 {
   "investor": "Reference",
+  "cost_intangible": true,
   "lbd_renovation": true,
   "info_renovation": true,
   "lbd_construction": true,
-  "info_construction": true
+  "info_construction": true,
+  "carbon_tax": true,
+  "carbon_tax_behavior": "myopic",
+  "cite": true,
+  "cite_plus": true,
+  "cee_subsidy": true,
+  "cee_taxes": false,
+  "reduced_vta": true,
+  "eptz": false,
+  "eptz_plus": false
 }

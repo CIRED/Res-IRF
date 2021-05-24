@@ -40,7 +40,8 @@
       "Natural gas",
       "Oil fuel",
       "Wood fuel"
-    ]
+    ],
+    "type": "dict"
   },
   "label2area": {
     "val": {
@@ -114,7 +115,9 @@
     "unit": "kWh/m2.yr"
   },
   "label2horizon_envelope": {
-    "Green value": 30,
+    "Green value": {
+      "type": "int", "val": 30
+    },
     "Reference": {
       "val": {
         "Homeowners": 30,
@@ -150,10 +153,13 @@
       ],
       "type": "pd.Series",
       "unit": "yr"
-    }
+    },
+    "type": "dict_to_parse"
   },
   "label2horizon_heater": {
-    "Green value": 16,
+    "Green value": {
+      "type": "float", "val": 16
+    },
     "Reference": {
       "val": {
         "Homeowners": 16,
@@ -163,7 +169,7 @@
       "index": [
         "Occupancy status"
       ],
-    "type": "pd.Series"
+      "type": "pd.Series"
     },
     "No green value": {
       "val": {
@@ -186,7 +192,8 @@
         "Occupancy status"
       ],
     "type": "pd.Series"
-    }
+    },
+    "type": "dict_to_parse"
   },
   "label2horizon_construction": 35,
   "label2heater": {
@@ -273,7 +280,8 @@
       "Income class owner",
       "Housing type"
     ],
-    "unit": "%/yr"
+    "unit": "%/yr",
+    "type": "pd.Series"
   },
   "label2discount_construction": {
     "val": {

@@ -1,8 +1,10 @@
-import pandas as pd
 import os
 import json
 
-from function_pandas import *
+from utils import *
+import numpy_financial as npf
+# npf.irr
+# npf.npv
 
 
 class PublicPolicy:
@@ -11,7 +13,7 @@ class PublicPolicy:
     Loan backed by the state are represented as subsidies.
     """
 
-    def __init__(self, name, start, end, kind, values):
+    def __init__(self, name, start, end, kind, values=None):
         """Define public policies.
 
         Parameters
@@ -42,21 +44,27 @@ class PublicPolicy:
         self.start = start
         self.end = end
 
-        list_kind = ['subsidies', 'taxes', 'regulation', 'subsidies_loan', 'other']
+        list_kind = ['subsidies', 'energy_taxes', 'regulation', 'subsidies_loan', 'other']
         if kind in list_kind:
             self.kind = kind
         else:
             raise AttributeError("Kind attribute must be included in {}".format([list_kind]))
 
-        if isinstance(values, float):
-            self.values = pd.Series(values, index=range(start, end + 1, 1))
-        elif isinstance(values, pd.Series):
-            self.values = values.loc[start:end]
-        elif isinstance(values, pd.DataFrame):
-            self.values = values.loc[:, start:end]
-        else:
-            raise AttributeError(
-                "Values attribute must be of type float, Series, or DataFrame. \n {} instead".format(type(values)))
+        self.values = None
+        if values is not None:
+            if isinstance(values, float):
+                self.values = pd.Series(values, index=range(start, end, 1))
+            elif isinstance(values, pd.Series):
+                start = max(start, min(values.index))
+                end = min(end, max(values.index))
+                self.values = values.loc[start:end]
+            elif isinstance(values, pd.DataFrame):
+                start = max(start, min(values.columns))
+                end = min(end, max(values.columns))
+                self.values = values.loc[:, start:end]
+            else:
+                raise AttributeError(
+                    "Values attribute must be of type float, Series, or DataFrame. \n {} instead".format(type(values)))
 
         self.targeted = False
         self.targets = None
@@ -71,10 +79,8 @@ class PublicPolicy:
                                                                                                     self.end,
                                                                                                     self.targeted)
 
-    def apply_policies(self, costs):
+    def values_by_cost(self, costs, yr=None, costs_max=None):
         """Multiply costs by self.values whatever types of costs and self.values.
-
-        # TODO: test with apply costs and remove policies.
 
         Parameters
         ----------
@@ -88,67 +94,113 @@ class PublicPolicy:
         if costs is pd.DataFrame: index must be segments, and columns year-time index.
         costs year-time series must include PublicPolicy application.
 
+        yr: int, optional
+
+        costs_max: , optional
+
         Returns
         -------
         pd.Series, or pd.DataFrame
         costs * self.values
         """
 
-        # costs_before = costs.loc[:self.start]
-        # costs_after = costs.loc[self.end + 1:]
-        if isinstance(costs, pd.Series):
-            costs = costs.loc[self.start:self.end + 1]
-        elif isinstance(costs, pd.DataFrame):
-            costs = costs.loc[:, self.start:self.end + 1]
+        costs[costs > costs_max] = costs_max
 
-        if not self.targeted:
+        # costs depends on year
+        if yr is None:
+
             if isinstance(costs, pd.Series):
-                return costs * self.values
+                start = max(self.start, min(costs.index))
+                end = min(self.end, max(costs.index))
+                costs = costs.loc[start:end]
             elif isinstance(costs, pd.DataFrame):
-                return ds_mul_df(self.values, costs, option='rows')
-            else:
-                raise ValueError("Costs must be type Series or DataFrame")
-        elif self.targeted:
-            levels_shared = [lvl for lvl in self.values.index.names if lvl in costs.index.names]
-            if len(levels_shared) != len(self.values.index.names):
-                print('Costs parameter is not enough segmented')
-            values_reindex = reindex_mi(self.values, costs.index, levels_shared)
-            return costs * values_reindex
+                start = max(self.start, min(costs.columns))
+                end = min(self.end, max(costs.columns))
+                costs = costs.loc[:, start:end]
 
-    def remove_policies(self, costs):
-        if not self.targeted:
+            if not self.targeted:
+                if isinstance(costs, pd.Series):
+                    return costs * self.values
+                elif isinstance(costs, pd.DataFrame):
+                    return ds_mul_df(self.values, costs, option='rows')
+                else:
+                    raise ValueError("Costs must be type Series or DataFrame")
+            elif self.targeted:
+                levels_shared = [lvl for lvl in self.values.index.names if lvl in costs.index.names]
+                if len(levels_shared) != len(self.values.index.names):
+                    print('Costs parameter is not enough segmented')
+                values_reindex = reindex_mi(self.values, costs.index, levels_shared)
+                return costs * values_reindex
+
+        # costs doesn't depend on year >>> values = values.loc[yr]
+        else:
+            if not self.targeted:
+                return costs * self.values.loc[yr]
+            elif self.targeted:
+                levels_shared = [lvl for lvl in self.values.index.names if lvl in costs.index.names]
+                if len(levels_shared) != len(self.values.index.names):
+                    print('Costs parameter is not enough segmented')
+                values_reindex = reindex_mi(self.values.loc[:, yr], costs.index, levels_shared)
+                return costs * values_reindex
+
+    def remove_policies(self, costs, yr=None):
+        if yr is None:
             if isinstance(costs, pd.Series):
-                return costs / (1 + self.values)
+                costs = costs.loc[self.start:self.end + 1]
             elif isinstance(costs, pd.DataFrame):
-                return ds_mul_df((1 + self.values) ** -1, costs, option='columns')
-            else:
-                raise ValueError("Costs must be type Series or DataFrame")
-        elif self.targeted:
-            levels_shared = [lvl for lvl in self.values.index.names if lvl in costs.index.names]
-            if len(levels_shared) != len(self.values.index.names):
-                print('Costs parameter is not enough segmented to match PublicPolicy targets')
+                costs = costs.loc[:, self.start:self.end + 1]
 
-            values_reindex = reindex_mi(self.values, costs.index, levels_shared)
-            return costs * (1 + values_reindex) ** -1
+            if not self.targeted:
+                if isinstance(costs, pd.Series):
+                    return costs * (self.values ** -1)
+                elif isinstance(costs, pd.DataFrame):
+                    return ds_mul_df(self.values ** -1, costs, option='rows')
+                else:
+                    raise ValueError("Costs must be type Series or DataFrame")
+            elif self.targeted:
+                levels_shared = [lvl for lvl in self.values.index.names if lvl in costs.index.names]
+                if len(levels_shared) != len(self.values.index.names):
+                    print('Costs parameter is not enough segmented')
+                values_reindex = reindex_mi(self.values ** -1, costs.index, levels_shared)
+                return costs * values_reindex
+
+        else:
+            if not self.targeted:
+                return costs * (self.values ** -1).loc[yr]
+            elif self.targeted:
+                levels_shared = [lvl for lvl in self.values.index.names if lvl in costs.index.names]
+                if len(levels_shared) != len(self.values.index.names):
+                    print('Costs parameter is not enough segmented')
+                values_reindex = reindex_mi(self.values ** -1, costs.index, levels_shared)
+                return costs * values_reindex
 
 
 class Subsidies(PublicPolicy):
+    """
+    Subsidies apply for a specific transition.
+    """
+    def __init__(self, name, start, end, kind, values, cost, unit='percent'):
+        super().__init__(name, start, end, kind, values)
+        self.cost = cost
+        self.unit = unit
+        # unit must be 'percent' or 'absolute'
+
+
+    def apply_subsidies(self, costs, costs_max=None):
+        if self.unit == 'percent':
+            discount = self.values_by_cost(costs, costs_max=costs_max)
+            return discount, costs - discount
+        elif self.unit == 'absolute':
+            pass
+
+
+class EnergyTaxes(PublicPolicy):
     def __init__(self, name, start, end, kind, values):
         super().__init__(name, start, end, kind, values)
 
-    def apply_subsidies(self, costs):
-        discount = self.apply_policies(costs)
-        return discount, costs - discount
-
-
-class Taxes(PublicPolicy):
-
-    def __init__(self, name, start, end, kind, values):
-        super().__init__(name, start, end, kind, values)
-
-    def apply_taxes(self, costs):
-        taxes = self.apply_policies(costs)
-        return taxes, costs + taxes
+    def apply_taxes(self, energy_price):
+        taxes = self.values_by_cost(energy_price)
+        return taxes, energy_price + taxes
 
 
 class Regulation(PublicPolicy):
@@ -162,25 +214,51 @@ class Regulation(PublicPolicy):
         pass
 
 
-class SubsidiesLoan(Subsidies):
+class RegulatedLoan(PublicPolicy):
     """Loan backed by the state.
 
-    Instead of paying interest_rate (%/yr)
+    Instead of paying interest_rate (%/yr).
+    Example: EPTZ
     """
 
-    def __init__(self, name, start, end, kind, values):
-        super().__init__(name, start, end, kind, values)
+    def __init__(self, name, start, end, kind, ir_regulated=0.0, principal_max=None, horizon_max=None):
+        super().__init__(name, start, end, kind)
+        self.ir_regulated = ir_regulated
+        self.horizon_max = horizon_max
+        self.principal_max = principal_max
 
-    def loan2subsidies(self, interest_rate):
-        if isinstance(interest_rate, float):
-            interest_rate = pd.Series(interest_rate, index=range(self.start, self.end + 1, 1))
-        elif isinstance(interest_rate, pd.Series):
-            interest_rate = interest_rate.loc[self.start:self.end]
+    @staticmethod
+    def interest_cost(interest_rate, n_period, principal):
+        period = np.arange(n_period) + 1
+        return - npf.ipmt(interest_rate, period, n_period, principal).sum()
 
-        # TODO: from interest_rate 2 subsidies
+    def loan2subsidary(self, ir_market, horizon, principal):
+        """Every parameter must be the same shape.
+        """
+        ir_market = np.full(principal.shape, ir_market)
+        horizon = np.full(principal.shape, horizon)
+
+        if isinstance(principal, np.ndarray):
+            principal[principal > self.principal_max] = self.principal_max
+            vfunc = np.vectorize(RegulatedLoan.interest_cost)
+            ic_market = vfunc(ir_market, horizon, principal)
+        else:
+            principal = min(self.principal_max, principal)
+            ic_market = RegulatedLoan.interest_cost(ir_market, horizon, principal)
+
+        if self.ir_regulated == 0:
+            ic_regulated = 0
+        else:
+            vfunc = np.vectorize(RegulatedLoan.interest_cost)
+            ic_regulated = vfunc(self.ir_regulated, horizon, principal)
+        opportunity_cost = ic_market - ic_regulated
+
+        return Subsidies(self.name, self.start, self.end, self.kind, opportunity_cost)
 
 
 if __name__ == '__main__':
+    horizon = 30
+    principal = 2500
 
     folder_test = os.path.join(os.getcwd(), 'tests', 'input')
     folder_input = os.path.join(os.getcwd(), 'input')
@@ -189,19 +267,37 @@ if __name__ == '__main__':
     with open(name_file) as f:
         policy_input = json.load(f)
 
-    test_cost_initial_final = pd.read_csv(os.path.join(folder_test, 'test_cost_initial_final.csv'), index_col=[0], header=[0])
-    test_cost_segmented = pd.read_csv(os.path.join(folder_test, 'test_cost_segmented.csv'), index_col=[0, 1, 2], header=[0], squeeze=True)
-    test_cost_years = pd.read_csv(os.path.join(folder_test, 'test_cost_years.csv'), index_col=[0], header=[0]).T
-    test_parc = pd.read_csv(os.path.join(folder_test, 'test_parc.csv'), index_col=[0, 1, 2, 3, 4, 5], header=[0], squeeze=True)
+    test_cost_initial_final = pd.read_csv(os.path.join(folder_test, 'test_cost_initial_final.csv'), index_col=[0],
+                                          header=[0])
+    test_cost_initial_final.index.set_names('Energy performance', inplace=True)
+    test_cost_initial_final.columns.set_names('Energy performance final', inplace=True)
 
-    carbon_tax = Taxes('vta', 2014, 2030, 'taxes', 0.1)
-    cost_carbon_tax, cost_wtax = carbon_tax.apply_taxes(test_cost_years)
+    test_cost_segmented = pd.read_csv(os.path.join(folder_test, 'test_cost_segmented.csv'), index_col=[0, 1, 2],
+                                      header=[0], squeeze=True)
+    test_energy_price = pd.read_csv(os.path.join(folder_test, 'test_cost_years.csv'), index_col=[0], header=[0]).T
+    test_parc = pd.read_csv(os.path.join(folder_test, 'test_parc.csv'), index_col=[0, 1, 2, 3, 4, 5], header=[0],
+                            squeeze=True)
+
+    p = PublicPolicy('test', 2015, 2030, 'other', values=0.1)
+
+    year = 2015
+    if p.start <= year < p.end:
+        subsidies = p.values_by_cost(test_cost_segmented.copy(), yr=year, costs_max=1000)
+        test_cost_segmented = test_cost_segmented - subsidies
+
+    eptz = RegulatedLoan('eptz', 2014, 2030, 'other', ir_regulated=0.0, principal_max=1000)
+    # a = eptz.loan2subsidary(0.04, 20, np.array([[1500, 1200, 500, 800, 1000], [100, 200, 100, 200, 100]]))
+
+    carbon_tax = EnergyTaxes('vta', 2014, 2030, 'energy_taxes', 0.1)
+    cost_carbon_tax, cost_wtax = carbon_tax.apply_taxes(test_energy_price)
+
+
 
     scenario_eptz = 'normal'
     if scenario_eptz == 'normal':
-        eptz = Taxes('vta', 2014, 2030, 'subsidies', 0.09)
+        eptz = EnergyTaxes('vta', 2014, 2030, 'subsidies', 0.09)
     elif scenario_eptz == '+':
-        eptz = Taxes('vta', 2014, 2030, 'subsidies', 0.23)
+        eptz = EnergyTaxes('vta', 2014, 2030, 'subsidies', 0.23)
 
     scenario_cite = 'not-targeted'
     if scenario_cite == 'not-targeted':

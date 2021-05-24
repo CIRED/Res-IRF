@@ -8,8 +8,8 @@ from project.utils import linear2series, reindex_mi
 def dict2series(item_dict):
     """Return pd.Series from a dict containing val and index labels.
     """
-    if not isinstance(item_dict, dict):
-        return item_dict
+    """if not isinstance(item_dict, dict):
+        return item_dict"""
 
     if len(item_dict['index']) == 1:
         ds = pd.Series(item_dict['val'])
@@ -18,60 +18,73 @@ def dict2series(item_dict):
               innerKey, values in innerDict.items()}
         ds = pd.Series(ds)
     else:
-        # TODO: more than 2 MultiIndex
         raise ValueError('More than 2 MultiIndex is not yet developed')
     ds.index.set_names(item_dict['index'], inplace=True)
     return ds
 
 
 def json2miindex(json_dict):
-    """Returns dictionary with miindex series based on a specific frame from json file.
-    """
-    if not isinstance(json_dict, dict):
+    if isinstance(json_dict, float) or isinstance(json_dict, int) or isinstance(json_dict, str) or isinstance(json_dict,
+                                                                                                              list):
         return json_dict
-
-    if 'val' in json_dict.keys():
-        return dict2series(json_dict)
-    else:
-        # this means it is dict with scenario --> return dict with pd.Series
-        result_dict = {}
-        for scenario in json_dict.keys():
-            result_dict[scenario] = dict2series(json_dict[scenario])
-        return result_dict
-
-
-def _json2miindex(json_dict):
     if json_dict['type'] == 'pd.Series':
         return dict2series(json_dict)
     elif json_dict['type'] == 'pd.DataFrame':
         column_name = json_dict['index'][1]
         ds = dict2series(json_dict)
         return ds.unstack(column_name)
+    elif json_dict['type'] == 'float' or json_dict['type'] == 'int':
+        return json_dict['val']
+    elif json_dict['type'] == 'file':
+        pass
     else:
         print('Need to be done!!')
 
 
+def parse_json(n_file):
+    result_dict = {}
+    with open(n_file) as f:
+        f_dict = json.load(f)
+        for key, item in f_dict.items():
+            if isinstance(item, float) or isinstance(item, int) or isinstance(item, str) or isinstance(item, list):
+                result_dict[key] = item
+            elif isinstance(item, dict):
+                if item['type'] == 'dict':
+                    result_dict[key] = item
+                elif item['type'] == 'pd.Series' or item['type'] == 'pd.DataFrame':
+                    result_dict[key] = json2miindex(item)
+                elif item['type'] == 'dict_to_parse':
+                    r_dict = {}
+                    for sub_key in [sub_k for sub_k in item.keys() if sub_k != 'type']:
+                        r_dict[sub_key] = json2miindex(item[sub_key])
+                    result_dict[key] = r_dict
+    return result_dict
+
+
 def final2consumption(consumption, conversion):
+    """Conversion of primary consumption to final consumption.
+    """
     consumption = pd.concat([consumption] * len(conversion.index),
                             keys=conversion.index, names=conversion.index.names)
     conversion = reindex_mi(conversion, consumption.index, conversion.index.names)
     return consumption * conversion
 
 
-def population_housing_dynamic(population_housing_prev, population_housing_min, population_housing_ini, factor):
+def population_housing_dynamic(pop_housing_prev, pop_housing_min, pop_housing_ini, factor):
     """Returns number of people by building for year.
 
     Number of people by housing decrease over the time.
-    TODO: It seems we could get the number of people by buildings exogeneously.
     """
-    eps_pop_housing = (population_housing_prev - population_housing_min) / (
-            population_housing_ini - population_housing_min)
+    eps_pop_housing = (pop_housing_prev - pop_housing_min) / (
+            pop_housing_ini - pop_housing_min)
     eps_pop_housing = max(0, min(1, eps_pop_housing))
     factor_pop_housing = factor * eps_pop_housing
-    return max(population_housing_min, population_housing_prev * (1 + factor_pop_housing))
+    return max(pop_housing_min, pop_housing_prev * (1 + factor_pop_housing))
 
 
 def forecast2myopic(forecast_price, yr):
+    """Returns myopic prices based on forecast prices and a year.
+    """
     val = forecast_price.loc[:, yr]
     columns_year = forecast_price.columns[forecast_price.columns >= yr]
     myopic = pd.concat([val] * len(columns_year), axis=1)
@@ -79,16 +92,13 @@ def forecast2myopic(forecast_price, yr):
     myopic.index.set_names('Heating energy', inplace=True)
     return myopic
 
-# FOLDERS
-####################################################################################################################
+
 folder = dict()
 folder['working_directory'] = os.getcwd()
 folder['input'] = os.path.join(os.getcwd(), 'project', 'input')
 folder['output'] = os.path.join(os.getcwd(), 'project', 'output')
 folder['intermediate'] = os.path.join(os.getcwd(), 'project', 'intermediate')
 folder['calibration'] = os.path.join(folder['input'], 'calibration')
-
-####################################################################################################################
 
 name_file = os.path.join(folder['input'], 'sources.json')
 with open(name_file) as file:
@@ -102,7 +112,6 @@ last_year = 2080
 index_input_year = range(calibration_year, last_year + 1, 1)
 
 name_file = os.path.join(os.getcwd(), sources_dict['stock_buildings']['source'])
-# logging.debug('Loading parc pickle file {}'.format(name_file))
 stock_ini_seg = pd.read_pickle(name_file)
 
 name_file = os.path.join(folder['input'], 'scenario.json')
@@ -113,15 +122,8 @@ name_file = os.path.join(os.getcwd(), sources_dict['colors']['source'])
 with open(name_file) as file:
     colors_dict = json.load(file)
 
-dict_parameters = {}
-name_file = os.path.join(folder['input'], 'parameters.json')
-with open(name_file) as file:
-    file_dict = json.load(file)
-    for key, item in file_dict.items():
-        if isinstance(item, float) or isinstance(item, int):
-            dict_parameters[key] = item
-        else:
-            dict_parameters[key] = _json2miindex(item)
+name_file = os.path.join(os.getcwd(), sources_dict['parameters']['source'])
+dict_parameters = parse_json(name_file)
 
 name_file = os.path.join(os.getcwd(), sources_dict['population']['source'])
 dict_parameters['Population total'] = pd.read_csv(os.path.join(folder['input'], name_file), sep=',', header=None,
@@ -140,7 +142,7 @@ dict_parameters['Available income real population'] = dict_parameters['Available
     'Population total']
 
 population_housing_min = dict_parameters['Population housing min']
-population_housing = {}
+population_housing = dict()
 population_housing[calibration_year] = dict_parameters['Population'].loc[calibration_year] / stock_ini_seg.sum()
 max_year = max(dict_parameters['Population'].index)
 
@@ -160,17 +162,8 @@ for year in index_input_year[1:]:
 dict_parameters['Population housing'] = pd.Series(population_housing)
 dict_parameters['Flow needed'] = pd.Series(flow_needed)
 
-name_file = os.path.join(folder['input'], 'label2info.json')
-dict_label = {}
-dict_level = {}
-with open(name_file) as file:
-    file_dict = json.load(file)
-    for key, item in file_dict.items():
-        if key.split('2')[0] == 'label':
-            dict_label[key] = json2miindex(item)
-        else:
-            dict_level[key] = item
-
+name_file = os.path.join(os.getcwd(), sources_dict['label2info']['source'])
+dict_label = parse_json(name_file)
 
 dict_label['label2income'] = dict_label['label2income'].apply(linear2series, args=(
     dict_parameters["Household income rate"], index_input_year))
@@ -187,10 +180,9 @@ dict_label['label2horizon_envelope'] = dict_label['label2horizon_envelope'][scen
 label2horizon = dict()
 label2horizon['envelope'] = dict_label['label2horizon_envelope']
 label2horizon['heater'] = dict_label['label2horizon_heater']
-
 dict_label['label2horizon'] = label2horizon
 
-file_dict = dict_level['levels_dict']
+file_dict = dict_label['levels_dict']
 keys = ['Housing type', 'Occupancy status', 'Heating energy', 'Energy performance', 'Income class']
 levels_dict = {key: file_dict[key] for key in keys}
 levels_dict['Income class owner'] = file_dict['Income class']
@@ -200,12 +192,13 @@ levels_dict_construction = {key: file_dict[key] for key in keys}
 levels_dict_construction['Income class owner'] = file_dict['Income class']
 levels_dict_construction['Energy performance'] = file_dict['Energy performance construction']
 
-dict_result = {}
-name_file = os.path.join(folder['input'], 'share.json')
-with open(name_file) as file:
-    file_dict = json.load(file)
-    for key, item in file_dict.items():
-        dict_result[key] = _json2miindex(item)
+name_file = os.path.join(os.getcwd(), sources_dict['share']['source'])
+dict_share = parse_json(name_file)
+
+name_file = os.path.join(os.getcwd(), sources_dict['policies']['source'])
+dict_policies = parse_json(name_file)
+
+carbon_tax = pd.read_csv(os.path.join(os.getcwd(), sources_dict['carbon_tax']['source']), index_col=[0]) / 1000000
 
 name_file = os.path.join(os.getcwd(), sources_dict['cost_renovation']['source'])
 cost_envelope = pd.read_csv(name_file, sep=',', header=[0], index_col=[0])
@@ -228,20 +221,21 @@ with open(name_file) as file:
 energy_prices_dict = dict()
 energy_price_data = pd.DataFrame()
 for key, value in file_dict['price_w_taxes'].items():
-    ds = linear2series(value, file_dict['price_rate'][key], index_input_year)
-    ds.name = key
-    energy_price_data = pd.concat((energy_price_data, ds), axis=1)
+    temp = linear2series(value, file_dict['price_rate'][key], index_input_year)
+    temp.name = key
+    energy_price_data = pd.concat((energy_price_data, temp), axis=1)
 energy_prices_dict['energy_price_forecast'] = energy_price_data.T
 
-temp = pd.concat([pd.Series(file_dict['price_w_taxes'])] * len(index_input_year), axis=1)
-temp.index.set_names('Heating energy', inplace=True)
-temp.columns = index_input_year
-energy_prices_dict['energy_price_myopic'] = temp
+co2_content_data = pd.DataFrame()
+for key, value in file_dict['co2_content'].items():
+    temp = linear2series(value, file_dict['co2_rate'][key], index_input_year)
+    temp.name = key
+    co2_content_data = pd.concat((co2_content_data, temp), axis=1)
+co2_content_data = co2_content_data.T
 
-name_file = os.path.join(folder['input'], 'rate_renovation_ini.csv')
+name_file = os.path.join(os.getcwd(), sources_dict['rate_renovation_ini']['source'])
 rate_renovation_ini = pd.read_csv(name_file, index_col=[0, 1], header=[0], squeeze=True)
 
-name_file = os.path.join(folder['input'], 'ms_renovation_ini.csv')
+name_file = os.path.join(os.getcwd(), sources_dict['ms_renovation_ini']['source'])
 ms_renovation_ini = pd.read_csv(name_file, index_col=[0], header=[0])
 ms_renovation_ini.index.set_names(['Energy performance'], inplace=True)
-

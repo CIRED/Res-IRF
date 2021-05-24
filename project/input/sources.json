@@ -19,7 +19,7 @@
     "source": "project/intermediate/intangible_cost_seg.pkl"
   },
   "cost_intangible_construction": {
-    "source_type": "function",
+    "source_type": "file",
     "source": "project/intermediate/cost_intangible_construction.pkl"
   },
   "rho": {
@@ -48,6 +48,18 @@
     "type": "file",
     "source": "project/input/parameters.json"
   },
+  "share": {
+    "type": "file",
+    "source": "project/input/share.json"
+  },
+  "label2info": {
+    "type": "file",
+    "source": "project/input/label2info.json"
+  },
+  "policies": {
+    "type": "file",
+    "source": "project/input/policies_input.json"
+  },
   "population": {
     "type": "file",
     "source": "project/input/projection_population_insee.csv"
@@ -55,5 +67,17 @@
   "colors": {
     "type": "file",
     "source": "project/input/colors.json"
+  },
+  "carbon_tax": {
+    "type": "file",
+    "source": "project/input/carbon_tax.csv"
+  },
+  "rate_renovation_ini":{
+    "type": "file",
+    "source": "project/input/rate_renovation_ini.csv"
+  },
+  "ms_renovation_ini":{
+    "type": "file",
+    "source": "project/input/ms_renovation_ini.csv"
   }
 }
