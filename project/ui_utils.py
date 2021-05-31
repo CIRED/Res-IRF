@@ -81,6 +81,9 @@ def economic_subplots(df, suptitle, format_axtitle=lambda x: x, format_val=lambd
         ax.spines['left'].set_visible(False)
         ax.get_yaxis().set_visible(False)
         ax.set_title(format_axtitle(df.index[k]), fontweight='bold', fontsize=10, pad=-1.6)
+
+
+
     plt.show()
 
 

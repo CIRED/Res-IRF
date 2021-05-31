@@ -10,7 +10,7 @@
   "cite": true,
   "cite_plus": true,
   "cee_subsidy": true,
-  "cee_taxes": false,
+  "cee_taxes": true,
   "reduced_vta": true,
   "eptz": false,
   "eptz_plus": false

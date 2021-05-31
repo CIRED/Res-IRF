@@ -23,20 +23,20 @@ class EnergyTaxes(PublicPolicy):
         self.kind = kind
         self.value = value
 
-    def price_to_taxes(self, energy_prices, co2_content=None):
+    def price_to_taxes(self, energy_prices=None, co2_content=None):
 
         if self.kind == '%':
-            return energy_prices * self.value, energy_prices * (1 + self.value)
+            return energy_prices * self.value
 
         elif self.kind == '€/kWh':
-            return self.value, energy_prices * self.value
+            return self.value
 
         elif self.kind == '€/gCO2':
             # €/tCO2 * gCO2/kWh / 1000000 -> €/kWh
             taxes = self.value * co2_content
             taxes.fillna(0, inplace=True)
             taxes = taxes.reindex(energy_prices.columns, axis=1)
-            return energy_prices * taxes, energy_prices * (1 + taxes)
+            return energy_prices * taxes
 
         else:
             raise AttributeError

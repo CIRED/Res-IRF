@@ -191,6 +191,7 @@ keys = ['Housing type', 'Occupancy status', 'Heating energy', 'Energy performanc
 levels_dict_construction = {key: file_dict[key] for key in keys}
 levels_dict_construction['Income class owner'] = file_dict['Income class']
 levels_dict_construction['Energy performance'] = file_dict['Energy performance construction']
+levels_dict_construction.pop('Energy performance construction', None)
 
 name_file = os.path.join(os.getcwd(), sources_dict['share']['source'])
 dict_share = parse_json(name_file)
@@ -199,6 +200,10 @@ name_file = os.path.join(os.getcwd(), sources_dict['policies']['source'])
 dict_policies = parse_json(name_file)
 
 carbon_tax = pd.read_csv(os.path.join(os.getcwd(), sources_dict['carbon_tax']['source']), index_col=[0]) / 1000000
+carbon_tax = carbon_tax.T
+carbon_tax.index.set_names('Heating energy', inplace=True)
+
+dict_policies['carbon_tax']['value'] = carbon_tax
 
 name_file = os.path.join(os.getcwd(), sources_dict['cost_renovation']['source'])
 cost_envelope = pd.read_csv(name_file, sep=',', header=[0], index_col=[0])
@@ -224,7 +229,9 @@ for key, value in file_dict['price_w_taxes'].items():
     temp = linear2series(value, file_dict['price_rate'][key], index_input_year)
     temp.name = key
     energy_price_data = pd.concat((energy_price_data, temp), axis=1)
-energy_prices_dict['energy_price_forecast'] = energy_price_data.T
+energy_price_data = energy_price_data.T
+energy_price_data.index.set_names('Heating energy', inplace=True)
+energy_prices_dict['energy_price_forecast'] = energy_price_data
 
 co2_content_data = pd.DataFrame()
 for key, value in file_dict['co2_content'].items():
@@ -232,6 +239,8 @@ for key, value in file_dict['co2_content'].items():
     temp.name = key
     co2_content_data = pd.concat((co2_content_data, temp), axis=1)
 co2_content_data = co2_content_data.T
+co2_content_data.index.set_names('Heating energy', inplace=True)
+
 
 name_file = os.path.join(os.getcwd(), sources_dict['rate_renovation_ini']['source'])
 rate_renovation_ini = pd.read_csv(name_file, index_col=[0, 1], header=[0], squeeze=True)

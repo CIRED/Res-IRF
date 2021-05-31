@@ -46,17 +46,35 @@ if __name__ == '__main__':
 
     logging.debug('Initialization')
 
-    energy_price = forecast2myopic(energy_prices_dict['energy_price_forecast'], calibration_year)
-    if scenario_dict['carbon_tax']:
-        carbon_tax = EnergyTaxes(dict_policies['Carbon tax']['name'],
-                                 dict_policies['Carbon tax']['start'],
-                                 dict_policies['Carbon tax']['end'],
-                                 dict_policies['Carbon tax']['kind'],
-                                 carbon_tax.T)
-        tax, _ = carbon_tax.price_to_taxes(energy_price, co2_content=co2_content_data)
-        if scenario_dict['carbon_tax_behavior'] == 'myopic':
-            tax = forecast2myopic(tax, calibration_year)
-        energy_price = energy_price * (1 + tax)
+    # energy_price = forecast2myopic(energy_prices_dict['energy_price_forecast'], calibration_year)
+    energy_price = energy_prices_dict['energy_price_forecast']
+
+    logging.debug('Initialize public policies')
+    dict_subsidies = {}
+    dict_energy_taxes = {}
+    total_taxes = None
+    for key, item in dict_policies.items():
+        if scenario_dict[item['name']]:
+            logging.debug('Considering: {}'.format(key))
+            if item['policy'] == 'subsidies':
+                dict_subsidies[key] = Subsidies(item['name'], item['start'], item['end'], item['kind'], item['value'],
+                                                transition=item['transition'])
+            elif item['policy'] == 'energy_taxes':
+                dict_energy_taxes[key] = EnergyTaxes(item['name'], item['start'], item['end'], item['kind'],
+                                                     item['value'])
+                temp = dict_energy_taxes[key].price_to_taxes(
+                    energy_prices=energy_prices_dict['energy_price_forecast'],
+                    co2_content=co2_content_data)
+                if total_taxes is None:
+                    total_taxes = temp
+                else:
+                    total_taxes += temp
+            elif item['policy'] == 'regulated_loan':
+                pass
+            elif item['policy'] == 'regulation':
+                pass
+
+    energy_price = energy_price * (1 + total_taxes)
 
     logging.debug('Creating HousingStockRenovated Python object')
     buildings = HousingStockRenovated(stock_ini_seg, levels_dict, calibration_year,
@@ -73,8 +91,8 @@ if __name__ == '__main__':
                                       label2income=dict_label['label2income'],
                                       label2consumption=dict_label['label2consumption'])
 
-    # initialize energy consumption actual
-    buildings.to_consumption_actual(energy_price)
+    logging.debug('Initialize energy consumption and cash-flows')
+    buildings.ini_energy_cash_flows(energy_price)
 
     segments_construction = buildings.to_segments_construction(
         ['Energy performance', 'Heating energy', 'Income class', 'Income class owner'], {})
@@ -95,14 +113,9 @@ if __name__ == '__main__':
                                                     label2income=dict_label['label2income'],
                                                     label2consumption=dict_label['label2consumption_construction'])
 
-    logging.debug('Initialize public policies')
-    dict_subsidies = {}
-    for key, item in dict_policies.items():
-        if item['policy'] == 'subsidies':
-            if scenario_dict[item['name']]:
-                logging.debug('Considering: {}'.format(key))
-                dict_subsidies[key] = Subsidies(item['name'], item['start'], item['end'], item['kind'], item['value'],
-                                                transition=item['transition'])
+    buildings_constructed.ini_all_indexes(energy_price,
+                                          levels=['Occupancy status', 'Housing type', 'Energy performance',
+                                                  'Heating energy'])
 
     if scenario_dict['cost_intangible']:
         logging.debug('Calibration market share construction --> intangible cost construction')
@@ -168,14 +181,6 @@ if __name__ == '__main__':
     for year in years[1:]:
         logging.debug('YEAR: {}'.format(year))
         buildings.year = year
-        energy_price = forecast2myopic(energy_prices_dict['energy_price_forecast'], year)
-
-        if scenario_dict['carbon_tax']:
-            logging.debug('Considering carbon tax')
-            tax, _ = carbon_tax.price_to_taxes(energy_price, co2_content=co2_content_data)
-            if scenario_dict['carbon_tax_behavior'] == 'myopic':
-                tax = forecast2myopic(tax, year)
-            energy_price = energy_price * (1 + tax)
 
         logging.debug('Calculate energy consumption actual')
         buildings.to_consumption_actual(energy_price)
@@ -185,6 +190,8 @@ if __name__ == '__main__':
         logging.debug('Demolition: {:,.0f} buildings, i.e.: {:.2f}%'.format(flow_demolition_seg.sum(),
                                                                             flow_demolition_seg.sum() / buildings.stock_seg.sum() * 100))
 
+        logging.debug('Update demolition')
+        buildings.add_flow(- flow_demolition_seg)
         logging.debug('Renovation dynamic')
         flow_remained_seg, flow_area_renovation_seg = buildings.to_flow_remained(energy_price,
                                                                                  consumption='conventional',
@@ -193,8 +200,8 @@ if __name__ == '__main__':
                                                                                  cost_intangible=cost_intangible_seg,
                                                                                  subsidies=list(dict_subsidies.values()))
 
-        logging.debug('Updating stock segmented and renovation knowledge after demolition and renovation')
-        buildings.update_stock(flow_demolition_seg, flow_remained_seg, flow_area_renovation_seg=flow_area_renovation_seg)
+        logging.debug('Updating stock segmented and renovation knowledge after renovation')
+        buildings.update_stock(flow_remained_seg, flow_area_renovation_seg=flow_area_renovation_seg)
 
         if scenario_dict['info_renovation']:
             logging.debug('Information acceleration - renovation')
@@ -249,7 +256,7 @@ if __name__ == '__main__':
             output['Cost construction'][year] = cost_construction
 
         logging.debug(
-            '\nSummary: \nYear: {}\nStock: {:,.0f} \nDemolition: {:,.0f} \nNeeded: {:,.0f} \nRenovation: {:,.0f} \nConstruction: {:,.0f}'.format(
+            '\nSummary: \nYear: {}\nStock after demolition: {:,.0f} \nDemolition: {:,.0f} \nNeeded: {:,.0f} \nRenovation: {:,.0f} \nConstruction: {:,.0f}'.format(
                 year, buildings.stock_seg.sum(), flow_demolition_seg.sum(), dict_parameters['Flow needed'].loc[year],
                 buildings.flow_renovation_label_energy_dict[year].sum().sum(), flow_constructed))
 

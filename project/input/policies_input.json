@@ -1,5 +1,5 @@
 {
-  "CITE +":
+  "cite_plus":
   {
     "name": "cite_plus",
     "policy": "subsidies",
@@ -60,7 +60,7 @@
     ],
     "type": "dict_to_parse"
   },
-  "CITE":
+  "cite":
   {
     "name": "cite",
     "policy": "subsidies",
@@ -71,7 +71,7 @@
     "transition": ["Energy performance"],
     "type": "dict_to_parse"
   },
-  "CEE-subsidy":
+  "cee_subsidy":
   {
     "name": "cee_subsidy",
     "policy": "subsidies",
@@ -82,7 +82,7 @@
     "transition": ["Energy performance"],
     "type": "dict_to_parse"
   },
-  "CEE-taxes":
+  "cee_taxes":
   {
     "name": "cee_taxes",
     "policy": "energy_taxes",
@@ -93,7 +93,7 @@
     "transition": ["Energy performance"],
     "type": "dict_to_parse"
   },
-  "Carbon tax":
+  "carbon_tax":
   {
     "name": "carbon_tax",
     "policy": "energy_taxes",
@@ -103,7 +103,7 @@
     "kind": "€/gCO2",
     "type": "dict_to_parse"
   },
-  "Reduced VTA":
+  "reduced_vta":
   {
     "name": "reduced_vta",
     "policy": "subsidies",
@@ -114,7 +114,7 @@
     "transition": ["Energy performance"],
     "type": "dict_to_parse"
   },
-  "EPTZ":
+  "eptz":
   {
     "name": "eptz",
     "policy": "regulated_loan",
@@ -192,9 +192,9 @@
       "type": "pd.DataFrame"
     },
     "type": "dict_to_parse"},
-  "EPTZ +":
+  "eptz_plus":
   {
-    "name": "eptz",
+    "name": "eptz_plus",
     "policy": "regulated_loan",
     "start": 2012,
     "end": 2050,
