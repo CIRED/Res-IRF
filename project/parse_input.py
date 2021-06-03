@@ -8,9 +8,6 @@ from project.utils import linear2series, reindex_mi
 def dict2series(item_dict):
     """Return pd.Series from a dict containing val and index labels.
     """
-    """if not isinstance(item_dict, dict):
-        return item_dict"""
-
     if len(item_dict['index']) == 1:
         ds = pd.Series(item_dict['val'])
     elif len(item_dict['index']) == 2:
@@ -24,8 +21,25 @@ def dict2series(item_dict):
 
 
 def json2miindex(json_dict):
+    """Parse dict and returns pd.Series or pd.DataFrame.
+
+    Parameters
+    ----------
+    json_dict: dict
+
+    Returns
+    -------
+    pd.Series, pd.DataFrame
+
+    Example
+    _______
+    d = {'type': 'pd.Series', 'val': {'D1': 0, 'D2': 1, 'D3': 1}, 'index': ['Income class']}
+    >>> json_dict(d)
+    pd.Series({'D1': 0, 'D2': 1, 'D3': 1}, names=['Income class'])
+    """
+
     if isinstance(json_dict, float) or isinstance(json_dict, int) or isinstance(json_dict, str) or isinstance(json_dict,
-                                                                                                              list):
+                                                                                                              list) or json_dict is None:
         return json_dict
     if json_dict['type'] == 'pd.Series':
         return dict2series(json_dict)
@@ -42,11 +56,27 @@ def json2miindex(json_dict):
 
 
 def parse_json(n_file):
+    """Parse json file and return dict.
+
+    For each primary key of json file assign:
+    - float, int, str, list
+    - MultiIndex pd.Series or pd.DataFrame thanks to json2miindex
+    - dict to reapply the function
+
+    Parameters
+    ----------
+    n_file: str
+    Path to json file.
+
+    Returns
+    -------
+    dict
+    """
     result_dict = {}
     with open(n_file) as f:
         f_dict = json.load(f)
         for key, item in f_dict.items():
-            if isinstance(item, float) or isinstance(item, int) or isinstance(item, str) or isinstance(item, list):
+            if isinstance(item, float) or isinstance(item, int) or isinstance(item, str) or isinstance(item, list) or item is None:
                 result_dict[key] = item
             elif isinstance(item, dict):
                 if item['type'] == 'dict':
@@ -202,22 +232,29 @@ dict_policies = parse_json(name_file)
 carbon_tax = pd.read_csv(os.path.join(os.getcwd(), sources_dict['carbon_tax']['source']), index_col=[0]) / 1000000
 carbon_tax = carbon_tax.T
 carbon_tax.index.set_names('Heating energy', inplace=True)
-
 dict_policies['carbon_tax']['value'] = carbon_tax
 
+# cost_invest
+
+cost_invest = dict()
 name_file = os.path.join(os.getcwd(), sources_dict['cost_renovation']['source'])
 cost_envelope = pd.read_csv(name_file, sep=',', header=[0], index_col=[0])
 cost_envelope.index.set_names('Energy performance', inplace=True)
 cost_envelope.columns.set_names('Energy performance final', inplace=True)
+cost_invest['Energy performance'] = cost_envelope
 
 name_file = os.path.join(os.getcwd(), sources_dict['cost_switch_fuel']['source'])
 cost_switch_fuel = pd.read_csv(name_file, index_col=[0], header=[0])
 cost_switch_fuel.index.set_names('Heating energy', inplace=True)
 cost_switch_fuel.columns.set_names('Heating energy final', inplace=True)
+cost_invest['Heating energy'] = cost_switch_fuel
 
+cost_invest_construction = dict()
 name_file = os.path.join(os.getcwd(), sources_dict['cost_construction']['source'])
 cost_construction = pd.read_csv(os.path.join(folder['input'], name_file), sep=',', header=[0, 1], index_col=[0])
 cost_construction.index.set_names('Housing type', inplace=True)
+cost_invest_construction['Energy performance'] = cost_construction
+cost_invest_construction['Heating energy'] = None
 
 name_file = os.path.join(os.getcwd(), sources_dict['energy_prices']['source'])
 with open(name_file) as file:

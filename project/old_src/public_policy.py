@@ -1,6 +1,7 @@
 import os
 import json
 
+import nump
 from utils import *
 import numpy_financial as npf
 # npf.irr
@@ -260,8 +261,8 @@ if __name__ == '__main__':
     horizon = 30
     principal = 2500
 
-    folder_test = os.path.join(os.getcwd(), 'tests', 'input')
-    folder_input = os.path.join(os.getcwd(), 'input')
+    folder_test = os.path.join(os.getcwd(), '../tests', 'input')
+    folder_input = os.path.join(os.getcwd(), '../input')
 
     name_file = os.path.join(folder_input, 'policies_input.json')
     with open(name_file) as f:

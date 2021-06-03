@@ -56,33 +56,34 @@ def economic_subplots(df, suptitle, format_axtitle=lambda x: x, format_val=lambd
     n_rows = ceil(n_axes / n_columns)
     fig, axes = plt.subplots(n_rows, n_columns, figsize=(12.8, 9.6), sharex=True, sharey=True)
     fig.suptitle(suptitle, fontsize=20, fontweight='bold')
-    for k in range(n_axes):
+    for k in range(n_rows * n_columns):
         row = floor(k / n_columns)
         column = k % n_columns
         if n_rows == 1:
             ax = axes[column]
         else:
             ax = axes[row, column]
-        df.T.plot(ax=ax, color='lightgray', linewidth=0.5)
-        df.iloc[k, :].plot(ax=ax, color='black', linewidth=2)
-        first_val = df.iloc[k, 0]
-        last_val = df.iloc[k, -1]
-        ax.annotate(format_val(first_val), xy=(0, first_val), xytext=(-18, 0), color='black',
-                    xycoords=ax.get_yaxis_transform(), textcoords='offset points',
-                    size=10, va='center')
-        ax.annotate(format_val(last_val), xy=(1, last_val), xytext=(-6, 0), color='black',
-                    xycoords=ax.get_yaxis_transform(), textcoords='offset points',
-                    size=10, va='center')
+        try:
+            df.T.plot(ax=ax, color='lightgray', linewidth=0.5)
+            df.iloc[k, :].plot(ax=ax, color='black', linewidth=2)
+            first_val = df.iloc[k, 0]
+            last_val = df.iloc[k, -1]
+            ax.annotate(format_val(first_val), xy=(0, first_val), xytext=(-18, 0), color='black',
+                        xycoords=ax.get_yaxis_transform(), textcoords='offset points',
+                        size=10, va='center')
+            ax.annotate(format_val(last_val), xy=(1, last_val), xytext=(-6, 0), color='black',
+                        xycoords=ax.get_yaxis_transform(), textcoords='offset points',
+                        size=10, va='center')
+            ax.xaxis.set_tick_params(which=u'both', length=0)
+            ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+            ax.spines['top'].set_visible(False)
+            ax.spines['right'].set_visible(False)
+            ax.spines['left'].set_visible(False)
+            ax.get_yaxis().set_visible(False)
+            ax.set_title(format_axtitle(df.index[k]), fontweight='bold', fontsize=10, pad=-1.6)
+        except IndexError:
+            ax.axis('off')
         ax.get_legend().remove()
-        ax.xaxis.set_tick_params(which=u'both', length=0)
-        ax.xaxis.set_major_locator(MaxNLocator(integer=True))
-        ax.spines['top'].set_visible(False)
-        ax.spines['right'].set_visible(False)
-        ax.spines['left'].set_visible(False)
-        ax.get_yaxis().set_visible(False)
-        ax.set_title(format_axtitle(df.index[k]), fontweight='bold', fontsize=10, pad=-1.6)
-
-
 
     plt.show()
 
@@ -117,3 +118,23 @@ def distribution_scatter(df, column_x, column_y, dict_color, level='Energy perfo
 
     leg = plt.legend(title=level)
     leg.get_frame().set_linewidth(0.0)
+
+
+def economic_boxplots(df, xlabel=None, ylabel=None, ax_title=None,
+                      format_x=lambda x, _: '{:,.0f}'.format(x), format_y=lambda y, _: '{:,.0f}'.format(y)):
+
+    fig, ax = plt.subplots(1, 1, figsize=(12.8, 9.6))
+    df.boxplot(ax=ax)
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.xaxis.set_major_formatter(plt.FuncFormatter(format_x))
+    ax.yaxis.set_major_formatter(plt.FuncFormatter(format_y))
+    ax.xaxis.set_tick_params(which=u'both', length=0)
+    ax.yaxis.set_tick_params(which=u'both', length=0)
+    if ax_title is not None:
+        ax.set_title(ax_title, fontweight='bold')
+    if xlabel is not None:
+        ax.set_xlabel(xlabel)
+    if ylabel is not None:
+        ax.set_ylabel(ylabel)

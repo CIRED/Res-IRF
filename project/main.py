@@ -1,3 +1,9 @@
+"""Res-IRF script
+
+This script requires that 'pandas' be installed within the Python
+environment you are running this script in.
+"""
+
 import time
 import logging
 import datetime
@@ -38,8 +44,8 @@ if __name__ == '__main__':
     input2output = ['Population total', 'Population', 'Population housing', 'Flow needed']
     for key in input2output:
         output[key] = dict_parameters[key]
-
-    input2output = {'Cost envelope': cost_envelope, 'Cost construction': cost_construction}
+    input2output = {'Cost envelope': cost_invest['Energy performance'],
+                    'Cost construction': cost_invest_construction['Energy performance']}
     for key, val in input2output.items():
         output[key] = dict()
         output[key][calibration_year] = val
@@ -70,10 +76,17 @@ if __name__ == '__main__':
                 else:
                     total_taxes += temp
             elif item['policy'] == 'regulated_loan':
-                pass
+                dict_subsidies[key] = RegulatedLoan(item['name'], item['start'], item['end'],
+                                                    ir_regulated=item['ir_regulated'], ir_market=item['ir_market'],
+                                                    principal_min=item['principal_min'],
+                                                    principal_max=item['principal_max'],
+                                                    horizon=item['horizon'], targets=item['targets'],
+                                                    transition=item['transition'])
+                dict_subsidies[key].reindex_attributes(stock_ini_seg.index)
+
             elif item['policy'] == 'regulation':
                 pass
-
+    output['total_taxes'] = total_taxes
     energy_price = energy_price * (1 + total_taxes)
 
     logging.debug('Creating HousingStockRenovated Python object')
@@ -116,8 +129,11 @@ if __name__ == '__main__':
     buildings_constructed.ini_all_indexes(energy_price,
                                           levels=['Occupancy status', 'Housing type', 'Energy performance',
                                                   'Heating energy'])
-
+    cost_intangible_construction = None
+    cost_intangible = None
     if scenario_dict['cost_intangible']:
+        cost_intangible = dict()
+        cost_intangible_construction = dict()
         logging.debug('Calibration market share construction --> intangible cost construction')
         name_file = sources_dict['cost_intangible_construction']['source']
         source = sources_dict['cost_intangible_construction']['source_type']
@@ -128,45 +144,47 @@ if __name__ == '__main__':
                 dict_share['Housing type share total'],
                 dict_share['Energy performance share total construction'])
 
-            cost_intangible_construction = buildings_constructed.to_calibration_market_share(market_share_obj_construction,
-                                                                                             energy_price,
-                                                                                             cost_construction=cost_construction)
+            cost_intangible_construction['Energy performance'] = buildings_constructed.to_calibration_market_share(
+                market_share_obj_construction,
+                energy_price,
+                cost_invest=cost_invest_construction)
             logging.debug('End of calibration and dumping: {}'.format(name_file))
-            cost_intangible_construction.to_pickle(name_file)
+            cost_intangible_construction['Energy performance'].to_pickle(name_file)
         elif source == 'file':
             logging.debug('Loading cost_intangible_construction from {}'.format(name_file))
-            cost_intangible_construction = pd.read_pickle(name_file)
-        else:
-            cost_intangible_construction = None
+            cost_intangible_construction['Energy performance'] = pd.read_pickle(name_file)
+
+        cost_intangible_construction['Heating energy'] = None
         output['Cost intangible construction'] = dict()
-        output['Cost intangible construction'][calibration_year] = cost_intangible_construction
+        output['Cost intangible construction'][calibration_year] = cost_intangible_construction['Energy performance']
 
         logging.debug('Calibration market share >>> intangible cost')
         name_file = sources_dict['cost_intangible']['source']
         source = sources_dict['cost_intangible']['source_type']
         if source == 'function':
-            cost_intangible_seg = buildings.calibration_market_share(energy_price, ms_renovation_ini,
-                                                                     folder_output=folder['intermediate'],
-                                                                     cost_invest=cost_envelope,
-                                                                     consumption='conventional')
+            cost_intangible['Energy performance'] = buildings.calibration_market_share(energy_price, ms_renovation_ini,
+                                                                                       folder_output=folder[
+                                                                                           'intermediate'],
+                                                                                       cost_invest=cost_invest,
+                                                                                       consumption='conventional')
             logging.debug('End of calibration and dumping: {}'.format(name_file))
-            cost_intangible_seg.to_pickle(name_file)
+            cost_intangible['Energy performance'].to_pickle(name_file)
         elif source == 'file':
             logging.debug('Loading intangible_cost from {}'.format(name_file))
-            cost_intangible_seg = pd.read_pickle(name_file)
-            cost_intangible_seg.columns.set_names('Energy performance final', inplace=True)
-        else:
-            cost_intangible_seg = None
+            cost_intangible['Energy performance'] = pd.read_pickle(name_file)
+            cost_intangible['Energy performance'].columns.set_names('Energy performance final', inplace=True)
+
+        cost_intangible['Heating energy'] = None
         output['Cost intangible'] = dict()
-        output['Cost intangible'][calibration_year] = cost_intangible_seg
+        output['Cost intangible'][calibration_year] = cost_intangible['Energy performance']
 
     logging.debug('Calibration renovation rate >>> rho')
     name_file = sources_dict['rho']['source']
     source = sources_dict['rho']['source_type']
     if source == 'function':
         rho_seg = buildings.calibration_renovation_rate(energy_price, rate_renovation_ini,
-                                                        cost_invest=cost_envelope,
-                                                        cost_intangible=cost_intangible_seg)
+                                                        cost_invest=cost_invest,
+                                                        cost_intangible=cost_intangible)
         logging.debug('End of calibration and dumping: {}'.format(name_file))
         rho_seg.to_pickle(name_file)
     elif source == 'file':
@@ -195,9 +213,8 @@ if __name__ == '__main__':
         logging.debug('Renovation dynamic')
         flow_remained_seg, flow_area_renovation_seg = buildings.to_flow_remained(energy_price,
                                                                                  consumption='conventional',
-                                                                                 cost_switch_fuel=cost_switch_fuel,
-                                                                                 cost_invest=cost_envelope,
-                                                                                 cost_intangible=cost_intangible_seg,
+                                                                                 cost_invest=cost_invest,
+                                                                                 cost_intangible=cost_intangible,
                                                                                  subsidies=list(dict_subsidies.values()))
 
         logging.debug('Updating stock segmented and renovation knowledge after renovation')
@@ -205,20 +222,19 @@ if __name__ == '__main__':
 
         if scenario_dict['info_renovation']:
             logging.debug('Information acceleration - renovation')
-            cost_intangible_seg = HousingStock.acceleration_information(buildings.knowledge,
-                                                                        cost_intangible_seg,
-                                                                        dict_parameters[
-                                                                            'Information rate max renovation'],
-                                                                        dict_parameters[
-                                                                            'Information rate renovation'])
-            output['Cost intangible'][year] = cost_intangible_seg
+            cost_intangible['Energy performance'] = HousingStock.acceleration_information(buildings.knowledge,
+                                                                                          cost_intangible['Energy performance'],
+                                                                                          dict_parameters['Information rate max renovation'],
+                                                                                          dict_parameters['Information rate renovation'])
+            output['Cost intangible'][year] = cost_intangible['Energy performance']
 
         if scenario_dict['lbd_renovation']:
             logging.debug('Learning by doing - renovation')
-            cost_envelope = HousingStock.learning_by_doing(buildings.knowledge,
-                                                           cost_envelope,
-                                                           dict_parameters['Learning by doing renovation'])
-            output['Cost envelope'][year] = cost_envelope
+            cost_invest['Energy performance'] = HousingStock.learning_by_doing(buildings.knowledge,
+                                                                               cost_invest['Energy performance'],
+                                                                               dict_parameters[
+                                                                                   'Learning by doing renovation'])
+            output['Cost envelope'][year] = cost_invest['Energy performance']
 
         logging.debug('Construction dynamic')
         buildings_constructed._year = year
@@ -234,29 +250,27 @@ if __name__ == '__main__':
         # update_flow_constructed_seg will automatically update area constructed and so construction knowledge
         buildings_constructed.update_flow_constructed_seg(energy_price,
                                                           cost_intangible=cost_intangible_construction,
-                                                          cost_construction=cost_construction,
+                                                          cost_invest=cost_invest_construction,
                                                           nu=dict_parameters["Nu construction"])
 
         if scenario_dict['info_construction']:
             logging.debug('Information acceleration - construction')
-            cost_intangible_construction = HousingStock.acceleration_information(buildings_constructed.knowledge,
-                                                                                 cost_intangible_construction,
-                                                                                 dict_parameters[
-                                                                                     "Information rate max construction"],
-                                                                                 dict_parameters[
-                                                                                     "Information rate construction"])
-            output['Cost intangible construction'][year] = cost_intangible_construction
+            cost_intangible_construction['Energy performance'] = HousingStock.acceleration_information(buildings_constructed.knowledge,
+                                                                                                       cost_intangible_construction['Energy performance'],
+                                                                                                       dict_parameters['Information rate max construction'],
+                                                                                                       dict_parameters['Information rate construction'])
+            output['Cost intangible construction'][year] = cost_intangible_construction['Energy performance']
 
         if scenario_dict['lbd_construction']:
             logging.debug('Learning by doing - construction')
-            cost_construction = HousingStock.learning_by_doing(buildings_constructed.knowledge,
-                                                               cost_construction,
-                                                               dict_parameters["Learning by doing renovation"],
-                                                               cost_lim=dict_parameters['Cost construction lim'])
-            output['Cost construction'][year] = cost_construction
+            cost_invest_construction['Energy performance'] = HousingStock.learning_by_doing(buildings_constructed.knowledge,
+                                                                                            cost_invest_construction['Energy performance'],
+                                                                                            dict_parameters["Learning by doing renovation"],
+                                                                                            cost_lim=dict_parameters['Cost construction lim'])
+            output['Cost construction'][year] = cost_invest_construction['Energy performance']
 
         logging.debug(
-            '\nSummary: \nYear: {}\nStock after demolition: {:,.0f} \nDemolition: {:,.0f} \nNeeded: {:,.0f} \nRenovation: {:,.0f} \nConstruction: {:,.0f}'.format(
+            '\nSummary:\nYear: {}\nDemolition: {:,.0f}\nStock after demolition: {:,.0f}\nNeeded: {:,.0f}\nRenovation: {:,.0f}\nConstruction: {:,.0f}'.format(
                 year, buildings.stock_seg.sum(), flow_demolition_seg.sum(), dict_parameters['Flow needed'].loc[year],
                 buildings.flow_renovation_label_energy_dict[year].sum().sum(), flow_constructed))
 

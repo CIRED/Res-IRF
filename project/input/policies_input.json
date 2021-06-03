@@ -120,6 +120,8 @@
     "policy": "regulated_loan",
     "start": 2012,
     "end": 2050,
+    "ir_regulated": null,
+    "ir_market": 0.03,
     "principal_max": {
       "val": {
         "D1": 16800,
@@ -139,9 +141,7 @@
       "type": "pd.Series"
     },
     "principal_min": 5000,
-    "ir_regulated": 0.0,
     "horizon": 5,
-    "ir_market": 0.03,
     "targets": {
       "val": {
         "G": {
@@ -191,6 +191,7 @@
       ],
       "type": "pd.DataFrame"
     },
+    "transition": ["Energy performance"],
     "type": "dict_to_parse"},
   "eptz_plus":
   {
@@ -198,10 +199,13 @@
     "policy": "regulated_loan",
     "start": 2012,
     "end": 2050,
-    "ir_regulated": 0.0,
+    "ir_regulated": null,
     "ir_market": 0.04,
     "principal_max": 30000,
+    "principal_min": null,
     "horizon": 10,
+    "targets": null,
+    "transition": ["Energy performance"],
     "type": "dict_to_parse"
   }
 }
