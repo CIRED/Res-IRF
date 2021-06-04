@@ -40,35 +40,25 @@ class HousingStock:
                  label2income=None,
                  label2consumption=None,
                  price_behavior='myopic'):
-        # TODO: add pd.MultiIndex as input type for stock
         """Initialize Housing Stock object.
 
         Parameters
         ----------
         stock_seg : pd.Series
-        MultiIndex levels describing buildings attributes. Values are number of buildings.
-
+            MultiIndex levels describing buildings attributes. Values are number of buildings.
         levels_values: dict
-        Possible values for levels.
-
+            possible values for levels
         year: int
-
         label2area: float, pd.Series, pd.DataFrame, dict, optional
-        Area by segments.
-
+            area by segments
         label2horizon: float, pd.Series, pd.DataFrame, dict, optional
-        Investment horizon by segments.
-
+            investment horizon by segments
         label2discount: float, pd.Series, pd.DataFrame, dict, optional
-        Interest rate by segments.
-
+            interest rate by segments
         label2income: float, pd.Series, pd.DataFrame, dict, optional
-        Income by segments.
-
+            income by segments
         label2consumption: float, pd.Series, pd.DataFrame, dict, optional
-        Consumption by segments
-
-        # TODO: use property to automatically update stock, segments, levels and dimensions
+            consumption by segments
         """
 
         self._year = year
@@ -256,8 +246,8 @@ class HousingStock:
             return discount_factor
 
     @staticmethod
-    def rate2time_series(interest_rate, idx_yr):
-        return [(1 + interest_rate) ** -(yr - idx_yr[0]) for yr in idx_yr]
+    def rate2time_series(rate, yrs):
+        return [(1 + rate) ** -(yr - yrs[0]) for yr in yrs]
 
     @staticmethod
     def to_discounted(df, rate):
@@ -361,23 +351,24 @@ class HousingStock:
         """Returns energy cost segmented and for every year based on energy consumption and energy prices.
         €/m2
         """
+        temp = mul_df.copy()
         if option == 'final':
-            if len(mul_df.index.names) == 1:
-                mul_df.index.names = ['Heating energy final']
+            if len(temp.index.names) == 1:
+                temp.index.names = ['Heating energy final']
             else:
-                mul_df.index.rename('Heating energy final', 'Heating energy', inplace=True)
+                temp.index.rename('Heating energy final', 'Heating energy', inplace=True)
 
-        mul_df = reindex_mi(mul_df, consumption.index, mul_df.index.names)
-        if isinstance(mul_df, pd.DataFrame):
+        temp = reindex_mi(temp, consumption.index, temp.index.names)
+        if isinstance(temp, pd.DataFrame):
             if isinstance(consumption, pd.DataFrame):
-                return mul_df * consumption
+                return temp * consumption
             elif isinstance(consumption, pd.Series):
-                return ds_mul_df(consumption, mul_df)
-        elif isinstance(mul_df, pd.Series):
+                return ds_mul_df(consumption, temp)
+        elif isinstance(temp, pd.Series):
             if isinstance(consumption, pd.DataFrame):
-                return ds_mul_df(mul_df, consumption)
+                return ds_mul_df(temp, consumption)
             elif isinstance(consumption, pd.Series):
-                return consumption * mul_df
+                return consumption * temp
 
     @staticmethod
     def to_summed(df, yr_ini, horizon):
@@ -1556,6 +1547,10 @@ class HousingStockConstructed(HousingStock):
         self._year = val
         self._stock_needed = self._stock_needed_ts.loc[val]
         self._share_multi_family_tot = self._share_multi_family_tot_dict[val]
+
+    @property
+    def stock_seg(self):
+        return self._stock_constructed_seg_dict[self.year]
 
     @property
     def flow_constructed(self):

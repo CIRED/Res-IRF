@@ -5,13 +5,13 @@
   "info_renovation": true,
   "lbd_construction": true,
   "info_construction": true,
-  "carbon_tax": true,
+  "carbon_tax": false,
   "carbon_tax_behavior": "myopic",
-  "cite": true,
-  "cite_plus": true,
-  "cee_subsidy": true,
-  "cee_taxes": true,
-  "reduced_vta": true,
-  "eptz": true,
-  "eptz_plus": true
+  "cite": false,
+  "cite_plus": false,
+  "cee_subsidy": false,
+  "cee_taxes": false,
+  "reduced_vta": false,
+  "eptz": false,
+  "eptz_plus": false
 }

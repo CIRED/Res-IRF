@@ -1,0 +1,53 @@
+{
+  "All policies": {
+    "investor": "Reference",
+    "cost_intangible": true,
+    "lbd_renovation": true,
+    "info_renovation": true,
+    "lbd_construction": true,
+    "info_construction": true,
+    "carbon_tax": false,
+    "carbon_tax_behavior": "myopic",
+    "cite": false,
+    "cite_plus": false,
+    "cee_subsidy": false,
+    "cee_taxes": false,
+    "reduced_vta": false,
+    "eptz": false,
+    "eptz_plus": false
+  },
+  "No policies": {
+    "investor": "Reference",
+    "cost_intangible": true,
+    "lbd_renovation": true,
+    "info_renovation": true,
+    "lbd_construction": true,
+    "info_construction": true,
+    "carbon_tax": false,
+    "carbon_tax_behavior": "myopic",
+    "cite": false,
+    "cite_plus": false,
+    "cee_subsidy": false,
+    "cee_taxes": false,
+    "reduced_vta": false,
+    "eptz": false,
+    "eptz_plus": false
+  },
+  "Carbon tax -1": {
+    "investor": "Reference",
+    "cost_intangible": true,
+    "lbd_renovation": true,
+    "info_renovation": true,
+    "lbd_construction": true,
+    "info_construction": true,
+    "carbon_tax": false,
+    "carbon_tax_behavior": "myopic",
+    "cite": false,
+    "cite_plus": false,
+    "cee_subsidy": false,
+    "cee_taxes": false,
+    "reduced_vta": false,
+    "eptz": false,
+    "eptz_plus": false
+  }
+}

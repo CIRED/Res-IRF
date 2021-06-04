@@ -144,10 +144,6 @@ index_input_year = range(calibration_year, last_year + 1, 1)
 name_file = os.path.join(os.getcwd(), sources_dict['stock_buildings']['source'])
 stock_ini_seg = pd.read_pickle(name_file)
 
-name_file = os.path.join(folder['input'], 'scenario.json')
-with open(name_file) as file:
-    scenario_dict = json.load(file)
-
 name_file = os.path.join(os.getcwd(), sources_dict['colors']['source'])
 with open(name_file) as file:
     colors_dict = json.load(file)
@@ -204,13 +200,6 @@ dict_label['label2consumption_heater_construction'] = dict_label['label2primary_
     'label2heater_construction']
 dict_label['label2consumption_construction'] = final2consumption(dict_label['label2consumption_heater_construction'],
                                                                  dict_label['label2final_energy'] ** -1)
-dict_label['label2horizon_heater'] = dict_label['label2horizon_heater'][scenario_dict['investor']]
-dict_label['label2horizon_envelope'] = dict_label['label2horizon_envelope'][scenario_dict['investor']]
-
-label2horizon = dict()
-label2horizon['envelope'] = dict_label['label2horizon_envelope']
-label2horizon['heater'] = dict_label['label2horizon_heater']
-dict_label['label2horizon'] = label2horizon
 
 file_dict = dict_label['levels_dict']
 keys = ['Housing type', 'Occupancy status', 'Heating energy', 'Energy performance', 'Income class']
@@ -235,7 +224,6 @@ carbon_tax.index.set_names('Heating energy', inplace=True)
 dict_policies['carbon_tax']['value'] = carbon_tax
 
 # cost_invest
-
 cost_invest = dict()
 name_file = os.path.join(os.getcwd(), sources_dict['cost_renovation']['source'])
 cost_envelope = pd.read_csv(name_file, sep=',', header=[0], index_col=[0])
@@ -277,7 +265,6 @@ for key, value in file_dict['co2_content'].items():
     co2_content_data = pd.concat((co2_content_data, temp), axis=1)
 co2_content_data = co2_content_data.T
 co2_content_data.index.set_names('Heating energy', inplace=True)
-
 
 name_file = os.path.join(os.getcwd(), sources_dict['rate_renovation_ini']['source'])
 rate_renovation_ini = pd.read_csv(name_file, index_col=[0, 1], header=[0], squeeze=True)

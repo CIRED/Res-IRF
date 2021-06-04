@@ -3,40 +3,56 @@
 This script requires that 'pandas' be installed within the Python
 environment you are running this script in.
 """
-
+import os
 import time
 import logging
 import datetime
-from shutil import copyfile
 import pandas as pd
+from shutil import copyfile
+
 
 from project.buildings import HousingStock, HousingStockRenovated, HousingStockConstructed
 from project.policies import EnergyTaxes, Subsidies, RegulatedLoan
-from project.parse_input import *
 from project.parse_output import parse_output
 
 
-if __name__ == '__main__':
+def res_irf(folder, scenario_dict, dict_parameters, dict_policies, levels_dict_construction, levels_dict,
+            energy_prices_dict, cost_invest, cost_invest_construction,
+            sources_dict, stock_ini_seg, co2_content_data, dict_label,
+            rate_renovation_ini, ms_renovation_ini, dict_share, logging):
+    """Res-IRF functions.
+
+    Parameters
+    ----------
+    folder: dict
+        path
+    scenario_dict: dict
+        dict with all scenarios
+    dict_parameters: dict
+        dict with all parameters
+    dict_policies: dict
+        dict with all policies parameters
+    levels_dict_construction: dict
+    levels_dict: dict
+    energy_prices_dict: dict
+    cost_invest: dict
+    cost_invest_construction: dict
+    sources_dict: dict
+    stock_ini_seg: pd.Series
+    co2_content_data: pd.Series
+    dict_label: dict
+    rate_renovation_ini: pd.Series
+    ms_renovation_ini: pd.DataFrame
+    dict_share: dict
+    """
+
     start = time.time()
-
-    folder['output'] = os.path.join(folder['output'], datetime.datetime.today().strftime('%Y%m%d_%H%M%S'))
-    if not os.path.isdir(folder['output']):
-        os.mkdir(folder['output'])
-
-    logging.basicConfig(filename=os.path.join(folder['output'], 'log.txt'),
-                        filemode='a',
-                        level=logging.DEBUG,
-                        format='%(asctime)s - (%(lineno)s) - %(message)s')
-    root_logger = logging.getLogger("")
-    log_formatter = logging.Formatter('%(asctime)s - (%(lineno)s) - %(message)s')
-    console_handler = logging.StreamHandler()
-    console_handler.setFormatter(log_formatter)
-    console_handler.setLevel('DEBUG')
-    root_logger.addHandler(console_handler)
+    calibration_year = sources_dict['stock_buildings']['year']
 
     logging.debug('Creation of output folder: {}'.format(folder['output']))
 
-    copyfile(os.path.join(folder['input'], 'scenario.json'), os.path.join(folder['output'], 'scenario.json'))
+    # copyfile(os.path.join(folder['input'], scenario_file), os.path.join(folder['output'], scenario_file))
+    pd.Series(scenario_dict).to_csv(os.path.join(folder['output'], 'scenario.csv'))
     copyfile(os.path.join(folder['input'], 'parameters.json'), os.path.join(folder['output'], 'parameters.json'))
 
     output = dict()
@@ -51,6 +67,14 @@ if __name__ == '__main__':
         output[key][calibration_year] = val
 
     logging.debug('Initialization')
+
+    # function of scenario_dict
+    label2horizon = dict()
+    dict_label['label2horizon_heater'] = dict_label['label2horizon_heater'][scenario_dict['investor']]
+    dict_label['label2horizon_envelope'] = dict_label['label2horizon_envelope'][scenario_dict['investor']]
+    label2horizon['envelope'] = dict_label['label2horizon_envelope']
+    label2horizon['heater'] = dict_label['label2horizon_heater']
+    dict_label['label2horizon'] = label2horizon
 
     # energy_price = forecast2myopic(energy_prices_dict['energy_price_forecast'], calibration_year)
     energy_price = energy_prices_dict['energy_price_forecast']
@@ -86,8 +110,9 @@ if __name__ == '__main__':
 
             elif item['policy'] == 'regulation':
                 pass
-    output['total_taxes'] = total_taxes
-    energy_price = energy_price * (1 + total_taxes)
+    if total_taxes is not None:
+        output['total_taxes'] = total_taxes
+        energy_price = energy_price * (1 + total_taxes)
 
     logging.debug('Creating HousingStockRenovated Python object')
     buildings = HousingStockRenovated(stock_ini_seg, levels_dict, calibration_year,
@@ -279,3 +304,63 @@ if __name__ == '__main__':
     end = time.time()
     logging.debug('Time for the module: {:,.0f} seconds.'.format(end - start))
     logging.debug('End')
+
+
+if __name__ == '__main__':
+    import copy
+    from project.parse_input import *
+    from multiprocessing import Process
+
+    multiple_scenario = True
+
+    start = time.time()
+
+    folder['output'] = os.path.join(folder['output'], datetime.datetime.today().strftime('%Y%m%d_%H%M%S'))
+    if not os.path.isdir(folder['output']):
+        os.mkdir(folder['output'])
+
+    logging.basicConfig(filename=os.path.join(folder['output'], 'log.txt'),
+                        filemode='a',
+                        level=logging.DEBUG,
+                        format='%(asctime)s - (%(lineno)s) - %(message)s')
+    root_logger = logging.getLogger("")
+    log_formatter = logging.Formatter('%(asctime)s - (%(lineno)s) - %(message)s')
+    console_handler = logging.StreamHandler()
+    console_handler.setFormatter(log_formatter)
+    console_handler.setLevel('DEBUG')
+    root_logger.addHandler(console_handler)
+
+    if not multiple_scenario:
+        name_file = os.path.join(folder['input'], 'scenario.json')
+        with open(name_file) as file:
+            scenario_dict = json.load(file)
+        res_irf(folder, scenario_dict, dict_parameters, dict_policies, levels_dict_construction, levels_dict,
+                energy_prices_dict, cost_invest, cost_invest_construction,
+                sources_dict, stock_ini_seg, co2_content_data, dict_label,
+                rate_renovation_ini, ms_renovation_ini, dict_share, logging)
+    else:
+        name_file = os.path.join(folder['input'], 'scenarios.json')
+        with open(name_file) as file:
+            scenarios_dict = json.load(file)
+
+        processes_list = []
+        for key, scenario_dict in scenarios_dict.items():
+
+            folder_scenario = copy.copy(folder)
+            folder_scenario['output'] = os.path.join(folder['output'], key.replace(' ', '_'))
+            os.mkdir(folder_scenario['output'])
+
+            processes_list += [Process(target=res_irf,
+                                       args=(folder_scenario, scenario_dict, dict_parameters, dict_policies,
+                                             levels_dict_construction, levels_dict,
+                                             energy_prices_dict, cost_invest, cost_invest_construction,
+                                             sources_dict, stock_ini_seg, co2_content_data, dict_label,
+                                             rate_renovation_ini, ms_renovation_ini, dict_share, logging))]
+
+        for p in processes_list:
+            p.start()
+        for p in processes_list:
+            p.join()
+
+    end = time.time()
+    logging.debug('Time for the module: {:,.0f} seconds.'.format(end - start))
