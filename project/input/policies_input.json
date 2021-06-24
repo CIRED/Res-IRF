@@ -103,13 +103,13 @@
     "kind": "€/gCO2",
     "type": "dict_to_parse"
   },
-  "reduced_vta":
+  "reduced_tax":
   {
-    "name": "reduced_vta",
+    "name": "reduced_tax",
     "policy": "subsidies",
     "start": 2012,
     "end": 2050,
-    "value": 0.045,
+    "value": 0.04,
     "kind": "%",
     "transition": ["Energy performance"],
     "type": "dict_to_parse"
@@ -207,5 +207,26 @@
     "targets": null,
     "transition": ["Energy performance"],
     "type": "dict_to_parse"
+  },
+  "renovation_obligation":
+  {
+    "name": "renovation_obligation",
+    "policy": "renovation_obligation",
+    "type": "dict_to_parse",
+    "participation_rate": 1.0,
+    "start_targets": {
+      "val": {
+        "G": 2020,
+        "F": 2024,
+        "E": 2028,
+        "D": 2032,
+        "C": 2036,
+        "B": 2040
+      },
+      "index": [
+        "Energy performance"
+      ],
+      "type": "pd.Series"
+    }
   }
 }

@@ -2,7 +2,7 @@ import pandas as pd
 import os
 import json
 
-from project.utils import linear2series, reindex_mi
+from project.utils import apply_linear_rate, reindex_mi
 
 
 def dict2series(item_dict):
@@ -76,7 +76,8 @@ def parse_json(n_file):
     with open(n_file) as f:
         f_dict = json.load(f)
         for key, item in f_dict.items():
-            if isinstance(item, float) or isinstance(item, int) or isinstance(item, str) or isinstance(item, list) or item is None:
+            if isinstance(item, float) or isinstance(item, int) or isinstance(item, str) or isinstance(item,
+                                                                                                       list) or item is None:
                 result_dict[key] = item
             elif isinstance(item, dict):
                 if item['type'] == 'dict':
@@ -158,8 +159,8 @@ dict_parameters['Population total'] = pd.read_csv(os.path.join(folder['input'], 
 factor_population = stock_ini_seg.sum() / dict_parameters['Stock total ini']
 dict_parameters['Population'] = dict_parameters['Population total'] * factor_population
 
-dict_parameters['Available income'] = linear2series(dict_parameters['Available income ini'],
-                                                    dict_parameters['Available income rate'], index_input_year)
+dict_parameters['Available income'] = apply_linear_rate(dict_parameters['Available income ini'],
+                                                        dict_parameters['Available income rate'], index_input_year)
 
 # inflation
 dict_parameters['Price index'] = pd.Series(1, index=index_input_year)
@@ -191,7 +192,7 @@ dict_parameters['Flow needed'] = pd.Series(flow_needed)
 name_file = os.path.join(os.getcwd(), sources_dict['label2info']['source'])
 dict_label = parse_json(name_file)
 
-dict_label['label2income'] = dict_label['label2income'].apply(linear2series, args=(
+dict_label['label2income'] = dict_label['label2income'].apply(apply_linear_rate, args=(
     dict_parameters["Household income rate"], index_input_year))
 dict_label['label2consumption_heater'] = dict_label['label2primary_consumption'] * dict_label['label2heater']
 dict_label['label2consumption'] = final2consumption(dict_label['label2consumption_heater'],
@@ -229,12 +230,14 @@ name_file = os.path.join(os.getcwd(), sources_dict['cost_renovation']['source'])
 cost_envelope = pd.read_csv(name_file, sep=',', header=[0], index_col=[0])
 cost_envelope.index.set_names('Energy performance', inplace=True)
 cost_envelope.columns.set_names('Energy performance final', inplace=True)
+cost_envelope = cost_envelope * (1 + 0.1) / (1 + 0.055)
 cost_invest['Energy performance'] = cost_envelope
 
 name_file = os.path.join(os.getcwd(), sources_dict['cost_switch_fuel']['source'])
 cost_switch_fuel = pd.read_csv(name_file, index_col=[0], header=[0])
 cost_switch_fuel.index.set_names('Heating energy', inplace=True)
 cost_switch_fuel.columns.set_names('Heating energy final', inplace=True)
+cost_switch_fuel = cost_switch_fuel * (1 + 0.1) / (1 + 0.055)
 cost_invest['Heating energy'] = cost_switch_fuel
 
 cost_invest_construction = dict()
@@ -251,7 +254,7 @@ with open(name_file) as file:
 energy_prices_dict = dict()
 energy_price_data = pd.DataFrame()
 for key, value in file_dict['price_w_taxes'].items():
-    temp = linear2series(value, file_dict['price_rate'][key], index_input_year)
+    temp = apply_linear_rate(value, file_dict['price_rate'][key], index_input_year)
     temp.name = key
     energy_price_data = pd.concat((energy_price_data, temp), axis=1)
 energy_price_data = energy_price_data.T
@@ -260,7 +263,7 @@ energy_prices_dict['energy_price_forecast'] = energy_price_data
 
 co2_content_data = pd.DataFrame()
 for key, value in file_dict['co2_content'].items():
-    temp = linear2series(value, file_dict['co2_rate'][key], index_input_year)
+    temp = apply_linear_rate(value, file_dict['co2_rate'][key], index_input_year)
     temp.name = key
     co2_content_data = pd.concat((co2_content_data, temp), axis=1)
 co2_content_data = co2_content_data.T

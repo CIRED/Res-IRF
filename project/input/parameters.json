@@ -1,5 +1,5 @@
 {
-  "End year": 2022,
+  "End year": 2030,
   "Destruction rate": 0.0035,
   "Residual destruction rate": 0.05,
   "Household income rate": 0.012,
@@ -80,23 +80,23 @@
   },
   "Rotation rate": {
     "val": {
-      "Landlords": 0.03,
+      "Landlords": 0.035,
       "Homeowners": 0.18,
       "Social-housing": 0.08
     },
     "index": [
-      "Housing type"
+      "Occupancy status"
     ],
     "type": "pd.Series"
   },
   "Mutation rate": {
     "val": {
-      "Landlords": 0.035,
+      "Landlords": 0,
       "Homeowners": 0.018,
       "Social-housing": 0.003
     },
     "index": [
-      "Housing type"
+      "Occupancy status"
     ],
     "type": "pd.Series"
   }

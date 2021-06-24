@@ -6,23 +6,17 @@ from utils import reindex_mi, ds_mul_df, get_levels_values
 from project.parse_input import colors_dict, co2_content_data, energy_prices_dict
 
 
-def concat_yearly_dict(output):
-    """
+def parse_dict(output):
+    """Parse dict and returns pd.DataFrame.
+
     output = {'key1': {2018: pd.Series(), 2019: pd.Series()}, 'key2': {2019: pd.DataFrame(), 2020: pd.DataFrame()}}
-    >>> concat_yearly_dict(output)
+    >>> parse_dict(output)
     {'key1': pd.DataFrame(), 'key2': pd.DataFrame()}
     """
     new_output = {}
     for key, output_dict in output.items():
         if isinstance(output_dict, dict):
-            for yr, val in output_dict.items():
-                if isinstance(val, pd.DataFrame):
-                    new_item = {yr: itm.stack(itm.columns.names) for yr, itm in output_dict.items()}
-                    new_output[key] = pd.DataFrame(new_item)
-                elif isinstance(val, pd.Series):
-                    new_output[key] = pd.DataFrame(output_dict)
-                elif isinstance(val, float):
-                    new_output[key] = pd.Series(output[key])
+            new_output[key] = dict_pd2df(output_dict)
         elif isinstance(output_dict, pd.DataFrame):
             new_output[key] = output_dict
         elif isinstance(output_dict, pd.Series):
@@ -31,8 +25,18 @@ def concat_yearly_dict(output):
 
 
 def dict_pd2df(d_pd):
-    """
-    Function that takes dict with year as key and return DataFrame with year as column
+    """Function that takes dict with year as key and return DataFrame with year as column.
+
+    If item is a pd.DataFrame will stack columns as row to be able to concatenate multiple years.
+
+    Parameters
+    ----------
+    d_pd: dict
+
+
+    Returns
+    -------
+    pd.DataFrame
     """
 
     def dict_df2df(d):
@@ -49,10 +53,17 @@ def dict_pd2df(d_pd):
             return dict_ds2df(d_pd)
 
 
-def to_subsidies_detailed(buildings, folder_detailed):
-    """Parse buildings.subsidies_detailed and returns DataFrame.
+def to_policies_detailed(buildings, folder_detailed):
+    """Parse buildings.policies_detailed and returns DataFrame.
+
+    Parameters
+    ----------
+    buildings: HousingStockRenovated
+    folder_detailed: path
+        ok
+
     """
-    d = buildings.subsidies_detailed[tuple(['Energy performance'])]
+    d = buildings.policies_detailed[tuple(['Energy performance'])]
     result_subsidies = {}
     for yr, item in d.items():
         temp = []
@@ -64,7 +75,7 @@ def to_subsidies_detailed(buildings, folder_detailed):
         result_subsidies[yr].dropna(axis=0, how='any', inplace=True)
         # result_subsidies[yr].index.names = list(df.index.names) + list(df.columns.names)
 
-    name_file = os.path.join(folder_detailed, 'subsidies_detailed.pkl')
+    name_file = os.path.join(folder_detailed, 'policies_detailed.pkl')
     with open(name_file, 'wb') as file:
         pickle.dump(result_subsidies, file)
     return result_subsidies
@@ -119,8 +130,8 @@ def to_detailed_output(buildings, buildings_constructed, output, folder_output):
                 'energy_cash_flows': buildings.energy_cash_flows,
                 'energy_lcc': buildings.energy_lcc,
                 'energy_lcc_final': buildings.energy_lcc_final,
-                'subsidies_detailed': buildings.subsidies_detailed,
-                'subsidies_total': buildings.subsidies_total,
+                'policies_detailed': buildings.policies_detailed,
+                'policies_total': buildings.policies_total,
                 'capex_total': buildings.capex_total,
                 'energy_saving': buildings.energy_saving,
                 'emission_saving': buildings.emission_saving,
@@ -128,11 +139,21 @@ def to_detailed_output(buildings, buildings_constructed, output, folder_output):
                 'emission_saving_lc': buildings.emission_saving_lc
                 }
 
+    # TODO: transfrom with dict_pd2df before pkl
+
+    parsed_dict = parse_dict(var_dict)
+
+    # pkl all var_dict
+    for key, item in parsed_dict.items():
+        name_file = os.path.join(folder_pkl, '{}.pkl'.format(key))
+        with open(name_file, 'wb') as file:
+            pickle.dump(item, file)
+
     flow_renovation = dict_pd2df(var_dict['flow_renovation_label_energy_dict'])
     capex_ep = dict_pd2df(var_dict['capex_total'][('Energy performance',)].copy())
     capex_he = dict_pd2df(var_dict['capex_total'][('Heating energy',)].copy())
-    subsidies_ep = dict_pd2df(var_dict['subsidies_total'][('Energy performance',)].copy())
-    # subsidies_he = dict_pd2df(var_dict['subsidies_total'][('Heating energy',)].copy())
+    subsidies_ep = dict_pd2df(var_dict['policies_total'][('Energy performance',)].copy())
+    # subsidies_he = dict_pd2df(var_dict['policies_total'][('Heating energy',)].copy())
 
     consumption_actual = var_dict['consumption_actual']
     consumption_conventional = var_dict['consumption_conventional']
@@ -164,20 +185,31 @@ def to_detailed_output(buildings, buildings_constructed, output, folder_output):
     if subsidies_ep is not None:
         subsidies_ep_re = reindex_mi(subsidies_ep, flow_renovation.index, subsidies_ep.index.names)
         # subsidies_he_re = reindex_mi(subsidies_he, flow_renovation.index, subsidies_he.index.names)
-        to_subsidies_detailed(buildings, folder_detailed)
+        to_policies_detailed(buildings, folder_detailed)
     else:
         subsidies_ep_re = capex_ep_re * 0
 
     # total consumption and emission of buildings
-    consumption = pd.DataFrame(buildings._stock_seg_dict) * buildings.consumption_actual
+    consumption = pd.DataFrame(buildings.stock_seg_dict) * buildings.consumption_actual
     consumption = ds_mul_df(buildings.to_area(), consumption)
+    consumption_construction = pd.DataFrame(
+        buildings_constructed.stock_constructed_seg_dict) * buildings_constructed.to_consumption_new_stock(
+        energy_prices_dict['energy_price_forecast'])
+    consumption_construction = ds_mul_df(buildings_constructed.to_area(segments=consumption_construction.index),
+                                         consumption_construction)
+    consumption_total = consumption.sum(axis=0) + consumption_construction.sum(axis=0)
+
     if 'total_taxes' in output.keys():
         taxes = HousingStock.mul_consumption(consumption, output['total_taxes'])
+        taxes_construction = HousingStock.mul_consumption(consumption_construction, output['total_taxes'])
     else:
         taxes = consumption * 0
+        taxes_construction = consumption_construction * 0
+    taxes_total = taxes.sum(axis=0) + taxes_construction.sum(axis=0)
 
     emission = HousingStock.mul_consumption(consumption, co2_content_data)
-
+    emission_construction = HousingStock.mul_consumption(consumption_construction, co2_content_data)
+    emission_total = emission.sum(axis=0) + emission_construction.sum(axis=0)
     financials_dict = dict()
     list_years = flow_renovation.columns
     for year in list_years:
@@ -228,13 +260,22 @@ def to_detailed_output(buildings, buildings_constructed, output, folder_output):
         # 'G and F buildings': flow_renovation.loc[:, year].
         # percentage of parc at least B
         # number of energy percariy
-        financials_dict[year] = {'Consumption actual': consumption.loc[:, year].sum(),
-                                 'Emission actual': emission.loc[:, year].sum(),
+        financials_dict[year] = {'Consumption': consumption.loc[:, year].sum(),
+                                 'Consumption construction': consumption_construction.loc[:, year].sum(),
+                                 'Consumption total': consumption_total.loc[year],
+                                 'Emission': emission.loc[:, year].sum(),
+                                 'Emission construction': emission_construction.loc[:, year].sum(),
+                                 'Emission total': emission_total.loc[year],
                                  'Total number of renovations': flow_renovation.loc[:, year].sum(),
+                                 'Number of G & F buildings':
+                                     buildings.stock_seg_dict[year].groupby('Energy performance').sum().loc[
+                                         ['G', 'F']].sum(),
                                  'Investment macro': financials_euro['Investment macro'].sum(),
+                                 'Private investment macro': financials_euro['Private investment macro'].sum(),
                                  'Subsidies macro': financials_euro['Subsidies macro'].sum(),
                                  'Energy taxes': taxes.loc[:, year].sum(),
-                                 'Private investment macro': financials_euro['Private investment macro'].sum(),
+                                 'Energy taxes construction': taxes_construction.loc[:, year].sum(),
+                                 'Energy taxes total': taxes_total.loc[year],
                                  'Emission saving': (emission_saving_yr * area_reindex).sum(),
                                  'Energy saving': (energy_saving_yr * area_reindex).sum()
                                  }
@@ -250,19 +291,7 @@ def to_detailed_output(buildings, buildings_constructed, output, folder_output):
         financials_euro.to_csv(os.path.join(folder_detailed, 'result_euro_{}.csv'.format(year)))
         financials_unit.to_csv(os.path.join(folder_detailed, 'result_unit_{}.csv'.format(year)))
 
-
-    """consumption_construction = pd.DataFrame(
-        buildings_constructed._stock_constructed_seg_dict) * buildings_constructed.to_consumption_conventional(
-        energy_prices_dict['energy_price_forecast'])
-    consumption_construction = ds_mul_df(buildings_constructed.to_area(), consumption_construction)"""
-
     pd.DataFrame(financials_dict).to_csv(os.path.join(folder_output, 'financials_dict.csv'))
-
-    # pkl all var_dict
-    for key, item in var_dict.items():
-        name_file = os.path.join(folder_pkl, '{}.pkl'.format(key))
-        with open(name_file, 'wb') as file:
-            pickle.dump(item, file)
 
 
 def parse_output(output, buildings, buildings_constructed, logging, folder_output, detailed_output=True):
@@ -278,7 +307,7 @@ def parse_output(output, buildings, buildings_constructed, logging, folder_outpu
     folder_pkl = os.path.join(folder_output, 'output_pkl')
     os.mkdir(folder_pkl)
 
-    new_output = concat_yearly_dict(output)
+    new_output = parse_dict(output)
     for key in new_output.keys():
         name_file = os.path.join(folder_csv, '{}.csv'.format(key.lower().replace(' ', '_')))
         logging.debug('Output to csv: {}'.format(name_file))
@@ -288,27 +317,3 @@ def parse_output(output, buildings, buildings_constructed, logging, folder_outpu
 
     if detailed_output:
         to_detailed_output(buildings, buildings_constructed, output, folder_output)
-
-    """"'# can be done later
-    def to_grouped(df, level):
-        grouped_sum = df.groupby(level).sum()
-        summed = grouped_sum.sum()
-        summed.name = 'Total'
-        result = pd.concat((grouped_sum.T, summed), axis=1).T
-        return result
-
-    # can be done later
-    levels = ['Energy performance', 'Heating energy']
-    val = 'Stock segmented'
-    for lvl in levels:
-        name_file = os.path.join(folder_output, '{}.csv'.format((val + '_' + lvl).lower().replace(' ', '_')))
-        logging.debug('Output to csv: {}'.format(name_file))
-        to_grouped(output[val], lvl).to_csv(name_file, header=True)
-
-    keys = ['Population total', 'Population', 'Population housing', 'Flow needed']
-    name_file = os.path.join(folder_output, 'demography.csv')
-    temp = pd.concat([output[k] for k in keys], axis=1)
-    temp.columns = keys
-    temp.to_csv(name_file, header=True)
-    name_file = os.path.join(folder_output, 'demography.pkl')
-    temp.to_pickle(name_file)"""

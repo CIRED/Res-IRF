@@ -1,9 +1,10 @@
-import pandas as pd
-from collections import defaultdict
-import matplotlib.pyplot as plt
-from math import floor, ceil
-from matplotlib.ticker import MaxNLocator
 import numpy as np
+import pandas as pd
+from math import floor, ceil
+from collections import defaultdict
+
+import matplotlib.pyplot as plt
+from matplotlib.ticker import MaxNLocator
 
 
 def reverse_nested_dict(data_dict):
@@ -16,24 +17,6 @@ def reverse_nested_dict(data_dict):
         for subkey, subval in val.items():
             flipped[subkey][key] = subval
     return flipped
-
-
-def concat_yearly_dict(data_dict):
-    """Concatenate dict of dict
-
-    """
-    new_output = {}
-    for key, output_dict in data_dict.items():
-        if isinstance(output_dict, dict):
-            for yr, val in output_dict.items():
-                if isinstance(val, pd.DataFrame):
-                    new_item = {yr: itm.stack(itm.columns.names) for yr, itm in output_dict.items()}
-                    new_output[key] = pd.DataFrame(new_item)
-                elif isinstance(val, pd.Series):
-                    new_output[key] = pd.DataFrame(output_dict)
-                elif isinstance(val, float):
-                    new_output[key] = pd.Series(data_dict[key])
-    return new_output
 
 
 def economic_subplots(df, suptitle, format_axtitle=lambda x: x, format_val=lambda x: '{:.0f}'.format(x), n_columns=3):
@@ -64,6 +47,7 @@ def economic_subplots(df, suptitle, format_axtitle=lambda x: x, format_val=lambd
         else:
             ax = axes[row, column]
         try:
+            test = df.iloc[k, :]
             df.T.plot(ax=ax, color='lightgray', linewidth=0.5)
             df.iloc[k, :].plot(ax=ax, color='black', linewidth=2)
             first_val = df.iloc[k, 0]
@@ -81,9 +65,9 @@ def economic_subplots(df, suptitle, format_axtitle=lambda x: x, format_val=lambd
             ax.spines['left'].set_visible(False)
             ax.get_yaxis().set_visible(False)
             ax.set_title(format_axtitle(df.index[k]), fontweight='bold', fontsize=10, pad=-1.6)
+            ax.get_legend().remove()
         except IndexError:
             ax.axis('off')
-        ax.get_legend().remove()
 
     plt.show()
 
@@ -92,7 +76,6 @@ def distribution_scatter(df, column_x, column_y, dict_color, level='Energy perfo
                          xlabel=None, ylabel=None, ax_title=None,
                          format_x=lambda x, _: '{:,.0f}'.format(x), format_y=lambda y, _: '{:,.0f}'.format(y)):
     """Plot df values by df.index.
-
     """
     fig, ax = plt.subplots(1, 1, figsize=(12.8, 9.6))
     scatter_x = df[column_x].to_numpy()

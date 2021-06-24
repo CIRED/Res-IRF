@@ -282,3 +282,26 @@ class RegulatedLoan(PublicPolicy):
         """
         opportunity_cost = self.to_opp_cost(self.ir_market, self.horizon, principal)
         return opportunity_cost
+
+
+class RenovationObligation:
+    def __init__(self, name, start_targets, participation_rate=1.0, columns=None):
+        self.name = name
+        self.policy = 'renovation_obligation'
+        self.start_targets = start_targets
+        self.targets = self.to_targets(columns)
+        self.participation_rate = participation_rate
+
+    def to_targets(self, columns=None):
+        if columns is None:
+            columns = range(self.start_targets.min(), self.start_targets.max() + 1, 1)
+        df = pd.DataFrame(index=self.start_targets.index, columns=columns)
+        temp = dict()
+        for idx, row in df.iterrows():
+            start = self.start_targets.loc[row.name]
+            row[row.index >= start] = 1
+            row[row.index < start] = 0
+            temp[row.name] = row
+        df = pd.DataFrame(temp).T
+        df.index.name = self.start_targets.index.name
+        return df

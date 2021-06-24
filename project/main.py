@@ -12,7 +12,7 @@ from shutil import copyfile
 
 
 from project.buildings import HousingStock, HousingStockRenovated, HousingStockConstructed
-from project.policies import EnergyTaxes, Subsidies, RegulatedLoan
+from project.policies import EnergyTaxes, Subsidies, RegulatedLoan, RenovationObligation
 from project.parse_output import parse_output
 
 
@@ -80,19 +80,20 @@ def res_irf(folder, scenario_dict, dict_parameters, dict_policies, levels_dict_c
     energy_price = energy_prices_dict['energy_price_forecast']
 
     logging.debug('Initialize public policies')
-    dict_subsidies = {}
+    policies_dict = {}
     dict_energy_taxes = {}
+    dict_renovation_obligation = {}
     total_taxes = None
-    for key, item in dict_policies.items():
+    for pol, item in dict_policies.items():
         if scenario_dict[item['name']]:
-            logging.debug('Considering: {}'.format(key))
+            logging.debug('Considering: {}'.format(pol))
             if item['policy'] == 'subsidies':
-                dict_subsidies[key] = Subsidies(item['name'], item['start'], item['end'], item['kind'], item['value'],
-                                                transition=item['transition'])
+                policies_dict[pol] = Subsidies(item['name'], item['start'], item['end'], item['kind'], item['value'],
+                                               transition=item['transition'])
             elif item['policy'] == 'energy_taxes':
-                dict_energy_taxes[key] = EnergyTaxes(item['name'], item['start'], item['end'], item['kind'],
+                dict_energy_taxes[pol] = EnergyTaxes(item['name'], item['start'], item['end'], item['kind'],
                                                      item['value'])
-                temp = dict_energy_taxes[key].price_to_taxes(
+                temp = dict_energy_taxes[pol].price_to_taxes(
                     energy_prices=energy_prices_dict['energy_price_forecast'],
                     co2_content=co2_content_data)
                 if total_taxes is None:
@@ -100,16 +101,21 @@ def res_irf(folder, scenario_dict, dict_parameters, dict_policies, levels_dict_c
                 else:
                     total_taxes += temp
             elif item['policy'] == 'regulated_loan':
-                dict_subsidies[key] = RegulatedLoan(item['name'], item['start'], item['end'],
-                                                    ir_regulated=item['ir_regulated'], ir_market=item['ir_market'],
-                                                    principal_min=item['principal_min'],
-                                                    principal_max=item['principal_max'],
-                                                    horizon=item['horizon'], targets=item['targets'],
-                                                    transition=item['transition'])
-                dict_subsidies[key].reindex_attributes(stock_ini_seg.index)
+                policies_dict[pol] = RegulatedLoan(item['name'], item['start'], item['end'],
+                                                   ir_regulated=item['ir_regulated'], ir_market=item['ir_market'],
+                                                   principal_min=item['principal_min'],
+                                                   principal_max=item['principal_max'],
+                                                   horizon=item['horizon'], targets=item['targets'],
+                                                   transition=item['transition'])
+                policies_dict[pol].reindex_attributes(stock_ini_seg.index)
 
-            elif item['policy'] == 'regulation':
-                pass
+            elif item['policy'] == 'renovation_obligation':
+                dict_renovation_obligation[pol] = RenovationObligation(item['name'], item['start_targets'],
+                                                                       item['participation_rate'],
+                                                                       columns=index_input_year)
+
+    policies = list(policies_dict.values())
+
     if total_taxes is not None:
         output['total_taxes'] = total_taxes
         energy_price = energy_price * (1 + total_taxes)
@@ -172,7 +178,8 @@ def res_irf(folder, scenario_dict, dict_parameters, dict_policies, levels_dict_c
             cost_intangible_construction['Energy performance'] = buildings_constructed.to_calibration_market_share(
                 market_share_obj_construction,
                 energy_price,
-                cost_invest=cost_invest_construction)
+                cost_invest=cost_invest_construction,
+                policies=policies)
             logging.debug('End of calibration and dumping: {}'.format(name_file))
             cost_intangible_construction['Energy performance'].to_pickle(name_file)
         elif source == 'file':
@@ -191,7 +198,8 @@ def res_irf(folder, scenario_dict, dict_parameters, dict_policies, levels_dict_c
                                                                                        folder_output=folder[
                                                                                            'intermediate'],
                                                                                        cost_invest=cost_invest,
-                                                                                       consumption='conventional')
+                                                                                       consumption='conventional',
+                                                                                       policies=policies)
             logging.debug('End of calibration and dumping: {}'.format(name_file))
             cost_intangible['Energy performance'].to_pickle(name_file)
         elif source == 'file':
@@ -209,7 +217,8 @@ def res_irf(folder, scenario_dict, dict_parameters, dict_policies, levels_dict_c
     if source == 'function':
         rho_seg = buildings.calibration_renovation_rate(energy_price, rate_renovation_ini,
                                                         cost_invest=cost_invest,
-                                                        cost_intangible=cost_intangible)
+                                                        cost_intangible=cost_intangible,
+                                                        policies=policies)
         logging.debug('End of calibration and dumping: {}'.format(name_file))
         rho_seg.to_pickle(name_file)
     elif source == 'file':
@@ -223,6 +232,7 @@ def res_irf(folder, scenario_dict, dict_parameters, dict_policies, levels_dict_c
     logging.debug('Launching iterations')
     for year in years[1:]:
         logging.debug('YEAR: {}'.format(year))
+        policies_year = [policy for policy in policies if policy.start <= year <= policy.end]
         buildings.year = year
 
         logging.debug('Calculate energy consumption actual')
@@ -235,12 +245,20 @@ def res_irf(folder, scenario_dict, dict_parameters, dict_policies, levels_dict_c
 
         logging.debug('Update demolition')
         buildings.add_flow(- flow_demolition_seg)
+
         logging.debug('Renovation dynamic')
+        renovation_obligation = None
+        if 'renovation_obligation' in dict_renovation_obligation:
+            renovation_obligation = dict_renovation_obligation['renovation_obligation']
         flow_remained_seg, flow_area_renovation_seg = buildings.to_flow_remained(energy_price,
                                                                                  consumption='conventional',
                                                                                  cost_invest=cost_invest,
                                                                                  cost_intangible=cost_intangible,
-                                                                                 subsidies=list(dict_subsidies.values()))
+                                                                                 policies=policies_year,
+                                                                                 renovation_obligation=renovation_obligation,
+                                                                                 mutation=dict_parameters['Mutation rate'],
+                                                                                 rotation=dict_parameters['Rotation rate']
+                                                                                 )
 
         logging.debug('Updating stock segmented and renovation knowledge after renovation')
         buildings.update_stock(flow_remained_seg, flow_area_renovation_seg=flow_area_renovation_seg)
@@ -276,7 +294,8 @@ def res_irf(folder, scenario_dict, dict_parameters, dict_policies, levels_dict_c
         buildings_constructed.update_flow_constructed_seg(energy_price,
                                                           cost_intangible=cost_intangible_construction,
                                                           cost_invest=cost_invest_construction,
-                                                          nu=dict_parameters["Nu construction"])
+                                                          nu=dict_parameters['Nu construction'],
+                                                          policies=None)
 
         if scenario_dict['info_construction']:
             logging.debug('Information acceleration - construction')
@@ -295,7 +314,7 @@ def res_irf(folder, scenario_dict, dict_parameters, dict_policies, levels_dict_c
             output['Cost construction'][year] = cost_invest_construction['Energy performance']
 
         logging.debug(
-            '\nSummary:\nYear: {}\nDemolition: {:,.0f}\nStock after demolition: {:,.0f}\nNeeded: {:,.0f}\nRenovation: {:,.0f}\nConstruction: {:,.0f}'.format(
+            '\nSummary:\nYear: {}\nStock after demolition: {:,.0f}\nDemolition: {:,.0f}\nNeeded: {:,.0f}\nRenovation: {:,.0f}\nConstruction: {:,.0f}'.format(
                 year, buildings.stock_seg.sum(), flow_demolition_seg.sum(), dict_parameters['Flow needed'].loc[year],
                 buildings.flow_renovation_label_energy_dict[year].sum().sum(), flow_constructed))
 
@@ -311,7 +330,7 @@ if __name__ == '__main__':
     from project.parse_input import *
     from multiprocessing import Process
 
-    multiple_scenario = True
+    multiple_scenario = False
 
     start = time.time()
 

@@ -6,15 +6,34 @@ def logistic(x, a=1, r=1, k=1):
     return k / (1 + a * np.exp(- r * x))
 
 
-def multi_index2tuple(ds, list_levels):
+def apply_linear_rate(value, rate, index):
+    """Apply a linear rate for a value based on years index.
+
+    Parameters
+    ----------
+    value: float or int
+    rate: float
+    index: list of int
+
+    Returns
+    -------
+    pd.Series
     """
-    Aggregate levels of a MultiIndex into a tuple.
-    Example:
-    df = pd.DataFrame({'col1': ['a1', 'b1'], 'col2': ['a2', 'b2']}, index=[('x1', 'x2', 'x3'), ('y1', 'y2', 'y3')])
-    df.index = pd.MultiIndex.from_tuples(df.index)
-    df.index.names = ['1', '2', '3']
-    dfp = DataFrameParc(df)
-    dfp.multi_index2tuple(['1', '2'])
+    temp = [value * (1 + rate) ** (i - index[0]) for i in index]
+    return pd.Series(temp, index=index)
+
+
+def multi_index2tuple(ds, list_levels):
+    """Aggregate levels of a MultiIndex into a tuple based on specified levels.
+
+    Parameters
+    ----------
+    ds: pd.Series
+    list_levels: list
+
+    Returns
+    -------
+    pd.Series
     """
 
     list_level_position = [ds.index.names.index(i) for i in list_levels]
@@ -42,38 +61,60 @@ def multi_index2tuple(ds, list_levels):
 
 
 def remove_rows(ds, level, value_to_drop):
-    """Remove rows based on value in index.
+    """Remove rows based on value a level of pandas MultiIndex.
+
+    Parameters
+    ----------
+    ds: pd.Series or pd.DataFrame
+    level: str
+        name of MultiIndex levels
+    value_to_drop:
+
+    Returns
+    -------
+    pd.Series
+
     """
     bad_index = ds.index.get_level_values(level) == value_to_drop
-    ds = ds[~bad_index]
-    return ds
+    return ds[~bad_index]
 
 
-def replace_strings(ds, replace_dict):
+def replace(data, replace_dict):
+    """Replace string in pandas Series (multiindexes included) with regex.
+
+    Parameters
+    ----------
+    data: pd.Series or pd.DataFrame
+    replace_dict: dict
+        example: replace_dict = {'old_val0': 'new_val0', 'old_val0': 'new_val0'}
+
+    Returns
+    -------
+    pd.Series
     """
-    Example: replace_dict = {'old_val0': 'new_val0', 'old_val0': 'new_val0'}
-    """
-    def replace_string_data(data, to_replace, value):
-        data_updated = data.replace(to_replace=to_replace, value=value, regex=True)
-        return data_updated
-
-    index_names = ds.index.names
-    df = ds.reset_index()
+    index_names = data.index.names
+    df = data.reset_index()
     for key, val in replace_dict.items():
-        df = replace_string_data(df, key, val)
-
+        df = df.replace(to_replace=key, value=val, regex=True)
     df.set_index(index_names, inplace=True)
-    return df.iloc[:, 0]
 
-
-def linear2series(value, rate, index):
-    temp = [value * (1 + rate) ** (i - index[0]) for i in index]
-    return pd.Series(temp, index=index)
+    if isinstance(data, pd.Series):
+        return df.iloc[:, 0]
+    elif isinstance(data, pd.DataFrame):
+        return df
 
 
 def get_levels_values(miindex, levels):
     """Returns MultiIndex for levels passed based on miiindex.
 
+    Parameters
+    ----------
+    miindex: pd.MultiIndex
+    levels: list
+
+    Returns
+    -------
+    pd.MultiIndex
     """
     tuple_idx = tuple()
     for level in levels:
@@ -101,14 +142,32 @@ def miiindex_loc(ds, slicing_midx):
     return res
 
 
-def reindex_mi(df, miindex, levels, axis=0):
+def reindex_mi(df, miindex, levels=None, axis=0):
     """Return re-indexed DataFrame based on miindex using only few labels.
 
-    Levels order must match df.levels order.
+    Parameters:
+    -----------
+    df: pd.DataFrame or pd.Series
+        data to reindex
+    miindex: pd.MultiIndex
+        master to index to reindex df
+    levels: list, default df.index.names
+        list of levels to use to reindex df
+    axis: {0, 1}, default 0
+        axis to reindex df
+
+    Returns:
+    --------
+    pd.DataFrame or pd.Series
+
     Example:
+    --------
         reindex_mi(surface_ds, segments, ['Occupancy status', 'Housing type']))
         reindex_mi(cost_invest_ds, segments, ['Heating energy final', 'Heating energy']))
     """
+
+    if levels is None:
+        levels = df.index.names
 
     if len(levels) > 1:
         tuple_index = (miindex.get_level_values(level).tolist() for level in levels)
@@ -131,7 +190,9 @@ def reindex_mi(df, miindex, levels, axis=0):
 
 
 def ds_mul_df(ds, df, option='columns'):
-    """Multiply pd.Series to each columns (or rows) of pd.Dataframe.
+    """# TODO replace by x
+
+    Multiply pd.Series to each columns (or rows) of pd.Dataframe.
 
     """
     if option == 'columns':
@@ -155,13 +216,60 @@ def ds_mul_df(ds, df, option='columns'):
 
 
 def add_level_nan(ds, level):
-    """
-    Add level with 'nan' as value index. Value of pd.Series don't change.
+    """Add level to ds with 'nan' as value index.
+
+    Value of pd.Series doesn't change.
+
+    Parameters:
+    -----------
+    ds: pd.Series
+    level: str
+
+    Returns:
+    --------
+    pd.Series
     """
     ds_index_names = ds.index.names
     ds = pd.concat([ds], keys=['nan'], names=[level])
     ds = ds.reorder_levels(ds_index_names + [level])
     return ds
+
+
+def add_level(ds, index, axis=0):
+    """Add index as a new level for ds.index or ds.columns.
+
+    Value of ds does not depend on the new level (i.e. only defined by other levels).
+
+    Parameters:
+    -----------
+    ds: pd.Series
+    index: list
+    axis: {0, 1}
+
+    Returns:
+    --------
+    pd.Series
+
+    """
+    # ds_added append identical Series for each unique value
+    if isinstance(ds, pd.Series):
+        ds_added = pd.Series(dtype='float64')
+        for new_index in index:
+            ds_added = ds_added.append(pd.concat([ds], keys=[new_index], names=[index.names[0]], axis=axis))
+
+        if axis == 0:
+            ds_added.index = pd.MultiIndex.from_tuples(ds_added.index)
+            ds_added.index.names = [index.names[0]] + ds.index.names
+
+        return ds_added
+
+    elif isinstance(ds, pd.DataFrame):
+        # only works for axis=1 for now
+        df_temp = pd.DataFrame(dtype='float64')
+        for column in index:
+            df_temp = pd.concat((df_temp, pd.concat([ds], keys=[column], names=[index.names[0]], axis=1)), axis=1)
+
+        return df_temp
 
 
 def de_aggregating_series(ds_val, level_share_tot, level):
@@ -211,11 +319,14 @@ def de_aggregate_columns(df1, df2):
 def de_aggregate_series(ds_val, df_share):
     """Add new levels to ds_val using df_share.
 
+
+
     df_share has segment in index and share of new level in columns.
     ds_val has segment in index.
     ds_share and ds_val segment share some levels.
 
     Example:
+    --------
         Function used to add Income class owner to a stock or a flow.
     """
     levels_shared = [n for n in df_share.index.names if n in ds_val.index.names]
@@ -224,23 +335,24 @@ def de_aggregate_series(ds_val, df_share):
     return ds_mul_df(ds_val, df_share_r).stack()
 
 
-def serie_to_prop(serie, level):
-    """Get proportion of one dimension.
-    """
-    # TODO: work on this function
-    by = [i for i in serie.index.names if i != level]
-    grouped = serie.groupby(by)
-    ds = pd.Series(dtype='float64')
-    for name, group in grouped:
-        ds = pd.concat((ds, group / group.sum()), axis=0)
-    ds.index = pd.MultiIndex.from_tuples(ds.index)
-    ds.index.names = serie.index.names
-    return ds
-
-
 def de_aggregate_value(serie, ds_prop, val, level_val, list_val, level_key):
-    """
-    Replace val by list_val in dfp using ds_prop.
+    """De-aggregate val by list_val in serie using ds_prop.
+
+    Parameters:
+    -----------
+    serie: pd.Series
+
+    ds_prop: pd.Series
+
+
+
+    Returns:
+    --------
+
+    Example:
+    --------
+        Let's say you want to combine 2 sources of data by de-aggregating the value other
+
     """
 
     good_index = serie.index.get_level_values(level_val) == val
@@ -249,7 +361,7 @@ def de_aggregate_value(serie, ds_prop, val, level_val, list_val, level_key):
 
     ds = pd.Series(dtype='float64')
     for v in list_val:
-        ds = ds.append(replace_strings(ds_de_aggregate, {val: v}))
+        ds = ds.append(replace(ds_de_aggregate, {val: v}))
 
     # ds = ds.loc[ds.index.drop_duplicates(keep=False)]
     ds.index = pd.MultiIndex.from_tuples(ds.index)
@@ -278,16 +390,16 @@ def val2share(ds, levels, func=lambda x: x, option='row'):
     If option = 'columns', return pd DataFrame with levels in index. Sum of each row is equal to 1.
     """
     # TODO: column option mandatory caused row is very confusing
-    denum = reindex_mi(ds.apply(func).groupby(levels).sum(), ds.index, levels)
+    denum = reindex_mi(ds.apply(func).groupby(levels).sum(), ds.index)
     num = ds.apply(func)
-    prop = num/denum
+    prop = num / denum
     if option == 'row':
         return prop
     elif option == 'column':
         values = prop.name
         columns = [lvl for lvl in ds.index.names if lvl not in levels]
         prop = prop.reset_index()
-        prop = pd.pivot_table(prop, values=values, index=levels,  columns=columns)
+        prop = pd.pivot_table(prop, values=values, index=levels, columns=columns)
         if None in prop.columns.names:
             prop = prop.droplevel(list(prop.columns.names).index(None), axis=1)
         return prop
@@ -295,28 +407,4 @@ def val2share(ds, levels, func=lambda x: x, option='row'):
         raise ValueError
 
 
-def add_level(ds, index, axis=0):
-    """Add index as a new level for ds index.
-
-    Value of ds does not depend on the new level (i.e. only defined by other levels).
-    """
-    # ds_added append identical Series for each unique value
-    if isinstance(ds, pd.Series):
-        ds_added = pd.Series(dtype='float64')
-        for new_index in index:
-            ds_added = ds_added.append(pd.concat([ds], keys=[new_index], names=[index.names[0]], axis=axis))
-
-        if axis == 0:
-            ds_added.index = pd.MultiIndex.from_tuples(ds_added.index)
-            ds_added.index.names = [index.names[0]] + ds.index.names
-
-        return ds_added
-
-    elif isinstance(ds, pd.DataFrame):
-        # only works for axis=1 for now
-        df_temp = pd.DataFrame(dtype='float64')
-        for column in index:
-            df_temp = pd.concat((df_temp, pd.concat([ds], keys=[column], names=[index.names[0]], axis=1)), axis=1)
-
-        return df_temp
 
