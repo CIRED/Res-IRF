@@ -7,7 +7,7 @@ from project.utils import reindex_mi, val2share, logistic, get_levels_values, ds
 from itertools import product
 
 # TODO: ds_mul_df
-
+# TODO: calibration_renovation_rate // rho should depends on Income class owner and Heating energy initial
 
 class HousingStock:
     """Class represents housing stocks. Housing is a building and household archetype.
@@ -297,21 +297,27 @@ class HousingStock:
             return HousingStock._label2(segments, self.label2consumption, scenario=scenario)
 
     def to_consumption_actual(self, energy_prices, detailed_output=False):
-        """Return consumption actual for every segment and all years.
+        """Return energy consumption for every segment and all years.
 
-        Years depends on income_seg and energy_prices.
+        A growing number of academic studies point to a gap between the conventional energy consumption predicted
+        by energy performance certificates and actual energy consumption.
+        The most common explanation is a more intense heating of the heating infrastructure after an energy efficiency
+        improvement – a phenomenon commonly referred to as the “rebound effect.”
+
+        Heating Intensity = -0.191 * log(Income Share) + 0.1105
 
         Parameters
         __________
         energy_prices: pd.DataFrame
-        rows: energy list, columns: years
-
-        detailed_output: boolean, optional
+        detailed_output: boolean, default False
 
         Returns
         _______
-        consumption_actual: pd.DataFrame
-        rows: segments, columns: years
+        pd.DataFrame
+            consumption_actual (rows: segments, columns: years)
+        or
+        dict
+
         """
 
         if self.consumption_actual is not None and not detailed_output:
@@ -427,21 +433,32 @@ class HousingStock:
 
         Energy LCC is calculated on an segment-specific horizon, and using a segment-specific discount rate.
         Because, time horizon depends of type of renovation (label, or heating energy), lcc needs to know which transition.
-        Energy LCC can also be calculated for new constructed buildings: kind='new'.
-        Transition defined the investment horizon.
+        NB: transition defined the investment horizon.
+        Energy LCC depends on (Occupancy status, Housing type, Income class owner, Energy performance, Heating energy,
+        and transition).
+
+        Parameters
+        ----------
+        energy_prices: pd.DataFrame
+        transition: list, default ['Energy performance']
+        consumption: {'conventional', 'actual}
+
+        Returns
+        -------
+        pd.Series
         """
         if transition is None:
             transition = ['Energy performance']
 
         try:
             return self.energy_lcc[tuple(transition)][consumption][self.year]
-        except KeyError:
+        except (KeyError, TypeError):
             try:
                 energy_cash_flows = self.energy_cash_flows[consumption]
-            except TypeError:
+            except (KeyError, TypeError):
                 try:
                     energy_cash_flows = self.energy_cash_flows_all[consumption]
-                except KeyError:
+                except (KeyError, TypeError):
                     consumption_seg = self.to_consumption(consumption)
                     energy_cash_flows = HousingStock.mul_consumption(consumption_seg, energy_prices)
             if self._price_behavior == 'myopic':
@@ -471,9 +488,21 @@ class HousingStock:
 
     def ini_energy_cash_flows(self, energy_price):
         """Initialize exogenous variable that doesn't depend on dynamic to fasten the script.
-        - Consumption conventional (doesn't depend on time),
-        - Consumption actual (depends on energy_price and income so depend on time),
-        - Energy cash-flows (depends on consumption and consumption actual)
+
+        List of attribute initialized:
+        - buildings.area: pd.Series (doesn't depend on time)
+        - buildings.budget_share: pd.DataFrame (depends on energy_price and income so depend on time)
+        - buildings.use_intensity: pd.DataFrame (depends on energy_price and income so depend on time)
+        - buildings.consumption_conventional: pd.Series (doesn't depend on time)
+        - buildings.consumption_actual: pd.DataFrame (depends on energy_price and income so depend on time)
+        - buildings.energy_cash_flows['conventional']: pd.DataFrame
+        - buildings.energy_cash_flows_disc['conventional']: pd.DataFrame
+        - buildings.energy_cash_flows['actual']: pd.DataFrame
+        - buildings.energy_cash_flows_disc['actual']: pd.DataFrame
+
+        Parameters
+        ----------
+        energy_price: pd.DataFrame
         """
         result_dict = self.to_consumption_actual(energy_price, detailed_output=True)
         self.area = result_dict['Area']
@@ -595,7 +624,7 @@ class HousingStock:
 
         try:
             return self.consumption_final[tuple(transition)][consumption]
-        except KeyError:
+        except (KeyError, TypeError):
             consumption_initial = self.to_consumption(consumption)
             consumption_final = self.to_final(consumption_initial, transition=transition)
             self.consumption_final[tuple(transition)][consumption] = consumption_final
@@ -608,7 +637,7 @@ class HousingStock:
 
         try:
             return self.energy_saving[tuple(transition)][consumption]
-        except KeyError:
+        except (KeyError, TypeError):
 
             consumption_initial = self.to_consumption(consumption)
             consumption_final = self.to_consumption_final(consumption=consumption, transition=transition)
@@ -640,7 +669,7 @@ class HousingStock:
 
         try:
             return self.emission_saving[tuple(transition)][consumption]
-        except KeyError:
+        except (KeyError, TypeError):
             consumption_initial = self.to_consumption(consumption)
             consumption_final = self.to_consumption_final(consumption=consumption, transition=transition)
             consumption_final = consumption_final.stack(consumption_final.columns.names)
@@ -675,7 +704,7 @@ class HousingStock:
 
         try:
             return self.energy_lcc_final[tuple(transition)][consumption][self.year]
-        except KeyError:
+        except (KeyError, TypeError):
             energy_lcc = self.to_energy_lcc(energy_prices, transition=transition, consumption=consumption)
             energy_lcc_final = self.to_final(energy_lcc, transition=transition)
             self.energy_lcc_final[tuple(transition)][consumption][self.year] = energy_lcc_final
@@ -688,21 +717,21 @@ class HousingStock:
         Parameters
         ----------
         energy_prices: pd.DataFrame
-            Index are heating energy and columns are years.
+            index are heating energy and columns are years.
         cost_invest: dict, optional
-            Keys are transition (cost_invest['Energy performance']) and item are pd.DataFrame
+            keys are transition (cost_invest['Energy performance']) and item are pd.DataFrame
         cost_intangible: dict, optional
-            Keys are transition (cost_intangible['Energy performance']) and item are pd.DataFrame
+            keys are transition (cost_intangible['Energy performance']) and item are pd.DataFrame
         consumption: {'conventional', 'actual'}, default 'conventional
         transition: {['Energy performance'], ['Heating energy'], ['Energy performance', 'Heating energy']}, default ['Energy performance']
-            Define transition. Transition can be defined as label transition, energy transition, or label-energy transition.
+            define transition. Transition can be defined as label transition, energy transition, or label-energy transition.
         policies: list, optional
-            List of Policies object
+            list of Policies object
 
         Returns
         -------
         pd.DataFrame
-            Life-cycle-cost DataFrame is structured for every initial state (index) to every final state defined by transition (columns).
+            life-cycle-cost DataFrame is structured for every initial state (index) to every final state defined by transition (columns).
         """
 
         if transition is None:
@@ -794,7 +823,28 @@ class HousingStock:
 
     def to_market_share(self, energy_prices, transition=None, consumption='conventional', cost_invest=None,
                         cost_intangible=None, policies=None, nu=8.0):
+        """Returns market share for each segment and each possible final state.
 
+        Parameter nu characterizing the heterogeneity of preferences is set to 8 in the model.
+        Intangible costs are calibrated so that the observed market shares are reproduced in the initial year.
+
+        Parameters
+        ----------
+        energy_prices: pd.DataFrame
+        cost_invest: dict, optional
+        cost_intangible: dict, optional
+        consumption: {'conventional', 'actual'}, default 'conventional
+        transition: {['Energy performance'], ['Heating energy'], ['Energy performance', 'Heating energy']},
+            default ['Energy performance']
+        policies: list, optional
+            list of Policies object
+        nu: float or int, default 8.0
+
+        Returns
+        -------
+        pd.DataFrame
+            market_share, lcc_final
+        """
         if transition is None:
             transition = ['Energy performance']
 
@@ -848,11 +898,47 @@ class HousingStock:
                                  consumption='conventional', policies=None):
         """Returns intangible costs by calibrating market_share.
 
-        TODO: Calibration of intangible cost could be based on absolute value instead of market share.
+        Intangible costs are calibrated so that the observed market shares are reproduced in the initial year.
+        Intangible costs are calibrated so that the life-cycle cost model, fed with the investment costs,
+        matches the observed market shares.
+
+        For each segment:
+        LCC final is calculated (depends on Occupancy status, Housing type, Income class owner,
+        Energy performance initial, Heating energy initial, transition), then Market Share.
+        transition here is Energy performance
+        NB: MS doesn't depend on Income class (tenant), so to fasten the function it can be first removed.
+        Solver finds Intangible cost for each segment to match the observed market share.
+        --> Intangible cost(Occupancy status, Housing type, Income class owner, Energy performance initial,
+        Heating energy initial, Energy performance final)
+
+        NB: Observed market share only depends on Energy performance initial and Energy performance final.
+        Each segment with the same performance transition need to match the same observed market shares.
+
+
+        Parameters:
+        -----------
+        energy_prices: pd.DataFrame
+        market_share_objective: pd.DataFrame
+            observed market share to match
+        folder_output: str, optional
+            if not None, will dump cost_intangible in .pkl file
+        cost_invest: pd.DataFrame, optional
+        consumption: {'conventional', 'actual'}, default 'conventional'
+        policies: list, optional
+            policies to consider in the market share
+
+        Returns:
+        --------
+        pd.DataFrame
+            Intangible cost,
         """
 
         lcc_final = self.to_lcc_final(energy_prices, consumption=consumption, cost_invest=cost_invest,
                                       transition=['Energy performance'], policies=policies)
+
+        # remove income class as MultiIndex and drop duplicated indexes
+        lcc_final.reset_index(level='Income class', drop=True, inplace=True)
+        lcc_final = lcc_final[~lcc_final.index.duplicated(keep='first')]
 
         # remove idx when label = 'A' (no transition) and label = 'B' (intangible_cost = 0)
         lcc_useful = remove_rows(lcc_final, 'Energy performance', 'A')
@@ -938,8 +1024,13 @@ class HousingStock:
 
         if folder_output is not None:
             intangible_cost.to_pickle(os.path.join(folder_output, 'intangible_cost.pkl'))
-        intangible_cost_mean = intangible_cost.groupby('Energy performance', axis=0).mean()
-        intangible_cost_mean = intangible_cost_mean.loc[intangible_cost_mean.index[::-1], :]
+        # intangible_cost_mean = intangible_cost.groupby('Energy performance', axis=0).mean()
+        # intangible_cost_mean = intangible_cost_mean.loc[intangible_cost_mean.index[::-1], :]
+
+        # adding Income class that have been removed first
+        intangible_cost = add_level(intangible_cost, pd.Index(self.levels_values['Income class'], name='Income class'),
+                                    axis=0)
+
         return intangible_cost
 
     def to_segments_construction(self, lvl2drop, new_lvl_dict):
@@ -966,14 +1057,31 @@ class HousingStock:
         return io_share_seg
 
     @staticmethod
+    def lbd(knowledge, learning_rate):
+        return knowledge ** (np.log(1 + learning_rate) / np.log(2))
+
+    @staticmethod
     def learning_by_doing(knowledge, cost, learning_rate, cost_lim=None):
         """Decrease capital cost after considering learning-by-doing effect.
 
         Investment costs decrease exponentially with the cumulative sum of operations so as to capture
         a “learning-by-doing” process.
+        The rate of cost reduction is set at 15% in new construction and 10% in renovation for a doubling of production.
+
+        Parameters
+        ----------
+        knowledge: pd.Series
+            knowledge indexes match cost columns to reach final state after transition
+        cost: pd.DataFrame
+        learning_rate: float
+        cost_lim: optional, pd.DataFrame
+
+        Returns
+        -------
+        pd.DataFrame
         """
         # TODO: create function with add column level
-        lbd = knowledge ** (np.log(1 + learning_rate) / np.log(2))
+        lbd = HousingStock.lbd(knowledge, learning_rate)
         if cost_lim is not None:
             cost_lim = cost_lim.unstack('Energy performance final')
             level = 'Heating energy final'
@@ -985,16 +1093,29 @@ class HousingStock:
             return ds_mul_df(lbd.reindex(idx_union), cost.T.reindex(idx_union)).T
 
     @staticmethod
-    def information_rate(knowledge, info_max, info_param):
-        """Returns information rate. More info_rate is high, more intangible_cost are low.
+    def information_rate(knowledge, learning_rate, info_max):
+        """Returns information rate.
+
+        More info_rate is high, more intangible_cost are low.
         Intangible renovation costs decrease according to a logistic curve with the same cumulative
         production so as to capture peer effects and knowledge diffusion.
         intangible_cost[yr] = intangible_cost[calibrationyear] * info_rate with info rate [1-info_rate_max ; 1]
         This function calibrate a logistic function, so rate of decrease is set at 25% for a doubling of cumulative
         production.
+
+        Parameters
+        ----------
+        knowledge: pd.Series
+            knowledge indexes match cost columns to reach final state after transition
+        info_max: float
+        learning_rate:
+
+        Returns
+        -------
+        float
         """
 
-        def equations(p, sh=info_max, alpha=info_param):
+        def equations(p, sh=info_max, alpha=learning_rate):
             a, r = p
             return (1 + a * np.exp(-r)) ** -1 - sh, (1 + a * np.exp(-2 * r)) ** -1 - sh - (1 - alpha) * sh + 1
 
@@ -1003,8 +1124,27 @@ class HousingStock:
         return logistic(knowledge, a=a, r=r) + 1 - info_max
 
     @staticmethod
-    def acceleration_information(knowledge, cost_intangible, info_max, info_param):
-        info_rate = HousingStock.information_rate(knowledge, info_max, info_param)
+    def acceleration_information(knowledge, cost_intangible, info_max, learning_rate):
+        """Decrease intangible cost to capture peer effects and knowledge diffusion.
+
+        Intangible renovation costs decrease according to a logistic curve with the same cumulative production so as
+        to capture peer effects and knowledge diffusion.
+        The rate of decrease (learning_rate) is set at 25% for a doubling of cumulative production.
+
+        Parameters
+        ----------
+        knowledge: pd.Series
+            knowledge indexes match cost columns to reach final state after transition
+        cost_intangible: pd.DataFrame
+        info_max: float
+        learning_rate: float
+
+        Returns
+        -------
+        pd.DataFrame
+            cost_intangible
+        """
+        info_rate = HousingStock.information_rate(knowledge, learning_rate, info_max)
 
         temp = cost_intangible.T.copy()
         if isinstance(temp.index, pd.MultiIndex):
@@ -1135,16 +1275,16 @@ class HousingStockRenovated(HousingStock):
         return self._stock_area_seg
 
     @staticmethod
-    def renovate_rate_func(lcc, rho, npv_min, rate_max, rate_min):
+    def renovate_rate_func(npv, rho, npv_min, rate_max, rate_min):
         if isinstance(rho, pd.Series):
-            rho_f = rho.loc[tuple(lcc.iloc[:-1].tolist())]
+            rho_f = rho.loc[tuple(npv.iloc[:-1].tolist())]
         else:
             rho_f = rho
 
         if np.isnan(rho_f):
             return float('nan')
         else:
-            return logistic(lcc.loc[0] - npv_min,
+            return logistic(npv.loc[0] - npv_min,
                             a=rate_max / rate_min - 1,
                             r=rho_f,
                             k=rate_max)
@@ -1198,7 +1338,7 @@ class HousingStockRenovated(HousingStock):
 
         pd.DataFrame
         """
-
+        # TODO: add nu as a parameter
         transition = ['Energy performance']
         renovation_rate_seg = self.to_renovation_rate(energy_prices,
                                                       transition=transition,
@@ -1496,6 +1636,38 @@ class HousingStockRenovated(HousingStock):
 
     def calibration_renovation_rate(self, energy_prices, renovation_rate_obj, consumption='conventional',
                                     cost_invest=None, cost_intangible=None, policies=None):
+        """Calibration of ρ parameter of the renovation rate function (logistic function of the NPV).
+
+        Renovation rate of dwellings labelled is calculated as a logistic function of the NPV.
+        The logistic form captures heterogeneity in heating preference and habits,
+        assuming they are normally distributed.
+
+        Parameter ρ is calibrated, for each type of decision-maker and each initial label (i.e., 6x6=36 values),
+        so that the NPVs calculated with the subsidies in effect in 2012 (see main article)
+        reproduce the observed renovation rates.
+
+        Renovation rate observed depends on (Occupancy status, Housing type)
+        NPV that depends on MS and so LCC: (Energy performance initial, Energy performance final,
+                                            Occupancy status, Housing type, Income class owner)
+        So Parameter ρ should depend on  (Occupancy status, Housing type, Energy performance initial,
+                                            Energy performance final, Heating energy intial)
+        But, function removed Heating energy initial and Income class owner dependency.
+
+        Parameters
+        ----------
+        energy_prices: pd.DataFrame
+        renovation_rate_obj: pd.DataFrame
+        consumption: {'conventional', 'actual'}, default 'conventional'
+        cost_invest: dict
+        cost_intangible: dict
+        policies: list
+
+        Returns
+        -------
+        pd.Series
+            ρ parameters by segment
+        """
+
         # TODO: rho_seg must be determine for all future indexes
         # TODO: weight_dm doesn't make a lot of sense
         npv_df = self.to_npv(energy_prices,
@@ -1518,6 +1690,7 @@ class HousingStockRenovated(HousingStock):
 
         weight_dm = ds_mul_df((stock_ini_wo_owner.groupby(['Occupancy status', 'Housing type']).sum()) ** -1,
                               seg_stock_dm)
+        # TODO: very strange as rho depends on Income class owner
         rho = rho.droplevel('Income class owner', axis=0)
         rho = rho[~rho.index.duplicated()]
         rho_df = rho.to_frame().pivot_table(index=weight_dm.index.names, columns=weight_dm.columns.names)

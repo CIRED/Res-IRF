@@ -15,7 +15,7 @@
     "type": "pd.Series"
   },
   "cost_intangible": {
-    "source_type": "file",
+    "source_type": "function",
     "source": "project/intermediate/intangible_cost_seg.pkl"
   },
   "cost_intangible_construction": {

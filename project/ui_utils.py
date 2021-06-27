@@ -121,3 +121,61 @@ def economic_boxplots(df, xlabel=None, ylabel=None, ax_title=None,
         ax.set_xlabel(xlabel)
     if ylabel is not None:
         ax.set_ylabel(ylabel)
+
+
+def stock_attributes_subplots(stock, dict_order={}, suptitle='Buildings stock', option='percent', dict_color=None,
+                              n_columns=3, sharey=False):
+    labels = list(stock.index.names)
+    stock_total = stock.sum()
+
+    n_axes = int(len(stock.index.names))
+    n_rows = ceil(n_axes / n_columns)
+    fig, axes = plt.subplots(n_rows, n_columns, figsize=(12.8, 9.6), sharey=sharey)
+
+    if suptitle is not None:
+        fig.suptitle(suptitle, fontsize=20, fontweight='bold')
+
+    for k in range(n_rows * n_columns):
+
+        try:
+            label = labels[k]
+        except IndexError:
+            ax.remove()
+            break
+
+        stock_label = stock.groupby(label).sum()
+        if label in dict_order.keys():
+            stock_label = stock_label.loc[dict_order[label]]
+
+        if option == 'percent':
+            stock_label = stock_label / stock_total
+
+        row = floor(k / n_columns)
+        column = k % n_columns
+        if n_rows == 1:
+            ax = axes[column]
+        else:
+            ax = axes[row, column]
+
+        if dict_color is not None:
+            stock_label.plot.bar(ax=ax, color=[dict_color[key] for key in stock_label.index])
+        else:
+            stock_label.plot.bar(ax=ax)
+
+        ax.xaxis.set_tick_params(which=u'both', length=0)
+        ax.xaxis.label.set_size(12)
+
+        if option == 'percent':
+            format_y = lambda y, _: '{:,.0f}%'.format(y * 100)
+        elif option == 'million':
+            format_y = lambda y, _: '{:,.0f}M'.format(y / 1000000)
+        else:
+            raise
+
+        ax.yaxis.set_major_formatter(plt.FuncFormatter(format_y))
+        ax.yaxis.set_tick_params(which=u'both', length=0)
+
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+        ax.spines['left'].set_visible(False)
+        plt.setp(ax.xaxis.get_majorticklabels(), rotation=0)

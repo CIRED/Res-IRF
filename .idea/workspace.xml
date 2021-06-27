@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5a27c1bc-6d7f-41bf-89e9-22387bb7bdb3" name="Default Changelist" comment="">
+    <list default="true" id="5a27c1bc-6d7f-41bf-89e9-22387bb7bdb3" name="Default Changelist" comment="cleaning and organizing">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/LICENSE" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/project/buildings.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/buildings.py" afterDir="false" />
@@ -10,16 +10,10 @@
       <change beforePath="$PROJECT_DIR$/project/input/ds_parc/fuel_oil_wood_2019.xlsx" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/project/input/ds_parc/parclocatifprive_post48_revenusPB.csv" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/project/input/parameters.json" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/parameters.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/policies_input.json" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/policies_input.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/scenario.json" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/scenario.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/scenarios.json" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/scenarios.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/input/sources.json" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/sources.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/parc.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/old_src/parc.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/parse_input.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/parse_input.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/parse_output.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/parse_output.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/policies.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/policies.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/ui_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/ui_utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/user_interface.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/project/user_interface.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -254,7 +248,10 @@
       <workItem from="1623219798366" duration="10687000" />
       <workItem from="1624434876307" duration="98000" />
       <workItem from="1624456666426" duration="3371000" />
-      <workItem from="1624525634975" duration="5458000" />
+      <workItem from="1624525634975" duration="9338000" />
+      <workItem from="1624612786831" duration="1402000" />
+      <workItem from="1624614421898" duration="12393000" />
+      <workItem from="1624721124121" duration="1487000" />
     </task>
     <task id="LOCAL-00001" summary="major update - work still ongoing">
       <created>1613665046411</created>
@@ -403,7 +400,14 @@
       <option name="project" value="LOCAL" />
       <updated>1622817444278</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="cleaning and organizing">
+      <created>1624541618966</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1624541618966</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -434,7 +438,8 @@
     <MESSAGE value="using oop - some public policies" />
     <MESSAGE value="all public policies" />
     <MESSAGE value="using multiprocessing for multiple scenarios" />
-    <option name="LAST_COMMIT_MESSAGE" value="using multiprocessing for multiple scenarios" />
+    <MESSAGE value="cleaning and organizing" />
+    <option name="LAST_COMMIT_MESSAGE" value="cleaning and organizing" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -467,7 +472,7 @@
     <SUITE FILE_PATH="coverage/Res_IRF$Doctests_in_parse_output.coverage" NAME="Doctests in parse_output Coverage Results" MODIFIED="1622725057132" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/project" />
     <SUITE FILE_PATH="coverage/Res_IRF$class_test.coverage" NAME="class_test Coverage Results" MODIFIED="1619699024161" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/project" />
     <SUITE FILE_PATH="coverage/Res_IRF$graphic.coverage" NAME="graphic Coverage Results" MODIFIED="1620836570610" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/Res_IRF$main.coverage" NAME="main Coverage Results" MODIFIED="1624434908116" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Res_IRF$main.coverage" NAME="main Coverage Results" MODIFIED="1624616368119" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$buildings_class.coverage" NAME="buildings_class Coverage Results" MODIFIED="1620739724250" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$func_payback.coverage" NAME="func_payback Coverage Results" MODIFIED="1616402049977" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$public_policy.coverage" NAME="public_policy Coverage Results" MODIFIED="1621431276052" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/project" />

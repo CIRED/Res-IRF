@@ -268,7 +268,7 @@ def res_irf(folder, scenario_dict, dict_parameters, dict_policies, levels_dict_c
             cost_intangible['Energy performance'] = HousingStock.acceleration_information(buildings.knowledge,
                                                                                           cost_intangible['Energy performance'],
                                                                                           dict_parameters['Information rate max renovation'],
-                                                                                          dict_parameters['Information rate renovation'])
+                                                                                          dict_parameters['Learning information rate renovation'])
             output['Cost intangible'][year] = cost_intangible['Energy performance']
 
         if scenario_dict['lbd_renovation']:
@@ -302,14 +302,14 @@ def res_irf(folder, scenario_dict, dict_parameters, dict_policies, levels_dict_c
             cost_intangible_construction['Energy performance'] = HousingStock.acceleration_information(buildings_constructed.knowledge,
                                                                                                        cost_intangible_construction['Energy performance'],
                                                                                                        dict_parameters['Information rate max construction'],
-                                                                                                       dict_parameters['Information rate construction'])
+                                                                                                       dict_parameters['Learning information rate construction'])
             output['Cost intangible construction'][year] = cost_intangible_construction['Energy performance']
 
         if scenario_dict['lbd_construction']:
             logging.debug('Learning by doing - construction')
             cost_invest_construction['Energy performance'] = HousingStock.learning_by_doing(buildings_constructed.knowledge,
                                                                                             cost_invest_construction['Energy performance'],
-                                                                                            dict_parameters["Learning by doing renovation"],
+                                                                                            dict_parameters['Learning by doing renovation'],
                                                                                             cost_lim=dict_parameters['Cost construction lim'])
             output['Cost construction'][year] = cost_invest_construction['Energy performance']
 
