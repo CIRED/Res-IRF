@@ -9,9 +9,8 @@
     "source": "project/intermediate"
   },
   "stock_buildings": {
-    "source": "project/intermediate/parc.pkl",
+    "source": "project/intermediate/stock_buildings.pkl",
     "year": 2018,
-    "index_names": ["Housing type", "Occupancy status", "Heating energy", "Energy performance", "Income class"],
     "type": "pd.Series"
   },
   "cost_intangible": {
