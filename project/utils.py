@@ -312,28 +312,11 @@ def de_aggregate_series(ds_val, df_share):
     levels_shared = [n for n in df_share.index.names if n in ds_val.index.names]
     # reindex_mi add missing levels to df_share
     df_share_r = reindex_mi(df_share, ds_val.index, levels_shared)
-    return ds_mul_df(ds_val, df_share_r).stack()
+    return(ds_val * df_share_r.T).T.stack()
 
-
+"""
 def de_aggregate_value(serie, ds_prop, val, level_val, list_val, level_key):
-    """De-aggregate val by list_val in serie using ds_prop.
 
-    Parameters:
-    -----------
-    serie: pd.Series
-
-    ds_prop: pd.Series
-
-
-
-    Returns:
-    --------
-
-    Example:
-    --------
-        Let's say you want to combine 2 sources of data by de-aggregating the value other
-
-    """
 
     good_index = serie.index.get_level_values(level_val) == val
     ds_keep = serie[~good_index]
@@ -361,6 +344,7 @@ def de_aggregate_value(serie, ds_prop, val, level_val, list_val, level_key):
 
     ds = ds.iloc[:, 0].append(ds_keep)
     return ds
+    """
 
 
 def val2share(ds, levels, func=lambda x: x, option='row'):
@@ -385,30 +369,3 @@ def val2share(ds, levels, func=lambda x: x, option='row'):
         return prop
     else:
         raise ValueError
-
-
-def ds_mul_df(ds, df, option='columns'):
-    """# TODO replace by x
-
-    Multiply pd.Series to each columns (or rows) of pd.Dataframe.
-
-    """
-    if option == 'columns':
-        if isinstance(df.index, pd.MultiIndex):
-            ds = ds.reorder_levels(df.index.names)
-        ds.sort_index(inplace=True)
-        df.sort_index(inplace=True)
-        assert (ds.index == df.index).all(), "indexes don't match"
-        ds = pd.concat([ds] * len(df.columns), axis=1)
-        ds.columns = df.columns
-        return ds * df
-    elif option == 'rows':
-        if isinstance(df.columns, pd.MultiIndex):
-            ds = ds.reorder_levels(df.columns.names)
-        ds.sort_index(inplace=True)
-        df.sort_index(inplace=True, axis=1)
-        assert (ds.index == df.columns).all(), "indexes don't match"
-        ds = pd.concat([ds] * len(df.index), axis=1).T
-        ds.index = df.index
-        return ds * df
-

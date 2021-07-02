@@ -117,7 +117,7 @@ def res_irf(folder, scenario_dict, dict_parameters, dict_policies, levels_dict_c
     policies = list(policies_dict.values())
 
     if total_taxes is not None:
-        output['total_taxes'] = total_taxes
+        output['Energy taxes (€/kWh)'] = total_taxes
         energy_price = energy_price * (1 + total_taxes)
 
     logging.debug('Creating HousingStockRenovated Python object')
@@ -292,11 +292,11 @@ def res_irf(folder, scenario_dict, dict_parameters, dict_policies, levels_dict_c
                                                        dict_parameters['Area max construction'])
         logging.debug('Updating flow_constructed segmented')
         # update_flow_constructed_seg will automatically update area constructed and so construction knowledge
-        buildings_constructed.to_flow_constructed_seg(energy_price,
-                                                      cost_intangible=cost_intangible_construction,
-                                                      cost_invest=cost_invest_construction,
-                                                      nu=dict_parameters['Nu construction'],
-                                                      policies=None)
+        buildings_constructed.update_flow_constructed_seg(energy_price,
+                                                          cost_intangible=cost_intangible_construction,
+                                                          cost_invest=cost_invest_construction,
+                                                          nu=dict_parameters['Nu construction'],
+                                                          policies=None)
 
         if scenario_dict['info_construction']:
             logging.debug('Information acceleration - construction')
@@ -319,7 +319,7 @@ def res_irf(folder, scenario_dict, dict_parameters, dict_policies, levels_dict_c
                 year, buildings.stock_seg.sum(), flow_demolition_seg.sum(), dict_parameters['Flow needed'].loc[year],
                 buildings.flow_renovation_label_energy_dict[year].sum().sum(), flow_constructed))
 
-    parse_output(output, buildings, buildings_constructed, logging, folder['output'])
+    parse_output(output, buildings, buildings_constructed, folder['output'])
 
     end = time.time()
     logging.debug('Time for the module: {:,.0f} seconds.'.format(end - start))
