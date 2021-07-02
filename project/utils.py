@@ -294,17 +294,20 @@ def de_aggregate_columns(df1, df2):
 
 
 def de_aggregate_series(ds_val, df_share):
-    """Add new levels to ds_val using df_share.
+    """TOKEEP:Add new levels to ds_val using df_share.
 
+    Parameters
+    ----------
+    ds_val:
+        index: segments
+    df_share: pd.DataFrame
+        index: segments, columns: new level,
+        ds_share and ds_val segment must share at least on level.
 
-
-    df_share has segment in index and share of new level in columns.
-    ds_val has segment in index.
-    ds_share and ds_val segment share some levels.
-
-    Example:
+    Returns:
     --------
-        Function used to add Income class owner to a stock or a flow.
+    pd.Series
+        MultiIndex series with
     """
     levels_shared = [n for n in df_share.index.names if n in ds_val.index.names]
     # reindex_mi add missing levels to df_share

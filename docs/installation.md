@@ -2,16 +2,46 @@
 argparser in order to launch directly from the terminal using
 some important parameters scenario.json / calibration_year / source
 
+In this tutorial, you will learn:
+- How is organized the project?
+- How to install an **environment** to **launch Res-IRF**, or a **detailed analysis of Res-IRF output**?
+- How to launch Res-IRF, and what are the input/output of the model?
+- How to launch *Res-IRF output analysis*?
 
 # Use Res-IRF
 
 ## Possible use
-- Launch Res-IRF dynamic based on input choice.
-   - Example: create your specific project/input/scenario.json
-- Analyse Res-IRF output:
-   - Main output: project/user_interface.ipynb
-   - Assess public policies: project/assessment_policies.ipynb
-- Launch Res-IRF tutorials:
+
+Standard way to launch Res-IRF is in 2 steps (detailed explanations for each step are provided bellow):  
+**Step 1: Launch Res-IRF main script.**  
+The model will put all results in a folder in project/output.  
+Folder name is by default ddmmyyyy_hhmm (launching date and hour) or can be change using script arguments --output (or -o).
+Results are mainly .pkl or .csv file, and are not directly readable.  
+NB: One file 'financials.csv' summarize important outputs.
+
+**Step 2: Launch one of the Jupyter Notebook analysis tool**  
+2 main 
+
+### Launch Res-IRF main script.
+Example: create your specific project/input/scenario.json
+
+### Analyse Res-IRF output
+
+#### Independent scenario
+Jupyter notebook that takes in input an output folder from Res-IRF, and 
+
+Tool: Jupyter notebook  
+Kernel: Res-IRF kernel  
+Code source: project/**user_interface.ipynb**  
+Tool input: output folder from Res-IRF
+
+#### Assess public policies
+Tool: Jupyter notebook  
+Kernel: Res-IRF kernel  
+Code source: project/**assessment_policies.ipynb**
+Tool input: project/output/folder_name
+
+### Launch Res-IRF tutorials:
    - project/tutorials.ipynb
 
 
@@ -40,7 +70,7 @@ Follow the steps to easly use Res-IRF.
 ## Conda environment
 
 ### Creating an environment from an environment.yml file
-Tutorial come from [this website](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-from-an-environment-yml-file)
+Tutorial comes from [this website](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-from-an-environment-yml-file)
 Use the terminal or an Anaconda Prompt for the following steps:
 
 1. Create the environment from the environment.yml file:
@@ -55,7 +85,7 @@ The first line of the yml file sets the new environment's name.
 You can also use `conda info --envs`.
 
 ### Sharing an environment
-Tutorial come from [this website](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-from-an-environment-yml-file)
+Tutorial comes from [this website](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-from-an-environment-yml-file)
 You may want to share your environment with someone else---for example, so they can re-create a test that you have done. To allow them to quickly reproduce your environment, with all of its packages and versions, give them a copy of your environment.yml file.
 1. Activate the environment to export: `conda activate myenv`
    Replace myenv with the name of the environment
@@ -71,7 +101,7 @@ You may want to share your environment with someone else---for example, so they 
 
 #### Create kernel
 ##### From conda environment
-
+Tutorial comes from [this website](https://medium.com/@nrk25693/how-to-add-your-conda-environment-to-your-jupyter-notebook-in-just-4-steps-abeab8b8d084)  
 **Step 1**: Create a Conda environment.
 `conda create --name firstEnv`
 

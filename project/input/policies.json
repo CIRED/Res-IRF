@@ -58,7 +58,8 @@
     "transition": [
       "Energy performance"
     ],
-    "type": "dict_to_parse"
+    "type": "dict_to_parse",
+    "calibration": false
   },
   "cite":
   {
@@ -69,7 +70,8 @@
     "value": 0.17,
     "kind": "%",
     "transition": ["Energy performance"],
-    "type": "dict_to_parse"
+    "type": "dict_to_parse",
+    "calibration": true
   },
   "cee_subsidy":
   {
@@ -80,7 +82,8 @@
     "value": 0.004,
     "kind": "€/kWh",
     "transition": ["Energy performance"],
-    "type": "dict_to_parse"
+    "type": "dict_to_parse",
+    "calibration": true
   },
   "cee_taxes":
   {
@@ -91,7 +94,8 @@
     "value": 0.004,
     "kind": "€/kWh",
     "transition": ["Energy performance"],
-    "type": "dict_to_parse"
+    "type": "dict_to_parse",
+    "calibration": true
   },
   "carbon_tax":
   {
@@ -101,7 +105,8 @@
     "end": 2050,
     "value": "project/input/carbon_tax.csv",
     "kind": "€/gCO2",
-    "type": "dict_to_parse"
+    "type": "dict_to_parse",
+    "calibration": true
   },
   "reduced_tax":
   {
@@ -112,7 +117,8 @@
     "value": 0.04,
     "kind": "%",
     "transition": ["Energy performance"],
-    "type": "dict_to_parse"
+    "type": "dict_to_parse",
+    "calibration": true
   },
   "eptz":
   {
@@ -192,7 +198,9 @@
       "type": "pd.DataFrame"
     },
     "transition": ["Energy performance"],
-    "type": "dict_to_parse"},
+    "type": "dict_to_parse",
+    "calibration": true
+  },
   "eptz_plus":
   {
     "name": "eptz_plus",
@@ -206,7 +214,8 @@
     "horizon": 10,
     "targets": null,
     "transition": ["Energy performance"],
-    "type": "dict_to_parse"
+    "type": "dict_to_parse",
+    "calibration": false
   },
   "renovation_obligation":
   {
@@ -227,6 +236,7 @@
         "Energy performance"
       ],
       "type": "pd.Series"
-    }
+    },
+    "calibration": false
   }
 }

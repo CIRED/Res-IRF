@@ -48,7 +48,7 @@ def economic_subplots(df, suptitle, format_axtitle=lambda x: x, format_val=lambd
             ax = axes[row, column]
         try:
             test = df.iloc[k, :]
-            df.T.plot(ax=ax, color='lightgray', linewidth=0.5)
+            df.T.plot(ax=ax, color='lightgray', linewidth=0.7)
             df.iloc[k, :].plot(ax=ax, color='black', linewidth=2)
             first_val = df.iloc[k, 0]
             last_val = df.iloc[k, -1]
@@ -179,3 +179,65 @@ def stock_attributes_subplots(stock, dict_order={}, suptitle='Buildings stock', 
         ax.spines['right'].set_visible(False)
         ax.spines['left'].set_visible(False)
         plt.setp(ax.xaxis.get_majorticklabels(), rotation=0)
+
+
+def table_plots(df, level_x, level_y, suptitle='', format_val=lambda x: '{:.0f}'.format(x)):
+    """Organized subplots with level_x and level_x values as subplot coordinate.
+    
+    Parameters
+    ----------
+    df: pd.DataFrame
+        MultiIndex 
+    level_x: str
+    level_y: str
+    suptitle: str, optional
+    format_val: function, optional
+    """
+    
+    index = df.index.get_level_values(level_x).unique()
+    columns = df.index.get_level_values(level_y).unique()
+    coord = list(product(range(0, len(index)), range(0, len(columns))))
+
+    fig, axes = plt.subplots(len(index), len(columns), figsize=(12.8, 9.6), sharex='col', sharey='row')
+    fig.suptitle(suptitle, fontsize=20, fontweight='bold')
+    fig.subplots_adjust(top=0.95)
+
+    for row, col in coord:
+        ax = axes[row, col]
+
+        if col == 0:
+            ax.set_ylabel(index[row], labelpad=5, fontdict=dict(weight='bold'))
+            ax.yaxis.set_label_position('left')
+        if row == len(index) - 1:
+            ax.set_xlabel(columns[col], labelpad=5, fontdict=dict(weight='bold'))
+            ax.xaxis.set_label_position('bottom')
+
+        try:
+            df.loc[index[row], columns[col]].plot(ax=ax, color='black', linewidth=2)
+            df.T.plot(ax=ax, color='lightgray', linewidth=0.5)
+            df.loc[index[row], columns[col]].plot(ax=ax, color='black', linewidth=2)
+            ax.get_legend().remove()
+            
+            # ax.get_yaxis().set_visible(False)
+            ax.set_yticklabels([])
+
+            first_val = df.loc[index[row], columns[col]].iloc[0]
+            last_val = df.loc[index[row], columns[col]].iloc[-1]
+            
+            ax.annotate(format_val(first_val), xy=(0, first_val), xytext=(-12, 0), color='black',
+                        xycoords=ax.get_yaxis_transform(), textcoords='offset points',
+                        size=8, va='center')
+            ax.annotate(format_val(last_val), xy=(1, last_val), xytext=(0, 0), color='black',
+                        xycoords=ax.get_yaxis_transform(), textcoords='offset points',
+                        size=8, va='center')
+            
+            ax.spines['top'].set_visible(False)
+            ax.spines['right'].set_visible(False)
+            ax.spines['left'].set_visible(False)
+
+            ax.xaxis.set_tick_params(which=u'both', length=0)
+            ax.yaxis.set_tick_params(which=u'both', length=0)
+            
+        except:
+            ax.axis('off')
+            continue

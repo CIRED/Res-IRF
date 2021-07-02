@@ -5,24 +5,26 @@ import pandas as pd
 
 
 class PublicPolicy:
-    def __init__(self, name, start, end, policy):
+    def __init__(self, name, start, end, policy, calibration=False):
         self.name = name
         self.start = start
         self.end = end
         self.policy = policy
+        self.calibration = calibration
 
 
 class EnergyTaxes(PublicPolicy):
-    def __init__(self, name, start, end, kind, value):
+    def __init__(self, name, start, end, kind, value, calibration=False):
         """
         value: pd.DataFrame
         indexes are energy, and columns are years
         """
-        super().__init__(name, start, end, 'energy_taxes')
+        super().__init__(name, start, end, 'energy_taxes', calibration)
 
         self.list_kind = ['%', '€/kWh', '€/gCO2']
         self.kind = kind
         self.value = value
+        self.calibration = calibration
 
     def price_to_taxes(self, energy_prices=None, co2_content=None):
 
@@ -45,8 +47,8 @@ class EnergyTaxes(PublicPolicy):
 
 class Subsidies(PublicPolicy):
     def __init__(self, name, start, end, kind, value,
-                 transition=None, targets=None, cost_max=None, subsidy_max=None):
-        super().__init__(name, start, end, 'subsidies')
+                 transition=None, cost_max=None, subsidy_max=None, calibration=False):
+        super().__init__(name, start, end, 'subsidies', calibration)
 
         if transition is None:
             self.transition = ['Energy performance']
@@ -60,7 +62,7 @@ class Subsidies(PublicPolicy):
         self.subsidy_max = subsidy_max
         self.value = value
 
-    def to_subsidy(self, cost=None, energy_saving=None, co2_saving=None):
+    def to_subsidy(self, cost=None, energy_saving=None):
 
         if self.kind == '€':
             return self.value
@@ -118,8 +120,8 @@ class RegulatedLoan(PublicPolicy):
 
     def __init__(self, name, start, end, ir_regulated=None, ir_market=None,
                  principal_max=None, principal_min=None,
-                 horizon=None, targets=None, transition=None):
-        super().__init__(name, start, end, 'regulated_loan')
+                 horizon=None, targets=None, transition=None, calibration=False):
+        super().__init__(name, start, end, 'regulated_loan', calibration)
 
         if transition is None:
             self.transition = ['Energy performance']

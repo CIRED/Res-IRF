@@ -18,11 +18,11 @@
     "source": "project/intermediate/intangible_cost_seg.pkl"
   },
   "cost_intangible_construction": {
-    "source_type": "file",
+    "source_type": "function",
     "source": "project/intermediate/cost_intangible_construction.pkl"
   },
   "rho": {
-    "source_type": "file",
+    "source_type": "function",
     "source": "project/intermediate/rho.pkl"
   },
   "cost_renovation": {
@@ -57,7 +57,7 @@
   },
   "policies": {
     "type": "file",
-    "source": "project/input/policies_input.json"
+    "source": "project/input/policies.json"
   },
   "population": {
     "type": "file",

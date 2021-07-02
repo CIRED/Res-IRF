@@ -9,7 +9,7 @@ import logging
 import datetime
 import pandas as pd
 from shutil import copyfile
-
+from itertools import product
 
 from project.buildings import HousingStock, HousingStockRenovated, HousingStockConstructed
 from project.policies import EnergyTaxes, Subsidies, RegulatedLoan, RenovationObligation
@@ -72,8 +72,8 @@ def res_irf(folder, scenario_dict, dict_parameters, dict_policies, levels_dict_c
     label2horizon = dict()
     dict_label['label2horizon_heater'] = dict_label['label2horizon_heater'][scenario_dict['investor']]
     dict_label['label2horizon_envelope'] = dict_label['label2horizon_envelope'][scenario_dict['investor']]
-    label2horizon['envelope'] = dict_label['label2horizon_envelope']
-    label2horizon['heater'] = dict_label['label2horizon_heater']
+    label2horizon[('Energy performance', )] = dict_label['label2horizon_envelope']
+    label2horizon[('Heating energy', )] = dict_label['label2horizon_heater']
     dict_label['label2horizon'] = label2horizon
 
     # energy_price = forecast2myopic(energy_prices_dict['energy_price_forecast'], calibration_year)
@@ -137,14 +137,13 @@ def res_irf(folder, scenario_dict, dict_parameters, dict_policies, levels_dict_c
 
     logging.debug('Initialize energy consumption and cash-flows')
     buildings.ini_energy_cash_flows(energy_price)
-
-    segments_construction = buildings.to_segments_construction(
-        ['Energy performance', 'Heating energy', 'Income class', 'Income class owner'], {})
     io_share_seg = buildings.to_io_share_seg()
     stock_area_existing_seg = buildings.stock_area_seg
 
     logging.debug('Creating HousingStockConstructed Python object')
-    buildings_constructed = HousingStockConstructed(pd.Series(dtype='float64', index=segments_construction),
+    segments_construction = pd.MultiIndex.from_tuples(list(product(*[v for _, v in levels_dict_construction.items()])))
+    segments_construction.names = [k for k in levels_dict_construction.keys()]
+    buildings_constructed = HousingStockConstructed(pd.Series(0, dtype='float64', index=segments_construction),
                                                     levels_dict_construction, calibration_year,
                                                     dict_parameters['Flow needed'],
                                                     param_share_multi_family=dict_parameters['Factor share multi-family'],
@@ -157,9 +156,9 @@ def res_irf(folder, scenario_dict, dict_parameters, dict_policies, levels_dict_c
                                                     label2income=dict_label['label2income'],
                                                     label2consumption=dict_label['label2consumption_construction'])
 
-    buildings_constructed.ini_all_indexes(energy_price,
+    """buildings_constructed.ini_all_indexes(energy_price,
                                           levels=['Occupancy status', 'Housing type', 'Energy performance',
-                                                  'Heating energy'])
+                                                  'Heating energy'])"""
     cost_intangible_construction = None
     cost_intangible = None
     if scenario_dict['cost_intangible']:
@@ -174,12 +173,13 @@ def res_irf(folder, scenario_dict, dict_parameters, dict_policies, levels_dict_c
                 dict_share['Heating energy share housing type'],
                 dict_share['Housing type share total'],
                 dict_share['Energy performance share total construction'])
+            policies_calibration = [policy for policy in policies if policy.calibration is True]
 
             cost_intangible_construction['Energy performance'] = buildings_constructed.to_calibration_market_share(
-                market_share_obj_construction,
                 energy_price,
+                market_share_obj_construction,
                 cost_invest=cost_invest_construction,
-                policies=policies)
+                policies=policies_calibration)
             logging.debug('End of calibration and dumping: {}'.format(name_file))
             cost_intangible_construction['Energy performance'].to_pickle(name_file)
         elif source == 'file':
@@ -194,12 +194,13 @@ def res_irf(folder, scenario_dict, dict_parameters, dict_policies, levels_dict_c
         name_file = sources_dict['cost_intangible']['source']
         source = sources_dict['cost_intangible']['source_type']
         if source == 'function':
-            cost_intangible['Energy performance'] = buildings.calibration_market_share(energy_price, ms_renovation_ini,
-                                                                                       folder_output=folder[
-                                                                                           'intermediate'],
-                                                                                       cost_invest=cost_invest,
-                                                                                       consumption='conventional',
-                                                                                       policies=policies)
+
+            policies_calibration = [policy for policy in policies if policy.calibration is True]
+            cost_intangible['Energy performance'] = buildings.to_calibration_market_share(energy_price,
+                                                                                          ms_renovation_ini,
+                                                                                          cost_invest=cost_invest,
+                                                                                          consumption='conventional',
+                                                                                          policies=policies_calibration)
             logging.debug('End of calibration and dumping: {}'.format(name_file))
             cost_intangible['Energy performance'].to_pickle(name_file)
         elif source == 'file':
@@ -291,11 +292,11 @@ def res_irf(folder, scenario_dict, dict_parameters, dict_policies, levels_dict_c
                                                        dict_parameters['Area max construction'])
         logging.debug('Updating flow_constructed segmented')
         # update_flow_constructed_seg will automatically update area constructed and so construction knowledge
-        buildings_constructed.update_flow_constructed_seg(energy_price,
-                                                          cost_intangible=cost_intangible_construction,
-                                                          cost_invest=cost_invest_construction,
-                                                          nu=dict_parameters['Nu construction'],
-                                                          policies=None)
+        buildings_constructed.to_flow_constructed_seg(energy_price,
+                                                      cost_intangible=cost_intangible_construction,
+                                                      cost_invest=cost_invest_construction,
+                                                      nu=dict_parameters['Nu construction'],
+                                                      policies=None)
 
         if scenario_dict['info_construction']:
             logging.debug('Information acceleration - construction')
@@ -329,6 +330,9 @@ if __name__ == '__main__':
     import copy
     from project.parse_input import *
     from multiprocessing import Process
+    import argparse
+
+    parser = argparse.ArgumentParser()
 
     multiple_scenario = False
 

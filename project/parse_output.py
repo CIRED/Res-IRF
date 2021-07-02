@@ -294,13 +294,132 @@ def to_detailed_output(buildings, buildings_constructed, output, folder_output):
     pd.DataFrame(financials_dict).to_csv(os.path.join(folder_output, 'financials_dict.csv'))
 
 
-def parse_output(output, buildings, buildings_constructed, logging, folder_output, detailed_output=True):
+def parse_output(output, buildings, buildings_constructed, folder_output, logging):
+    """Parse Res-IRF output to return understandable data.
+
+    Main output are segmented in 2 categories (stock, and transition flow).
+    1. Stock - image of the stock in year y.
+        - Housing number
+        - Conventional energy consumption (kWh)
+        - Conventional energy consumption (kWh/m2)
+        - Actual energy consumption (kWh)
+        - Actual energy consumption (kWh/M2)
+        - Energy cost (€/m2)
+        - Energy tax cost (€/m2)
+        - Heating intensity (%)
+        - Renovation rate (%)
+
+    Stock can be:
+    - fully aggregated --> macro
+    - aggregated by level
+
+    2. Transition flow (index = segments + ['Energy performance final', 'Heating energy final'])
+        - Number of transitions
+        - Investment cost (€)
+        - Investment cost (€/m2)
+        - Subsidies used (€)
+        - Subsidies used (€/m2)
+
+
+        - NB: energy saving and emission saving are not necessary
+
+    Others output:
+    1. Knowledge (is defined by final state)
+
+    Returns
+    -------
+    dict
+        Stock
+        keys are years, and values pd.DataFrame (index: segments, columns: data)
+        Example: {2018: pd.DataFrame(index=segments, columns=['Housing Number', 'Energy consumption', ...])
+    dict
+        Transition flow
+        keys are years, and values pd.DataFrame (index: segments + final state, columns: data)
+        Example: {2018: pd.DataFrame(index=segments + ['Energy performance final', 'Heating energy final'],
+        columns=['Transition number', 'Capex', 'Subsidies'])
+    """
 
     logging.debug('Parsing output')
-    output['Stock segmented'] = pd.DataFrame(buildings._stock_seg_dict)
-    output['Stock knowledge energy performance'] = pd.DataFrame(buildings._stock_knowledge_ep_dict)
-    output['Stock construction segmented'] = pd.DataFrame(buildings_constructed._stock_constructed_seg_dict)
-    output['Stock knowledge construction'] = pd.DataFrame(buildings_constructed._stock_knowledge_construction_dict)
+    # output['Stock knowledge energy performance'] = pd.DataFrame(buildings._stock_knowledge_ep_dict)
+    # output['Stock knowledge construction'] = pd.DataFrame(buildings_constructed._stock_knowledge_construction_dict)
+
+    # 1. Renovation
+    # 1.1 Stock
+    output_stock = dict()
+    output_stock['Stock'] = pd.DataFrame(buildings._stock_seg_dict)
+    output_stock['Stock (m2)'] = (output_stock['Stock'].T * buildings.area).T
+    output_stock['Consumption conventional (kWh/m2)'] = buildings.consumption_conventional
+    output_stock['Consumption conventional (kWh)'] = (buildings.consumption_conventional * output_stock['Stock (m2)'].T).T
+    output_stock['Consumption actual (kWh/m2)'] = buildings.consumption_actual
+    output_stock['Consumption actual (kWh)'] = buildings.consumption_actual * output_stock['Stock (m2)']
+    output_stock['Budget share (%)'] = buildings.budget_share
+    output_stock['Use intensity (%)'] = buildings.heating_intensity
+    output_stock['Emission (gCO2/m2)'] = HousingStock.mul_consumption(output_stock['Consumption actual (kWh/m2)'], co2_content_data)
+    output_stock['Emission (gCO2)'] = HousingStock.mul_consumption(output_stock['Consumption actual (kWh)'], co2_content_data)
+
+    if 'total_taxes' in output.keys():
+        output_stock['Taxes cost (€/m2)'] = HousingStock.mul_consumption(buildings.consumption_actual, output['total_taxes'])
+    else:
+        output_stock['Taxes cost (€/m2)'] = buildings.consumption_actual * 0
+    output_stock['Taxes cost (€)'] = output_stock['Taxes cost (€/m2)'] * output_stock['Stock (m2)']
+
+    output_stock['NPV (€/m2'] = dict_pd2df(buildings.npv[('Energy performance',)])
+    output_stock['Renovation rate (%)'] = dict_pd2df(buildings.renovation_rate_dict[('Energy performance',)])
+
+    # 1.2 Transitions
+    output_flow_transition = dict()
+    flow_renovation = dict_pd2df(buildings.flow_renovation_label_energy_dict)
+    output_flow_transition['Flow transition'] = flow_renovation
+    output_flow_transition['Flow transition (m2)'] = (flow_renovation.T * reindex_mi(buildings.area, flow_renovation.index)).T
+
+    # investment and subsides
+    capex_ep = reindex_mi(dict_pd2df(buildings.capex_total[('Energy performance',)]), flow_renovation.index)
+    capex_he = reindex_mi(dict_pd2df(buildings.capex_total[('Heating energy',)]), flow_renovation.index)
+    output_flow_transition['Capex (€/m2)'] = capex_ep + capex_he
+    output_flow_transition['Capex (€)'] = output_flow_transition['Flow transition (m2)'] * output_flow_transition['Capex (€/m2)']
+
+    if buildings.policies_total[('Energy performance',)] != {}:
+        subsidies_ep = reindex_mi(dict_pd2df(buildings.policies_total[('Energy performance',)]), flow_renovation.index)
+    else:
+        subsidies_ep = 0 * capex_ep
+    if buildings.policies_total[('Heating energy',)] != {}:
+        subsidies_he = reindex_mi(dict_pd2df(buildings.policies_total[('Heating energy',)]), flow_renovation.index)
+    else:
+        subsidies_he = 0 * capex_he
+    output_flow_transition['Subsidies (€/m2)'] = subsidies_ep + subsidies_he
+    output_flow_transition['Subsidies (€)'] = output_flow_transition['Flow transition (m2)'] * output_flow_transition['Subsidies (€/m2)']
+
+    # 3. Quick summary
+    summary = dict()
+    summary['Stock renovation'] = output_stock['Stock'].sum(axis=0)
+    summary['Consumption conventional renovation (kWh)'] = output_stock['Consumption conventional (kWh)'].sum(axis=0)
+    summary['Consumption actual renovation (kWh)'] = output_stock['Consumption actual (kWh)'].sum(axis=0)
+    summary['Emission (gCO2)'] = output_stock['Emission (gCO2)'].sum(axis=0)
+    summary['Use intensity renovation (%)'] = (output_stock['Use intensity (%)'] * output_stock['Stock']).sum(axis=0) / output_stock['Stock'].sum(axis=0)
+    summary['Renovation rate renovation (%)'] = (output_stock['Renovation rate (%)'] * output_stock['Stock']).sum(axis=0) / output_stock['Stock'].sum(axis=0)
+
+    summary['Flow transition renovation'] = output_flow_transition['Flow transition'].sum(axis=0)
+    summary['Capex renovation (€)'] = output_flow_transition['Capex (€)'].sum(axis=0)
+    summary['Subsidies renovation (€)'] = output_flow_transition['Subsidies (€)'].sum(axis=0)
+
+    summary = pd.DataFrame(summary)
+    summary.dropna(axis=0, thresh=2, inplace=True)
+    # 2. Construction
+    # 2.1 Stock
+    output_cons_stock = dict()
+    output_cons_stock['Stock'] = pd.DataFrame(buildings_constructed.stock_constructed_seg_dict)
+    output_cons_stock['Stock (m2)'] = (output_cons_stock['Stock'].T * buildings_constructed.to_area(segments=output_cons_stock['Stock'].index)).T
+    # output_cons_stock['Consumption conventional (kWh/m2)']
+    # output_cons_stock['Consumption conventional (kWh)']
+    output_cons_stock['Consumption actual (kWh/m2)'] = buildings_constructed.to_consumption_new_stock(
+        energy_prices_dict['energy_price_forecast'])
+    output_cons_stock['Consumption actual (kWh)'] = output_cons_stock['Consumption actual (kWh/m2)'] * output_cons_stock['Stock (m2)']
+    output_cons_stock['Emission (gCO2/m2)'] = HousingStock.mul_consumption(
+        output_cons_stock['Consumption actual (kWh/m2)'], co2_content_data)
+    output_cons_stock['Emission (gCO2)'] = HousingStock.mul_consumption(output_cons_stock['Consumption actual (kWh)'],
+                                                                        co2_content_data)
+
+
 
     folder_csv = os.path.join(folder_output, 'output_csv')
     os.mkdir(folder_csv)
@@ -315,5 +434,3 @@ def parse_output(output, buildings, buildings_constructed, logging, folder_outpu
         name_file = os.path.join(folder_pkl, '{}.pkl'.format(key.lower().replace(' ', '_')))
         new_output[key].to_pickle(name_file)
 
-    if detailed_output:
-        to_detailed_output(buildings, buildings_constructed, output, folder_output)

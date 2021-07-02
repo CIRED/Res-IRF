@@ -1,6 +1,7 @@
 import pandas as pd
 import os
 import json
+import pickle5 as pickle
 
 from project.utils import apply_linear_rate, reindex_mi
 
@@ -143,7 +144,13 @@ last_year = 2080
 index_input_year = range(calibration_year, last_year + 1, 1)
 
 name_file = os.path.join(os.getcwd(), sources_dict['stock_buildings']['source'])
+"""with open(name_file, 'rb') as f:
+    data = pickle.load(name_file)
+pickle.loads(name_file)"""
+
 stock_ini_seg = pd.read_pickle(name_file)
+stock_ini_seg = stock_ini_seg.reorder_levels(
+    ['Occupancy status', 'Housing type', 'Income class', 'Heating energy', 'Energy performance', 'Income class owner'])
 
 name_file = os.path.join(os.getcwd(), sources_dict['colors']['source'])
 with open(name_file) as file:
