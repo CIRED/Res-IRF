@@ -779,7 +779,7 @@ class HousingStock:
                     else:
                         total_policies += s
 
-                    self.policies_detailed[tuple(transition)][self.year][policy.name] = s
+                    self.policies_detailed[tuple(transition)][self.year]['{} (€/m2)'.format(policy.name)] = s
                     self.policies_total[tuple(transition)][self.year] = total_policies
 
         if capex is not None:

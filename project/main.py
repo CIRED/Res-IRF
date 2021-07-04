@@ -333,11 +333,14 @@ if __name__ == '__main__':
     import argparse
 
     parser = argparse.ArgumentParser()
+    parser.add_argument('-s', '--scenarios', default=False, help='multi scenarios')
+    args = parser.parse_args()
 
     multiple_scenario = False
+    if args.scenarios == 'True':
+        multiple_scenario = True
 
     start = time.time()
-
     folder['output'] = os.path.join(folder['output'], datetime.datetime.today().strftime('%Y%m%d_%H%M%S'))
     if not os.path.isdir(folder['output']):
         os.mkdir(folder['output'])

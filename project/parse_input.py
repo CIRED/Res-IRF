@@ -1,7 +1,6 @@
 import pandas as pd
 import os
 import json
-import pickle5 as pickle
 
 from project.utils import apply_linear_rate, reindex_mi
 

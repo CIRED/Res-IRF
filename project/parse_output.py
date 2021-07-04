@@ -4,6 +4,15 @@ import pickle
 from buildings import HousingStock
 from utils import reindex_mi
 from project.parse_input import colors_dict, co2_content_data, energy_prices_dict
+from collections import defaultdict
+
+
+def reverse_dict(data):
+    flipped = defaultdict(dict)
+    for key, val in data.items():
+        for subkey, subval in val.items():
+            flipped[subkey][key] = subval
+    return dict(flipped)
 
 
 def parse_dict(output):
@@ -25,13 +34,14 @@ def parse_dict(output):
 
 
 def dict_pd2df(d_pd):
-    """Function that takes dict with year as key and return DataFrame with year as column.
+    """Function that takes dict with year as key and data as value and return DataFrame with year as column.
 
     If item is a pd.DataFrame will stack columns as row to be able to concatenate multiple years.
 
     Parameters
     ----------
     d_pd: dict
+        {year: pd.DataFrame or pd.Series}
 
 
     Returns
@@ -53,32 +63,41 @@ def dict_pd2df(d_pd):
             return dict_ds2df(d_pd)
 
 
-def to_policies_detailed(buildings, folder_detailed):
-    """Parse buildings.policies_detailed and returns DataFrame.
+def parse_subsidies(buildings, flow_renovation):
+    """Parse buildings.policies_detailed and returns:
+    1. dict with year as key and DataFrame aggregating all policies as value
+    2. dict with policies as key and time DataFrame
 
     Parameters
     ----------
     buildings: HousingStockRenovated
-    folder_detailed: path
-        ok
-
+    flow_renovation: pd.DataFrame
+        index: segments + transition, columns: years, value: number of buildings renovating to final state
     """
+
     d = buildings.policies_detailed[tuple(['Energy performance'])]
-    result_subsidies = {}
+
+    # 1. dict with year as key and DataFrame aggregating all policies as value
+    subsides_year = dict()
     for yr, item in d.items():
         temp = []
         for name, df in item.items():
             temp += [df.stack(df.columns.names)]
-        result_subsidies[yr] = pd.concat(temp, axis=1)
-        result_subsidies[yr].columns = item.keys()
-        result_subsidies[yr].replace(0, float('nan'), inplace=True)
-        result_subsidies[yr].dropna(axis=0, how='any', inplace=True)
-        # result_subsidies[yr].index.names = list(df.index.names) + list(df.columns.names)
+        subsides_year[yr] = pd.concat(temp, axis=1)
+        subsides_year[yr].columns = item.keys()
+        subsides_year[yr].replace(0, float('nan'), inplace=True)
+        subsides_year[yr].dropna(axis=0, how='any', inplace=True)
 
-    name_file = os.path.join(folder_detailed, 'policies_detailed.pkl')
-    with open(name_file, 'wb') as file:
-        pickle.dump(result_subsidies, file)
-    return result_subsidies
+    # 2. dict with policies as key and time DataFrame
+    subsides_dict = parse_dict(reverse_dict(d))
+
+    summary_subsidies = dict()
+    for year, df in subsides_year.items():
+        df = df.reorder_levels(flow_renovation.index.names)
+        summary_subsidies[year] = (df.T * flow_renovation.loc[:, year]).T.sum()
+    summary_subsidies = pd.DataFrame(summary_subsidies).T
+    summary_subsidies.columns = [i.replace('€/m2', '€') for i in summary_subsidies.columns]
+    return summary_subsidies, subsides_dict, subsides_year
 
 
 def parse_output(output, buildings, buildings_constructed, folder_output):
@@ -128,9 +147,9 @@ def parse_output(output, buildings, buildings_constructed, folder_output):
 
     # 1. stock
     object_dict = {'Renovation': buildings, 'Construction': buildings_constructed}
+    buildings_constructed.to_consumption_actual(energy_prices_dict['energy_price_forecast'])
     output_stock = dict()
     for name, building in object_dict.items():
-        print(name)
         output_stock['Stock' + ' - {}'.format(name)] = pd.DataFrame(building.stock_seg_dict)
         output_stock['Stock (m2)' + ' - {}'.format(name)] = (
                     output_stock['Stock' + ' - {}'.format(name)].T * building.area).T
@@ -164,7 +183,7 @@ def parse_output(output, buildings, buildings_constructed, folder_output):
             'Consumption actual (kWh/m2)', 'Consumption actual (kWh)', 'Budget share (%)', 'Use intensity (%)',
             'Emission (gCO2/m2)', 'Emission (gCO2)']
     for keys in temp:
-        output_stock[keys] = output_stock['{} - Construction'.format(keys)].reorder_levels(
+        output_stock['{} - Construction'.format(keys)] = output_stock['{} - Construction'.format(keys)].reorder_levels(
         output_stock['{} - Renovation'.format(keys)].index.names)
         output_stock[keys] = pd.concat(
             (output_stock['{} - Renovation'.format(keys)], output_stock['{} - Construction'.format(keys)]), axis=0)
@@ -196,9 +215,16 @@ def parse_output(output, buildings, buildings_constructed, folder_output):
     output_flow_transition['Subsidies (€/m2)'] = subsidies_ep + subsidies_he
     output_flow_transition['Subsidies (€)'] = output_flow_transition['Flow transition (m2)'] * output_flow_transition['Subsidies (€/m2)']
 
+    flow_renovation_label = dict_pd2df(buildings.flow_renovation_label_dict)
+    area = reindex_mi(buildings.label2area, flow_renovation_label.index)
+    flow_renovation_label = (flow_renovation_label.T * area).T
+    summary_subsidies, output_subsides_year, output_subsides = parse_subsidies(buildings, flow_renovation_label)
+    pickle.dump(output_subsides_year, open(os.path.join(folder_output, 'output_subsides_year.pkl'), 'wb'))
+    pickle.dump(output_subsides, open(os.path.join(folder_output, 'output_subsides.pkl'), 'wb'))
+
     # 3. Quick summary
     summary = dict()
-    summary['Stock renovation'] = output_stock['Stock'].sum(axis=0)
+    summary['Stock'] = output_stock['Stock'].sum(axis=0)
     summary['Consumption conventional (kWh)'] = output_stock['Consumption conventional (kWh)'].sum(axis=0)
     summary['Consumption actual (kWh)'] = output_stock['Consumption actual (kWh)'].sum(axis=0)
     summary['Emission (gCO2)'] = output_stock['Emission (gCO2)'].sum(axis=0)
@@ -207,11 +233,14 @@ def parse_output(output, buildings, buildings_constructed, folder_output):
     summary['Flow transition renovation'] = output_flow_transition['Flow transition'].sum(axis=0)
     summary['Capex renovation (€)'] = output_flow_transition['Capex (€)'].sum(axis=0)
     summary['Subsidies renovation (€)'] = output_flow_transition['Subsidies (€)'].sum(axis=0)
-
     summary = pd.DataFrame(summary)
     summary.dropna(axis=0, thresh=4, inplace=True)
 
+    summary = pd.concat((summary, summary_subsidies), axis=1)
+
     summary.to_csv(os.path.join(folder_output, 'summary.csv'))
-    pickle.dump(output_flow_transition, open('output_transition.pkl', 'wb'))
-    pickle.dump(output_stock, open('output_transition.pkl', 'wb'))
+    pickle.dump(output_flow_transition, open(os.path.join(folder_output, 'output_transition.pkl'), 'wb'))
+    pickle.dump(output_stock, open(os.path.join(folder_output, 'output_stock.pkl'), 'wb'))
+
+
 
