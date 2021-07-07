@@ -2,6 +2,8 @@ import numpy as np
 import pandas as pd
 from math import floor, ceil
 from collections import defaultdict
+from itertools import product
+import seaborn as sns
 
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
@@ -16,7 +18,7 @@ def reverse_nested_dict(data_dict):
     for key, val in data_dict.items():
         for subkey, subval in val.items():
             flipped[subkey][key] = subval
-    return flipped
+    return dict(flipped)
 
 
 def economic_subplots(df, suptitle, format_axtitle=lambda x: x, format_val=lambda x: '{:.0f}'.format(x), n_columns=3):
@@ -25,7 +27,7 @@ def economic_subplots(df, suptitle, format_axtitle=lambda x: x, format_val=lambd
     Parameters
     ----------
     df: pd.DataFrame
-    columns must be years
+        columns must be years
 
     suptitle: str
 
@@ -33,7 +35,7 @@ def economic_subplots(df, suptitle, format_axtitle=lambda x: x, format_val=lambd
 
     format_val: function, optional
 
-    n_columns: int, optional
+    n_columns: int, default 3
     """
     n_axes = int(len(df.index))
     n_rows = ceil(n_axes / n_columns)
@@ -68,6 +70,63 @@ def economic_subplots(df, suptitle, format_axtitle=lambda x: x, format_val=lambd
             ax.get_legend().remove()
         except IndexError:
             ax.axis('off')
+
+    plt.show()
+
+    
+def scenario_grouped_subplots(df_dict, suptitle='', n_columns=3, format_y=lambda y, _: y):
+    """Plot a line for each index in a subplot.
+
+    Parameters
+    ----------
+    df_dict: dict
+        df_dict values are pd.DataFrame (index=years, columns=scenario)
+
+    suptitle: str, optional
+
+    format_y: function, optional
+
+    n_columns: int, default 3
+    """
+    list_keys = list(df_dict.keys())
+
+    sns.set_palette(sns.color_palette('rocket', df_dict[list_keys[0]].shape[1]))
+
+    n_axes = int(len(list_keys))
+    n_rows = ceil(n_axes / n_columns)
+    fig, axes = plt.subplots(n_rows, n_columns, figsize=(12.8, 9.6), sharex=True, sharey=True)
+    fig.suptitle(suptitle, fontsize=20, fontweight='bold')
+    for k in range(n_rows * n_columns):
+
+        row = floor(k / n_columns)
+        column = k % n_columns
+        if n_rows == 1:
+            ax = axes[column]
+        else:
+            ax = axes[row, column]
+        try:
+            key = list_keys[k]
+            df_dict[key].plot(ax=ax, linewidth=1)
+
+            ax.xaxis.set_tick_params(which=u'both', length=0)
+            ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+            ax.spines['top'].set_visible(False)
+            ax.spines['right'].set_visible(False)
+            ax.spines['left'].set_visible(False)
+
+            ax.yaxis.set_tick_params(which=u'both', length=0)
+            ax.yaxis.set_major_formatter(plt.FuncFormatter(format_y))
+
+            # ax.get_yaxis().set_visible(False)
+            ax.set_title(key, fontweight='bold', fontsize=10, pad=-1.6)
+            if k == 0:
+                handles, labels = ax.get_legend_handles_labels()
+            ax.get_legend().remove()
+        except IndexError:
+            ax.axis('off')
+
+    fig.legend(handles, labels, loc='upper right', frameon=False)
+    # plt.legend(frameon=False)
 
     plt.show()
 
@@ -181,13 +240,13 @@ def stock_attributes_subplots(stock, dict_order={}, suptitle='Buildings stock', 
         plt.setp(ax.xaxis.get_majorticklabels(), rotation=0)
 
 
-def table_plots(df, level_x, level_y, suptitle='', format_val=lambda x: '{:.0f}'.format(x)):
+def table_plots(df, level_x=0, level_y=1, suptitle='', format_val=lambda x: '{:.0f}'.format(x)):
     """Organized subplots with level_x and level_x values as subplot coordinate.
     
     Parameters
     ----------
     df: pd.DataFrame
-        MultiIndex 
+        2 levels MultiIndex 
     level_x: str
     level_y: str
     suptitle: str, optional
@@ -241,3 +300,59 @@ def table_plots(df, level_x, level_y, suptitle='', format_val=lambda x: '{:.0f}'
         except:
             ax.axis('off')
             continue
+            
+
+def table_plots_scenarios(dict_df, suptitle='', format_y=lambda y, _: y):
+    """Organized subplots key[0], key[1] values as subplot coordinate.
+    
+    Parameters
+    ----------
+    dict_df: dict
+        2 levels MultiIndex 
+
+    suptitle: str, optional
+    format_y: function, optional
+    """
+    index = sorted(list(set([k[0] for k in dict_df.keys()])), reverse=False)
+    columns = sorted(list(set([k[1] for k in dict_df.keys()])), reverse=False)
+    coord = list(product(range(0, len(index)), range(0, len(columns))))
+
+    fig, axes = plt.subplots(len(index), len(columns), figsize=(12.8, 9.6), sharex='col', sharey=True)
+    fig.suptitle(suptitle, fontsize=20, fontweight='bold')
+    fig.subplots_adjust(top=0.95)
+
+    for row, col in coord:
+        ax = axes[row, col]
+
+        if col == 0:
+            ax.set_ylabel(index[row], labelpad=5, fontdict=dict(weight='bold'))
+            ax.yaxis.set_label_position('left')
+        if row == len(index) - 1:
+            ax.set_xlabel(columns[col], labelpad=5, fontdict=dict(weight='bold'))
+            ax.xaxis.set_label_position('bottom')
+
+        try:
+            df = dict_df[(index[row], columns[col])]
+            df.plot(ax=ax, linewidth=1)
+            if row == 0 and col == 0:
+                handles, labels = ax.get_legend_handles_labels()
+            ax.get_legend().remove()
+
+            # ax.get_yaxis().set_visible(False)
+            # ax.set_yticklabels([])
+
+            ax.spines['top'].set_visible(False)
+            ax.spines['right'].set_visible(False)
+            ax.spines['left'].set_visible(False)
+
+            ax.xaxis.set_tick_params(which=u'both', length=0)
+            ax.yaxis.set_tick_params(which=u'both', length=0)
+            ax.yaxis.set_major_formatter(plt.FuncFormatter(format_y))
+
+
+        except KeyError:
+            ax.axis('off')
+            continue
+
+    fig.legend(handles, labels, loc='upper right', frameon=False)
+    plt.show()

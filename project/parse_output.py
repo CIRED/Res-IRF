@@ -3,7 +3,7 @@ import os
 import pickle
 from buildings import HousingStock
 from utils import reindex_mi
-from project.parse_input import colors_dict, co2_content_data, energy_prices_dict
+from parse_input import co2_content_data, energy_prices_dict
 from collections import defaultdict
 
 
@@ -87,17 +87,28 @@ def parse_subsidies(buildings, flow_renovation):
         subsides_year[yr].columns = item.keys()
         subsides_year[yr].replace(0, float('nan'), inplace=True)
         subsides_year[yr].dropna(axis=0, how='any', inplace=True)
+        subsides_year[yr].columns = [c.replace('_', ' ').capitalize() for c in subsides_year[yr].columns]
+
+        df = subsides_year[yr].copy()
+        df = df.reorder_levels(flow_renovation.index.names)
+        subsides_euro = (flow_renovation.loc[:, yr] * df.T).T
+        subsides_euro.columns = [c.replace('€/m2', '€') for c in list(subsides_euro.columns)]
+
+        subsides_year[yr] = pd.concat((subsides_year[yr], subsides_euro), axis=1)
 
     # 2. dict with policies as key and time DataFrame
     subsides_dict = parse_dict(reverse_dict(d))
 
+    for key in list(subsides_dict.keys()):
+        subsides_dict[key.replace('€/m2', '€')] = subsides_dict[key] * flow_renovation
+    subsides_dict_copy = {key.replace('_', ' ').capitalize(): subsides_dict[key] for key in list(subsides_dict.keys())}
+
     summary_subsidies = dict()
     for year, df in subsides_year.items():
-        df = df.reorder_levels(flow_renovation.index.names)
-        summary_subsidies[year] = (df.T * flow_renovation.loc[:, year]).T.sum()
+        summary_subsidies[year] = df.loc[:, [c for c in df.columns if '(€)' in c]].sum()
     summary_subsidies = pd.DataFrame(summary_subsidies).T
-    summary_subsidies.columns = [i.replace('€/m2', '€') for i in summary_subsidies.columns]
-    return summary_subsidies, subsides_dict, subsides_year
+
+    return summary_subsidies, subsides_dict_copy, subsides_year
 
 
 def parse_output(output, buildings, buildings_constructed, folder_output):
@@ -178,6 +189,10 @@ def parse_output(output, buildings, buildings_constructed, folder_output):
                                                                     'Taxes cost (€/m2)' + ' - {}'.format(name)] * \
                                                                 output_stock['Stock (m2)' + ' - {}'.format(name)]
 
+    for key in output_stock.keys():
+        if isinstance(output_stock[key], pd.DataFrame):
+            output_stock[key].dropna(axis=1, how='all', inplace=True)
+
     # concatenate data
     temp = ['Stock', 'Stock (m2)', 'Consumption conventional (kWh/m2)', 'Consumption conventional (kWh)',
             'Consumption actual (kWh/m2)', 'Consumption actual (kWh)', 'Budget share (%)', 'Use intensity (%)',
@@ -218,9 +233,10 @@ def parse_output(output, buildings, buildings_constructed, folder_output):
     flow_renovation_label = dict_pd2df(buildings.flow_renovation_label_dict)
     area = reindex_mi(buildings.label2area, flow_renovation_label.index)
     flow_renovation_label = (flow_renovation_label.T * area).T
-    summary_subsidies, output_subsides_year, output_subsides = parse_subsidies(buildings, flow_renovation_label)
-    pickle.dump(output_subsides_year, open(os.path.join(folder_output, 'output_subsides_year.pkl'), 'wb'))
-    pickle.dump(output_subsides, open(os.path.join(folder_output, 'output_subsides.pkl'), 'wb'))
+    if buildings.policies_total[('Energy performance',)] != {}:
+        summary_subsidies, output_subsides_year, output_subsides = parse_subsidies(buildings, flow_renovation_label)
+        pickle.dump(output_subsides_year, open(os.path.join(folder_output, 'output_subsides_year.pkl'), 'wb'))
+        pickle.dump(output_subsides, open(os.path.join(folder_output, 'output_subsides.pkl'), 'wb'))
 
     # 3. Quick summary
     summary = dict()
@@ -236,7 +252,8 @@ def parse_output(output, buildings, buildings_constructed, folder_output):
     summary = pd.DataFrame(summary)
     summary.dropna(axis=0, thresh=4, inplace=True)
 
-    summary = pd.concat((summary, summary_subsidies), axis=1)
+    if buildings.policies_total[('Energy performance',)] != {}:
+        summary = pd.concat((summary, summary_subsidies), axis=1)
 
     summary.to_csv(os.path.join(folder_output, 'summary.csv'))
     pickle.dump(output_flow_transition, open(os.path.join(folder_output, 'output_transition.pkl'), 'wb'))

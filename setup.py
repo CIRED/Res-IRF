@@ -7,7 +7,7 @@ setup(
    name='Res-IRF',
    version='1.0',
    description='Building Energy Model',
-   license="MIT",
+   license="GNU GENERAL PUBLIC LICENSE",
    long_description=long_description,
    author='L.G. Giraudet, L. Vivier',
    author_email='vivier@centre-cired.fr',

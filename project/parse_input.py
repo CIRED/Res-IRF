@@ -2,7 +2,7 @@ import pandas as pd
 import os
 import json
 
-from project.utils import apply_linear_rate, reindex_mi
+from utils import apply_linear_rate, reindex_mi
 
 
 def dict2series(item_dict):

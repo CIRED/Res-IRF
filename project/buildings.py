@@ -3,8 +3,9 @@ import os
 import numpy as np
 from scipy.optimize import fsolve
 from copy import deepcopy
-from project.utils import reindex_mi, val2share, logistic, get_levels_values, remove_rows, add_level, de_aggregate_series, de_aggregating_series, de_aggregate_columns
 from itertools import product
+
+from utils import reindex_mi, val2share, logistic, get_levels_values, remove_rows, add_level, de_aggregate_series, de_aggregating_series, de_aggregate_columns
 
 # TODO: calibration_renovation_rate // rho should depends on Income class owner and Heating energy initial
 # TODO: clean HousingStockConstructed
@@ -1916,22 +1917,14 @@ class HousingStockConstructed(HousingStock):
 
         return share_multi_family_tot
 
-    """
-    def to_consumption_new_stock(self, energy_prices):
-        segments = self._stock_constructed_seg_dict[self.year].index
-        area = self.to_area(segments=segments)
-        income = self.to_income(segments=segments)
-        energy_prices = reindex_mi(energy_prices, segments, energy_prices.index.names)
-        consumption_conventional = self.to_consumption_conventional(segments=segments)
-        heating_intensity = -0.191 * budget_share.apply(np.log) + 0.1105
-        consumption_actual = (consumption_conventional * heating_intensity.T).T
-        return consumption_actual
-    """
-
     def to_share_housing_type(self):
         """Returns share of Housing type ('Multi-family', 'Single-family') in the new constructed housings.
 
-        # TODO: test
+        Share_multifamily[year] = Stock_multifamily[year] / Stock[year]
+        Share_multifamily[year] = (Stock_multifamily[year - 1] + Flow_multifamily_construction) / Stock[year]
+        Share_multifamily[year] = (Share_multifamily[year - 1] * Stock[year - 1] + Flow_multifamily_construction) / Stock[year]
+        Flow_multifamily_construction = Share_multifamily[year] * Stock[year] - Share_multifamily[year - 1] * Stock[year - 1]
+
 
         Returns
         -------

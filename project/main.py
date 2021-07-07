@@ -11,15 +11,15 @@ import pandas as pd
 from shutil import copyfile
 from itertools import product
 
-from project.buildings import HousingStock, HousingStockRenovated, HousingStockConstructed
-from project.policies import EnergyTaxes, Subsidies, RegulatedLoan, RenovationObligation
-from project.parse_output import parse_output
+from buildings import HousingStock, HousingStockRenovated, HousingStockConstructed
+from policies import EnergyTaxes, Subsidies, RegulatedLoan, RenovationObligation
+from parse_output import parse_output
 
 
 def res_irf(folder, scenario_dict, dict_parameters, dict_policies, levels_dict_construction, levels_dict,
             energy_prices_dict, cost_invest, cost_invest_construction,
             sources_dict, stock_ini_seg, co2_content_data, dict_label,
-            rate_renovation_ini, ms_renovation_ini, dict_share, logging):
+            rate_renovation_ini, ms_renovation_ini, dict_share, logging, end_year):
     """Res-IRF functions.
 
     Parameters
@@ -229,7 +229,7 @@ def res_irf(folder, scenario_dict, dict_parameters, dict_policies, levels_dict_c
         rho_seg = None
     buildings.rho_seg = rho_seg
 
-    years = range(calibration_year, dict_parameters['End year'], 1)
+    years = range(calibration_year, end_year, 1)
     logging.debug('Launching iterations')
     for year in years[1:]:
         logging.debug('YEAR: {}'.format(year))
@@ -281,7 +281,7 @@ def res_irf(folder, scenario_dict, dict_parameters, dict_policies, levels_dict_c
             output['Cost envelope'][year] = cost_invest['Energy performance']
 
         logging.debug('Construction dynamic')
-        buildings_constructed._year = year
+        buildings_constructed.year = year
         flow_constructed = dict_parameters['Flow needed'].loc[year] - buildings.stock_seg.sum()
         logging.debug('Construction of: {:,.0f} buildings'.format(flow_constructed))
         buildings_constructed.flow_constructed = flow_constructed
@@ -327,18 +327,24 @@ def res_irf(folder, scenario_dict, dict_parameters, dict_policies, levels_dict_c
 
 
 if __name__ == '__main__':
+
     import copy
-    from project.parse_input import *
+    from parse_input import *
     from multiprocessing import Process
     import argparse
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-s', '--scenarios', default=False, help='multi scenarios')
+    parser.add_argument('-y', '--year_end', default=False, help='multi scenarios')
     args = parser.parse_args()
 
     multiple_scenario = False
     if args.scenarios == 'True':
         multiple_scenario = True
+
+    end_year = dict_parameters['End year']
+    if args.year_end:
+        end_year = int(args.year_end)
 
     start = time.time()
     folder['output'] = os.path.join(folder['output'], datetime.datetime.today().strftime('%Y%m%d_%H%M%S'))
@@ -363,7 +369,7 @@ if __name__ == '__main__':
         res_irf(folder, scenario_dict, dict_parameters, dict_policies, levels_dict_construction, levels_dict,
                 energy_prices_dict, cost_invest, cost_invest_construction,
                 sources_dict, stock_ini_seg, co2_content_data, dict_label,
-                rate_renovation_ini, ms_renovation_ini, dict_share, logging)
+                rate_renovation_ini, ms_renovation_ini, dict_share, logging, end_year)
     else:
         name_file = os.path.join(folder['input'], 'scenarios.json')
         with open(name_file) as file:
