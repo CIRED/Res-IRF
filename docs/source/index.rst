@@ -7,10 +7,16 @@ Welcome to Res-IRF's documentation!
 ===================================
 
 .. toctree::
-   :maxdepth: 2
    :caption: Contents:
+   :maxdepth: 2
 
-
+   README
+   appendix
+   modules
+   LICENSE
+   CHANGELOG
+   TODO
+   future_development
 
 Indices and tables
 ==================

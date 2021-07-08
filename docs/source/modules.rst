@@ -1,12 +1,6 @@
-build
-=====
+Module
+======
 
-.. toctree::
-   :maxdepth: 4
-   :caption: Contents:
-
-Model file
-==========
 .. automodule:: buildings
     :members:
 .. automodule:: policies
@@ -14,11 +8,4 @@ Model file
 .. automodule:: utils
     :members:
 
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
 
