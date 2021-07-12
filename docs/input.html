@@ -1,0 +1,458 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Input &mdash; Res-IRF 0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Res-IRF
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="README.html">Res-IRF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendix.html">Additional information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LICENSE.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="CHANGELOG.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TODO.html">Todo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="future_development.html">Future developments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials Res-IRF fondation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html#Building-stock">Building stock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html#Energy-use">Energy use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html#Transition-economics">Transition economics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html#Stock-dynamics">Stock dynamics</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Res-IRF</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Input</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/input.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<section class="tex2jax_ignore mathjax_ignore" id="input">
+<h1>Input<a class="headerlink" href="#input" title="Permalink to this headline">¶</a></h1>
+<blockquote>
+<div><p>Res-IRF integrate a detailed description of the energy performance of the dwelling stock with a rich description of
+household behaviour. Res-IRF has been developed to improve the behavioural realism that integrated models of energy
+demand typically lack. (cf. README.md)</p>
+</div></blockquote>
+<p>This description implies the use of a variety of different input.
+Most of these inputs are uncertain. It is then necessary to run a sensitivity analysis.</p>
+<p><strong>Data that are bolded get a native integration</strong></p>
+<p>We consider multiple scenarios for each input.
+However, it is time-consuming to run all scenarios, and we prefer running at least 3:</p>
+<ul class="simple">
+<li><p>Reference</p></li>
+<li><p>Optimistic</p></li>
+<li><p>Pessimistic</p></li>
+</ul>
+<p>Some data source are numbers, series or dataframe included in json file.<br />
+Others come from others files (.csv, .pkl, etc…).
+Source.json file contain sources to these data as file path.</p>
+<p>Scenario file chose which scenarios are launched.</p>
+<section id="building-stock">
+<h2>Building stock<a class="headerlink" href="#building-stock" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><strong>initial stock by attributes</strong>:</p>
+<ul>
+<li><p>Energy performance label</p></li>
+<li><p>Heating energy (Power, Natural gas, Oil fuel, Wood fuel)</p></li>
+<li><p>Housing type (Multi-family, Single-family)</p></li>
+<li><p>Occupancy status (Landlords, Homeowners, Social-housing)</p></li>
+<li><p>Income class tenant</p></li>
+<li><p>Income class owner</p></li>
+</ul>
+</li>
+</ul>
+<p>NB:</p>
+<ul class="simple">
+<li><p>The model has been written to let user add or drop stock attributes. It will be necessary to rewrite some function in
+order to do so.</p></li>
+<li><p>Users can also estimate attributes to populate their dataset and use the current version.</p></li>
+</ul>
+<blockquote>
+<div><p>Data from SDES-2018, Phebus-2012</p>
+</div></blockquote>
+</section>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><strong>End year (2040)</strong> (python input)</p></li>
+</ul>
+</section>
+<section id="buildings-dynamic">
+<h2>Buildings dynamic<a class="headerlink" href="#buildings-dynamic" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><strong>Destruction rate (0.35%/yr)</strong></p></li>
+<li><p>Residual destruction rate (5%/yr)</p></li>
+<li><p>Rotation rate</p></li>
+<li><p>Mutation rate</p></li>
+</ul>
+<section id="construction-dynamic">
+<h3>Construction dynamic<a class="headerlink" href="#construction-dynamic" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Factor share multi-family</p></li>
+<li><p>Elasticity area construction</p></li>
+<li><p>Area max construction</p></li>
+</ul>
+</section>
+</section>
+<section id="demographic">
+<h2>Demographic<a class="headerlink" href="#demographic" title="Permalink to this headline">¶</a></h2>
+<p>These data are based on verified sources (INSEE), and are not prioritize for the uncertainty.</p>
+<ul class="simple">
+<li><p>Stock total ini</p>
+<ul>
+<li><p>Total number of buildings the initial year.</p></li>
+</ul>
+</li>
+<li><p>Factor population housing ini</p>
+<ul>
+<li><p>Number of people by housing for the calibration year</p></li>
+</ul>
+</li>
+<li><p>Population housing min</p>
+<ul>
+<li><p>Minimum number of people by housing over the years</p></li>
+</ul>
+</li>
+<li><p>Available income ini</p>
+<ul>
+<li><p>Total available income</p></li>
+</ul>
+</li>
+<li><p>Available income rate</p></li>
+<li><p>Household income rate</p></li>
+<li><p>projection population</p></li>
+</ul>
+</section>
+<section id="market-share-and-renovation-parameters">
+<h2>Market share and renovation parameters<a class="headerlink" href="#market-share-and-renovation-parameters" title="Permalink to this headline">¶</a></h2>
+<p>As other parameters (intangible cost and rho) are calibrated based on observed data, we don’t prioritize the one bellow:</p>
+<ul class="simple">
+<li><p>Nu intangible cost</p></li>
+<li><p>Nu construction</p></li>
+<li><p>Nu label</p></li>
+<li><p>Nu energy</p></li>
+<li><p>NPV min</p></li>
+<li><p>Renovation rate max</p></li>
+<li><p>Renovation rate min</p></li>
+</ul>
+</section>
+<section id="learning-by-doing">
+<h2>Learning by doing<a class="headerlink" href="#learning-by-doing" title="Permalink to this headline">¶</a></h2>
+<p>All these parameters seem to have been estimated</p>
+<ul class="simple">
+<li><p>Learning by doing renovation (10%)</p>
+<ul>
+<li><p>Reduction of renovation cost when knowledge doubles</p></li>
+</ul>
+</li>
+<li><p>Learning years renovation (10 years)</p>
+<ul>
+<li><p>Calculate initial knowledge</p></li>
+</ul>
+</li>
+<li><p>Learning information rate renovation (25%)</p>
+<ul>
+<li><p>Reduction of intangible cost when knowledge doubles</p></li>
+</ul>
+</li>
+<li><p>Information rate max renovation (80%)</p>
+<ul>
+<li><p>Maximum share of reduction</p></li>
+</ul>
+</li>
+<li><p>Learning by doing construction (15%)</p></li>
+<li><p>Cost construction lim</p></li>
+<li><p>Learning information rate construction (25%)</p></li>
+<li><p>Information rate max construction (95%)</p></li>
+</ul>
+<blockquote>
+<div><p>Learning by doing and information acceleration can be activated or de-activated.</p>
+</div></blockquote>
+</section>
+<section id="cost-and-prices">
+<h2>Cost and prices<a class="headerlink" href="#cost-and-prices" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><strong>energy prices</strong></p>
+<ul>
+<li><p>energy price w/ taxes initial (€/kWh)</p></li>
+<li><p>energy price rate (%/year)</p></li>
+</ul>
+</li>
+<li><p>CO2 content</p>
+<ul>
+<li><p>CO2 content initial (gCO2/kWh)</p></li>
+<li><p>CO2 content rate (%/year)</p></li>
+</ul>
+</li>
+<li><p>construction cost</p></li>
+<li><p><strong>renovation cost</strong></p></li>
+<li><p><strong>switching-fuel cost</strong></p></li>
+<li><p>policies detailed</p>
+<ul>
+<li><p>carbon tax data</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="behavioral-parameters">
+<h2>Behavioral parameters<a class="headerlink" href="#behavioral-parameters" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>investment discount rate</p></li>
+<li><p>construction investment discount rate</p></li>
+<li><p><strong>envelope investment horizon</strong></p></li>
+<li><p><strong>heater investment horizon</strong></p></li>
+</ul>
+</section>
+<section id="numeric-value-for-stock-attributes">
+<h2>Numeric value for stock attributes<a class="headerlink" href="#numeric-value-for-stock-attributes" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>income</p></li>
+<li><p>area</p></li>
+<li><p>construction area</p></li>
+<li><p>energy performance label primary consumption</p></li>
+<li><p>energy performance label construction primary consumption</p></li>
+<li><p>rate final energy in total primary consumption</p></li>
+<li><p>rate heating energy in total final energy consumption</p></li>
+<li><p>rate heating energy in total construction final energy consumption</p></li>
+</ul>
+</section>
+<section id="observed-data">
+<h2>Observed data<a class="headerlink" href="#observed-data" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>market share renovation initial</p>
+<ul>
+<li><p>Observed market share for the calibration year</p></li>
+</ul>
+</li>
+<li><p>renovation rate initial</p></li>
+</ul>
+</section>
+<section id="construction-distribution">
+<h2>Construction distribution<a class="headerlink" href="#construction-distribution" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Housing type share total</p></li>
+<li><p>Occupancy status share housing type</p></li>
+<li><p>Energy performance share total construction</p></li>
+<li><p>Housing type share total construction</p></li>
+<li><p>Heating energy share housing type</p></li>
+</ul>
+</section>
+<section id="others">
+<h2>Others<a class="headerlink" href="#others" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>colors</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Lucas Vivier.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
