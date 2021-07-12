@@ -12,7 +12,7 @@ from utils import reindex_mi, val2share, logistic, get_levels_values, remove_row
 
 
 class HousingStock:
-    """Class represents housing stocks. Housing is a building and household archetype.
+    """Class represents housing stocks. Housing is a building and household/owner archetype.
 
     Attributes
     ----------
@@ -175,7 +175,6 @@ class HousingStock:
         Parameters
         ----------
         label2: float, pd.Series, pd.DataFrame, dict
-
         scenario: str, optional
 
         Returns
@@ -258,15 +257,16 @@ class HousingStock:
 
     @staticmethod
     def to_discounted(df, rate):
-        # TODO: use HousingStock.to_discounted(df, self.label2discount)
         """Returns discounted DataFrame from DataFrame.
 
         Parameters
         __________
-
         df: pd.DataFrame
+        rate: float or pd.Series
 
-        discount: float or pd.Series
+        Returns
+        -------
+        pd.DataFrame
         """
 
         yrs = df.columns
@@ -294,7 +294,7 @@ class HousingStock:
             return HousingStock._label2(segments, self.label2consumption, scenario=scenario)
 
     def to_consumption_actual(self, energy_prices, detailed_output=False, segments=None):
-        """Return energy consumption for every segment (self.segments) and all years.
+        """Return energy consumption for every segment and all years.
 
         A growing number of academic studies point to a gap between the conventional energy consumption predicted
         by energy performance certificates and actual energy consumption.
@@ -307,15 +307,13 @@ class HousingStock:
         __________
         energy_prices: pd.DataFrame
         detailed_output: boolean, default False
-        segments: pd.Index,
+        segments: pd.Index, optional
+            If segments is not filled, use self.segments.
 
         Returns
         _______
         pd.DataFrame
             consumption_actual (rows: segments, columns: years)
-        or
-        dict
-
         """
 
         if self.consumption_actual is not None and not detailed_output:
@@ -351,17 +349,39 @@ class HousingStock:
             return consumption_actual
 
     def to_consumption(self, consumption, segments=None):
+        """Returns consumption conventional or actual based on consumption parameter.
+
+        Parameters
+        ----------
+        consumption: str, {'conventional', 'actual'}
+        segments: pd.Index, optional
+            If segments is not filled, use self.segments.
+
+        Returns
+        -------
+
+        """
         if consumption == 'conventional':
             return self.to_consumption_conventional(segments=segments)
         elif consumption == 'actual':
+            # TODO: if consumption_actual is not filled will not worked
             return self.consumption_actual(segments=segments)
         else:
             raise AttributeError("Consumption must be in ['conventional', 'actual']")
 
     @staticmethod
     def mul_consumption(consumption, mul_df, option='initial'):
-        """Returns energy cost segmented and for every year based on energy consumption and energy prices.
-        €/m2
+        """Multiply any pd.DataFrame to consumption.
+
+        Parameters
+        ----------
+        consumption: pd.DataFrame or pd.Series
+        mul_df: pd.DataFrame or pd.Series
+        option: str, {'initial', 'final'}, default 'initial'
+
+        Returns
+        -------
+        pd.DataFrame or pd.Series
         """
         temp = mul_df.copy()
         if option == 'final':
@@ -384,6 +404,21 @@ class HousingStock:
 
     @staticmethod
     def to_summed(df, yr_ini, horizon):
+        """Summed df based on its horizon.
+
+        Parameters
+        ----------
+        df: pd.DataFrame
+            pd.MultiIndex as index, and years as columns
+        yr_ini
+            int
+        horizon: pd.Series
+            pd.MultiIndex as index
+
+        Returns
+        -------
+        pd.Series
+        """
         if isinstance(horizon, int):
             yrs = range(yr_ini, yr_ini + horizon, 1)
             df_summed = df.loc[:, yrs].sum(axis=1)
@@ -391,39 +426,50 @@ class HousingStock:
             horizon_re = reindex_mi(horizon, df.index, horizon.index.names)
 
             def horizon2years(num, yr):
-                """Return list of years based on a number of years and year.
+                """Return list of years based on a number of years and an initial year.
 
-                Parameters:
-                -----------
+                Parameters
+                ----------
                 num: int
-
                 yr: int
 
-                Returns:
-                --------
+                Returns
+                -------
                 list
+
+                Example:
+                >>> horizon2years(2018, 3)
+                [2018, 2019, 2020]
+                >>> horizon2years(2020, 10)
+                [2020, 2021, 2022, 2023, 2024, 2025, 2026, 2027, 2028, 2029]
+
                 """
                 return [yr + k for k in range(int(num))]
 
             yrs = horizon_re.apply(horizon2years, args=[yr_ini])
 
             def time_series2sum(ds, years, levels):
-                """Return sum of ds for each segment based on list of years in invest years.
+                """Sum n values over axis=1 based on years to consider for each row.
 
-                Parameters:
-                -----------
+                Parameters
+                ----------
                 ds: pd.Series
-                segments as index, time series as column
-
+                    Segments as index, years as column
                 years: pd.Series
-                list of years to use for each segment
-
+                    List of years to use for each segment
                 levels: str
-                levels used to catch idxyears
+                    Levels used to catch idxyears
 
-                Returns:
-                --------
+                Returns
+                -------
                 float
+
+                Examples
+                --------
+                >>> data = pd.Series(np.ones((3, 5)), columns=[2018, 2019, 2020, 2021, 2022])
+                >>> years = pd.Series([[2018, 2019, 2020], [2018, 2019, 2020, 2021], [2018]])
+                >>> time_series2sum(data, years, levels)
+
                 """
                 idx_invest = [ds[lvl] for lvl in levels]
                 idxyears = years.loc[tuple(idx_invest)]
@@ -448,8 +494,8 @@ class HousingStock:
         ----------
         energy_prices: pd.DataFrame
         transition: list, default ['Energy performance']
-        consumption: {'conventional', 'actual}
-        segments: pd.Index, default None
+        consumption: str, {'conventional', 'actual}, default 'conventional'
+        segments: pd.Index, optional
 
         Returns
         -------
@@ -488,12 +534,12 @@ class HousingStock:
     def to_transition(self, ds, transition=None):
         """Returns pd.DataFrame from pd.Series by adding final state as column.
 
-        Create a MultiIndex columns when transition is a list.
+        Create a MultiIndex columns when it occurs simultaneous transitions.
 
         Parameters
         ----------
         ds: pd.Series
-        transition: list, optional
+        transition: list, default ['Energy performance']
 
         Returns
         -------
@@ -520,9 +566,9 @@ class HousingStock:
         Parameters
         ----------
         ds: pd.Series
-            data to pick values
+            Data to pick values
         idx_full: pd.MultiIndex
-            idx_full corresponds to final state data index
+            Corresponds to final state data index
         transition: list
 
         Returns
@@ -554,7 +600,14 @@ class HousingStock:
 
         Parameters
         ----------
+        ds: pd.Series
+        transition: list, default ['Energy performance', 'Heating energy']
+        segments: pd.Index, optional
+            Use self.segments if input is not filled.
 
+        Returns
+        -------
+        pd.DataFrame
         """
         if transition is None:
             transition = ['Energy performance', 'Heating energy']

@@ -30,12 +30,6 @@ def json2miindex(json_dict):
     Returns
     -------
     pd.Series, pd.DataFrame
-
-    Example
-    _______
-    d = {'type': 'pd.Series', 'val': {'D1': 0, 'D2': 1, 'D3': 1}, 'index': ['Income class']}
-    >>> json_dict(d)
-    pd.Series({'D1': 0, 'D2': 1, 'D3': 1}, names=['Income class'])
     """
 
     if isinstance(json_dict, float) or isinstance(json_dict, int) or isinstance(json_dict, str) or isinstance(json_dict,
@@ -105,6 +99,17 @@ def population_housing_dynamic(pop_housing_prev, pop_housing_min, pop_housing_in
     """Returns number of people by building for year.
 
     Number of people by housing decrease over the time.
+
+    Parameters
+    ----------
+    pop_housing_prev: int
+    pop_housing_min: int
+    pop_housing_ini: int
+    factor: int
+
+    Returns
+    -------
+    int
     """
     eps_pop_housing = (pop_housing_prev - pop_housing_min) / (
             pop_housing_ini - pop_housing_min)
@@ -143,12 +148,8 @@ last_year = 2080
 index_input_year = range(calibration_year, last_year + 1, 1)
 
 name_file = os.path.join(os.getcwd(), sources_dict['stock_buildings']['source'])
-"""with open(name_file, 'rb') as f:
-    data = pickle.load(name_file)
-pickle.loads(name_file)"""
-
-stock_ini_seg = pd.read_pickle(name_file)
-stock_ini_seg = stock_ini_seg.reorder_levels(
+stock_ini = pd.read_pickle(name_file)
+stock_ini = stock_ini.reorder_levels(
     ['Occupancy status', 'Housing type', 'Income class', 'Heating energy', 'Energy performance', 'Income class owner'])
 
 name_file = os.path.join(os.getcwd(), sources_dict['colors']['source'])
@@ -162,8 +163,11 @@ name_file = os.path.join(os.getcwd(), sources_dict['population']['source'])
 dict_parameters['Population total'] = pd.read_csv(os.path.join(folder['input'], name_file), sep=',', header=None,
                                                   index_col=[0],
                                                   squeeze=True)
-factor_population = stock_ini_seg.sum() / dict_parameters['Stock total ini']
-dict_parameters['Population'] = dict_parameters['Population total'] * factor_population
+
+# sizing_factor < 1 --> all extensive results are based on the size of initial parc
+sizing_factor = stock_ini.sum() / dict_parameters['Stock total ini']
+dict_parameters['Sizing factor'] = sizing_factor
+dict_parameters['Population'] = dict_parameters['Population total'] * sizing_factor
 
 dict_parameters['Available income'] = apply_linear_rate(dict_parameters['Available income ini'],
                                                         dict_parameters['Available income rate'], index_input_year)
@@ -176,7 +180,7 @@ dict_parameters['Available income real population'] = dict_parameters['Available
 
 population_housing_min = dict_parameters['Population housing min']
 population_housing = dict()
-population_housing[calibration_year] = dict_parameters['Population'].loc[calibration_year] / stock_ini_seg.sum()
+population_housing[calibration_year] = dict_parameters['Population'].loc[calibration_year] / stock_ini.sum()
 max_year = max(dict_parameters['Population'].index)
 
 flow_needed = dict()

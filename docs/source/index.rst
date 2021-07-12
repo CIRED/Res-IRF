@@ -17,6 +17,7 @@ Welcome to Res-IRF's documentation!
    CHANGELOG
    TODO
    future_development
+   tutorials.ipynb
 
 Indices and tables
 ==================

@@ -18,7 +18,7 @@ from parse_output import parse_output
 
 def res_irf(folder, scenario_dict, dict_parameters, dict_policies, levels_dict_construction, levels_dict,
             energy_prices_dict, cost_invest, cost_invest_construction,
-            sources_dict, stock_ini_seg, co2_content_data, dict_label,
+            sources_dict, stock_ini, co2_content_data, dict_label,
             rate_renovation_ini, ms_renovation_ini, dict_share, logging, end_year):
     """Res-IRF functions.
 
@@ -38,7 +38,7 @@ def res_irf(folder, scenario_dict, dict_parameters, dict_policies, levels_dict_c
     cost_invest: dict
     cost_invest_construction: dict
     sources_dict: dict
-    stock_ini_seg: pd.Series
+    stock_ini: pd.Series
     co2_content_data: pd.Series
     dict_label: dict
     rate_renovation_ini: pd.Series
@@ -107,7 +107,7 @@ def res_irf(folder, scenario_dict, dict_parameters, dict_policies, levels_dict_c
                                                    principal_max=item['principal_max'],
                                                    horizon=item['horizon'], targets=item['targets'],
                                                    transition=item['transition'])
-                policies_dict[pol].reindex_attributes(stock_ini_seg.index)
+                policies_dict[pol].reindex_attributes(stock_ini.index)
 
             elif item['policy'] == 'renovation_obligation':
                 dict_renovation_obligation[pol] = RenovationObligation(item['name'], item['start_targets'],
@@ -121,7 +121,7 @@ def res_irf(folder, scenario_dict, dict_parameters, dict_policies, levels_dict_c
         energy_price = energy_price * (1 + total_taxes)
 
     logging.debug('Creating HousingStockRenovated Python object')
-    buildings = HousingStockRenovated(stock_ini_seg, levels_dict, calibration_year,
+    buildings = HousingStockRenovated(stock_ini, levels_dict, calibration_year,
                                       residual_rate=dict_parameters['Residual destruction rate'],
                                       destruction_rate=dict_parameters['Destruction rate'],
                                       rate_renovation_ini=rate_renovation_ini,
@@ -156,9 +156,6 @@ def res_irf(folder, scenario_dict, dict_parameters, dict_policies, levels_dict_c
                                                     label2income=dict_label['label2income'],
                                                     label2consumption=dict_label['label2consumption_construction'])
 
-    """buildings_constructed.ini_all_indexes(energy_price,
-                                          levels=['Occupancy status', 'Housing type', 'Energy performance',
-                                                  'Heating energy'])"""
     cost_intangible_construction = None
     cost_intangible = None
     if scenario_dict['cost_intangible']:
@@ -213,6 +210,7 @@ def res_irf(folder, scenario_dict, dict_parameters, dict_policies, levels_dict_c
         output['Cost intangible'][calibration_year] = cost_intangible['Energy performance']
 
     logging.debug('Calibration renovation rate >>> rho')
+
     name_file = sources_dict['rho']['source']
     source = sources_dict['rho']['source_type']
     if source == 'function':
@@ -227,6 +225,7 @@ def res_irf(folder, scenario_dict, dict_parameters, dict_policies, levels_dict_c
         rho_seg = pd.read_pickle(name_file)
     else:
         rho_seg = None
+
     buildings.rho_seg = rho_seg
 
     years = range(calibration_year, end_year, 1)
@@ -236,8 +235,8 @@ def res_irf(folder, scenario_dict, dict_parameters, dict_policies, levels_dict_c
         policies_year = [policy for policy in policies if policy.start <= year <= policy.end]
         buildings.year = year
 
-        logging.debug('Calculate energy consumption actual')
-        buildings.to_consumption_actual(energy_price)
+        # logging.debug('Calculate energy consumption actual')
+        # buildings.to_consumption_actual(energy_price)
 
         logging.debug('Demolition dynamic')
         flow_demolition_seg = buildings.to_flow_demolition_seg()
@@ -282,7 +281,8 @@ def res_irf(folder, scenario_dict, dict_parameters, dict_policies, levels_dict_c
 
         logging.debug('Construction dynamic')
         buildings_constructed.year = year
-        flow_constructed = dict_parameters['Flow needed'].loc[year] - buildings.stock_seg.sum()
+        flow_constructed = dict_parameters['Flow needed'].loc[
+                               year] - buildings.stock_seg.sum() - buildings_constructed.stock_seg.sum()
         logging.debug('Construction of: {:,.0f} buildings'.format(flow_constructed))
         buildings_constructed.flow_constructed = flow_constructed
 
@@ -368,7 +368,7 @@ if __name__ == '__main__':
             scenario_dict = json.load(file)
         res_irf(folder, scenario_dict, dict_parameters, dict_policies, levels_dict_construction, levels_dict,
                 energy_prices_dict, cost_invest, cost_invest_construction,
-                sources_dict, stock_ini_seg, co2_content_data, dict_label,
+                sources_dict, stock_ini, co2_content_data, dict_label,
                 rate_renovation_ini, ms_renovation_ini, dict_share, logging, end_year)
     else:
         name_file = os.path.join(folder['input'], 'scenarios.json')
@@ -386,8 +386,8 @@ if __name__ == '__main__':
                                        args=(folder_scenario, scenario_dict, dict_parameters, dict_policies,
                                              levels_dict_construction, levels_dict,
                                              energy_prices_dict, cost_invest, cost_invest_construction,
-                                             sources_dict, stock_ini_seg, co2_content_data, dict_label,
-                                             rate_renovation_ini, ms_renovation_ini, dict_share, logging))]
+                                             sources_dict, stock_ini, co2_content_data, dict_label,
+                                             rate_renovation_ini, ms_renovation_ini, dict_share, logging, end_year))]
 
         for p in processes_list:
             p.start()

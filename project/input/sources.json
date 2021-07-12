@@ -9,7 +9,7 @@
     "source": "project/intermediate"
   },
   "stock_buildings": {
-    "source": "project/intermediate/stock_buildings.pkl",
+    "source": "project/intermediate/stock_buildings_sdes.pkl",
     "year": 2018,
     "type": "pd.Series"
   },

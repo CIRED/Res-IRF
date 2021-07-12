@@ -1,5 +1,7 @@
 # Todo
 
+## Calibration with CEREN data
+
 ## Argument parser
 argparser in order to launch directly from the terminal using
 some important parameters scenario.json / calibration_year / source
@@ -8,3 +10,4 @@ some important parameters scenario.json / calibration_year / source
 
 ## Integration test
 
+## Deploy documentation on GitHub Pages.

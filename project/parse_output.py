@@ -19,7 +19,6 @@ def parse_dict(output):
     """Parse dict and returns pd.DataFrame.
 
     output = {'key1': {2018: pd.Series(), 2019: pd.Series()}, 'key2': {2019: pd.DataFrame(), 2020: pd.DataFrame()}}
-    >>> parse_dict(output)
     {'key1': pd.DataFrame(), 'key2': pd.DataFrame()}
     """
     new_output = {}
@@ -251,6 +250,10 @@ def parse_output(output, buildings, buildings_constructed, folder_output):
     summary['Subsidies renovation (€)'] = output_flow_transition['Subsidies (€)'].sum(axis=0)
     summary = pd.DataFrame(summary)
     summary.dropna(axis=0, thresh=4, inplace=True)
+
+    # add number of F and G buildings
+    summary['Stock FG'] = output_stock['Stock'].groupby('Energy performance').sum().loc[['F', 'G'], :]
+    summary['Stock CDEFG'] = output_stock['Stock'].groupby('Energy performance').sum().loc[['C', 'D', 'E', 'F', 'G'], :]
 
     if buildings.policies_total[('Energy performance',)] != {}:
         summary = pd.concat((summary, summary_subsidies), axis=1)

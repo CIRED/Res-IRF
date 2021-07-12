@@ -21,6 +21,29 @@ def reverse_nested_dict(data_dict):
     return dict(flipped)
 
 
+def simple_plot(x, y, xlabel, ylabel):
+    """Make simple Line2D plot.
+    
+    Parameters
+    ----------
+    x: list-like
+    y: list-like
+    x_label: str
+    y_label: str
+    """
+    fig, ax = plt.subplots(1, 1)
+    ax.plot(x, y)
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.xaxis.set_tick_params(which=u'both', length=0)
+    ax.yaxis.set_tick_params(which=u'both', length=0)
+    plt.show()
+
+
 def economic_subplots(df, suptitle, format_axtitle=lambda x: x, format_val=lambda x: '{:.0f}'.format(x), n_columns=3):
     """Plot a line for each index in a subplot.
 
