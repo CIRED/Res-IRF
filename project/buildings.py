@@ -9,6 +9,8 @@ from utils import reindex_mi, val2share, logistic, get_levels_values, remove_row
 
 # TODO: calibration_renovation_rate // rho should depends on Income class owner and Heating energy initial
 # TODO: clean HousingStockConstructed
+# TODO: put exogenous parameters outside the script (heating intensity + lambda)
+# TODO: use 4% for calibration cf. 2012 paper
 
 
 class HousingStock:
@@ -119,6 +121,9 @@ class HousingStock:
         self.pv = deepcopy(temp)
         self.npv = deepcopy(temp)
         self.capex_total = deepcopy(temp)
+        self.capex = deepcopy(temp)
+        self.capex_intangible = deepcopy(temp)
+
         self.policies_detailed = deepcopy(temp)
         self.policies_total = deepcopy(temp)
 
@@ -141,6 +146,10 @@ class HousingStock:
     @year.setter
     def year(self, val):
         self._year = val
+
+    @property
+    def calibration_year(self):
+        return self._calibration_year
 
     @property
     def stock_seg(self):
@@ -340,7 +349,7 @@ class HousingStock:
                            'Income': income,
                            'Energy prices': energy_prices,
                            'Budget share': budget_share,
-                           'Use intensity': heating_intensity,
+                           'Heating intensity': heating_intensity,
                            'Consumption-conventional': consumption_conventional,
                            'Consumption-actual': consumption_actual
                            }
@@ -391,8 +400,12 @@ class HousingStock:
                 temp.index.rename('Heating energy final', 'Heating energy', inplace=True)
 
         temp = reindex_mi(temp, consumption.index, temp.index.names)
+
         if isinstance(temp, pd.DataFrame):
             if isinstance(consumption, pd.DataFrame):
+                idx = temp.columns.union(consumption.columns)
+                temp = temp.reindex(idx, axis=1)
+                consumption = consumption.reindex(idx, axis=1)
                 return temp * consumption
             elif isinstance(consumption, pd.Series):
                 return (consumption * temp.T).T
@@ -785,22 +798,34 @@ class HousingStock:
 
         lcc_transition_seg = lcc_final_seg.copy()
         columns = lcc_transition_seg.columns
+
+        capex_total = None
         capex = None
+        capex_intangible = None
         for t in transition:
             if cost_invest[t] is not None:
                 c = reindex_mi(cost_invest[t], lcc_final_seg.index)
                 c = reindex_mi(c, lcc_final_seg.columns, c.columns.names, axis=1)
-                if capex is None:
+                if capex_total is None:
+                    capex_total = c
                     capex = c
                 else:
+                    capex_total += c
                     capex += c
             if cost_intangible is not None:
                 if cost_intangible[t] is not None:
                     c = reindex_mi(cost_intangible[t], lcc_final_seg.index, cost_intangible[t].index.names)
                     c = reindex_mi(c, lcc_final_seg.columns, c.columns.names, axis=1)
                     c.fillna(0, inplace=True)
-                    capex += c
-        self.capex_total[tuple(transition)][self.year] = capex
+                    capex_total += c
+                    if capex_intangible is None:
+                        capex_intangible = c
+                    else:
+                        capex_intangible += c
+
+        self.capex[tuple(transition)][self.year] = capex
+        self.capex_intangible[tuple(transition)][self.year] = capex_intangible
+        self.capex_total[tuple(transition)][self.year] = capex_total
 
         self.policies_detailed[tuple(transition)][self.year] = dict()
         total_policies = None
@@ -933,6 +958,8 @@ class HousingStock:
                             cost_intangible=cost_intangible,
                             policies=policies, nu=nu)
 
+        pv_seg.sort_index(inplace=True)
+        energy_lcc_seg.sort_index(inplace=True)
         assert energy_lcc_seg.index.equals(pv_seg.index), 'Index should match'
 
         npv = energy_lcc_seg - pv_seg
@@ -1229,6 +1256,7 @@ class HousingStock:
         self.energy_cash_flows_disc['conventional'] = HousingStock.to_discounted(
             self.energy_cash_flows['conventional'], self.label2discount)
 
+    # TODO: not used
     def ini_all_indexes(self, energy_price, levels='all'):
         """Initialize values for all segments and transition.
 
@@ -1499,7 +1527,7 @@ class HousingStockRenovated(HousingStock):
         cost_invest: dict, optional
         cost_intangible: dict, optional
         consumption: str, default 'conventional'
-        policies: dict, optional
+        policies: list, optional
         renovation_obligation: RenovationObligation, optional
         mutation: pd.Series or float, default 0.0
         rotation: pd.Series or float, default 0.0
@@ -1543,7 +1571,7 @@ class HousingStockRenovated(HousingStock):
         cost_invest: dict, optional
         cost_intangible: dict, optional
         consumption: str, default 'conventional'
-        policies: dict, optional
+        policies: list, optional
         renovation_obligation: RenovationObligation, optional
         mutation: pd.Series or float, default 0.0
         rotation: pd.Series or float, default 0.0
@@ -1677,7 +1705,11 @@ class HousingStockRenovated(HousingStock):
         # we year with the worst label and we stop when nb_housing_demolition_theo == 0
         flow_demolition = pd.Series(0, index=stock_mobile.index, dtype='float64')
         for segment in segments_mobile:
-            label = worst_label_dict[segment]
+            # dangerous conditions
+            if segment in worst_label_dict.keys():
+                label = worst_label_dict[segment]
+            else:
+                break
             num = self.levels_values['Energy performance'].index(label)
             idx_w_ep = (segment[0], segment[1], segment[2], segment[3], label, segment[4])
 
@@ -1771,7 +1803,7 @@ class HousingStockRenovated(HousingStock):
         Parameters
         ----------
         energy_prices: pd.DataFrame
-        renovation_rate_obj: pd.DataFrame
+        renovation_rate_obj: pd.Series
         consumption: {'conventional', 'actual'}, default 'conventional'
         cost_invest: dict
         cost_intangible: dict
@@ -1795,6 +1827,8 @@ class HousingStockRenovated(HousingStock):
         renovation_rate_obj = reindex_mi(renovation_rate_obj, npv_df.index, renovation_rate_obj.index.names)
         rho = (np.log(self._rate_max / self._rate_min - 1) - np.log(
             self._rate_max / renovation_rate_obj - 1)) / (npv_df - self._npv_min)
+
+
 
         stock_ini_wo_owner = self.stock_seg.groupby(
             [lvl for lvl in self._levels if lvl != 'Income class owner']).sum()
@@ -2127,7 +2161,6 @@ class HousingStockConstructed(HousingStock):
     def to_market_share_objective(os_share_ht_construction, he_share_ht_construction, ht_share_tot_construction,
                                   ep_share_tot_construction):
         """
-
         Market share is the same shape than LCC -
         rows = [Occupancy status, Housing type] - columns = [Heating energy, Energy performance]
         """

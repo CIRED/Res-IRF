@@ -3,8 +3,6 @@
   {
     "name": "cite_plus",
     "policy": "subsidies",
-    "start": 2012,
-    "end": 2050,
     "value": {
       "val": {
         "G": {
@@ -58,74 +56,56 @@
     "transition": [
       "Energy performance"
     ],
-    "type": "dict_to_parse",
-    "calibration": false
+    "type": "dict_to_parse"
   },
   "cite":
   {
     "name": "cite",
     "policy": "subsidies",
-    "start": 2012,
-    "end": 2050,
     "value": 0.17,
     "kind": "%",
     "transition": ["Energy performance"],
-    "type": "dict_to_parse",
-    "calibration": true
+    "type": "dict_to_parse"
   },
   "cee_subsidy":
   {
     "name": "cee_subsidy",
     "policy": "subsidies",
-    "start": 2012,
-    "end": 2050,
     "value": 0.004,
     "kind": "€/kWh",
     "transition": ["Energy performance"],
-    "type": "dict_to_parse",
-    "calibration": true
+    "type": "dict_to_parse"
   },
   "cee_taxes":
   {
     "name": "cee_taxes",
     "policy": "energy_taxes",
-    "start": 2012,
-    "end": 2050,
     "value": 0.004,
     "kind": "€/kWh",
     "transition": ["Energy performance"],
-    "type": "dict_to_parse",
-    "calibration": true
+    "type": "dict_to_parse"
   },
   "carbon_tax":
   {
     "name": "carbon_tax",
     "policy": "energy_taxes",
-    "start": 2012,
-    "end": 2050,
     "value": "project/input/carbon_tax.csv",
     "kind": "€/gCO2",
-    "type": "dict_to_parse",
-    "calibration": true
+    "type": "dict_to_parse"
   },
   "reduced_tax":
   {
     "name": "reduced_tax",
     "policy": "subsidies",
-    "start": 2012,
-    "end": 2050,
     "value": 0.04,
     "kind": "%",
     "transition": ["Energy performance"],
-    "type": "dict_to_parse",
-    "calibration": true
+    "type": "dict_to_parse"
   },
   "eptz":
   {
     "name": "eptz",
     "policy": "regulated_loan",
-    "start": 2012,
-    "end": 2050,
     "ir_regulated": null,
     "ir_market": 0.03,
     "principal_max": {
@@ -198,15 +178,12 @@
       "type": "pd.DataFrame"
     },
     "transition": ["Energy performance"],
-    "type": "dict_to_parse",
-    "calibration": true
+    "type": "dict_to_parse"
   },
   "eptz_plus":
   {
     "name": "eptz_plus",
     "policy": "regulated_loan",
-    "start": 2012,
-    "end": 2050,
     "ir_regulated": null,
     "ir_market": 0.04,
     "principal_max": 30000,
@@ -214,8 +191,7 @@
     "horizon": 10,
     "targets": null,
     "transition": ["Energy performance"],
-    "type": "dict_to_parse",
-    "calibration": false
+    "type": "dict_to_parse"
   },
   "renovation_obligation":
   {

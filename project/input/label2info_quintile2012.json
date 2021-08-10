@@ -1,0 +1,303 @@
+{
+  "levels_dict": {
+    "Occupancy status": [
+      "Homeowners",
+      "Landlords",
+      "Social-housing"
+    ],
+    "Housing type": [
+      "Single-family",
+      "Multi-family"
+    ],
+    "Energy performance": [
+      "G",
+      "F",
+      "E",
+      "D",
+      "C",
+      "B",
+      "A"
+    ],
+    "Energy performance construction": [
+      "BBC",
+      "BEPOS"
+    ],
+    "Income class": [
+      "C1",
+      "C2",
+      "C3",
+      "C4",
+      "C5"
+    ],
+    "Heating energy": [
+      "Power",
+      "Natural gas",
+      "Oil fuel",
+      "Wood fuel"
+    ],
+    "type": "dict"
+  },
+  "label2area": {
+    "val": {
+      "Homeowners": {
+        "Single-family": 109.5,
+        "Multi-family": 74.3
+      },
+      "Landlords": {
+        "Single-family": 87.1,
+        "Multi-family": 53.5
+      },
+      "Social-housing": {
+        "Single-family": 77.8,
+        "Multi-family": 63.3
+      }
+    },
+    "index": [
+      "Occupancy status",
+      "Housing type"
+    ],
+    "type": "pd.Series",
+    "unit": "m2"
+  },
+  "label2area_construction": {
+    "val": {
+      "Homeowners": {
+        "Single-family": 132,
+        "Multi-family": 81
+      },
+      "Landlords": {
+        "Single-family": 90,
+        "Multi-family": 60
+      },
+      "Social-housing": {
+        "Single-family": 84,
+        "Multi-family": 71
+      }
+    },
+    "index": [
+      "Occupancy status",
+      "Housing type"
+    ],
+    "type": "pd.Series",
+    "unit": "m2/buildings"
+  },
+  "label2primary_consumption": {
+    "val": {
+      "G": 596,
+      "F": 392,
+      "E": 280,
+      "D": 191,
+      "C": 125,
+      "B": 76,
+      "A": 39
+    },
+    "index": [
+      "Energy performance"
+    ],
+    "type": "pd.Series",
+    "unit": "kWh/m2.yr"
+  },
+  "label2primary_consumption_construction": {
+    "val": {
+      "BBC": 50,
+      "BEPOS": 40
+    },
+    "index": [
+      "Energy performance"
+    ],
+    "type": "pd.Series",
+    "unit": "kWh/m2.yr"
+  },
+  "label2horizon_envelope": {
+    "Green value": {
+      "type": "int", "val": 30
+    },
+    "Reference": {
+      "val": {
+        "Homeowners": 30,
+        "Landlords": 3,
+        "Social-housing": 30
+      },
+      "index": [
+        "Occupancy status"
+      ],
+      "type": "pd.Series",
+      "unit": "yr"
+    },
+    "No green value": {
+      "val": {
+        "Homeowners": 7,
+        "Social-housing": 30,
+        "Landlords": 7
+      },
+      "index": [
+        "Occupancy status"
+      ],
+      "type": "pd.Series",
+      "unit": "yr"
+    },
+    "No green value and rent": {
+      "val": {
+        "Homeowners": 7,
+        "Social-housing": 30,
+        "Landlords": 3
+      },
+      "index": [
+        "Occupancy status"
+      ],
+      "type": "pd.Series",
+      "unit": "yr"
+    },
+    "type": "dict_to_parse"
+  },
+  "label2horizon_heater": {
+    "Green value": {
+      "type": "float", "val": 16
+    },
+    "Reference": {
+      "val": {
+        "Homeowners": 16,
+        "Landlords": 3,
+        "Social-housing": 16
+      },
+      "index": [
+        "Occupancy status"
+      ],
+      "type": "pd.Series"
+    },
+    "No green value": {
+      "val": {
+        "Homeowners": 7,
+        "Social-housing": 16,
+        "Landlords": 7
+      },
+      "index": [
+        "Occupancy status"
+      ],
+    "type": "pd.Series"
+    },
+    "No green value and rent": {
+      "val": {
+        "Homeowners": 7,
+        "Social-housing": 16,
+        "Landlords": 3
+      },
+      "index": [
+        "Occupancy status"
+      ],
+    "type": "pd.Series"
+    },
+    "type": "dict_to_parse"
+  },
+  "label2horizon_construction": 35,
+  "label2heater": {
+    "val": {
+      "G": 0.85,
+      "F": 0.82,
+      "E": 0.77,
+      "D": 0.74,
+      "C": 0.72,
+      "B": 0.77,
+      "A": 1.12
+    },
+    "index": [
+      "Energy performance"
+    ],
+    "type": "pd.Series",
+    "unit": "%"
+  },
+  "label2heater_construction": {
+    "val": {
+      "BBC": 0.4,
+      "BEPOS": 0.4
+    },
+    "index": [
+      "Energy performance"
+    ],
+    "type": "pd.Series",
+    "unit": "%"
+  },
+  "label2discount": {
+    "val": {
+      "C1": {
+        "Single-family": 0.15,
+        "Multi-family": 0.37,
+        "Social-housing": 0.04
+      },
+      "C2": {
+        "Single-family": 0.1,
+        "Multi-family": 0.24,
+        "Social-housing": 0.04
+      },
+      "C3": {
+        "Single-family": 0.07,
+        "Multi-family": 0.15,
+        "Social-housing": 0.04
+      },
+      "C4": {
+        "Single-family": 0.05,
+        "Multi-family": 0.07,
+        "Social-housing": 0.04
+      },
+      "C5": {
+        "Single-family": 0.04,
+        "Multi-family": 0.05,
+        "Social-housing": 0.04
+      }
+    },
+    "index": [
+      "Income class owner",
+      "Housing type"
+    ],
+    "unit": "%/yr",
+    "type": "pd.Series"
+  },
+  "label2discount_construction": {
+    "val": {
+      "Single-family": {
+        "Homeowners": 0.07,
+        "Landlords": 0.07,
+        "Social-housing": 0.04
+      },
+      "Multi-family": {
+        "Homeowners": 0.1,
+        "Landlords": 0.1,
+        "Social-housing": 0.04
+      }
+    },
+    "index": [
+      "Housing type",
+      "Occupancy status"
+    ],
+    "type": "pd.Series",
+    "unit": "%/yr"
+  },
+  "label2income": {
+    "val": {
+      "C1": 14103,
+      "C2": 21002,
+      "C3": 29294,
+      "C4": 41094,
+      "C5": 61300
+    },
+    "index": [
+      "Income class"
+    ],
+    "type": "pd.Series",
+    "unit": "€"
+  },
+  "label2final_energy": {
+    "val": {
+      "Power": 2.58,
+      "Natural gas": 1,
+      "Oil fuel": 1,
+      "Wood fuel": 1
+    },
+    "index": [
+      "Heating energy"
+    ],
+    "type": "pd.Series",
+    "unit": "%"
+  }
+}
+

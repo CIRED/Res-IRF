@@ -22,7 +22,7 @@ def reverse_nested_dict(data_dict):
 
 
 def simple_plot(x, y, xlabel, ylabel):
-    """Make simple Line2D plot.
+    """Make pretty simple Line2D plot.
     
     Parameters
     ----------
@@ -33,6 +33,28 @@ def simple_plot(x, y, xlabel, ylabel):
     """
     fig, ax = plt.subplots(1, 1)
     ax.plot(x, y)
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.xaxis.set_tick_params(which=u'both', length=0)
+    ax.yaxis.set_tick_params(which=u'both', length=0)
+    plt.show()
+    
+    
+def simple_pd_plot(df, xlabel, ylabel):
+    """Make pretty simple Line2D plot.
+    
+    Parameters
+    ----------
+    df: pd.DataFrame
+    x_label: str
+    y_label: str
+    """
+    fig, ax = plt.subplots(1, 1)
+    df.plot(ax=ax)
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
     ax.spines['top'].set_visible(False)
@@ -73,10 +95,11 @@ def economic_subplots(df, suptitle, format_axtitle=lambda x: x, format_val=lambd
             ax = axes[row, column]
         try:
             test = df.iloc[k, :]
-            df.T.plot(ax=ax, color='lightgray', linewidth=0.7)
-            df.iloc[k, :].plot(ax=ax, color='black', linewidth=2)
-            first_val = df.iloc[k, 0]
-            last_val = df.iloc[k, -1]
+            df.T.dropna().plot(ax=ax, color='lightgray', linewidth=0.7)
+            ds = df.iloc[k, :]
+            ds.dropna().plot(ax=ax, color='black', linewidth=2)
+            first_val = ds[ds.first_valid_index()]
+            last_val = ds[ds.last_valid_index()]
             ax.annotate(format_val(first_val), xy=(0, first_val), xytext=(-18, 0), color='black',
                         xycoords=ax.get_yaxis_transform(), textcoords='offset points',
                         size=10, va='center')
@@ -85,6 +108,7 @@ def economic_subplots(df, suptitle, format_axtitle=lambda x: x, format_val=lambd
                         size=10, va='center')
             ax.xaxis.set_tick_params(which=u'both', length=0)
             ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+            ax.figure.autofmt_xdate()
             ax.spines['top'].set_visible(False)
             ax.spines['right'].set_visible(False)
             ax.spines['left'].set_visible(False)
@@ -129,7 +153,7 @@ def scenario_grouped_subplots(df_dict, suptitle='', n_columns=3, format_y=lambda
             ax = axes[row, column]
         try:
             key = list_keys[k]
-            df_dict[key].plot(ax=ax, linewidth=1)
+            df_dict[key].sort_index().plot(ax=ax, linewidth=1)
 
             ax.xaxis.set_tick_params(which=u'both', length=0)
             ax.xaxis.set_major_locator(MaxNLocator(integer=True))
@@ -356,7 +380,7 @@ def table_plots_scenarios(dict_df, suptitle='', format_y=lambda y, _: y):
 
         try:
             df = dict_df[(index[row], columns[col])]
-            df.plot(ax=ax, linewidth=1)
+            df.sort_index().plot(ax=ax, linewidth=1)
             if row == 0 and col == 0:
                 handles, labels = ax.get_legend_handles_labels()
             ax.get_legend().remove()

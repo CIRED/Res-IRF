@@ -5,6 +5,20 @@ import pandas as pd
 
 
 class PublicPolicy:
+    """Public policy parent class.
+
+    Attributes
+    ----------
+    name : str
+        Name of the policy.
+    start : int
+        Year policy starts.
+    end : int
+        Year policy ends.
+    policy : {'energy_taxes', 'subsidies'}
+    calibration : bool, default: False
+        Should policy be used for the calibration step?
+    """
     def __init__(self, name, start, end, policy, calibration=False):
         self.name = name
         self.start = start
@@ -14,10 +28,45 @@ class PublicPolicy:
 
 
 class EnergyTaxes(PublicPolicy):
+    """Represents energy taxes.
+
+    Attributes
+    ----------
+    name : str
+        Name of the policy.
+    start : int
+        Year policy starts.
+    end : int
+        Year policy ends.
+    calibration : bool, default: False
+        Should policy be used for the calibration step?
+    kind : {'%', '€/kWh', '€/gCO2'}
+        Unit of measure of the value attribute.
+    value: float, pd.Series or pd.DataFrame
+        Value of energy taxes.
+
+    Methods
+    -------
+    price_to_taxes(energy_prices=None, co2_content=None)
+        Calculate energy taxes cost.
+    """
     def __init__(self, name, start, end, kind, value, calibration=False):
-        """
-        value: pd.DataFrame
-        indexes are energy, and columns are years
+        """EnergyTaxes constructor.
+
+        Parameters
+        ----------
+        name : str
+            Name of the policy.
+        start : int
+            Year policy starts.
+        end : int
+            Year policy ends.
+        calibration : bool, default: False
+            Should policy be used for the calibration step?
+        kind : {'%', '€/kWh', '€/gCO2'}
+            Unit of measure of the value attribute.
+        value: float, pd.Series or pd.DataFrame
+            Value of energy taxes.
         """
         super().__init__(name, start, end, 'energy_taxes', calibration)
 
@@ -27,7 +76,20 @@ class EnergyTaxes(PublicPolicy):
         self.calibration = calibration
 
     def price_to_taxes(self, energy_prices=None, co2_content=None):
+        """Calculate energy taxes cost based on self.kind unit of measure.
 
+        Parameters
+        ----------
+        energy_prices : pd.Series or pd.DataFrame, optional
+            Energy prices in €/kWh. Heating energy as index, and years as columns.
+        co2_content : pd.Series or pd.DataFrame, optional
+            CO2 content in gCO2/kWh. Heating energy as index, and years as columns.
+
+        Returns
+        -------
+        pd.Series
+            Energy tax cost in €/kWh.
+        """
         if self.kind == '%':
             return energy_prices * self.value
 
@@ -36,7 +98,11 @@ class EnergyTaxes(PublicPolicy):
 
         elif self.kind == '€/gCO2':
             # €/tCO2 * gCO2/kWh / 1000000 -> €/kWh
-            taxes = self.value * co2_content
+            value = self.value
+            idx = value.columns.union(co2_content.columns)
+            value = value.reindex(idx, axis=1)
+            co2_content = co2_content.reindex(idx, axis=1)
+            taxes = value * co2_content
             taxes.fillna(0, inplace=True)
             taxes = taxes.reindex(energy_prices.columns, axis=1)
             return energy_prices * taxes
@@ -46,6 +112,30 @@ class EnergyTaxes(PublicPolicy):
 
 
 class Subsidies(PublicPolicy):
+    """Represents energy taxes.
+
+    Attributes
+    ----------
+    name : str
+        Name of the policy.
+    start : int
+        Year policy starts.
+    end : int
+        Year policy ends.
+    calibration : bool, default: False
+        Should policy be used for the calibration step?
+    kind : {'%', '€/kWh', '€/gCO2'}
+        Unit of measure of the value attribute.
+    value : float, pd.Series or pd.DataFrame
+        Value of subsidies.
+    transition : list, default: ['Energy performance']
+        Transition to apply the subsidy.
+    cost_max : float, optional
+        Maximum capex cost to receive a subsidy.
+    subsidy_max : float, optional
+        Maximum subsidy.
+    """
+
     def __init__(self, name, start, end, kind, value,
                  transition=None, cost_max=None, subsidy_max=None, calibration=False):
         super().__init__(name, start, end, 'subsidies', calibration)
