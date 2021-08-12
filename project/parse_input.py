@@ -260,8 +260,12 @@ def parameters_input(folder, scenario_dict, calibration_year, stock_sum):
     summary_param['Buildings stock (Millions)'] = pd.Series(stock_needed) / 10**6
     summary_param['Person by housing'] = pd.Series(population_housing)
     summary_param = pd.DataFrame(summary_param)
+
+    income = dict_label['label2income'].T
+    income.columns = ['Income {} (€)'.format(c) for c in income.columns]
+    summary_param = pd.concat((summary_param, income), axis=1)
+
     summary_param = summary_param.loc[calibration_year:, :]
-    # summary_param = summary_param.loc[:,]
 
     return dict_parameters, levels_dict, levels_dict_construction, dict_label, rate_renovation_ini, ms_renovation_ini, observed_data, summary_param
 
@@ -333,19 +337,21 @@ def parse_input(folder, scenario_dict):
     name_file = os.path.join(os.getcwd(), scenario_dict['energy_prices_bt']['source'])
     energy_prices_bt = pd.read_csv(name_file, index_col=[0], header=[0]).T
     energy_prices_bt.index.set_names('Heating energy', inplace=True)
+    energy_prices = energy_prices_bt
 
-    vta = pd.Series([0.16, 0.16, 0.2, 0.2], index=['Power', 'Natural gas', 'Oil fuel', 'Wood fuel'])
-    vta.index.set_names('Heating energy', inplace=True)
+    if scenario_dict['energy_taxes']['vta']:
+        vta = pd.Series([0.16, 0.16, 0.2, 0.2], index=['Power', 'Natural gas', 'Oil fuel', 'Wood fuel'])
+        vta.index.set_names('Heating energy', inplace=True)
+        vta_energy = (energy_prices_bt.T * vta).T
+        energy_prices = energy_prices + vta_energy
 
-    vta_energy = (energy_prices_bt.T * vta).T
-    energy_prices = energy_prices_bt + vta_energy
+    if scenario_dict['energy_taxes']['activated']:
+        name_file = os.path.join(os.getcwd(), scenario_dict['energy_taxes']['source'])
+        energy_taxes = pd.read_csv(name_file, index_col=[0], header=[0]).T
+        energy_taxes.index.set_names('Heating energy', inplace=True)
 
-    name_file = os.path.join(os.getcwd(), scenario_dict['energy_taxes']['source'])
-    energy_taxes = pd.read_csv(name_file, index_col=[0], header=[0]).T
-    energy_taxes.index.set_names('Heating energy', inplace=True)
-
-    # energy prices before cee and carbon tax and after vta and other energy taxes
-    energy_prices = energy_prices + energy_taxes
+        # energy prices before cee and carbon tax and after vta and other energy taxes
+        energy_prices = energy_prices + energy_taxes
 
     # extension of energy_prices time series
     last_year_prices = energy_prices.columns[-1]

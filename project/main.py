@@ -17,7 +17,7 @@ from parse_output import parse_output
 
 
 def res_irf(calibration_year, end_year, folder, scenario_dict, dict_parameters, dict_policies, levels_dict_construction,
-            levels_dict, energy_prices, cost_invest, cost_invest_construction, stock_ini, co2_content_data, dict_label,
+            levels_dict, energy_prices_bp, cost_invest, cost_invest_construction, stock_ini, co2_content_data, dict_label,
             rate_renovation_ini, ms_renovation_ini, observed_data, logging):
     """Res-IRF main function.
 
@@ -33,7 +33,8 @@ def res_irf(calibration_year, end_year, folder, scenario_dict, dict_parameters, 
         dict with all policies parameters
     levels_dict_construction: dict
     levels_dict: dict
-    energy_prices: pd.DataFrame
+    energy_prices_bp: pd.DataFrame
+        After VTA and other energy taxes but before any endogenous energy taxes.
     cost_invest: dict
     cost_invest_construction: dict
     stock_ini: pd.Series
@@ -75,48 +76,59 @@ def res_irf(calibration_year, end_year, folder, scenario_dict, dict_parameters, 
     dict_label['label2horizon'] = label2horizon
 
     logging.debug('Initialize public policies')
-    policies_dict = {}
-    dict_energy_taxes = {}
-    dict_renovation_obligation = {}
-    total_taxes = None
+    subsidies_dict = {}
+    energy_taxes_dict = {}
+    renovation_obligation_dict = {}
     for pol, item in dict_policies.items():
         if scenario_dict[item['name']]['activated']:
             logging.debug('Considering: {}'.format(pol))
             if item['policy'] == 'subsidies':
-                policies_dict[pol] = Subsidies(item['name'], scenario_dict[item['name']]['start'],
-                                               scenario_dict[item['name']]['end'], item['kind'], item['value'],
-                                               transition=item['transition'])
+                subsidies_dict[pol] = Subsidies(item['name'], scenario_dict[item['name']]['start'],
+                                                scenario_dict[item['name']]['end'], item['kind'], item['value'],
+                                                transition=item['transition'],
+                                                calibration=scenario_dict[item['name']]['calibration'])
             elif item['policy'] == 'energy_taxes':
-                dict_energy_taxes[pol] = EnergyTaxes(item['name'], scenario_dict[item['name']]['start'],
+                energy_taxes_dict[pol] = EnergyTaxes(item['name'], scenario_dict[item['name']]['start'],
                                                      scenario_dict[item['name']]['end'], item['kind'],
-                                                     item['value'])
-                temp = dict_energy_taxes[pol].price_to_taxes(
-                    energy_prices=energy_prices,
-                    co2_content=co2_content_data)
-                if total_taxes is None:
-                    total_taxes = temp
-                else:
-                    total_taxes += temp
+                                                     item['value'],
+                                                     calibration=scenario_dict[item['name']]['calibration'])
+
             elif item['policy'] == 'regulated_loan':
-                policies_dict[pol] = RegulatedLoan(item['name'], scenario_dict[item['name']]['start'],
-                                                   scenario_dict[item['name']]['end'],
-                                                   ir_regulated=item['ir_regulated'], ir_market=item['ir_market'],
-                                                   principal_min=item['principal_min'],
-                                                   principal_max=item['principal_max'],
-                                                   horizon=item['horizon'], targets=item['targets'],
-                                                   transition=item['transition'])
-                policies_dict[pol].reindex_attributes(stock_ini.index)
+                subsidies_dict[pol] = RegulatedLoan(item['name'], scenario_dict[item['name']]['start'],
+                                                    scenario_dict[item['name']]['end'],
+                                                    ir_regulated=item['ir_regulated'], ir_market=item['ir_market'],
+                                                    principal_min=item['principal_min'],
+                                                    principal_max=item['principal_max'],
+                                                    horizon=item['horizon'], targets=item['targets'],
+                                                    transition=item['transition'],
+                                                    calibration=scenario_dict[item['name']]['calibration'])
+                subsidies_dict[pol].reindex_attributes(stock_ini.index)
 
             elif item['policy'] == 'renovation_obligation':
-                dict_renovation_obligation[pol] = RenovationObligation(item['name'], item['start_targets'],
+                renovation_obligation_dict[pol] = RenovationObligation(item['name'], item['start_targets'],
                                                                        participation_rate=item['participation_rate'],
                                                                        columns=range(calibration_year, 2081, 1))
 
-    policies = list(policies_dict.values())
+    policies = list(subsidies_dict.values())
+
+    total_taxes = None
+    for _, tax in energy_taxes_dict.items():
+        val = tax.price_to_taxes(energy_prices=energy_prices_bp, co2_content=co2_content_data)
+        # if not indexed by heating energy
+        if isinstance(val, pd.Series):
+            val = pd.concat([val] * len(levels_dict['Heating energy']), axis=1).T
+            val.index = levels_dict['Heating energy']
+            val.index.set_names(['Heating energy'], inplace=True)
+
+        if total_taxes is None:
+            total_taxes = val
+        else:
+            total_taxes = total_taxes + val
 
     if total_taxes is not None:
-        output['Energy taxes (€/kWh)'] = total_taxes
-        energy_prices = energy_prices * (1 + total_taxes)
+        energy_prices = energy_prices_bp + total_taxes.reindex(energy_prices_bp.columns, axis=1).fillna(0)
+    else:
+        energy_prices = energy_prices_bp
 
     logging.debug('Creating HousingStockRenovated Python object')
     buildings = HousingStockRenovated(stock_ini, levels_dict, calibration_year,
@@ -156,6 +168,8 @@ def res_irf(calibration_year, end_year, folder, scenario_dict, dict_parameters, 
 
     cost_intangible_construction = None
     cost_intangible = None
+    policies_calibration = [policy for policy in policies if policy.calibration is True]
+
     if scenario_dict['cost_intangible']:
         cost_intangible = dict()
         cost_intangible_construction = dict()
@@ -168,8 +182,6 @@ def res_irf(calibration_year, end_year, folder, scenario_dict, dict_parameters, 
                 observed_data['Heating energy share housing type'],
                 observed_data['Housing type share total'],
                 observed_data['Energy performance share total construction'])
-            # TODO: with scenario instead of policy
-            policies_calibration = [policy for policy in policies if policy.calibration is True]
 
             cost_intangible_construction['Energy performance'] = buildings_constructed.to_calibration_market_share(
                 energy_prices,
@@ -191,7 +203,6 @@ def res_irf(calibration_year, end_year, folder, scenario_dict, dict_parameters, 
         source = scenario_dict['cost_intangible_source']['source_type']
         if source == 'function':
 
-            policies_calibration = [policy for policy in policies if policy.calibration is True]
             cost_intangible['Energy performance'] = buildings.to_calibration_market_share(energy_prices,
                                                                                           ms_renovation_ini,
                                                                                           cost_invest=cost_invest,
@@ -216,7 +227,7 @@ def res_irf(calibration_year, end_year, folder, scenario_dict, dict_parameters, 
         rho_seg = buildings.calibration_renovation_rate(energy_prices, rate_renovation_ini,
                                                         cost_invest=cost_invest,
                                                         cost_intangible=cost_intangible,
-                                                        policies=policies)
+                                                        policies=policies_calibration)
         logging.debug('End of calibration and dumping: {}'.format(name_file))
         rho_seg.to_pickle(name_file)
     elif source == 'file':
@@ -231,6 +242,7 @@ def res_irf(calibration_year, end_year, folder, scenario_dict, dict_parameters, 
     logging.debug('Launching iterations')
     for year in years[1:]:
         logging.debug('YEAR: {}'.format(year))
+
         policies_year = [policy for policy in policies if policy.start <= year < policy.end]
         buildings.year = year
 
@@ -247,8 +259,8 @@ def res_irf(calibration_year, end_year, folder, scenario_dict, dict_parameters, 
 
         logging.debug('Renovation dynamic')
         renovation_obligation = None
-        if 'renovation_obligation' in dict_renovation_obligation:
-            renovation_obligation = dict_renovation_obligation['renovation_obligation']
+        if 'renovation_obligation' in renovation_obligation_dict:
+            renovation_obligation = renovation_obligation_dict['renovation_obligation']
         flow_remained_seg, flow_area_renovation_seg = buildings.to_flow_remained(energy_prices,
                                                                                  consumption='conventional',
                                                                                  cost_invest=cost_invest,
@@ -265,15 +277,19 @@ def res_irf(calibration_year, end_year, folder, scenario_dict, dict_parameters, 
         if scenario_dict['info_renovation']:
             logging.debug('Information acceleration - renovation')
             cost_intangible['Energy performance'] = HousingStock.acceleration_information(buildings.knowledge,
-                                                                                          cost_intangible['Energy performance'],
-                                                                                          dict_parameters['Information rate max renovation'],
-                                                                                          dict_parameters['Learning information rate renovation'])
+                                                                                          output['Cost intangible'][
+                                                                                              buildings.calibration_year],
+                                                                                          dict_parameters[
+                                                                                              'Information rate max renovation'],
+                                                                                          dict_parameters[
+                                                                                              'Learning information rate renovation'])
             output['Cost intangible'][year] = cost_intangible['Energy performance']
 
         if scenario_dict['lbd_renovation']:
             logging.debug('Learning by doing - renovation')
             cost_invest['Energy performance'] = HousingStock.learning_by_doing(buildings.knowledge,
-                                                                               cost_invest['Energy performance'],
+                                                                               output['Cost envelope'][
+                                                                                   buildings.calibration_year],
                                                                                dict_parameters[
                                                                                    'Learning by doing renovation'])
             output['Cost envelope'][year] = cost_invest['Energy performance']
@@ -299,18 +315,20 @@ def res_irf(calibration_year, end_year, folder, scenario_dict, dict_parameters, 
 
         if scenario_dict['info_construction']:
             logging.debug('Information acceleration - construction')
-            cost_intangible_construction['Energy performance'] = HousingStock.acceleration_information(buildings_constructed.knowledge,
-                                                                                                       cost_intangible_construction['Energy performance'],
-                                                                                                       dict_parameters['Information rate max construction'],
-                                                                                                       dict_parameters['Learning information rate construction'])
+            cost_intangible_construction['Energy performance'] = HousingStock.acceleration_information(
+                buildings_constructed.knowledge,
+                output['Cost intangible construction'][buildings_constructed.calibration_year],
+                dict_parameters['Information rate max construction'],
+                dict_parameters['Learning information rate construction'])
             output['Cost intangible construction'][year] = cost_intangible_construction['Energy performance']
 
         if scenario_dict['lbd_construction']:
             logging.debug('Learning by doing - construction')
-            cost_invest_construction['Energy performance'] = HousingStock.learning_by_doing(buildings_constructed.knowledge,
-                                                                                            cost_invest_construction['Energy performance'],
-                                                                                            dict_parameters['Learning by doing renovation'],
-                                                                                            cost_lim=dict_parameters['Cost construction lim'])
+            cost_invest_construction['Energy performance'] = HousingStock.learning_by_doing(
+                buildings_constructed.knowledge,
+                output['Cost construction'][buildings_constructed.calibration_year],
+                dict_parameters['Learning by doing renovation'],
+                cost_lim=dict_parameters['Cost construction lim'])
             output['Cost construction'][year] = cost_invest_construction['Energy performance']
 
         logging.debug(

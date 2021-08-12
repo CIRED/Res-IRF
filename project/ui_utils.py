@@ -53,7 +53,7 @@ def simple_pd_plot(df, xlabel, ylabel):
     x_label: str
     y_label: str
     """
-    fig, ax = plt.subplots(1, 1)
+    fig, ax = plt.subplots(1, 1, figsize=(12.8, 9.6))
     df.plot(ax=ax)
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)

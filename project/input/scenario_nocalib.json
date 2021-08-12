@@ -1,6 +1,6 @@
 {
-  "Reference Phebus 2012 ZP": {
-    "end": 2015,
+  "Phebus ZP no calib": {
+    "end": 2014,
     "investor": "Reference",
     "stock_buildings": {
       "source": "project/input/stock_buildings_phebus2012.pkl",
@@ -9,11 +9,11 @@
     },
     "cost_intangible": true,
     "cost_intangible_source": {
-      "source_type": "function",
+      "source_type": "file",
       "source": "project/intermediate/cost_intangible_phebus2012_zp.pkl"
     },
     "cost_intangible_construction_source": {
-      "source_type": "function",
+      "source_type": "file",
       "source": "project/intermediate/cost_intangible_construction_phebus2012_zp.pkl"
     },
     "lbd_renovation": false,
@@ -22,22 +22,25 @@
     "info_construction": false,
     "energy_prices_bt": {
       "type": "file",
-      "source": "project/input/energy_prices_bt.csv"
+      "source": "project/input/energy_prices_2012.csv"
     },
     "energy_taxes": {
+      "activated": false,
       "type": "file",
-      "source": "project/input/energy_taxes.csv"
+      "source": "project/input/energy_taxes.csv",
+      "vta": false
+
     },
     "energy_prices_evolution": "forecast",
     "population": {
       "type": "file",
-      "source": "project/input/projection_population_insee.csv"
+      "source": "project/input/projection_population_2012.csv"
     },
     "carbon_tax": {
-      "activated": false,
+      "activated": true,
       "start": 2012,
-      "end": 2040,
-      "calibration": false
+      "end": 2013,
+      "calibration": true
     },
     "carbon_tax_value": {
       "type": "file",
@@ -48,10 +51,10 @@
       "source": "project/input/CO2_content_2012.csv"
     },
     "cite": {
-      "activated": false,
+      "activated": true,
       "start": 2012,
-      "end": 2040,
-      "calibration": false
+      "end": 2012,
+      "calibration": true
     },
     "cite_plus": {
       "activated": false,
@@ -60,28 +63,28 @@
       "calibration": false
     },
     "cee_subsidy": {
-      "activated": false,
+      "activated": true,
       "start": 2012,
-      "end": 2040,
-      "calibration": false
+      "end": 2012,
+      "calibration": true
     },
     "cee_taxes": {
-      "activated": false,
+      "activated": true,
       "start": 2012,
-      "end": 2040,
-      "calibration": false
+      "end": 2013,
+      "calibration": true
     },
     "reduced_tax": {
-      "activated": false,
+      "activated": true,
       "start": 2012,
-      "end": 2040,
-      "calibration": false
+      "end": 2012,
+      "calibration": true
     },
     "eptz": {
-      "activated": false,
+      "activated": true,
       "start": 2012,
-      "end": 2040,
-      "calibration": false
+      "end": 2012,
+      "calibration": true
     },
     "eptz_plus": {
       "activated": false,
@@ -108,7 +111,7 @@
       "source": "project/input/observed_data.json"
     },
     "rho": {
-    "source_type": "function",
+    "source_type": "file",
     "source": "project/intermediate/rho_phebus2012_zp.pkl"
   },
     "rate_renovation_ini":{

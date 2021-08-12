@@ -66,8 +66,7 @@ def dict_pd2df(d_pd):
 
 
 def gap_number(flow_renovation):
-    """
-    Calculate the number of label jump.
+    """Calculate the number of label jump.
 
     Parameters
     ----------
@@ -265,8 +264,7 @@ def parse_output(output, buildings, buildings_constructed, energy_prices, co2_co
     capex_ep = reindex_mi(dict_pd2df(buildings.capex_intangible[('Energy performance',)]), flow_renovation.index)
     output_flow_transition['Capex intangible (€/m2)'] = capex_ep
 
-    temp = capex_ep.groupby(['Energy performance', 'Energy performance final']).mean().loc[:,
-    buildings.calibration_year].unstack().loc[['G', 'F', 'E', 'D', 'C', 'B'], ['F', 'E', 'D', 'C', 'B', 'A']]
+    temp = output['Cost intangible'][buildings.calibration_year].groupby('Energy performance').mean().loc[['G', 'F', 'E', 'D', 'C'], ['F', 'E', 'D', 'C', 'B', 'A']]
     temp.to_csv(os.path.join(folder_output, 'cost_intangible_ini.csv'))
 
     capex_ep = reindex_mi(dict_pd2df(buildings.capex_total[('Energy performance',)]), flow_renovation.index)
@@ -354,7 +352,21 @@ def parse_output(output, buildings, buildings_constructed, energy_prices, co2_co
     detailed['Annual renovation expenditure (Billions €)'] = output_flow_transition['Capex (€)'].sum(axis=0) / 10**9
     # TODO: detailed['Annual heating expenditure (Billions €)']
     detailed['Share energy poverty (%)'] = summary['Energy poverty'] / output_stock['Stock'].sum(axis=0)
-    detailed = pd.DataFrame(detailed).dropna(axis=0).T
+
+    detailed = pd.DataFrame(detailed).dropna(how='all', axis=0).T
+
+    temp = pd.DataFrame(buildings.stock_knowledge_ep_dict) / 10**6
+    temp.index = ['Stock experience {} Mm2'.format(i) for i in temp.index]
+    detailed = pd.concat((detailed, temp), axis=0)
+
+    temp = pd.DataFrame(buildings.knowledge_dict)
+    temp.index = ['Knowledge {}'.format(i) for i in temp.index]
+    detailed = pd.concat((detailed, temp), axis=0)
+
+    temp = HousingStock.lbd(pd.DataFrame(buildings.knowledge_dict), -0.1)
+    temp.index = ['Lbd factor {}'.format(i) for i in temp.index]
+    detailed = pd.concat((detailed, temp), axis=0)
+
     detailed.to_csv(os.path.join(folder_output, 'detailed.csv'))
 
 

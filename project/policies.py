@@ -91,10 +91,10 @@ class EnergyTaxes(PublicPolicy):
             Energy tax cost in €/kWh.
         """
         if self.kind == '%':
-            return energy_prices * self.value
+            val =  energy_prices * self.value
 
         elif self.kind == '€/kWh':
-            return self.value
+            val = self.value
 
         elif self.kind == '€/gCO2':
             # €/tCO2 * gCO2/kWh / 1000000 -> €/kWh
@@ -105,10 +105,15 @@ class EnergyTaxes(PublicPolicy):
             taxes = value * co2_content
             taxes.fillna(0, inplace=True)
             taxes = taxes.reindex(energy_prices.columns, axis=1)
-            return energy_prices * taxes
+            val = energy_prices * taxes
 
         else:
             raise AttributeError
+
+        if isinstance(val, float):
+            return pd.Series(val, index=range(self.start, self.end))
+        elif isinstance(val, pd.DataFrame):
+            return val.loc[:, self.start:self.end - 1]
 
 
 class Subsidies(PublicPolicy):
