@@ -195,7 +195,10 @@ class HousingStock:
                 val = label2[list(label2.keys())[0]]
                 val = reindex_mi(val, segments)
             else:
-                val = reindex_mi(label2[scenario], segments)
+                if isinstance(label2[scenario], float) or isinstance(label2[scenario], int):
+                    val = pd.Series(label2[scenario], index=segments)
+                else:
+                    val = reindex_mi(label2[scenario], segments)
         else:
             val = label2
 

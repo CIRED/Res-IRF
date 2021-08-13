@@ -222,7 +222,7 @@ def parameters_input(folder, scenario_dict, calibration_year, stock_sum):
     dict_label = parse_json(name_file)
 
     dict_label['label2income'] = dict_label['label2income'].apply(apply_linear_rate, args=(
-        dict_parameters["Household income rate"], index_input_year))
+        dict_parameters['Household income rate'], index_input_year))
     dict_label['label2consumption_heater'] = dict_label['label2primary_consumption'] * dict_label['label2heater']
     dict_label['label2consumption'] = final2consumption(dict_label['label2consumption_heater'],
                                                         dict_label['label2final_energy'] ** -1)
@@ -339,19 +339,26 @@ def parse_input(folder, scenario_dict):
     energy_prices_bt.index.set_names('Heating energy', inplace=True)
     energy_prices = energy_prices_bt
 
+    # initialize energy taxes
+    energy_taxes = energy_prices.copy()
+    for col in energy_prices.columns:
+        energy_taxes[col].values[:] = 0
+
     if scenario_dict['energy_taxes']['vta']:
         vta = pd.Series([0.16, 0.16, 0.2, 0.2], index=['Power', 'Natural gas', 'Oil fuel', 'Wood fuel'])
         vta.index.set_names('Heating energy', inplace=True)
         vta_energy = (energy_prices_bt.T * vta).T
         energy_prices = energy_prices + vta_energy
+        energy_taxes = energy_taxes + vta_energy
 
     if scenario_dict['energy_taxes']['activated']:
         name_file = os.path.join(os.getcwd(), scenario_dict['energy_taxes']['source'])
-        energy_taxes = pd.read_csv(name_file, index_col=[0], header=[0]).T
-        energy_taxes.index.set_names('Heating energy', inplace=True)
+        energy_tax = pd.read_csv(name_file, index_col=[0], header=[0]).T
+        energy_tax.index.set_names('Heating energy', inplace=True)
 
         # energy prices before cee and carbon tax and after vta and other energy taxes
-        energy_prices = energy_prices + energy_taxes
+        energy_prices = energy_prices + energy_tax
+        energy_taxes = energy_taxes + energy_tax
 
     # extension of energy_prices time series
     last_year_prices = energy_prices.columns[-1]
@@ -406,5 +413,5 @@ def parse_input(folder, scenario_dict):
     summary_input = pd.DataFrame(summary_input)
     summary_input = summary_input.loc[calibration_year:, :]
 
-    return stock_ini, energy_prices, cost_invest, cost_invest_construction, co2_content, dict_policies, summary_input
+    return stock_ini, energy_prices, energy_taxes, cost_invest, cost_invest_construction, co2_content, dict_policies, summary_input
 

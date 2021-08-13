@@ -17,7 +17,7 @@ from parse_output import parse_output
 
 
 def res_irf(calibration_year, end_year, folder, scenario_dict, dict_parameters, dict_policies, levels_dict_construction,
-            levels_dict, energy_prices_bp, cost_invest, cost_invest_construction, stock_ini, co2_content_data, dict_label,
+            levels_dict, energy_prices_bp, energy_taxes, cost_invest, cost_invest_construction, stock_ini, co2_content_data, dict_label,
             rate_renovation_ini, ms_renovation_ini, observed_data, logging):
     """Res-IRF main function.
 
@@ -126,7 +126,9 @@ def res_irf(calibration_year, end_year, folder, scenario_dict, dict_parameters, 
             total_taxes = total_taxes + val
 
     if total_taxes is not None:
-        energy_prices = energy_prices_bp + total_taxes.reindex(energy_prices_bp.columns, axis=1).fillna(0)
+        temp = total_taxes.reindex(energy_prices_bp.columns, axis=1).fillna(0)
+        energy_prices = energy_prices_bp + temp
+        energy_taxes = energy_taxes + temp
     else:
         energy_prices = energy_prices_bp
 
@@ -336,7 +338,7 @@ def res_irf(calibration_year, end_year, folder, scenario_dict, dict_parameters, 
                 year, buildings.stock_seg.sum(), flow_demolition_seg.sum(), dict_parameters['Stock needed'].loc[year],
                 buildings.flow_renovation_label_energy_dict[year].sum().sum(), flow_constructed))
 
-    parse_output(output, buildings, buildings_constructed, energy_prices, co2_content_data,
+    parse_output(output, buildings, buildings_constructed, energy_prices, energy_taxes, co2_content_data,
                  observed_data['Aggregated consumption coefficient {}'.format(calibration_year)], folder['output'])
 
     end = time.time()
@@ -389,8 +391,10 @@ if __name__ == '__main__':
     for key, scenario_dict in scenarios_dict.items():
 
         calibration_year = scenario_dict['stock_buildings']['year']
-        stock_ini, energy_prices, cost_invest, cost_invest_construction, co2_content_data, dict_policies, summary_input = parse_input(
+
+        stock_ini, energy_prices, energy_taxes, cost_invest, cost_invest_construction, co2_content_data, dict_policies, summary_input = parse_input(
             folder, scenario_dict)
+
         dict_parameters, levels_dict, levels_dict_construction, dict_label, rate_renovation_ini, ms_renovation_ini, observed_data, summary_param = parameters_input(
             folder, scenario_dict, calibration_year, stock_ini.sum())
 
@@ -407,7 +411,7 @@ if __name__ == '__main__':
         processes_list += [Process(target=res_irf,
                                    args=(calibration_year, end_year, folder_scenario, scenario_dict, dict_parameters, dict_policies,
                                          levels_dict_construction, levels_dict,
-                                         energy_prices, cost_invest, cost_invest_construction,
+                                         energy_prices, energy_taxes, cost_invest, cost_invest_construction,
                                          stock_ini, co2_content_data, dict_label,
                                          rate_renovation_ini, ms_renovation_ini, observed_data, logging))]
 

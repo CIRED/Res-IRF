@@ -1,7 +1,7 @@
 {
   "Phebus ZP no calib": {
     "end": 2014,
-    "investor": "Reference",
+    "investor": "Green value",
     "stock_buildings": {
       "source": "project/input/stock_buildings_phebus2012.pkl",
       "year": 2012,
