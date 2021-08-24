@@ -95,9 +95,9 @@
 <li class="toctree-l2"><a class="reference internal" href="#disclaimer">Disclaimer</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#about-the-authors">About the authors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#possible-use">Possible use</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#usage-example">Usage example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#documentation">Documentation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#meta">Meta</a></li>
 </ul>
 </li>
@@ -112,6 +112,7 @@
 <li class="toctree-l1"><a class="reference internal" href="tutorials.html#Energy-use">Energy use</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials.html#Transition-economics">Transition economics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials.html#Stock-dynamics">Stock dynamics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Documentation.html">Documentation</a></li>
 </ul>
 
             
@@ -219,23 +220,6 @@
 <div><p>The Res-IRF model is a tool for <strong>simulating energy consumption for space heating</strong> in the French residential sector.  Its main characteristic is to integrate a detailed description of the energy performance of the dwelling stock with a rich description of household behaviour. Res-IRF has been developed to improve the behavioural realism that integrated models of energy demand typically lack.</p>
 </div></blockquote>
 </section>
-<section id="possible-use">
-<h2>Possible use<a class="headerlink" href="#possible-use" title="Permalink to this headline">¶</a></h2>
-<p>Project include different scripts and notebook to run the output and analyse its output.<br />
-The standard way to launch Res-IRF:</p>
-<p><strong>Step 1: Launch Res-IRF main script.</strong><br />
-The model create results in a folder in project/output.<br />
-Folder name is by default <code class="docutils literal notranslate"><span class="pre">ddmmyyyy_hhmm</span></code> (launching date and hour).
-Results are mainly .pkl (serialize format by the pickle library) or .csv file, and are not designed to be directly readable.<br />
-NB: One file ‘summary.csv’ summarize important outputs.</p>
-<p><strong>Step 2: Launch one of the Jupyter Notebook analysis tool</strong><br />
-There are 3 main notebooks:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">user_interface.ipynb</span></code>: macro and micro output analysis.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">compare.ipyb</span></code>: macro and micro output comparison.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">assess_public_poclies.ipyb</span></code>: macro and micro output comparison and calculation of efficiency and effectiveness.</p></li>
-</ul>
-</section>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
 <p><strong>Step 1</strong>: Git <strong>clone Res-IRF folder</strong> in your computer.</p>
@@ -261,6 +245,24 @@ There are 3 main notebooks:</p>
 </section>
 <section id="usage-example">
 <h2>Usage example<a class="headerlink" href="#usage-example" title="Permalink to this headline">¶</a></h2>
+<p>Project include different scripts and notebook to run the output and analyse its output.<br />
+The standard way to launch Res-IRF:</p>
+<p><strong>Step 1: Launch Res-IRF main script.</strong><br />
+The model create results in a folder in project/output.<br />
+Folder name is by default <code class="docutils literal notranslate"><span class="pre">ddmmyyyy_hhmm</span></code> (launching date and hour).
+Results are mainly .pkl (serialize format by the pickle library) or .csv file, and are not designed to be directly readable.<br />
+NB: One file ‘summary.csv’ summarize important outputs.</p>
+<p><strong>Step 2: Launch one of the Jupyter Notebook analysis tool</strong><br />
+There are 3 main notebooks:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">user_interface.ipynb</span></code>: macro and micro output analysis.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">compare.ipyb</span></code>: macro and micro output comparison.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">assess_public_poclies.ipyb</span></code>: macro and micro output comparison and calculation of efficiency and effectiveness.</p></li>
+</ul>
+</section>
+<section id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
+<p>Documentation is available on https://lucas-vivier.github.io/Res-IRF/</p>
 </section>
 <section id="meta">
 <h2>Meta<a class="headerlink" href="#meta" title="Permalink to this headline">¶</a></h2>

@@ -4,10 +4,11 @@
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Search &mdash; Res-IRF 0.0 documentation</title>
+  <title>Documentation &mdash; Res-IRF 0.0 documentation</title>
   
 
   
@@ -25,7 +26,6 @@
   
 
   
-    
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -41,10 +41,9 @@
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-    <script type="text/javascript" src="_static/searchtools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="#" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Tutorials Res-IRF fondation" href="tutorials.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -71,7 +70,7 @@
 
           
 <div role="search">
-  <form id="rtd-search-form" class="wy-form" action="#" method="get">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -90,7 +89,7 @@
             
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="README.html">Res-IRF</a></li>
 <li class="toctree-l1"><a class="reference internal" href="appendix.html">Additional information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">Module</a></li>
@@ -103,7 +102,14 @@
 <li class="toctree-l1"><a class="reference internal" href="tutorials.html#Energy-use">Energy use</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials.html#Transition-economics">Transition economics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials.html#Stock-dynamics">Stock dynamics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Documentation.html">Documentation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#quickstart">Quickstart</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#update-content-modification-of-md-file-or-docstring-in-py-file">Update content (modification of .md file or docstring in .py file)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#add-content-adding-md-file">Add content (adding .md file)</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 
             
@@ -152,10 +158,14 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>Search</li>
+      <li>Documentation</li>
     
     
       <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/Documentation.md.txt" rel="nofollow"> View page source</a>
+          
         
       </li>
     
@@ -167,23 +177,76 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <noscript>
-  <div id="fallback" class="admonition warning">
-    <p class="last">
-      Please activate JavaScript to enable the search functionality.
-    </p>
-  </div>
-  </noscript>
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
 
-  
-  <div id="search-results">
-  
-  </div>
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<section class="tex2jax_ignore mathjax_ignore" id="documentation">
+<h1>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h1>
+<p>Documentation is available: https://lucas-vivier.github.io/Res-IRF/</p>
+<ol class="simple">
+<li><p>Documentation is run with Sphinx.<br />
+Sphinx concatenate Markdown (.md) files and pick up docstring information (modules and functions information) in .py files and returns .html files.</p></li>
+<li><p>Documentation is available online thanks to GitHub pages services.<br />
+GitHub pages recognize .html files and create a static website.</p></li>
+</ol>
+<p>Documentation is organized in 2 different folders:</p>
+<ul class="simple">
+<li><p>documentation : folder used by Sphinx:</p>
+<ul>
+<li><p><em>documentation/source</em> contains source (mostly .md files),</p></li>
+<li><p><em>documentation/build</em> contains .html files.</p></li>
+</ul>
+</li>
+<li><p>docs : used by GitHub pages to create a static website.</p></li>
+</ul>
+<section id="quickstart">
+<h2>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this headline">¶</a></h2>
+<section id="update-content-modification-of-md-file-or-docstring-in-py-file">
+<h3>Update content (modification of .md file or docstring in .py file)<a class="headerlink" href="#update-content-modification-of-md-file-or-docstring-in-py-file" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Run sphinx make file</p></li>
+<li><p>Copy and paste <em>documentation/build</em> folder in <em>docs</em> folder</p></li>
+<li><p>Visit the documentation website to confirm update has been considered correctly.</p></li>
+</ul>
+</section>
+<section id="add-content-adding-md-file">
+<h3>Add content (adding .md file)<a class="headerlink" href="#add-content-adding-md-file" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Need to add file name in <em>documentation/source/index.rst</em> file</p></li>
+</ul>
+</section>
+</section>
+</section>
+
 
            </div>
            
           </div>
           <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="tutorials.html" class="btn btn-neutral float-left" title="Tutorials Res-IRF fondation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
 
   <hr/>
 
@@ -220,14 +283,7 @@
   
   
     
-  
-  <script type="text/javascript">
-    jQuery(function() { Search.loadIndex("searchindex.js"); });
-  </script>
-  
-  <script type="text/javascript" id="searchindexloader"></script>
    
-
 
 </body>
 </html>

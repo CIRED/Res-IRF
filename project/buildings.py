@@ -782,7 +782,7 @@ class HousingStock:
         cost_intangible: dict, optional
             keys are transition (cost_intangible['Energy performance']) and item are pd.DataFrame
         consumption: {'conventional', 'actual'}, default 'conventional
-        transition: {['Energy performance'], ['Heating energy'], ['Energy performance', 'Heating energy']}, default ['Energy performance']
+        transition: list, default ['Energy performance']
             define transition. Transition can be defined as label transition, energy transition, or label-energy transition.
         policies: list, optional
             list of Policies object
@@ -1258,6 +1258,53 @@ class HousingStock:
             self.energy_cash_flows['actual'], self.label2discount)
         self.energy_cash_flows_disc['conventional'] = HousingStock.to_discounted(
             self.energy_cash_flows['conventional'], self.label2discount)
+
+    @staticmethod
+    def to_share_multi_family_tot(stock_needed, param):
+        """Calculate share of multi-family buildings in the total stock.
+
+        In Res-IRF 2.0, the share of single- and multi-family dwellings was held constant in both existing and new
+        housing stocks, but at different levels; it therefore evolved in the total stock by a simple composition
+        effect. These dynamics are now more precisely parameterized in Res-IRF 3.0 thanks to recent empirical
+        work linking the increase in the share of multi-family housing in the total stock to the rate of growth of
+        the total stock housing growth (Fisch et al., 2015).
+        This relationship in particular reflects urbanization effects.
+
+        Parameters
+        ----------
+        stock_needed: pd.Series
+        param: float
+
+        Returns
+        -------
+        dict
+            Dictionary with year as keys and share of multi-family in the total stock as value.
+            {2012: 0.393, 2013: 0.394, 2014: 0.395}
+        """
+
+        def func(stock, stock_ini, p):
+            """Share of multi-family dwellings as a function of the growth rate of the dwelling stock.
+
+            Parameters
+            ----------
+            stock: float
+            stock_ini: float
+            p: float
+
+            Returns
+            -------
+            float
+            """
+            trend_housing = (stock - stock_ini) / stock * 100
+            share = 0.1032 * np.log(10.22 * trend_housing / 10 + 79.43) * p
+            return share
+
+        share_multi_family_tot = {}
+        stock_needed_ini = stock_needed.iloc[0]
+        for year in stock_needed.index:
+            share_multi_family_tot[year] = func(stock_needed.loc[year], stock_needed_ini, param)
+
+        return share_multi_family_tot
 
     # TODO: not used
     def ini_all_indexes(self, energy_price, levels='all'):
@@ -1958,8 +2005,8 @@ class HousingStockConstructed(HousingStock):
         self._stock_needed = stock_needed_ts.loc[self._calibration_year]
         # used to estimate share of housing type
         # TODO: to_share_multi_family_tot is exogenous and must be done elsewhere
-        self._share_multi_family_tot_dict = HousingStockConstructed.to_share_multi_family_tot(stock_needed_ts,
-                                                                                              param_share_multi_family)
+        self._share_multi_family_tot_dict = HousingStock.to_share_multi_family_tot(stock_needed_ts,
+                                                                                   param_share_multi_family)
         self._share_multi_family_tot = self._share_multi_family_tot_dict[self._calibration_year]
 
         # used to let share of occupancy status in housing type constant
@@ -2017,12 +2064,6 @@ class HousingStockConstructed(HousingStock):
         self.flow_area_constructed_he_ep = flow_area_constructed_seg.groupby(
             ['Energy performance', 'Heating energy']).sum()
 
-    """
-    @property
-    def stock_constructed_seg_dict(self):
-        return self._stock_constructed_seg_dict
-    """
-
     @property
     def flow_area_constructed_he_ep(self):
         return self._flow_area_constructed_he_ep
@@ -2051,23 +2092,11 @@ class HousingStockConstructed(HousingStock):
     def knowledge(self):
         return self._knowledge
 
-    @staticmethod
-    def to_share_multi_family_tot(stock_needed, param):
-
-        def func(stock, stock_ini, p):
-            trend_housing = (stock - stock_ini) / stock * 100
-            share = 0.1032 * np.log(10.22 * trend_housing / 10 + 79.43) * p
-            return share
-
-        share_multi_family_tot = {}
-        stock_needed_ini = stock_needed.iloc[0]
-        for year in stock_needed.index:
-            share_multi_family_tot[year] = func(stock_needed.loc[year], stock_needed_ini, param)
-
-        return share_multi_family_tot
-
     def to_share_housing_type(self):
         """Returns share of Housing type ('Multi-family', 'Single-family') in the new constructed housings.
+
+        Share of multi-family in the total stock to reflect urbanization effects.
+        Demolition dynamic is made endogenously and therefore construction should reflect the evolution..
 
         Share_multifamily[year] = Stock_multifamily[year] / Stock[year]
         Share_multifamily[year] = (Stock_multifamily[year - 1] + Flow_multifamily_construction) / Stock[year]
@@ -2092,10 +2121,10 @@ class HousingStockConstructed(HousingStock):
         return ht_share_tot_construction
 
     def to_flow_constructed_dm(self):
-        """Returns flow of constructed buildings segmented by Housing type and Occupancy status.
+        """Returns flow of constructed buildings segmented by decision-maker (dm) (Housing type, Occupancy status).
 
-        1. Share of Housing type evolve over the time (to_share_housing_type method)
-        2. Occupancy status share stay constant for each type of Housing type
+        1. Increase in the share of multi-family housing in the total stock.
+        2. The share of owner-occupied and rented dwellings is held constant.
 
         Returns
         -------
@@ -2219,13 +2248,10 @@ class HousingStockConstructed(HousingStock):
         self.flow_constructed_seg = flow_constructed_seg
         return flow_constructed_seg
 
+    """
     @staticmethod
     def to_market_share_objective(os_share_ht_construction, he_share_ht_construction, ht_share_tot_construction,
                                   ep_share_tot_construction):
-        """
-        Market share is the same shape than LCC -
-        rows = [Occupancy status, Housing type] - columns = [Heating energy, Energy performance]
-        """
         os_he_share_ht_construction = de_aggregate_columns(os_share_ht_construction, he_share_ht_construction)
         os_he_ht_share_tot_construction = (ht_share_tot_construction * os_he_share_ht_construction.T).T.stack().stack()
 
@@ -2236,6 +2262,7 @@ class HousingStockConstructed(HousingStock):
                                            option='column')
         # market_share_objective = market_share_objective.droplevel(None, axis=1)
         return market_share_objective
+    """
 
     def to_calibration_market_share(self, energy_price, market_share_objective, cost_invest=None,
                                     consumption='conventional', policies=None):

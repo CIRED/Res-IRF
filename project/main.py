@@ -16,33 +16,33 @@ from policies import EnergyTaxes, Subsidies, RegulatedLoan, RenovationObligation
 from parse_output import parse_output
 
 
-def res_irf(calibration_year, end_year, folder, scenario_dict, dict_parameters, dict_policies, levels_dict_construction,
-            levels_dict, energy_prices_bp, energy_taxes, cost_invest, cost_invest_construction, stock_ini, co2_content_data, dict_label,
-            rate_renovation_ini, ms_renovation_ini, observed_data, logging):
+def res_irf(calibration_year, end_year, folder, config, parameters, policies_parameters, attributes, energy_prices_bp,
+            energy_taxes, cost_invest, cost_invest_construction, stock_ini, co2_content_data,
+            rate_renovation_ini, ms_renovation_ini, ms_construction_ini, logging):
     """Res-IRF main function.
 
     Parameters
     ----------
     folder: dict
-        path
-    scenario_dict: dict
-        dict with all scenarios
-    dict_parameters: dict
-        dict with all parameters
-    dict_policies: dict
-        dict with all policies parameters
-    levels_dict_construction: dict
-    levels_dict: dict
+        Path to a scenario-specific folder used to store all outputs.
+    config: dict
+        Dictionary with all scenarios configurations parameters.
+    parameters: dict
+        Dictionary with parameters.
+    policies_parameters: dict
+        Dictionary with all policies parameters.
+    attributes: dict
+        Specific dictionary setting up numerical values for each stock attribute.
+        Attributes also contain a list of each attribute.
     energy_prices_bp: pd.DataFrame
         After VTA and other energy taxes but before any endogenous energy taxes.
     cost_invest: dict
     cost_invest_construction: dict
     stock_ini: pd.Series
     co2_content_data: pd.DataFrame
-    dict_label: dict
     rate_renovation_ini: pd.Series
     ms_renovation_ini: pd.DataFrame
-    observed_data: dict
+    ms_construction_ini: pd.DataFrame
     """
 
     start = time.time()
@@ -50,58 +50,58 @@ def res_irf(calibration_year, end_year, folder, scenario_dict, dict_parameters, 
     logging.debug('Creation of output folder: {}'.format(folder['output']))
 
     # copyfile(os.path.join(folder['input'], scenario_file), os.path.join(folder['output'], scenario_file))
-    pd.Series(scenario_dict).to_csv(os.path.join(folder['output'], 'scenario.csv'))
+    pd.Series(config).to_csv(os.path.join(folder['output'], 'scenario.csv'))
     copyfile(os.path.join(folder['input'], 'parameters.json'), os.path.join(folder['output'], 'parameters.json'))
 
     output = dict()
     logging.debug('Loading in output_dict all input needed for post-script analysis')
-    # TODO: unuseful input are printed during parse_input
-    input2output = ['Population total', 'Population', 'Population housing', 'Stock needed']
-    for key in input2output:
-        output[key] = dict_parameters[key]
-    input2output = {'Cost envelope': cost_invest['Energy performance'],
-                    'Cost construction': cost_invest_construction['Energy performance']}
-    for key, val in input2output.items():
-        output[key] = dict()
-        output[key][calibration_year] = val
+
+    output['Population total'] = parameters['Population total']
+    output['Population'] = parameters['Population']
+    output['Population housing'] = parameters['Population housing']
+    output['Stock needed'] = parameters['Stock needed']
+    output['Cost envelope'] = dict()
+    output['Cost envelope'][calibration_year] = cost_invest['Energy performance']
+    output['Cost construction'] = dict()
+    output['Cost construction'][calibration_year] = cost_invest_construction['Energy performance']
 
     logging.debug('Initialization')
 
-    # function of scenario_dict
+    # function of config
     label2horizon = dict()
-    dict_label['label2horizon_heater'] = dict_label['label2horizon_heater'][scenario_dict['investor']]
-    dict_label['label2horizon_envelope'] = dict_label['label2horizon_envelope'][scenario_dict['investor']]
-    label2horizon[('Energy performance', )] = dict_label['label2horizon_envelope']
-    label2horizon[('Heating energy', )] = dict_label['label2horizon_heater']
-    dict_label['label2horizon'] = label2horizon
+    attributes['label2horizon_heater'] = attributes['label2horizon_heater'][config['investor']]
+    attributes['label2horizon_envelope'] = attributes['label2horizon_envelope'][config['investor']]
+    label2horizon[('Energy performance', )] = attributes['label2horizon_envelope']
+    label2horizon[('Heating energy', )] = attributes['label2horizon_heater']
+    attributes['label2horizon'] = label2horizon
 
     logging.debug('Initialize public policies')
     subsidies_dict = {}
     energy_taxes_dict = {}
     renovation_obligation_dict = {}
-    for pol, item in dict_policies.items():
-        if scenario_dict[item['name']]['activated']:
+    for pol, item in policies_parameters.items():
+        if config[item['name']]['activated']:
             logging.debug('Considering: {}'.format(pol))
             if item['policy'] == 'subsidies':
-                subsidies_dict[pol] = Subsidies(item['name'], scenario_dict[item['name']]['start'],
-                                                scenario_dict[item['name']]['end'], item['kind'], item['value'],
+                subsidies_dict[pol] = Subsidies(item['name'], config[item['name']]['start'],
+                                                config[item['name']]['end'], item['kind'], item['value'],
                                                 transition=item['transition'],
-                                                calibration=scenario_dict[item['name']]['calibration'])
+                                                calibration=config[item['name']]['calibration'])
             elif item['policy'] == 'energy_taxes':
-                energy_taxes_dict[pol] = EnergyTaxes(item['name'], scenario_dict[item['name']]['start'],
-                                                     scenario_dict[item['name']]['end'], item['kind'],
+                energy_taxes_dict[pol] = EnergyTaxes(item['name'], config[item['name']]['start'],
+                                                     config[item['name']]['end'], item['kind'],
                                                      item['value'],
-                                                     calibration=scenario_dict[item['name']]['calibration'])
+                                                     calibration=config[item['name']]['calibration'])
 
             elif item['policy'] == 'regulated_loan':
-                subsidies_dict[pol] = RegulatedLoan(item['name'], scenario_dict[item['name']]['start'],
-                                                    scenario_dict[item['name']]['end'],
+                subsidies_dict[pol] = RegulatedLoan(item['name'], config[item['name']]['start'],
+                                                    config[item['name']]['end'],
                                                     ir_regulated=item['ir_regulated'], ir_market=item['ir_market'],
                                                     principal_min=item['principal_min'],
                                                     principal_max=item['principal_max'],
                                                     horizon=item['horizon'], targets=item['targets'],
                                                     transition=item['transition'],
-                                                    calibration=scenario_dict[item['name']]['calibration'])
+                                                    calibration=config[item['name']]['calibration'])
                 subsidies_dict[pol].reindex_attributes(stock_ini.index)
 
             elif item['policy'] == 'renovation_obligation':
@@ -116,8 +116,8 @@ def res_irf(calibration_year, end_year, folder, scenario_dict, dict_parameters, 
         val = tax.price_to_taxes(energy_prices=energy_prices_bp, co2_content=co2_content_data)
         # if not indexed by heating energy
         if isinstance(val, pd.Series):
-            val = pd.concat([val] * len(levels_dict['Heating energy']), axis=1).T
-            val.index = levels_dict['Heating energy']
+            val = pd.concat([val] * len(attributes['housing_stock_renovated']['Heating energy']), axis=1).T
+            val.index = attributes['housing_stock_renovated']['Heating energy']
             val.index.set_names(['Heating energy'], inplace=True)
 
         if total_taxes is None:
@@ -133,19 +133,19 @@ def res_irf(calibration_year, end_year, folder, scenario_dict, dict_parameters, 
         energy_prices = energy_prices_bp
 
     logging.debug('Creating HousingStockRenovated Python object')
-    buildings = HousingStockRenovated(stock_ini, levels_dict, calibration_year,
-                                      residual_rate=dict_parameters['Residual destruction rate'],
-                                      destruction_rate=dict_parameters['Destruction rate'],
+    buildings = HousingStockRenovated(stock_ini, attributes['housing_stock_renovated'], calibration_year,
+                                      label2area=attributes['label2area'],
+                                      label2horizon=attributes['label2horizon'],
+                                      label2discount=attributes['label2discount'],
+                                      label2income=attributes['label2income'],
+                                      label2consumption=attributes['label2consumption'],
+                                      residual_rate=parameters['Residual destruction rate'],
+                                      destruction_rate=parameters['Destruction rate'],
                                       rate_renovation_ini=rate_renovation_ini,
-                                      learning_year=dict_parameters['Learning years renovation'],
-                                      npv_min=dict_parameters['NPV min'],
-                                      rate_max=dict_parameters['Renovation rate max'],
-                                      rate_min=dict_parameters['Renovation rate min'],
-                                      label2area=dict_label['label2area'],
-                                      label2horizon=dict_label['label2horizon'],
-                                      label2discount=dict_label['label2discount'],
-                                      label2income=dict_label['label2income'],
-                                      label2consumption=dict_label['label2consumption'])
+                                      learning_year=parameters['Learning years renovation'],
+                                      npv_min=parameters['NPV min'],
+                                      rate_max=parameters['Renovation rate max'],
+                                      rate_min=parameters['Renovation rate min'])
 
     logging.debug('Initialize energy consumption and cash-flows')
     buildings.ini_energy_cash_flows(energy_prices)
@@ -153,41 +153,35 @@ def res_irf(calibration_year, end_year, folder, scenario_dict, dict_parameters, 
     stock_area_existing_seg = buildings.stock_area_seg
 
     logging.debug('Creating HousingStockConstructed Python object')
-    segments_construction = pd.MultiIndex.from_tuples(list(product(*[v for _, v in levels_dict_construction.items()])))
-    segments_construction.names = [k for k in levels_dict_construction.keys()]
+    segments_construction = pd.MultiIndex.from_tuples(list(product(*[v for _, v in attributes['housing_stock_constructed'].items()])))
+    segments_construction.names = [k for k in attributes['housing_stock_constructed'].keys()]
     buildings_constructed = HousingStockConstructed(pd.Series(0, dtype='float64', index=segments_construction),
-                                                    levels_dict_construction, calibration_year,
-                                                    dict_parameters['Stock needed'],
-                                                    param_share_multi_family=dict_parameters['Factor share multi-family'],
-                                                    os_share_ht=observed_data['Occupancy status share housing type'],
+                                                    attributes['housing_stock_constructed'], calibration_year,
+                                                    parameters['Stock needed'],
+                                                    param_share_multi_family=parameters['Factor share multi-family'],
+                                                    os_share_ht=parameters['Occupancy status share housing type'],
                                                     io_share_seg=io_share_seg,
                                                     stock_area_existing_seg=stock_area_existing_seg,
-                                                    label2area=dict_label['label2area_construction'],
-                                                    label2horizon=dict_label['label2horizon_construction'],
-                                                    label2discount=dict_label['label2discount_construction'],
-                                                    label2income=dict_label['label2income'],
-                                                    label2consumption=dict_label['label2consumption_construction'])
+                                                    label2area=attributes['label2area_construction'],
+                                                    label2horizon=attributes['label2horizon_construction'],
+                                                    label2discount=attributes['label2discount_construction'],
+                                                    label2income=attributes['label2income'],
+                                                    label2consumption=attributes['label2consumption_construction'])
 
     cost_intangible_construction = None
     cost_intangible = None
     policies_calibration = [policy for policy in policies if policy.calibration is True]
 
-    if scenario_dict['cost_intangible']:
+    if config['cost_intangible']:
         cost_intangible = dict()
         cost_intangible_construction = dict()
         logging.debug('Calibration market share construction --> intangible cost construction')
-        name_file = scenario_dict['cost_intangible_construction_source']['source']
-        source = scenario_dict['cost_intangible_construction_source']['source_type']
+        name_file = config['cost_intangible_construction_source']['source']
+        source = config['cost_intangible_construction_source']['source_type']
         if source == 'function':
-            market_share_obj_construction = HousingStockConstructed.to_market_share_objective(
-                observed_data['Occupancy status share housing type'],
-                observed_data['Heating energy share housing type'],
-                observed_data['Housing type share total'],
-                observed_data['Energy performance share total construction'])
-
             cost_intangible_construction['Energy performance'] = buildings_constructed.to_calibration_market_share(
                 energy_prices,
-                market_share_obj_construction,
+                ms_construction_ini,
                 cost_invest=cost_invest_construction,
                 policies=policies_calibration)
             logging.debug('End of calibration and dumping: {}'.format(name_file))
@@ -201,8 +195,8 @@ def res_irf(calibration_year, end_year, folder, scenario_dict, dict_parameters, 
         output['Cost intangible construction'][calibration_year] = cost_intangible_construction['Energy performance']
 
         logging.debug('Calibration market share >>> intangible cost')
-        name_file = scenario_dict['cost_intangible_source']['source']
-        source = scenario_dict['cost_intangible_source']['source_type']
+        name_file = config['cost_intangible_source']['source']
+        source = config['cost_intangible_source']['source_type']
         if source == 'function':
 
             cost_intangible['Energy performance'] = buildings.to_calibration_market_share(energy_prices,
@@ -223,8 +217,8 @@ def res_irf(calibration_year, end_year, folder, scenario_dict, dict_parameters, 
 
     logging.debug('Calibration renovation rate >>> rho')
 
-    name_file = scenario_dict['rho']['source']
-    source = scenario_dict['rho']['source_type']
+    name_file = config['rho']['source']
+    source = config['rho']['source_type']
     if source == 'function':
         rho_seg = buildings.calibration_renovation_rate(energy_prices, rate_renovation_ini,
                                                         cost_invest=cost_invest,
@@ -269,77 +263,77 @@ def res_irf(calibration_year, end_year, folder, scenario_dict, dict_parameters, 
                                                                                  cost_intangible=cost_intangible,
                                                                                  policies=policies_year,
                                                                                  renovation_obligation=renovation_obligation,
-                                                                                 mutation=dict_parameters['Mutation rate'],
-                                                                                 rotation=dict_parameters['Rotation rate']
+                                                                                 mutation=parameters['Mutation rate'],
+                                                                                 rotation=parameters['Rotation rate']
                                                                                  )
 
         logging.debug('Updating stock segmented and renovation knowledge after renovation')
         buildings.update_stock(flow_remained_seg, flow_area_renovation_seg=flow_area_renovation_seg)
 
-        if scenario_dict['info_renovation']:
+        if config['info_renovation']:
             logging.debug('Information acceleration - renovation')
             cost_intangible['Energy performance'] = HousingStock.acceleration_information(buildings.knowledge,
                                                                                           output['Cost intangible'][
                                                                                               buildings.calibration_year],
-                                                                                          dict_parameters[
+                                                                                          parameters[
                                                                                               'Information rate max renovation'],
-                                                                                          dict_parameters[
+                                                                                          parameters[
                                                                                               'Learning information rate renovation'])
             output['Cost intangible'][year] = cost_intangible['Energy performance']
 
-        if scenario_dict['lbd_renovation']:
+        if config['lbd_renovation']:
             logging.debug('Learning by doing - renovation')
             cost_invest['Energy performance'] = HousingStock.learning_by_doing(buildings.knowledge,
                                                                                output['Cost envelope'][
                                                                                    buildings.calibration_year],
-                                                                               dict_parameters[
+                                                                               parameters[
                                                                                    'Learning by doing renovation'])
             output['Cost envelope'][year] = cost_invest['Energy performance']
 
         logging.debug('Construction dynamic')
         buildings_constructed.year = year
-        flow_constructed = dict_parameters['Stock needed'].loc[
+        flow_constructed = parameters['Stock needed'].loc[
                                year] - buildings.stock_seg.sum() - buildings_constructed.stock_seg.sum()
         logging.debug('Construction of: {:,.0f} buildings'.format(flow_constructed))
         buildings_constructed.flow_constructed = flow_constructed
 
         logging.debug('Updating label2area_construction')
-        buildings_constructed.update_area_construction(dict_parameters['Elasticity area construction'],
-                                                       dict_parameters['Available income real population'],
-                                                       dict_parameters['Area max construction'])
+        buildings_constructed.update_area_construction(parameters['Elasticity area construction'],
+                                                       parameters['Available income real population'],
+                                                       parameters['Area max construction'])
         logging.debug('Updating flow_constructed segmented')
         # update_flow_constructed_seg will automatically update area constructed and so construction knowledge
         buildings_constructed.update_flow_constructed_seg(energy_prices,
                                                           cost_intangible=cost_intangible_construction,
                                                           cost_invest=cost_invest_construction,
-                                                          nu=dict_parameters['Nu construction'],
+                                                          nu=parameters['Nu construction'],
                                                           policies=None)
 
-        if scenario_dict['info_construction']:
+        if config['info_construction']:
             logging.debug('Information acceleration - construction')
             cost_intangible_construction['Energy performance'] = HousingStock.acceleration_information(
                 buildings_constructed.knowledge,
                 output['Cost intangible construction'][buildings_constructed.calibration_year],
-                dict_parameters['Information rate max construction'],
-                dict_parameters['Learning information rate construction'])
+                parameters['Information rate max construction'],
+                parameters['Learning information rate construction'])
             output['Cost intangible construction'][year] = cost_intangible_construction['Energy performance']
 
-        if scenario_dict['lbd_construction']:
+        if config['lbd_construction']:
             logging.debug('Learning by doing - construction')
             cost_invest_construction['Energy performance'] = HousingStock.learning_by_doing(
                 buildings_constructed.knowledge,
                 output['Cost construction'][buildings_constructed.calibration_year],
-                dict_parameters['Learning by doing renovation'],
-                cost_lim=dict_parameters['Cost construction lim'])
+                parameters['Learning by doing renovation'],
+                cost_lim=parameters['Cost construction lim'])
             output['Cost construction'][year] = cost_invest_construction['Energy performance']
 
         logging.debug(
             '\nSummary:\nYear: {}\nStock after demolition: {:,.0f}\nDemolition: {:,.0f}\nNeeded: {:,.0f}\nRenovation: {:,.0f}\nConstruction: {:,.0f}'.format(
-                year, buildings.stock_seg.sum(), flow_demolition_seg.sum(), dict_parameters['Stock needed'].loc[year],
+                year, buildings.stock_seg.sum(), flow_demolition_seg.sum(), parameters['Stock needed'].loc[year],
                 buildings.flow_renovation_label_energy_dict[year].sum().sum(), flow_constructed))
 
     parse_output(output, buildings, buildings_constructed, energy_prices, energy_taxes, co2_content_data,
-                 observed_data['Aggregated consumption coefficient {}'.format(calibration_year)], folder['output'])
+                 parameters['Aggregated consumption coefficient {}'.format(calibration_year)], folder['output'])
 
     end = time.time()
     logging.debug('Time for the module: {:,.0f} seconds.'.format(end - start))
@@ -388,17 +382,17 @@ if __name__ == '__main__':
         scenarios_dict = json.load(file)
 
     processes_list = []
-    for key, scenario_dict in scenarios_dict.items():
+    for key, config in scenarios_dict.items():
 
-        calibration_year = scenario_dict['stock_buildings']['year']
+        calibration_year = config['stock_buildings']['year']
 
-        stock_ini, energy_prices, energy_taxes, cost_invest, cost_invest_construction, co2_content_data, dict_policies, summary_input = parse_input(
-            folder, scenario_dict)
+        stock_ini, energy_prices, energy_taxes, cost_invest, cost_invest_construction, co2_content_data, policies_parameters, summary_input = parse_input(
+            folder, config)
 
-        dict_parameters, levels_dict, levels_dict_construction, dict_label, rate_renovation_ini, ms_renovation_ini, observed_data, summary_param = parameters_input(
-            folder, scenario_dict, calibration_year, stock_ini.sum())
+        parameters, attributes, rate_renovation_ini, ms_renovation_ini, ms_construction_ini, summary_param = parameters_input(
+            folder, config, calibration_year, stock_ini.sum())
 
-        end_year = scenario_dict['end']
+        end_year = config['end']
         if args.year_end:
             end_year = int(args.year_end)
 
@@ -409,11 +403,11 @@ if __name__ == '__main__':
         pd.concat((summary_input, summary_param), axis=1).T.loc[:, calibration_year:].to_csv(os.path.join(folder_scenario['output'], 'summary_input.csv'))
 
         processes_list += [Process(target=res_irf,
-                                   args=(calibration_year, end_year, folder_scenario, scenario_dict, dict_parameters, dict_policies,
-                                         levels_dict_construction, levels_dict,
+                                   args=(calibration_year, end_year, folder_scenario, config, parameters, 
+                                         policies_parameters, attributes,
                                          energy_prices, energy_taxes, cost_invest, cost_invest_construction,
-                                         stock_ini, co2_content_data, dict_label,
-                                         rate_renovation_ini, ms_renovation_ini, observed_data, logging))]
+                                         stock_ini, co2_content_data,
+                                         rate_renovation_ini, ms_renovation_ini, ms_construction_ini, logging))]
 
     for p in processes_list:
         p.start()

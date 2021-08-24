@@ -7,13 +7,17 @@
       "year": 2012,
       "type": "pd.Series"
     },
+    "attributes": {
+      "type": "file",
+      "source": "project/input/label2info_quintile2012.json"
+    },
     "cost_intangible": true,
     "cost_intangible_source": {
       "source_type": "file",
       "source": "project/intermediate/cost_intangible_phebus2012_zp.pkl"
     },
     "cost_intangible_construction_source": {
-      "source_type": "file",
+      "source_type": "function",
       "source": "project/intermediate/cost_intangible_construction_phebus2012_zp.pkl"
     },
     "lbd_renovation": false,
@@ -106,10 +110,6 @@
     "type": "file",
     "source": "project/input/parameters.json"
   },
-    "observed_data": {
-      "type": "file",
-      "source": "project/input/observed_data.json"
-    },
     "rho": {
     "source_type": "file",
     "source": "project/intermediate/rho_phebus2012_zp.pkl"
@@ -121,6 +121,10 @@
     "ms_renovation_ini":{
       "type": "file",
       "source": "project/input/ms_renovation_ini.csv"
+    },
+    "ms_construction_ini":{
+      "type": "file",
+      "source": "project/input/ms_construction_ini_2012.csv"
     },
     "cost_renovation": {
       "type": "file",
@@ -139,10 +143,6 @@
     "cost_switch_fuel": {
       "type": "file",
       "source": "project/input/cost_switch_fuel.csv"
-    },
-    "label2info": {
-      "type": "file",
-      "source": "project/input/label2info_quintile2012.json"
     }
   }
 }

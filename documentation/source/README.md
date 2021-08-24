@@ -8,23 +8,6 @@ The development of the Res-IRF model was initiated at CIRED in 2008. Coordinated
 ## Overview
 > The Res-IRF model is a tool for **simulating energy consumption for space heating** in the French residential sector.  Its main characteristic is to integrate a detailed description of the energy performance of the dwelling stock with a rich description of household behaviour. Res-IRF has been developed to improve the behavioural realism that integrated models of energy demand typically lack.
 
-## Possible use
-Project include different scripts and notebook to run the output and analyse its output.  
-The standard way to launch Res-IRF:  
-
-**Step 1: Launch Res-IRF main script.**  
-The model create results in a folder in project/output.  
-Folder name is by default `ddmmyyyy_hhmm` (launching date and hour).
-Results are mainly .pkl (serialize format by the pickle library) or .csv file, and are not designed to be directly readable.  
-NB: One file 'summary.csv' summarize important outputs.
-
-**Step 2: Launch one of the Jupyter Notebook analysis tool**  
-There are 3 main notebooks:
-- `user_interface.ipynb`: macro and micro output analysis.
-- `compare.ipyb`: macro and micro output comparison.
-- `assess_public_poclies.ipyb`: macro and micro output comparison and calculation of efficiency and effectiveness. 
-
-
 ## Installation
 **Step 1**: Git **clone Res-IRF folder** in your computer.
    - Use your terminal and go to a location where you want to store the Res-IRF project.
@@ -43,6 +26,24 @@ There are 3 main notebooks:
    - `python main.py`
 
 ## Usage example
+Project include different scripts and notebook to run the output and analyse its output.  
+The standard way to launch Res-IRF:  
+
+**Step 1: Launch Res-IRF main script.**  
+The model create results in a folder in project/output.  
+Folder name is by default `ddmmyyyy_hhmm` (launching date and hour).
+Results are mainly .pkl (serialize format by the pickle library) or .csv file, and are not designed to be directly readable.  
+NB: One file 'summary.csv' summarize important outputs.
+
+**Step 2: Launch one of the Jupyter Notebook analysis tool**  
+There are 3 main notebooks:
+- `user_interface.ipynb`: macro and micro output analysis.
+- `compare.ipyb`: macro and micro output comparison.
+- `assess_public_poclies.ipyb`: macro and micro output comparison and calculation of efficiency and effectiveness. 
+
+## Documentation
+
+Documentation is available on https://lucas-vivier.github.io/Res-IRF/
 
 ## Meta
 

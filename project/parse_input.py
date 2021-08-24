@@ -134,7 +134,6 @@ def parameters_input(folder, scenario_dict, calibration_year, stock_sum):
 
     - Demographic and macro-economic variable,
     - Numerical value of stock attributes (final consumption for label D or yearly income for D10 class),
-    - Observed data for calibration.
 
     Parameters
     ----------
@@ -155,14 +154,14 @@ def parameters_input(folder, scenario_dict, calibration_year, stock_sum):
         Keys are stock attributes and values are list of all possible values taken by each attribute.
     sources_dict : dict
         Containing path to calibration file.
-    dict_label : dict
+    attributes : dict
         Numerical values of stock attributes (income for D1, consumption for F label, etc...)..
     rate_renovation_ini : pd.DataFrame
         Observed renovation rate in calibration year.
     ms_renovation_ini : pd.DataFrame
         Observed market share in calibration year.
-    observed_data: dict
-        Observed data. Necessary to calibrate some parameters for calibration year.
+    ms_construction_ini : pd.DataFrame
+        Observed market share in calibration year.
     summary_param: pd.DataFrame
     """
 
@@ -219,33 +218,30 @@ def parameters_input(folder, scenario_dict, calibration_year, stock_sum):
     # 3. Numerical value of stock attributes
 
     name_file = os.path.join(os.getcwd(), scenario_dict['label2info']['source'])
-    dict_label = parse_json(name_file)
+    attributes = parse_json(name_file)
 
-    dict_label['label2income'] = dict_label['label2income'].apply(apply_linear_rate, args=(
+    attributes['label2income'] = attributes['label2income'].apply(apply_linear_rate, args=(
         dict_parameters['Household income rate'], index_input_year))
-    dict_label['label2consumption_heater'] = dict_label['label2primary_consumption'] * dict_label['label2heater']
-    dict_label['label2consumption'] = final2consumption(dict_label['label2consumption_heater'],
-                                                        dict_label['label2final_energy'] ** -1)
-    dict_label['label2consumption_heater_construction'] = dict_label['label2primary_consumption_construction'] * dict_label[
+    attributes['label2consumption_heater'] = attributes['label2primary_consumption'] * attributes['label2heater']
+    attributes['label2consumption'] = final2consumption(attributes['label2consumption_heater'],
+                                                        attributes['label2final_energy'] ** -1)
+    attributes['label2consumption_heater_construction'] = attributes['label2primary_consumption_construction'] * attributes[
         'label2heater_construction']
-    dict_label['label2consumption_construction'] = final2consumption(dict_label['label2consumption_heater_construction'],
-                                                                     dict_label['label2final_energy'] ** -1)
+    attributes['label2consumption_construction'] = final2consumption(attributes['label2consumption_heater_construction'],
+                                                                     attributes['label2final_energy'] ** -1)
 
-    file_dict = dict_label['levels_dict']
+    file_dict = attributes['levels_dict']
     keys = ['Housing type', 'Occupancy status', 'Heating energy', 'Energy performance', 'Income class']
-    levels_dict = {key: file_dict[key] for key in keys}
-    levels_dict['Income class owner'] = file_dict['Income class']
+    attributes['housing_stock_renovated'] = {key: file_dict[key] for key in keys}
+    attributes['housing_stock_renovated']['Income class owner'] = file_dict['Income class']
 
     keys = ['Housing type', 'Occupancy status', 'Heating energy', 'Energy performance construction', 'Income class']
-    levels_dict_construction = {key: file_dict[key] for key in keys}
-    levels_dict_construction['Income class owner'] = file_dict['Income class']
-    levels_dict_construction['Energy performance'] = file_dict['Energy performance construction']
-    levels_dict_construction.pop('Energy performance construction', None)
-
+    attributes['housing_stock_constructed'] = {key: file_dict[key] for key in keys}
+    attributes['housing_stock_constructed']['Income class owner'] = file_dict['Income class']
+    attributes['housing_stock_constructed']['Energy performance'] = file_dict['Energy performance construction']
+    attributes['housing_stock_constructed'].pop('Energy performance construction')
+    
     # 4. Observed data for calibration
-
-    name_file = os.path.join(os.getcwd(), scenario_dict['observed_data']['source'])
-    observed_data = parse_json(name_file)
 
     name_file = os.path.join(os.getcwd(), scenario_dict['rate_renovation_ini']['source'])
     rate_renovation_ini = pd.read_csv(name_file, index_col=[0, 1], header=[0], squeeze=True)
@@ -254,6 +250,12 @@ def parameters_input(folder, scenario_dict, calibration_year, stock_sum):
     ms_renovation_ini = pd.read_csv(name_file, index_col=[0], header=[0])
     ms_renovation_ini.index.set_names(['Energy performance'], inplace=True)
 
+    name_file = os.path.join(os.getcwd(), scenario_dict['ms_construction_ini']['source'])
+    ms_construction_ini = pd.read_csv(name_file, index_col=[0, 1], header=[0, 1])
+    ms_construction_ini.index.set_names(['Occupancy status', 'Housing type'], inplace=True)
+
+    # 5. Summary
+
     summary_param = dict()
     summary_param['Total population (Millions)'] = dict_parameters['Population'] / 10**6
     summary_param['Income (Billions €)'] = dict_parameters['Available income real'] * sizing_factor / 10**9
@@ -261,13 +263,13 @@ def parameters_input(folder, scenario_dict, calibration_year, stock_sum):
     summary_param['Person by housing'] = pd.Series(population_housing)
     summary_param = pd.DataFrame(summary_param)
 
-    income = dict_label['label2income'].T
+    income = attributes['label2income'].T
     income.columns = ['Income {} (€)'.format(c) for c in income.columns]
     summary_param = pd.concat((summary_param, income), axis=1)
 
     summary_param = summary_param.loc[calibration_year:, :]
 
-    return dict_parameters, levels_dict, levels_dict_construction, dict_label, rate_renovation_ini, ms_renovation_ini, observed_data, summary_param
+    return dict_parameters, attributes, rate_renovation_ini, ms_renovation_ini, ms_construction_ini, summary_param
 
 
 def parse_input(folder, scenario_dict):

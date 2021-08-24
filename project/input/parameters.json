@@ -101,6 +101,49 @@
       "Occupancy status"
     ],
     "type": "pd.Series"
+  },
+  "Aggregated consumption coefficient 2018": {
+    "val": {
+      "Power": 0.65,
+      "Natural gas": 0.95,
+      "Oil fuel": 0.79,
+      "Wood fuel": 3.97
+    },
+    "index": [
+      "Heating energy"
+    ],
+    "type": "pd.Series"
+  },
+  "Aggregated consumption coefficient 2012": {
+    "val": {
+      "Power": 0.79,
+      "Natural gas": 1.06,
+      "Oil fuel": 1.03,
+      "Wood fuel": 2.14
+    },
+    "index": [
+      "Heating energy"
+    ],
+    "type": "pd.Series"
+  },
+  "Occupancy status share housing type": {
+    "val": {
+      "Multi-family": {
+        "Homeowners": 0.308,
+        "Landlords": 0.397,
+        "Social-housing": 0.295
+      },
+      "Single-family": {
+        "Homeowners": 0.803,
+        "Landlords": 0.144,
+        "Social-housing": 0.053
+      }
+    },
+    "index": [
+      "Housing type",
+      "Occupancy status"
+    ],
+    "type": "pd.DataFrame"
   }
 }
 

@@ -52,14 +52,14 @@
     "val": {
       "Single-family": {
         "Power": 0.753,
-        "Natural gas": 0.185,
+        "Natural gas": 0.184,
         "Oil fuel": 0.005,
         "Wood fuel": 0.058
       },
       "Multi-family": {
         "Power": 0.195,
-        "Natural gas": 0.795,
-        "Oil fuel": 0.795,
+        "Natural gas": 0.794,
+        "Oil fuel": 0.001,
         "Wood fuel": 0.01
       }
     },
@@ -68,29 +68,6 @@
       "Heating energy"
     ],
     "type": "pd.DataFrame"
-  },
-  "Aggregated consumption coefficient 2018": {
-    "val": {
-      "Power": 0.65,
-      "Natural gas": 0.95,
-      "Oil fuel": 0.79,
-      "Wood fuel": 3.97
-    },
-    "index": [
-      "Heating energy"
-    ],
-    "type": "pd.Series"
-  },
-  "Aggregated consumption coefficient 2012": {
-    "val": {
-      "Power": 0.79,
-      "Natural gas": 1.06,
-      "Oil fuel": 1.03,
-      "Wood fuel": 2.14
-    },
-    "index": [
-      "Heating energy"
-    ],
-    "type": "pd.Series"
   }
+
 }

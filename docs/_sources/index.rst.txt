@@ -18,6 +18,7 @@ Welcome to Res-IRF's documentation!
    TODO
    future_development
    tutorials.ipynb
+   Documentation
 
 Indices and tables
 ==================
