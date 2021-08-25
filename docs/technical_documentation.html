@@ -1,0 +1,722 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Technical documentation &mdash; Res-IRF 0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Documentation" href="contributing.html" />
+    <link rel="prev" title="Tutorials Res-IRF fondation" href="tutorials.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Res-IRF
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="README.html">Res-IRF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendix.html">Additional information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LICENSE.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="CHANGELOG.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TODO.html">Todo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="future_development.html">Future developments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials Res-IRF fondation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html#Building-stock">Building stock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html#Energy-use">Energy use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html#Transition-economics">Transition economics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html#Stock-dynamics">Stock dynamics</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Technical documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#context">Context</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#previous-developments">Previous developments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#data-used-in-version-3-0">Data used in version 3.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#specification-of-version-3-0">Specification of Version 3.0</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#building-stock">Building stock</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#scope">Scope</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#energy-use">Energy use</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#conventional-energy-use">Conventional energy use</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#specific-consumption">Specific consumption</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#actual-energy-use">Actual energy use</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#total-energy-use">Total energy use</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#energy-efficiency-improvements">Energy efficiency improvements</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#stock-dynamics">Stock dynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#investment-decisions-general-case">Investment decisions – general case</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#new-constructions">New constructions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#renovation-of-existing-dwellings">Renovation of existing dwellings</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#intensive-margin">Intensive margin</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Res-IRF</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Technical documentation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/technical_documentation.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<section class="tex2jax_ignore mathjax_ignore" id="technical-documentation">
+<h1>Technical documentation<a class="headerlink" href="#technical-documentation" title="Permalink to this headline">¶</a></h1>
+<p>[[toc]]</p>
+<section id="context">
+<h2>Context<a class="headerlink" href="#context" title="Permalink to this headline">¶</a></h2>
+<p>The Res-IRF model <a class="footnote-reference brackets" href="#e630" id="id1">1</a> is a tool for simulating energy consumption for space heating in the French residential
+sector. Its main characteristic is to integrate a detailed description of the energy performance of the dwelling stock
+with a rich description of household behaviour. Res-IRF has been developed to improve the behavioural realism that
+integrated models of energy demand typically lack (Mundaca et al., 2010; McCollum et al., 2017).</p>
+<p>Fed by population growth, household income growth and energy prices as exogenous inputs, the model returns construction
+and renovation costs and flows, energy consumption and heating comfort as endogenous outputs (cf. Figure 1). This
+process is iterated on an annual time-step basis. The energy efficiency of a dwelling is characterized by its Energy
+Performance Certificate (EPC, diagnostic de performance énergétique ) and energy efficiency improvements correspond to
+upgrades to a more efficient label. Energy consumption results from household decisions along three margins: the
+extensive margin of investment – the decision of whether or not to renovate –, the intensive margin of investment – the
+magnitude of the energy efficiency upgrade – and the intensity with which the heating infrastructure is used after
+renovation. Investment decisions are based on a net present value (NPV) calculation that incorporates a number of
+barriers at the source of the so-called ‘energy-efficiency gap’ – the discrepancy between observed energy-efficiency
+levels and those predicted by engineering studies (Jaffe and Stavins, 1994; Sorrell, 2004; Gillingham et al., 2009;
+Allcott and Greenstone, 2012). These include: myopic expectation of energy prices, hidden costs of renovation (e.g.,
+inconvenience associated with insulation works), barriers to collective decision-making within homeowner associations,
+split incentives between landlords and tenants, credit constraints, and the so-called rebound effect. The main
+innovation of version 3.0 is that these decisions are now also a function of household income.</p>
+<p><img alt="alt text" src="_images/elementary_model_structure.png" /></p>
+</section>
+<section id="previous-developments">
+<h2>Previous developments<a class="headerlink" href="#previous-developments" title="Permalink to this headline">¶</a></h2>
+<p>The development of Res-IRF has produced six peer-reviewed articles to this day, of which an overview is provided in
+Table 1.</p>
+</section>
+<section id="data-used-in-version-3-0">
+<h2>Data used in version 3.0<a class="headerlink" href="#data-used-in-version-3-0" title="Permalink to this headline">¶</a></h2>
+<p>Previous versions of Res-IRF were parameterized on data published in 2008 by the Agence nationale de l’habitat (ANAH,
+2008). A major step forward for the time, this database aggregated data of varying quality from different sources. A
+number of extrapolations made up for missing (e.g., the number of dwellings built before 1975) or imprecise (e.g.,
+occupancy status of decision-makers) data.</p>
+<p>The version 3.0 of the model is now mainly based on data from the Phébus survey (Performance de l’Habitat, Équipements,
+Besoins et USages de l’énergie ). Published in 2014, the Phébus data represented a substantial improvement in knowledge
+of the housing stock and its occupants. Specifically, a more systematic data collection procedure allowed for new
+information (in particular on household income) and improved accuracy of previously available information. These
+advances now permit assessment of the distributional aspects of residential energy consumption.</p>
+<p>The Phébus survey has two components:</p>
+<ul class="simple">
+<li><p>The so-called “Clode” sample details the characteristics of dwellings, their occupants and their energy expenditure.
+Specific weights are assigned to each household type to ensure that the sample is representative of the French
+population.</p></li>
+<li><p>The so-called “EPC” sample complements, for a subsample of 44% of households in the Clode sample, socio-economic data
+with certain physical data, including the energy consumption predicted by the EPC label. In Res-IRF, specific weights
+are assigned to this sub-sample, based on Denjean (2014).</p></li>
+</ul>
+<p>To parameterize the model, we matched the two components in a single database. Without further specification, the
+matched database is the one we refer to when we mention Phébus in the text.</p>
+<p>In addition to the Phébus data, we calibrate correction parameters so that the model outputs at the initial year are
+consistent with the data produced by the Centre d’études et de recherches économiques sur l’énergie (CEREN). The CEREN
+data differ from the Phébus ones in their scope and the methodology used to produce them. They however serve as a
+reference for most projections of energy consumption in France.</p>
+<p>|                    | **
+Phébus-Clode**                                                                                   | **
+Phébus-DPE**                                                                      | **
+CEREN**                                                              |
+| —————— | ————————————————————————————————– | ———————————————————————————– | ———————————————————————- |
+| <strong>Data source   ** | In-home survey including over 500 questions and energy bills.                                      | EPC audit realized among voluntary households that participated in the Clode survey | Census data supplemented by household and retrofit contractor surveys. |
+| <strong>Sample
+size</strong>    | 5,405 dwellings                                                                                    | 2,389 dwellings (from the 5,405 of the Clode sample)                                | 3,000 (2,000 in existing dwellings and 800 in new ones)                |
+| **
+Stakeholders</strong>   | Management : SoeS, Veritas pour DPE, Ipsos pour Clode. Funding : EDF, Total, Leclerc, ANAH, ADEME. | CEREN                                                                               |</p>
+<p>|                             | <strong>Phébus-Clode</strong>                                                   | **
+Phébus-DPE**                                                   | <strong>CEREN</strong>                               |
+| ————————— | —————————————————————— | —————————————————————- | ————————————— |
+| <strong>Surface of the
+dwelling</strong> | Available                                                          | Available                                                        | Not available                           |
+| <strong>Year of
+construction</strong>    | Available                                                          | Available                                                        | Not available                           |
+| <strong>Occupancy
+status</strong>        | Owner-occupiers, landlords and social housing                      | Owner-occupiers and landlords                                    | Owner-occupiers and landlords           |
+| <strong>Type of
+dwelling</strong>        | Single- and multi-family                                           | Single- and multi-family                                         | Single- and multi-family                |
+| **
+Scope**                   | Main residences in metropolitan France, detailed by climatic zones | Main residences in metropolitan France, detailed by departements | Main residences in metropolitan France  |
+| **
+Income**                  | Available for occupants                                            | Not available                                                    | Not available                           |
+| <strong>Energy
+consumption</strong>      | Actual, adjusted from energy bills                                 | Conventional, as predicted by the EPC label                      | Actual, from measurement and estimation |</p>
+</section>
+<section id="specification-of-version-3-0">
+<h2>Specification of Version 3.0<a class="headerlink" href="#specification-of-version-3-0" title="Permalink to this headline">¶</a></h2>
+<p>The model is calibrated on base year 2012. What we refer to as existing dwellings corresponds to the stock of dwellings
+available in 2012, minus annual destructions. What we refer to as new dwellings is the cumulative sum of dwellings
+constructed after 2012.</p>
+<section id="building-stock">
+<h3>Building stock<a class="headerlink" href="#building-stock" title="Permalink to this headline">¶</a></h3>
+<p>The model contains 1,080 types of dwellings divided into:</p>
+<ul class="simple">
+<li><p>Nine energy performance levels – EPC labels A to G for existing dwellings, Low Energy Building (LE) and Net Zero
+Energy Building (NZ) levels for new dwellings (see corresponding energy use in Table 6);</p></li>
+<li><p>Four main heating fuels – electricity, natural gas, fuel oil and fuel wood</p></li>
+<li><p>Six types of investors – owner-occupiers, landlords or social housing managers, each in single- and multi-family
+dwellings;</p></li>
+<li><p>Five categories of household income, the boundaries of which are aligned with those of INSEE quintiles.</p></li>
+</ul>
+<section id="scope">
+<h4>Scope<a class="headerlink" href="#scope" title="Permalink to this headline">¶</a></h4>
+<p>Res-IRF 3.0 covers 23.9 million principal residences in metropolitan France among the 27.1 million covered by the
+Phébus-Clode survey for the year 2012. This scope differs from that of other databases (see Figure 2). It was delineated
+by excluding from the Phébus sample: those dwellings heated with fuels with low market shares, such as liquefied
+petroleum gas (LPG) and district heating; some dwellings for which it was not possible to identify a principal energy
+carrier; some dwellings for which the Phébus data were missing.</p>
+</section>
+</section>
+</section>
+<section id="energy-use">
+<h2>Energy use<a class="headerlink" href="#energy-use" title="Permalink to this headline">¶</a></h2>
+<p>The model uses two metrics for energy use: the conventional consumption predicted by the EPC label of the dwelling; and
+the actual consumption that determines energy expenditure. The two are linked by the intensity of heating of the heating
+infrastructure, which is an endogenous function of the model.</p>
+<section id="conventional-energy-use">
+<h3>Conventional energy use<a class="headerlink" href="#conventional-energy-use" title="Permalink to this headline">¶</a></h3>
+<p>Integrating new data on specific consumption (kWh/m²/year) and housing surface area (m²) allowed us to improve the
+accuracy of total consumption parameters (kWh/year).</p>
+<section id="specific-consumption">
+<h4>Specific consumption<a class="headerlink" href="#specific-consumption" title="Permalink to this headline">¶</a></h4>
+<p>The conventional specfic consumption of an existing dwelling is directly given by its EPC label. In Res-IRF 2.0, each
+label was assigned an energy consumption equal to the middle of EPC band. By including a precise measurement of the
+conventional energy consumption of each dwelling, the Phébus-DPE database made it possible to estimate for each band an
+average consumption. The resulting values are those used in version 3.0; they compared to the previous ones in Figure 8.</p>
+<p>Since the EPC covers energy consumption for heating, hot water and air conditioning, adjustments are needed to isolate
+the part specifically dedicated to heating. In Res-IRF 2.0, this part was set to 0.8, based on CEREN data. Here again,
+the Phébus-DPE database, by distinguishing energy between heating use, hot water use and photovoltaic production, makes
+it possible to estimate an average share dedicated to heating for each EPC band. | <strong>EPC band</strong> | <strong>Average
+consumption (kWh/m²/year)</strong> | <strong>Share dedicated to heating</strong> | <strong>Average consumption for heating in Res-IRF (
+kWh/m²/an)</strong> | | ———— | ———— | ———— | ———— | | <strong>G</strong> | 596 | 0.85 | <strong>507</strong> | | <strong>F</strong> |
+392 | 0.82 | <strong>321</strong> | | <strong>E</strong> | 280 | 0.77 | <strong>216</strong> | | <strong>D</strong> | 191 | 0.74 | <strong>141</strong> | | <strong>C</strong> | 125 | 0.72 | <strong>90</strong> |
+| <strong>B</strong> | 76 | 0.77 | <strong>59</strong> | | <strong>A</strong> | 40 | 1.12 | <strong>45</strong> | | <strong>LE</strong> | 50 | 0.40 | <strong>20</strong> | | <strong>NZ</strong> | 40 | 0.40 | **
+16** |</p>
+<p>New dwellings fall into two categories of energy performance: Low Energy (LE) level, aligned with the prevailing
+building code at 50 kWh/m²/year of primary energy, and Net Zero Energy (NZ) level, mandating zero consumption, net of
+production from renewable sources. Since we focus on gross energy consumption, we assign a consumption of 40
+kWhEP/m²/year to NZ dwellings. The same coefficient of 0.4 is applied to BBC and BEPOS consumption in order to isolate
+heating from the five usages covered by building code prescriptions (instead of three usages in the case of the EPC in
+existing dwellings). Note that the energy requirements of EPC band A are also net of production from renewable sources.
+Our focus on gross consumption leads us to apply a coefficient that is greater than 1. These calculations are detailed
+in Table 6.</p>
+<section id="surface-area">
+<h5>Surface area<a class="headerlink" href="#surface-area" title="Permalink to this headline">¶</a></h5>
+<p>The same approach was used to re-set surface area parameters bases on average values estimated on Phébus data, by
+category of dwelling. Descriptive statistics are provided in Figure 9 and compared to the values used in version 2.0.</p>
+</section>
+</section>
+<section id="actual-energy-use">
+<h4>Actual energy use<a class="headerlink" href="#actual-energy-use" title="Permalink to this headline">¶</a></h4>
+<p>A growing number of academic studies point to a gap between the conventional energy consumption predicted by energy
+performance certificates and actual energy consumption. The most common explanation is a more intense heating of the
+heating infrastructure after an energy efficiency improvement – a phenomenon commonly referred to as the “rebound
+effect.” <a class="footnote-reference brackets" href="#a" id="id2">2</a></p>
+<p>In versions 1.0 and 2.0, the intensity of use was determined by conventional heating expenditure, based on work carried
+out by EDF R&amp;D (Allibe, 2015)<a class="footnote-reference brackets" href="#c2" id="id3">3</a>. It therefore depended on two variables: the energy performance of the dwelling,
+measured by its EPC label, and the price of energy. In version 3.0, we included a third variable: household income. This
+development was made possible by several improvements in the data available, including the Phébus database and
+additional work by EDF R&amp;D (Cayla and Osso, 2013), which now connects heating intensity to the income share devoted to
+heating, i.e. conventional expenditure as a percentage of income.</p>
+<p>Heating intensity in Res-IRF now follows the following equation:
+$<span class="math notranslate nohighlight">\( Heating Intensity=-0,191*log⁡(Income Share)+0,1105 \)</span>$</p>
+<p>with:
+$<span class="math notranslate nohighlight">\( Heating Intensity= (Actual energy use)/(Conventional energy use) \)</span>$</p>
+<p>and:
+$<span class="math notranslate nohighlight">\( Income Share=(Energy price*Surface*Conventional energy use)/Income \)</span>$</p>
+<p>Figure 10 compares the relationship used in Res-IRF version 3.0 with that used in version 2.0, based on an average
+surface area of 85m² and an average annual income of €30,000. The new relationship is less steep, reflecting a
+compensating effect of income on energy prices (both leading to a leftward shift on the horizontal axis). With this new
+formula, the aggregate heating intensity in Res-IRF is now 0.74 at the initial year, instead of 0.55 in the previous
+version.</p>
+</section>
+<section id="total-energy-use">
+<h4>Total energy use<a class="headerlink" href="#total-energy-use" title="Permalink to this headline">¶</a></h4>
+<p>The total final actual energy consumption generated by Res-IRF from the Phébus data for the initial year differs from
+the values produced by CEREN. As mentioned above (see Figures 2 and 5), these differences are due to differing scopes
+between the Phébus and CEREN databases and to the adjustments needed to select the main heating fuel (see Section 2.1.4)
+.</p>
+<p>To ensure consistency with the CEREN data, which is the reference commonly used in modelling exercises, Res-IRF is
+calibrated to reproduce the final energy consumption given by CEREN for each fuel in 2012. The resulting conversion
+coefficients are listed in Table 7. They indicate that Res-IRF reproduces natural gas and heating oil consumption fairly
+accurately, with an error of around 5%. On the other hand, electricity consumption is clearly overestimated and
+fuel-wood consumption is greatly underestimated. The succinct documentation of the CEREN database did not allow us to
+clearly identify the reasons for these biases. However, it can reasonably be assumed that they are attributable to the
+procedure for selecting a main heating fuel in Res-IRF, which probably implies some substitution of electricity for wood
+in dwellings that are mainly heated with electricity but use wood as auxiliary heating. The difficulties inherent in
+converting different forms of wood (logs, pellets, etc.) into TWh can also explain the differences observed in wood
+consumption.</p>
+<p>|                                                 |<strong>Electricity</strong>|<strong>Natural gas</strong>|<strong>Fuel oil</strong>|<strong>Fuel wood</strong>|<strong>_
+TOTAL_</strong>|
+|————————————————-|—————|—————|————|————-|———–|
+|<strong>CEREN values to be reproduced in 2012 (TWhEF)</strong>|44.4           |119.7          |55.5        |73.3         |<strong>_
+292.9_</strong>|
+|<strong>Correction factor applied to Res-IRF</strong>         |0.79           |1.06           |1.03        |2.14         |<strong>_
+1.14_</strong> |</p>
+</section>
+</section>
+</section>
+<section id="energy-efficiency-improvements">
+<h2>Energy efficiency improvements<a class="headerlink" href="#energy-efficiency-improvements" title="Permalink to this headline">¶</a></h2>
+<section id="stock-dynamics">
+<h3>Stock dynamics<a class="headerlink" href="#stock-dynamics" title="Permalink to this headline">¶</a></h3>
+<p>The number of dwellings and their surface area are determined each year in Res-IRF by exogenous projections of
+population and aggregate household income projection. The former is based on INSEE (2006); in the absence of an
+authoritative scenario, the latter is based on a growth assumption of 1.2%/year, which extrapolates the trend given by
+INSEE for the period 2009-2013<a class="footnote-reference brackets" href="#dd29" id="id4">4</a>. Based on the annual needs thus determined, the total housing stock is divided
+into two components:</p>
+<ul class="simple">
+<li><p>The stock of “existing dwellings” corresponds to the total stock of the initial year. It is eroded at a rate of
+0.35%/year due to destruction, based on Allaire et al. (2008). Destructions are assumed to affect in priority the
+lowest energy performance labels, based on Traisnel (2001).</p></li>
+<li><p>New constructions are calculated so as to meet housing needs, determined by total projected housing needs net of the
+existing stock. The cumulative sum of new constructions since the initial year constitutes the stock of “new
+dwellings.”</p></li>
+</ul>
+<p>This specification produces a flow of new constructions of 365,000 in 2013, 357,000 in 2014 and 348,000 in 2015, similar
+to the average of 374,000 given by INSEE (2018) over a slightly wider area including the French overseas departments and
+territories, except Mayotte.</p>
+<p>In Res-IRF 2.0, the share of single- and multi-family dwellings was held constant in both existing and new housing
+stocks, but at different levels; it therefore evolved in the total stock by a simple composition effect. These dynamics
+are now more precisely parameterized in Res-IRF 3.0 thanks to recent empirical work linking the increase in the share of
+multi-family housing in the total stock to the rate of growth of the total stock housing growth (Fisch et al., 2015) (
+Figure 11). This relationship in particular reflects urbanization effects. The share of owner-occupied and rented
+dwellings is held constant.</p>
+</section>
+<section id="investment-decisions-general-case">
+<h3>Investment decisions – general case<a class="headerlink" href="#investment-decisions-general-case" title="Permalink to this headline">¶</a></h3>
+<p>The energy performance of the housing stock in Res-IRF is affected by both the construction of new dwellings and the
+renovation of existing ones. Both effects are modelled by discrete choice functions. Generally speaking, the owner of a
+dwelling of initial performance i∈{1…n} chooses to upgrade it to an option of final performance f∈{i+1,…,n} by comparing
+its life-cycle cost to that of other options. The life-cycle cost <span class="math notranslate nohighlight">\(LCC_{i,f}\)</span> of an option is the sum of three terms:
+$<span class="math notranslate nohighlight">\( LCC_{i,f}= INV_{i,f}+ γ * ENER_f + IC_{i,f} \)</span>$</p>
+<p>where INV is the investment cost; ENER is the life-cycle discounted cost of conventional energy use, calculated using
+the energy price for the year under consideration; IC are some “intangible costs,” representing non-energy attributes of
+the investment, such as aesthetic or acoustic benefits, inconvenience generated by insulation works, etc..</p>
+<p>The assumption of myopic expectation, which materializes by applying the discount factor to the contemporaneous energy
+price, is justified by a number of econometric studies (e.g., Anderson et al., 2013). The discount factor γ depends on
+the discount rate r and the investment horizon l according to the following relationship:</p>
+<div class="math notranslate nohighlight">
+\[γ(r,l)=∑_{t=0} (1+r)^{-t} = (1-(1+r)^{-l)})/r\]</div>
+<p>The two parameters are set in Res-IRF so as to capture various barriers to home renovation:</p>
+<ul class="simple">
+<li><p>The discount rate captures both the tighter credit constraints facing lower-income households and the barriers to
+decision-making within homeowner associations.</p></li>
+<li><p>The investment horizon reflects the intensity with which real estate and rental markets capitalize the “green value”
+of the housing, i.e., magnitude of the rental or resale premium for a property that has just undergone energy
+efficiency improvements.</p></li>
+</ul>
+<p>The market share <span class="math notranslate nohighlight">\(MS_{i,f}\)</span> of upgrades from labels i to f, resulting from the aggregation of individual choices, is
+determined by their life-cycle cost from the following equation:</p>
+<div class="math notranslate nohighlight">
+\[ MS_{i,f} = LCC_{i,f}^{-v}/(∑_{k=i+1} LCC_{i,k} ^{-v} ) \]</div>
+<p>Parameter v characterizing the heterogeneity of preferences is set to 8 in the model.<a class="footnote-reference brackets" href="#d4ae" id="id5">5</a>  Intangible costs are
+calibrated so that the observed market shares are reproduced in the initial year.</p>
+<p>The paragraphs thereafter describe in detail the specification of energy efficiency improvements, which are based on two
+types of technical data – the market shares of the different options in the initial year and their investment cost – and
+two types of behavioural data – the discount rate and the investment horizon.</p>
+</section>
+<section id="new-constructions">
+<h3>New constructions<a class="headerlink" href="#new-constructions" title="Permalink to this headline">¶</a></h3>
+<p>Construction costs at the LE and NZ levels have been updated in Res-IRF 3.0 based on estimates recently made available
+by CGDD (2015) <a class="footnote-reference brackets" href="#de8a" id="id6">6</a></p>
+<table class="colwidths-auto docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p><strong>Single-family dwellings</strong></p></th>
+<th class="head"><p><strong>Single-family dwellings</strong></p></th>
+<th class="head"><p><strong>Multi-family dwellings</strong></p></th>
+<th class="head"><p><strong>Multi-family dwellings</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p></p></td>
+<td><p><strong>Low Energy</strong></p></td>
+<td><p><strong>Net Zero Energy</strong></p></td>
+<td><p><strong>Low Energy</strong></p></td>
+<td><p><strong>Net Zero Energy</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>112</p></td>
+<td><p>1 199</p></td>
+<td><p>1 308</p></td>
+<td><p></p></td>
+<td><p><strong>Natural gas</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>1 094</p></td>
+<td><p>1 121</p></td>
+<td><p>1 323</p></td>
+<td><p>1 350</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<p>The market shares used to calibrate intangible costs were also updated, based on trends provided by CEREN (Figure 12).</p>
+<p>The massive penetration of natural gas at the expense of electric heating observed over the past ten years in
+multi-family housing is mainly due to the anticipation and subsequent application of the 2012 building code. In order to
+abstract from short-term variations, the 2012 market shares are set in Res-IRF on the average of the years 2012-2015 (
+Table 9).</p>
+<table class="colwidths-auto docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p><strong>Electricity</strong></p></th>
+<th class="head"><p><strong>Natural gas</strong></p></th>
+<th class="head"><p><strong>Fuel oil</strong></p></th>
+<th class="head"><p><strong>Fuel wood</strong></p></th>
+<th class="head"><p><strong><em>Total</em></strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Single-family dwellings</strong></p></td>
+<td><p>75.3%</p></td>
+<td><p>18.5%</p></td>
+<td><p>0.5%</p></td>
+<td><p>5.8%</p></td>
+<td><p><em>100%</em></p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Multi-family dwellings</strong></p></td>
+<td><p>19.5%</p></td>
+<td><p>79.5%</p></td>
+<td><p>0.0%</p></td>
+<td><p>1.0%</p></td>
+<td><p><em>100%</em></p></td>
+</tr>
+</tbody>
+</table>
+<p>Considering that the quality of new constructions results from decisions made by building and real estate professionals
+rather than by future owners, we subject these decisions in the model to private investment criteria, reflected by a
+discount rate of 7% and a time horizon of 35 years.</p>
+</section>
+<section id="renovation-of-existing-dwellings">
+<h3>Renovation of existing dwellings<a class="headerlink" href="#renovation-of-existing-dwellings" title="Permalink to this headline">¶</a></h3>
+<p>The model simultaneously determines the number of renovations and their performance. The process is therefore more
+complex than in new construction, where the two margins are distinct. For the sake of clarity, we hereafter describe
+them sequentially.</p>
+<section id="intensive-margin">
+<h4>Intensive margin<a class="headerlink" href="#intensive-margin" title="Permalink to this headline">¶</a></h4>
+<p>Renovation costs <span class="math notranslate nohighlight">\(INV_{i,f}\)</span> are described by an upper diagonal matrix linking the initial EPC label i of the dwelling
+to its final label f (Table 10). Parameterization of the matrix is based on piecemeal data supplemented with values
+interpolated according to the following principles:</p>
+<ul class="simple">
+<li><p>Decreasing returns, i.e., increasing incremental cost of renovation: <span class="math notranslate nohighlight">\(INV_{i,f+2}-INV_{i,f+1} &gt; INV_{i,f+1} - INV_
+{i,f}\)</span>.</p></li>
+<li><p>Economies of scale, i.e., deep retrofits costing less than a succession of incremental renovations: <span class="math notranslate nohighlight">\(INV_{i,f} &lt; INV_
+{i,i+k} + INV_{i+k,f}\)</span> for all k such that <span class="math notranslate nohighlight">\(1≤k&lt;f-i\)</span>.</p></li>
+</ul>
+<table class="colwidths-auto docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>Initial / Final label</strong></p></th>
+<th class="head"><p><strong>F</strong></p></th>
+<th class="head"><p><strong>E</strong></p></th>
+<th class="head"><p><strong>D</strong></p></th>
+<th class="head"><p><strong>C</strong></p></th>
+<th class="head"><p><strong>B</strong></p></th>
+<th class="head"><p><strong>A</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>G</strong></p></td>
+<td><p>76</p></td>
+<td><p>136</p></td>
+<td><p>201</p></td>
+<td><p>271</p></td>
+<td><p>351</p></td>
+<td><p>442</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>F</strong></p></td>
+<td><p></p></td>
+<td><p>63</p></td>
+<td><p>130</p></td>
+<td><p>204</p></td>
+<td><p>287</p></td>
+<td><p>382</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>E</strong></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p>70</p></td>
+<td><p>146</p></td>
+<td><p>232</p></td>
+<td><p>331</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>D</strong></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p>79</p></td>
+<td><p>169</p></td>
+<td><p>271</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>C</strong></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p>93</p></td>
+<td><p>199</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>B</strong></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p>110</p></td>
+</tr>
+</tbody>
+</table>
+<hr class="footnotes docutils" />
+<dl class="footnote brackets">
+<dt class="label" id="e630"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
+<dd><p>The acronym Res-IRF stands for the Residential module of IMACLIM-R France. Also developed at CIRED, IMACLIM-R
+France is a general equilibrium model of the French economy (Sassi et al., 2010). The two models are linked in Giraudet
+et al. (2012) and Mathy et al. (2015). The linkage in these papers is ‘soft’ in that it only concerns energy markets:
+Res-IRF sends energy demand to IMACLIM-R France which in turn sends back updated energy prices.</p>
+</dd>
+<dt class="label" id="a"><span class="brackets"><a class="fn-backref" href="#id2">2</a></span></dt>
+<dd><p>See for example Aydin et al (2017). Another explanation sometimes put forward is the pre-bound effect,
+according to which consumption before renovation, from which energy savings are predicted, is overestimated (
+Sunikka-Blank et al., 2012).</p>
+</dd>
+<dt class="label" id="c2"><span class="brackets"><a class="fn-backref" href="#id3">3</a></span></dt>
+<dd><p>The relationaship was: <span class="math notranslate nohighlight">\(intensity of use = 3.5309 *exp(-0.643 *log (conventional expenditure per m2))\)</span></p>
+</dd>
+<dt class="label" id="dd29"><span class="brackets"><a class="fn-backref" href="#id4">4</a></span></dt>
+<dd><p>Based on a gross disposable household income of €1,318.3 billion in
+2012 (https://www.insee.fr/fr/statistiques/2569356?sommaire=2587886).</p>
+</dd>
+<dt class="label" id="d4ae"><span class="brackets"><a class="fn-backref" href="#id5">5</a></span></dt>
+<dd><p>In the absence of data allowing a more precise estimate, this value is set in an ad hoc manner. Sensitivity
+analysis of the model has shown that this parameter only had a small influence on the simulated energy consumption (
+Branger et al., 2015).</p>
+</dd>
+<dt class="label" id="de8a"><span class="brackets"><a class="fn-backref" href="#id6">6</a></span></dt>
+<dd><p>The study does not include information on housing heated with fuel oil or on multi-family homes heated with
+wood. The former are therefore assigned the costs of new buildings heated with natural gas, and the latter the costs of
+single-family homes heated with wood, to which we add the average additional cost of multi-family homes.</p>
+</dd>
+</dl>
+</section>
+</section>
+</section>
+</section>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="contributing.html" class="btn btn-neutral float-right" title="Documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="tutorials.html" class="btn btn-neutral float-left" title="Tutorials Res-IRF fondation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Lucas Vivier.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
