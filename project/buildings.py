@@ -1929,6 +1929,7 @@ class HousingStockRenovated(HousingStock):
         weight = val2share(self.stock_seg, levels, option='column')
         rho_temp = rho.unstack(['Income class', 'Heating energy', 'Income class owner'])
         rho_weighted = (weight * rho_temp).fillna(0).sum(axis=1)
+        # rho = reindex_mi(rho_weighted, npv.index)
 
         """self.rho = rho
         renovation_rate_bis = self.to_renovation_rate(energy_prices,

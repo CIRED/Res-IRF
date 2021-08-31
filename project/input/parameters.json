@@ -143,7 +143,59 @@
       "Occupancy status"
     ],
     "type": "pd.DataFrame"
-  }
+  },
+  "Probability disease performance": {
+    "val": {
+      "G": 0.34,
+      "F": 0.22,
+      "E": 0,
+      "D": 0,
+      "C": 0,
+      "B": 0,
+      "A": 0
+    },
+    "index": [
+      "Energy performance"
+    ],
+    "type": "pd.Series"
+  },
+  "Probability disease income 2018": {
+    "val": {
+      "D1": 0.143,
+      "D2": 0.143,
+      "D3": 0.143,
+      "D4": 0.003,
+      "D5": 0.003,
+      "D6": 0.003,
+      "D7": 0.003,
+      "D8": 0.003,
+      "D9": 0.003,
+      "D10": 0.003
+    },
+    "index": [
+      "Income class"
+    ],
+    "type": "pd.Series"
+  },
+  "Probability disease income 2012": {
+    "val": {
+      "C1": 0.143,
+      "C2": 0.03,
+      "C3": 0.003,
+      "C4": 0.003,
+      "C5": 0.003
+    },
+    "index": [
+      "Income class"
+    ],
+    "type": "pd.Series"
+  },
+  "Probability death after disease": 0.03,
+  "Cost disease": 6000,
+  "Cost disease rate": 0.01,
+  "Cost welfare": 22000,
+  "Cost life": 3400000,
+  "Opportunity cost factor": 0.2
 }
 
 

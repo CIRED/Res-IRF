@@ -36,10 +36,21 @@ Results are mainly .pkl (serialize format by the pickle library) or .csv file, a
 NB: One file 'summary.csv' summarize important outputs.
 
 **Step 2: Launch one of the Jupyter Notebook analysis tool**  
-There are 3 main notebooks:
-- `user_interface.ipynb`: macro and micro output analysis.
-- `compare.ipyb`: macro and micro output comparison.
-- `assess_public_poclies.ipyb`: macro and micro output comparison and calculation of efficiency and effectiveness. 
+There are 4 main notebooks:
+- `ui_unique.ipynb`: macro and micro output analysis.
+- `quick_comparison.ipyb`: macro and micro output comparison.
+- `ui_comparison.ipyb`: macro and micro output comparison.
+- `policy_indicator.ipyb`: macro and micro output comparison and calculation of efficiency and effectiveness. 
+
+Other notebooks are in `tutorials_notbook` to insist on a specific Res-IRF functions.
+- `demographic_variables.ipynb`
+- `heating_intensity.ipynb`
+- `information_rate.ipynb`
+- `learning_by_doing.ipynb`
+- `market_share.ipynb`
+- `renovation_dynamics.ipynb`
+- `renovation_rate.ipynb`
+
 
 ## Documentation
 

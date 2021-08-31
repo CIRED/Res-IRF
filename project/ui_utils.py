@@ -782,3 +782,35 @@ def multi_scenario_plot(data, idx_ref, title, xlabel, ylabel, leg=False, version
             # hide the axes frame and the x/y labels
             ax.axis('off')
             plt.show()
+
+
+def policies_stacked_plot(df, save=None):
+    """Make pretty simple Line2D plot.
+
+    Parameters
+    ----------
+    df: pd.DataFrame
+    save: str, optional
+    """
+    fig, ax = plt.subplots(1, 1, figsize=(12.8, 9.6))
+
+    df.plot.area(ax=ax)
+
+    ax.set_ylabel('Total cost (Billions €)')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.xaxis.set_tick_params(which=u'both', length=0)
+    ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+
+    ax.yaxis.set_tick_params(which=u'both', length=0)
+
+    try:
+        ax.get_legend().remove()
+        fig.legend(frameon=False)
+    except AttributeError:
+        pass
+
+    if save is not None:
+        fig.savefig(save)

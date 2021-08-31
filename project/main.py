@@ -14,6 +14,7 @@ from itertools import product
 from buildings import HousingStock, HousingStockRenovated, HousingStockConstructed
 from policies import EnergyTaxes, Subsidies, RegulatedLoan, RenovationObligation
 from parse_output import parse_output, quick_graphs
+from policy_indicators import run_indicators
 
 
 def res_irf(calibration_year, end_year, folder, config, parameters, policies_parameters, attributes, energy_prices_bp,
@@ -382,10 +383,17 @@ if __name__ == '__main__':
     if args.name:
         name_file = os.path.join(folder['input'], args.name)
     with open(name_file) as file:
-        scenarios_dict = json.load(file)
+        config_dict = json.load(file)
+
+    if 'config' in config_dict.keys():
+        config_runs = config_dict['config']
+        del config_dict['config']
+    else:
+        config_runs = dict()
+        config_runs['Policies indicators'] = False
 
     processes_list = []
-    for key, config in scenarios_dict.items():
+    for key, config in config_dict.items():
 
         calibration_year = config['stock_buildings']['year']
 
@@ -420,7 +428,15 @@ if __name__ == '__main__':
     for p in processes_list:
         p.join()
 
+    logging.debug('Creating graphs')
     quick_graphs(folder['output'])
+
+    if config_runs['Policies indicators']:
+        logging.debug('Calculating policies indicators')
+        CO2_value = pd.read_csv(os.path.join(folder['input'], 'CO2_value.csv'), header=None, index_col=[0], squeeze=True)
+        run_indicators(config_runs, folder['output'], CO2_value, parameters)
+
+    # value_CO2 = pd.read_csv(os.path.join(folder['input'], 'value_CO2.csv'), header=None, index_col=[0], squeeze=True)
 
     end = time.time()
     logging.debug('Time for the module: {:,.0f} seconds.'.format(end - start))

@@ -1,6 +1,6 @@
 {
   "Phebus ZP no calib": {
-    "end": 2015,
+    "end": 2016,
     "investor": "Reference",
     "stock_buildings": {
       "source": "project/input/stock_buildings_phebus2012.pkl",
@@ -51,7 +51,7 @@
     "carbon_tax": {
       "activated": true,
       "start": 2012,
-      "end": 2015,
+      "end": 2016,
       "calibration": true
     },
     "carbon_tax_value": {
@@ -65,7 +65,7 @@
     "cite": {
       "activated": true,
       "start": 2012,
-      "end": 2014,
+      "end": 2016,
       "calibration": true
     },
     "cite_plus": {
@@ -77,25 +77,25 @@
     "cee_subsidy": {
       "activated": true,
       "start": 2012,
-      "end": 2012,
+      "end": 2016,
       "calibration": true
     },
     "cee_taxes": {
       "activated": true,
       "start": 2012,
-      "end": 2015,
+      "end": 2016,
       "calibration": true
     },
     "reduced_tax": {
       "activated": true,
       "start": 2012,
-      "end": 2012,
+      "end": 2016,
       "calibration": true
     },
     "eptz": {
       "activated": true,
       "start": 2012,
-      "end": 2012,
+      "end": 2016,
       "calibration": true
     },
     "eptz_plus": {
@@ -111,7 +111,7 @@
       "calibration": false
     },
     "rho": {
-    "source_type": "file",
+    "source_type": "function",
     "source": "project/intermediate/rho_phebus2012.pkl"
   },
     "renovation_rate_ini":{

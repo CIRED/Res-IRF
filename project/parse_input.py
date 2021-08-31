@@ -2,7 +2,7 @@ import pandas as pd
 import os
 import json
 
-from utils import apply_linear_rate, reindex_mi
+from utils import apply_linear_rate, reindex_mi, add_level
 
 
 def dict2series(item_dict):
@@ -407,7 +407,18 @@ def parse_parameters(folder, config, stock_sum):
     parameters['Population housing'] = pd.Series(population_housing)
     parameters['Stock needed'] = pd.Series(stock_needed)
 
-    # 5. Summary
+    # 5. Others
+
+    proba_performance = parameters['Probability disease performance']
+    proba_income = parameters['Probability disease income {}'.format(calibration_year)]
+
+    proba_performance = add_level(proba_performance, proba_income.index, axis=0)
+    proba_income = reindex_mi(proba_income, proba_performance.index)
+    parameters['Probability disease'] = proba_performance * proba_income
+    parameters['Cost disease'] = apply_linear_rate(parameters['Cost disease'], parameters['Cost disease rate'],
+                                                   index_input_year)
+
+    # 6. Summary
 
     summary_param = dict()
     summary_param['Total population (Millions)'] = parameters['Population'] / 10**6

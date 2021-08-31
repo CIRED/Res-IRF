@@ -299,7 +299,6 @@ def parse_output(output, buildings, buildings_constructed, energy_prices, energy
         result['{} (€)'.format(key)] = tax
     summary_taxes = pd.DataFrame(result)
 
-
     # 3. Quick summary
     summary = dict()
     summary['Stock'] = output_stock['Stock'].sum(axis=0)
@@ -327,11 +326,15 @@ def parse_output(output, buildings, buildings_constructed, energy_prices, energy
     summary = pd.DataFrame(summary)
     summary.dropna(axis=0, thresh=4, inplace=True)
 
+    summary_policies = - summary_taxes
     if buildings.policies_total[('Energy performance',)] != {}:
+        summary_policies = pd.concat((summary_policies, summary_subsidies), axis=1)
         summary = pd.concat((summary, summary_subsidies), axis=1)
 
     summary = pd.concat((summary, summary_taxes), axis=1)
     summary.to_csv(os.path.join(folder_output, 'summary.csv'))
+    summary_policies.to_csv(os.path.join(folder_output, 'summary_policies.csv'))
+    policies_stacked_plot(summary_policies / 10**9, save=os.path.join(folder_output, 'summary_policies.png'))
 
     detailed = dict()
     df = (output_stock['Consumption actual (kWh)'].groupby('Heating energy').sum().T * coefficient).T
