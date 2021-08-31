@@ -1,13 +1,11 @@
 import pandas as pd
 import os
 import pickle
+
 from buildings import HousingStock
 from utils import reindex_mi
 from collections import defaultdict
-
-"""name_file = os.path.join(os.getcwd(), sources_dict['colors']['source'])
-with open(name_file) as file:
-    colors_dict = json.load(file)"""
+from ui_utils import *
 
 
 def reverse_dict(data):
@@ -142,8 +140,8 @@ def parse_subsidies(buildings, flow_renovation):
     return summary_subsidies, subsides_dict_copy, subsides_year
 
 
-def parse_output(output, buildings, buildings_constructed, energy_prices, energy_taxes, co2_content_data, coefficient,
-                 folder_output, lbd_output=False):
+def parse_output(output, buildings, buildings_constructed, energy_prices, energy_taxes, energy_taxes_detailed,
+                 co2_content_data, coefficient, folder_output, lbd_output=False):
     """Parse Res-IRF output to return understandable data.
 
     Main output are segmented in 2 categories (stock, and transition flow).
@@ -286,12 +284,21 @@ def parse_output(output, buildings, buildings_constructed, energy_prices, energy
     output_flow_transition['Subsidies (€)'] = output_flow_transition['Flow transition (m2)'] * output_flow_transition['Subsidies (€/m2)']
 
     flow_renovation_label = dict_pd2df(buildings.flow_renovation_label_dict)
-    area = reindex_mi(buildings.label2area, flow_renovation_label.index)
+    area = reindex_mi(buildings.attributes2area, flow_renovation_label.index)
     flow_renovation_label = (flow_renovation_label.T * area).T
     if buildings.policies_total[('Energy performance',)] != {}:
         summary_subsidies, output_subsides_year, output_subsides = parse_subsidies(buildings, flow_renovation_label)
         pickle.dump(output_subsides_year, open(os.path.join(folder_output, 'output_subsides_year.pkl'), 'wb'))
         pickle.dump(output_subsides, open(os.path.join(folder_output, 'output_subsides.pkl'), 'wb'))
+
+    result = dict()
+    for key, item in energy_taxes_detailed.items():
+        key = key.replace('_', ' ').capitalize()
+        df = (output_stock['Consumption actual (kWh)'].groupby('Heating energy').sum().T * coefficient).T
+        tax = (df * item).dropna(axis=1).sum()
+        result['{} (€)'.format(key)] = tax
+    summary_taxes = pd.DataFrame(result)
+
 
     # 3. Quick summary
     summary = dict()
@@ -323,6 +330,7 @@ def parse_output(output, buildings, buildings_constructed, energy_prices, energy
     if buildings.policies_total[('Energy performance',)] != {}:
         summary = pd.concat((summary, summary_subsidies), axis=1)
 
+    summary = pd.concat((summary, summary_taxes), axis=1)
     summary.to_csv(os.path.join(folder_output, 'summary.csv'))
 
     detailed = dict()
@@ -331,16 +339,16 @@ def parse_output(output, buildings, buildings_constructed, energy_prices, energy
     taxes_expenditure = (df * energy_taxes).dropna(axis=1).sum() / 10 ** 9
 
     detailed['Consumption actual (TWh)'] = df.sum() / 10**9
-    for energy in buildings.levels_values['Heating energy']:
+    for energy in buildings.attributes_values['Heating energy']:
         detailed['Consumption {} (TWh)'.format(energy)] = df.loc[energy, :] / 10**9
         
     detailed['Heating intensity (%)'] = (output_stock['Heating intensity (%)'] * output_stock['Stock']).sum(axis=0) / output_stock['Stock'].sum(axis=0)
     df = (output_stock['Heating intensity (%)'] * output_stock['Stock']).groupby('Income class').sum() / output_stock['Stock'].groupby('Income class').sum()
-    for income in buildings.levels_values['Income class']:
+    for income in buildings.attributes_values['Income class']:
         detailed['Heating intensity {} (%)'.format(income)] = df.loc[income, :]
 
     detailed['Stock (Thousands)'] = output_stock['Stock'].sum(axis=0) / 10**3
-    for label in buildings.levels_values['Energy performance'] + buildings_constructed.levels_values['Energy performance']:
+    for label in buildings.attributes_values['Energy performance'] + buildings_constructed.attributes_values['Energy performance']:
         detailed['Stock {} (Thousands)'.format(label)] = output_stock['Stock'].groupby('Energy performance').sum().loc[
                                                          label, :] / 1000
     detailed['Flow renovation (Thousands)'] = output_flow_transition['Flow transition'].sum(axis=0) / 10**3
@@ -348,6 +356,13 @@ def parse_output(output, buildings, buildings_constructed, energy_prices, energy
     detailed.update(gap_number(flow_renovation))
     df = flow_renovation.groupby(['Occupancy status', 'Housing type']).sum()
     df.index = df.index.values
+
+    temp = buildings.rate_renovation_ini
+    temp = temp.groupby(['Occupancy status', 'Housing type']).mean()
+    temp.name = 2012
+    temp = pd.concat((temp, dict_pd2df(buildings.renovation_rate_dm)), axis=1)
+    for dm in temp.index:
+        detailed['Renovation rate {} (%)'.format(dm)] = temp.loc[dm, : ]
 
     detailed['Annual renovation expenditure (Billions €)'] = output_flow_transition['Capex (€)'].sum(axis=0) / 10**9
     detailed['Annual subsidies (Billions €)'] = output_flow_transition['Subsidies (€)'].sum(axis=0) / 10**9
@@ -357,6 +372,7 @@ def parse_output(output, buildings, buildings_constructed, energy_prices, energy
     detailed['Share energy poverty (%)'] = output_stock['Stock'][output_stock['Budget share (%)'] > 0.1].sum(axis=0) / output_stock['Stock'].sum(axis=0)
 
     detailed = pd.DataFrame(detailed).dropna(how='all', axis=0).T
+    # detailed.index = detailed.index.astype('int64')
 
     if lbd_output:
         temp = pd.DataFrame(buildings.stock_knowledge_ep_dict) / 10**6
@@ -376,3 +392,47 @@ def parse_output(output, buildings, buildings_constructed, energy_prices, energy
     pickle.dump(output_stock, open(os.path.join(folder_output, 'output_stock.pkl'), 'wb'))
 
 
+def quick_graphs(folder_output):
+    """
+    Returns main comparison graphs.
+
+    - What could be the evolution of actual energy consumption?
+    - How many renovation (of at least 1 EPC) could there be by 2050?
+    - What could be the evolution of stock energy performance by 2050?
+    - What could be the heating intensity by 2050?
+    - How many energy poverty households could there be by 2050?
+
+    Parameters
+    ----------
+    folder_output: str
+    """
+
+    scenarios = [f for f in os.listdir(folder_output) if f not in ['log.txt', '.DS_Store']]
+    folders = {scenario: os.path.join(folder_output, scenario) for scenario in scenarios}
+    sns.set_palette(sns.color_palette('husl', len(scenarios)))
+
+    summaries = {scenario: pd.read_csv(os.path.join(folders[scenario], 'summary.csv'), index_col=[0]) for scenario in
+                 scenarios}
+    summaries = reverse_nested_dict(summaries)
+    summaries = {key: pd.DataFrame(item) for key, item in summaries.items()}
+
+    output_stock = {scenario: pickle.load(open(os.path.join(folders[scenario], 'output_stock.pkl'), 'rb')) for scenario
+                    in scenarios}
+    output_stock = reverse_nested_dict(output_stock)
+
+    simple_pd_plot(summaries['Consumption actual (kWh)'] / 10 ** 9, 'Years', 'Consumption actual (TWh)',
+                   save=os.path.join(folder_output, 'consumption_actual.png'))
+
+    simple_pd_plot(summaries['Heating intensity renovation (%)'], 'Years', 'Heating intensity (%)', format_y='percent',
+                   save=os.path.join(folder_output, 'heating_intensity.png'))
+
+    simple_pd_plot(summaries['Flow transition renovation'] / 10 ** 3, 'Years', 'Flow renovation (Thousands)',
+                   save=os.path.join(folder_output, 'flow_renovation.png'))
+
+    scenario_grouped_subplots(grouped_scenarios(output_stock['Stock - Renovation'], 'Energy performance'),
+                              suptitle='Evolution buildings stock (Millions)',
+                              format_y=lambda y, _: '{:,.0f}'.format(y / 10 ** 6), n_columns=7, rotation=90, nbins=4,
+                              save=os.path.join(folder_output, 'stock_performance.png'))
+
+    simple_pd_plot(summaries['Energy poverty'] / 10 ** 6, 'Years', 'Energy poverty (Millions)',
+                   save=os.path.join(folder_output, 'energy_poverty.png'))

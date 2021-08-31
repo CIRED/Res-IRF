@@ -1,5 +1,5 @@
 {
-  "levels_dict": {
+  "attributes_dict": {
     "Occupancy status": [
       "Homeowners",
       "Landlords",
@@ -23,11 +23,16 @@
       "BEPOS"
     ],
     "Income class": [
-      "C1",
-      "C2",
-      "C3",
-      "C4",
-      "C5"
+      "D1",
+      "D2",
+      "D3",
+      "D4",
+      "D5",
+      "D6",
+      "D7",
+      "D8",
+      "D9",
+      "D10"
     ],
     "Heating energy": [
       "Power",
@@ -37,7 +42,7 @@
     ],
     "type": "dict"
   },
-  "label2area": {
+  "attributes2area": {
     "val": {
       "Homeowners": {
         "Single-family": 109.5,
@@ -59,7 +64,7 @@
     "type": "pd.Series",
     "unit": "m2"
   },
-  "label2area_construction": {
+  "attributes2area_construction": {
     "val": {
       "Homeowners": {
         "Single-family": 132,
@@ -81,7 +86,7 @@
     "type": "pd.Series",
     "unit": "m2/buildings"
   },
-  "label2primary_consumption": {
+  "attributes2primary_consumption": {
     "val": {
       "G": 596,
       "F": 392,
@@ -97,7 +102,7 @@
     "type": "pd.Series",
     "unit": "kWh/m2.yr"
   },
-  "label2primary_consumption_construction": {
+  "attributes2primary_consumption_construction": {
     "val": {
       "BBC": 50,
       "BEPOS": 40
@@ -108,7 +113,7 @@
     "type": "pd.Series",
     "unit": "kWh/m2.yr"
   },
-  "label2horizon_envelope": {
+  "attributes2horizon_envelope": {
     "Green value": {
       "type": "int", "val": 30
     },
@@ -150,7 +155,7 @@
     },
     "type": "dict_to_parse"
   },
-  "label2horizon_heater": {
+  "attributes2horizon_heater": {
     "Green value": {
       "type": "float", "val": 16
     },
@@ -189,8 +194,8 @@
     },
     "type": "dict_to_parse"
   },
-  "label2horizon_construction": 35,
-  "label2heater": {
+  "attributes2horizon_construction": 35,
+  "attributes2heater": {
     "val": {
       "G": 0.85,
       "F": 0.82,
@@ -206,7 +211,7 @@
     "type": "pd.Series",
     "unit": "%"
   },
-  "label2heater_construction": {
+  "attributes2heater_construction": {
     "val": {
       "BBC": 0.4,
       "BEPOS": 0.4
@@ -217,29 +222,54 @@
     "type": "pd.Series",
     "unit": "%"
   },
-  "label2discount": {
+  "attributes2discount": {
     "val": {
-      "C1": {
+      "D1": {
         "Single-family": 0.15,
         "Multi-family": 0.37,
         "Social-housing": 0.04
       },
-      "C2": {
+      "D2": {
+        "Single-family": 0.15,
+        "Multi-family": 0.37,
+        "Social-housing": 0.04
+      },
+      "D3": {
         "Single-family": 0.1,
         "Multi-family": 0.24,
         "Social-housing": 0.04
       },
-      "C3": {
+      "D4": {
+        "Single-family": 0.1,
+        "Multi-family": 0.24,
+        "Social-housing": 0.04
+      },
+      "D5": {
         "Single-family": 0.07,
         "Multi-family": 0.15,
         "Social-housing": 0.04
       },
-      "C4": {
+      "D6": {
+        "Single-family": 0.07,
+        "Multi-family": 0.15,
+        "Social-housing": 0.04
+      },
+      "D7": {
         "Single-family": 0.05,
         "Multi-family": 0.07,
         "Social-housing": 0.04
       },
-      "C5": {
+      "D8": {
+        "Single-family": 0.05,
+        "Multi-family": 0.07,
+        "Social-housing": 0.04
+      },
+      "D9": {
+        "Single-family": 0.04,
+        "Multi-family": 0.05,
+        "Social-housing": 0.04
+      },
+      "D10": {
         "Single-family": 0.04,
         "Multi-family": 0.05,
         "Social-housing": 0.04
@@ -252,7 +282,7 @@
     "unit": "%/yr",
     "type": "pd.Series"
   },
-  "label2discount_construction": {
+  "attributes2discount_construction": {
     "val": {
       "Single-family": {
         "Homeowners": 0.07,
@@ -272,13 +302,23 @@
     "type": "pd.Series",
     "unit": "%/yr"
   },
-  "label2income": {
+  "attributes2income": {
     "val": {
-      "C1": 14103,
-      "C2": 21002,
-      "C3": 29294,
-      "C4": 41094,
-      "C5": 61300
+      "D1": 13628,
+      "D2": 20391,
+      "D3": 24194,
+      "D4": 27426,
+      "D5": 31139,
+      "D6": 35178,
+      "D7": 39888,
+      "D8": 45400,
+      "D9": 54309,
+      "D10": 92735,
+      "C1": 17009,
+      "C2": 25810,
+      "C3": 33159,
+      "C4": 42643,
+      "C5": 73523
     },
     "index": [
       "Income class"
@@ -286,7 +326,7 @@
     "type": "pd.Series",
     "unit": "€"
   },
-  "label2final_energy": {
+  "attributes2final_energy": {
     "val": {
       "Power": 2.58,
       "Natural gas": 1,

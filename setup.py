@@ -5,7 +5,7 @@ with open("README.md", 'r') as f:
 
 setup(
    name='Res-IRF',
-   version='1.0',
+   version='4.0',
    description='Building Energy Model',
    license="GNU GENERAL PUBLIC LICENSE",
    long_description=long_description,

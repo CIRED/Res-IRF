@@ -5,7 +5,7 @@ from scipy.optimize import fsolve
 from copy import deepcopy
 from itertools import product
 
-from utils import reindex_mi, val2share, logistic, get_levels_values, remove_rows, add_level, de_aggregate_series, de_aggregating_series, de_aggregate_columns
+from utils import reindex_mi, val2share, logistic, get_levels_values, remove_rows, add_level, de_aggregate_series
 
 # TODO: calibration_renovation_rate // rho should depends on Income class owner and Heating energy initial
 # TODO: clean HousingStockConstructed
@@ -16,19 +16,19 @@ from utils import reindex_mi, val2share, logistic, get_levels_values, remove_row
 class HousingStock:
     """Class represents housing stocks. Housing is a building and household/owner archetype.
 
-    Attributes
+    AttributesAttributes
     ----------
     stock_seg : pd.Series
         MultiIndex pd.Series that contains the number of archetypes by attribute
-    label2area : pd.Series
+    attributes2area : pd.Series
         pd.Series that returns area (m2) of the building based on archetypes attribute
-    label2horizon : pd.Series
+    attributes2horizon : pd.Series
         pd.Series that returns investment horizon (yrs) of the building owner based on archetypes attribute
-    label2discount : pd.Series
+    attributes2discount : pd.Series
         pd.Series that returns discount rate (%/yr) of the building owner based on archetypes attribute
-    label2income : pd.Series
+    attributes2income : pd.Series
         pd.Series that returns income (€/yr) of the building owner based on archetypes attribute
-    label2consumption : pd.Series
+    attributes2consumption : pd.Series
         pd.Series that returns conventional consumption (kWh/m2.yr) of the building based on archetypes attribute
 
     Methods
@@ -37,13 +37,13 @@ class HousingStock:
         returns actual consumption considering household specific behavior
     """
 
-    def __init__(self, stock_seg, levels_values,
+    def __init__(self, stock_seg, attributes_values,
                  year=2018,
-                 label2area=None,
-                 label2horizon=None,
-                 label2discount=None,
-                 label2income=None,
-                 label2consumption=None,
+                 attributes2area=None,
+                 attributes2horizon=None,
+                 attributes2discount=None,
+                 attributes2income=None,
+                 attributes2consumption=None,
                  price_behavior='myopic'):
         """Initialize Housing Stock object.
 
@@ -51,18 +51,18 @@ class HousingStock:
         ----------
         stock_seg : pd.Series
             MultiIndex levels describing buildings attributes. Values are number of buildings.
-        levels_values: dict
+        attributes_values: dict
             possible values for levels
         year: int
-        label2area: float, pd.Series, pd.DataFrame, dict, optional
+        attributes2area: float, pd.Series, pd.DataFrame, dict, optional
             area by segments
-        label2horizon: float, pd.Series, pd.DataFrame, dict, optional
+        attributes2horizon: float, pd.Series, pd.DataFrame, dict, optional
             investment horizon by segments
-        label2discount: float, pd.Series, pd.DataFrame, dict, optional
+        attributes2discount: float, pd.Series, pd.DataFrame, dict, optional
             interest rate by segments
-        label2income: float, pd.Series, pd.DataFrame, dict, optional
+        attributes2income: float, pd.Series, pd.DataFrame, dict, optional
             income by segments
-        label2consumption: float, pd.Series, pd.DataFrame, dict, optional
+        attributes2consumption: float, pd.Series, pd.DataFrame, dict, optional
             consumption by segments
         """
 
@@ -78,13 +78,13 @@ class HousingStock:
         self._dimension = len(self._stock_seg.index.names)
 
         # explains what kind of levels needs to be used
-        self.levels_values = levels_values
+        self.attributes_values = attributes_values
 
-        self.label2area = label2area
-        self.label2horizon = label2horizon
-        self.label2discount = label2discount
-        self.label2income = label2income
-        self.label2consumption = label2consumption
+        self.attributes2area = attributes2area
+        self.attributes2horizon = attributes2horizon
+        self.attributes2discount = attributes2discount
+        self.attributes2income = attributes2income
+        self.attributes2consumption = attributes2consumption
 
         self.discount_rate = None
         self.horizon = None
@@ -178,29 +178,29 @@ class HousingStock:
         self.stock_seg = new_stock.copy()
 
     @staticmethod
-    def _label2(segments, label2, scenario=None):
-        """Returns segmented value based on self._segments and by using label2 table.
+    def _attributes2(segments, attributes2, scenario=None):
+        """Returns segmented value based on self._segments and by using attributes2 table.
 
         Parameters
         ----------
-        label2: float, pd.Series, pd.DataFrame, dict
+        attributes2: float, pd.Series, pd.DataFrame, dict
         scenario: str, optional
 
         Returns
         -------
         pd.Series or pd.DataFrame
         """
-        if isinstance(label2, dict):
+        if isinstance(attributes2, dict):
             if scenario is None:
-                val = label2[list(label2.keys())[0]]
+                val = attributes2[list(attributes2.keys())[0]]
                 val = reindex_mi(val, segments)
             else:
-                if isinstance(label2[scenario], float) or isinstance(label2[scenario], int):
-                    val = pd.Series(label2[scenario], index=segments)
+                if isinstance(attributes2[scenario], float) or isinstance(attributes2[scenario], int):
+                    val = pd.Series(attributes2[scenario], index=segments)
                 else:
-                    val = reindex_mi(label2[scenario], segments)
+                    val = reindex_mi(attributes2[scenario], segments)
         else:
-            val = label2
+            val = attributes2
 
         if isinstance(val, float) or isinstance(val, int):
             val = pd.Series(val, index=segments)
@@ -211,41 +211,41 @@ class HousingStock:
     def to_stock_area_seg(self, scenario=None, segments=None):
         """Suppose that area_seg levels are included in self.levels.
         """
-        if self.label2area is None:
-            raise AttributeError('Need to define a table from labels2area')
+        if self.attributes2area is None:
+            raise AttributeError('Need to define a table from attributes2area')
         if segments is None:
             segments = self._segments
-        area = HousingStock._label2(segments, self.label2area, scenario=scenario)
+        area = HousingStock._attributes2(segments, self.attributes2area, scenario=scenario)
         return area * self._stock_seg
 
     def to_income(self, scenario=None, segments=None):
-        if self.label2income is None:
-            raise AttributeError('Need to define a table from label2income')
+        if self.attributes2income is None:
+            raise AttributeError('Need to define a table from attributes2income')
         if segments is None:
             segments = self._segments
-        return HousingStock._label2(segments, self.label2income, scenario=scenario)
+        return HousingStock._attributes2(segments, self.attributes2income, scenario=scenario)
 
     def to_area(self, scenario=None, segments=None):
-        if self.label2area is None:
-            raise AttributeError('Need to define a table from label2area')
+        if self.attributes2area is None:
+            raise AttributeError('Need to define a table from attributes2area')
         if segments is None:
             segments = self._segments
-        return HousingStock._label2(segments, self.label2area, scenario=scenario)
+        return HousingStock._attributes2(segments, self.attributes2area, scenario=scenario)
 
     def to_horizon(self, scenario=None, segments=None):
-        if self.label2horizon is None:
-            raise AttributeError('Need to define a table from label2horizon')
+        if self.attributes2horizon is None:
+            raise AttributeError('Need to define a table from attributes2horizon')
         if segments is None:
             segments = self._segments
-        horizon = HousingStock._label2(segments, self.label2horizon, scenario=scenario)
+        horizon = HousingStock._attributes2(segments, self.attributes2horizon, scenario=scenario)
         return horizon
 
     def to_discount_rate(self, scenario=None, segments=None):
-        if self.label2discount is None:
-            raise AttributeError('Need to define a table from label2horizon')
+        if self.attributes2discount is None:
+            raise AttributeError('Need to define a table from attributes2horizon')
         if segments is None:
             segments = self._segments
-        discount_rate = HousingStock._label2(segments, self.label2discount, scenario=scenario)
+        discount_rate = HousingStock._attributes2(segments, self.attributes2discount, scenario=scenario)
         return discount_rate
 
     def to_discount_factor(self, scenario_horizon=None, scenario_discount=None, segments=None):
@@ -299,11 +299,11 @@ class HousingStock:
         if self.consumption_conventional is not None:
             return self.consumption_conventional
         else:
-            if self.label2consumption is None:
-                raise AttributeError('Need to define a table from label2consumption')
+            if self.attributes2consumption is None:
+                raise AttributeError('Need to define a table from attributes2consumption')
             if segments is None:
                 segments = self._segments
-            return HousingStock._label2(segments, self.label2consumption, scenario=scenario)
+            return HousingStock._attributes2(segments, self.attributes2consumption, scenario=scenario)
 
     def to_consumption_actual(self, energy_prices, detailed_output=False, segments=None):
         """Return energy consumption for every segment and all years.
@@ -501,7 +501,7 @@ class HousingStock:
         """Return segmented energy-life-cycle-cost discounted from segments, and energy prices year=yr.
 
         Energy LCC is calculated on an segment-specific horizon, and using a segment-specific discount rate.
-        Because, time horizon depends of type of renovation (label, or heating energy), lcc needs to know which transition.
+        Because, time horizon depends of type of renovation (attributes, or heating energy), lcc needs to know which transition.
         NB: transition defined the investment horizon.
         Energy LCC depends on (Occupancy status, Housing type, Income class owner, Energy performance, Heating energy,
         and transition).
@@ -541,7 +541,7 @@ class HousingStock:
                 energy_lcc.sort_index(inplace=True)
             else:
                 # TODO energy_cash_flows if consumption='conventional' from ds to df
-                energy_cost_discounted_seg = HousingStock.to_discounted(energy_cash_flows, self.label2discount)
+                energy_cost_discounted_seg = HousingStock.to_discounted(energy_cash_flows, self.attributes2discount)
                 energy_lcc = HousingStock.to_summed(energy_cost_discounted_seg, self.year, self.to_horizon(scenario=tuple(transition)))
 
             self.energy_lcc[tuple(transition)][consumption][self.year] = energy_lcc
@@ -566,8 +566,8 @@ class HousingStock:
 
         if isinstance(transition, list):
             for t in transition:
-                ds = pd.concat([ds] * len(self.levels_values[t]),
-                               keys=self.levels_values[t], names=['{} final'.format(t)], axis=1)
+                ds = pd.concat([ds] * len(self.attributes_values[t]),
+                               keys=self.attributes_values[t], names=['{} final'.format(t)], axis=1)
             return ds
         else:
             raise AttributeError('transition should be a list')
@@ -760,7 +760,7 @@ class HousingStock:
                 index = segments
                 for t in transition:
                     if t not in segments.names:
-                        index = add_level(pd.Series(dtype='float64', index=index), pd.Index(self.levels_values[t], name=t)).index
+                        index = add_level(pd.Series(dtype='float64', index=index), pd.Index(self.attributes_values[t], name=t)).index
 
             energy_lcc = self.to_energy_lcc(energy_prices, transition=transition, consumption=consumption,
                                             segments=index)
@@ -783,7 +783,7 @@ class HousingStock:
             keys are transition (cost_intangible['Energy performance']) and item are pd.DataFrame
         consumption: {'conventional', 'actual'}, default 'conventional
         transition: list, default ['Energy performance']
-            define transition. Transition can be defined as label transition, energy transition, or label-energy transition.
+            define transition. Transition can be defined as attributes transition, energy transition, or attributes-energy transition.
         policies: list, optional
             list of Policies object
         segments: pd.MultiIndex, optional
@@ -810,8 +810,8 @@ class HousingStock:
                 c = reindex_mi(cost_invest[t], lcc_final_seg.index)
                 c = reindex_mi(c, lcc_final_seg.columns, c.columns.names, axis=1)
                 if capex_total is None:
-                    capex_total = c
-                    capex = c
+                    capex_total = c.copy()
+                    capex = c.copy()
                 else:
                     capex_total += c
                     capex += c
@@ -822,7 +822,7 @@ class HousingStock:
                     c.fillna(0, inplace=True)
                     capex_total += c
                     if capex_intangible is None:
-                        capex_intangible = c
+                        capex_intangible = c.copy()
                     else:
                         capex_intangible += c
 
@@ -1015,7 +1015,7 @@ class HousingStock:
         lcc_final.reset_index(level='Income class', drop=True, inplace=True)
         lcc_final = lcc_final[~lcc_final.index.duplicated(keep='first')]
 
-        # remove idx when label = 'A' (no transition) and label = 'B' (intangible_cost = 0)
+        # remove idx when certificate = 'A' (no transition) and certificate = 'B' (intangible_cost = 0)
         lcc_useful = remove_rows(lcc_final, 'Energy performance', 'A')
         lcc_useful = remove_rows(lcc_useful, 'Energy performance', 'B')
 
@@ -1071,20 +1071,20 @@ class HousingStock:
         step = 0.01
 
         idx_list, lambda_list, intangible_list = [], [], []
-        num_label = list(lcc_final.index.names).index('Energy performance')
+        num_certificate = list(lcc_final.index.names).index('Energy performance')
         for idx in lcc_useful.index:
-            num_ini = self.levels_values['Energy performance'].index(idx[num_label])
-            labels_final = self.levels_values['Energy performance'][num_ini + 1:]
-            # intangible cost would be for index = idx, and labels_final.
+            num_ini = self.attributes_values['Energy performance'].index(idx[num_certificate])
+            certificate_final = self.attributes_values['Energy performance'][num_ini + 1:]
+            # intangible cost would be for index = idx, and certificate_final.
             for lambda_current in range(int(lambda_min * 100), int(lambda_max * 100), int(step * 100)):
                 lambda_current = lambda_current / 100
-                lcc_row_np = lcc_final.loc[idx, labels_final].to_numpy()
-                ms_obj_np = ms_obj_approx.loc[idx, labels_final].to_numpy()
+                lcc_row_np = lcc_final.loc[idx, certificate_final].to_numpy()
+                ms_obj_np = ms_obj_approx.loc[idx, certificate_final].to_numpy()
                 ier, root = solve_intangible_cost(lambda_current, lcc_row_np, ms_obj_np)
                 if ier == 1:
                     lambda_list += [lambda_current]
                     idx_list += [idx]
-                    intangible_list += [pd.Series(root ** 2, index=labels_final)]
+                    intangible_list += [pd.Series(root ** 2, index=certificate_final)]
                     # func(root, lcc_row_np, ms_obj_np, lambda_current)
                     break
 
@@ -1096,7 +1096,7 @@ class HousingStock:
         assert len(lcc_useful.index) == len(idx_list), "Calibration didn't work for all segments"
 
         # adding Income class that have been removed first
-        intangible_cost = add_level(intangible_cost, pd.Index(self.levels_values['Income class'], name='Income class'),
+        intangible_cost = add_level(intangible_cost, pd.Index(self.attributes_values['Income class'], name='Income class'),
                                     axis=0)
 
         return intangible_cost
@@ -1255,9 +1255,9 @@ class HousingStock:
             self.consumption_conventional,
             energy_price)
         self.energy_cash_flows_disc['actual'] = HousingStock.to_discounted(
-            self.energy_cash_flows['actual'], self.label2discount)
+            self.energy_cash_flows['actual'], self.attributes2discount)
         self.energy_cash_flows_disc['conventional'] = HousingStock.to_discounted(
-            self.energy_cash_flows['conventional'], self.label2discount)
+            self.energy_cash_flows['conventional'], self.attributes2discount)
 
     @staticmethod
     def to_share_multi_family_tot(stock_needed, param):
@@ -1318,21 +1318,21 @@ class HousingStock:
         """
 
         if levels == 'all':
-            tpl = (self.levels_values.values())
-            tpl_names = self.levels_values.keys()
+            tpl = (self.attributes_values.values())
+            tpl_names = self.attributes_values.keys()
         else:
-            tpl = (self.levels_values[lvl] for lvl in levels)
+            tpl = (self.attributes_values[lvl] for lvl in levels)
             tpl_names = levels
 
         idx_all = pd.MultiIndex.from_tuples(list(product(*tuple(tpl))))
         idx_all.names = tpl_names
-        building_all = HousingStock(pd.Series(0, index=idx_all), self.levels_values,
+        building_all = HousingStock(pd.Series(0, index=idx_all), self.attributes_values,
                                     year=self.year,
-                                    label2area=self.label2area,
-                                    label2horizon=self.label2horizon,
-                                    label2discount=self.label2discount,
-                                    label2income=self.label2income,
-                                    label2consumption=self.label2consumption,
+                                    attributes2area=self.attributes2area,
+                                    attributes2horizon=self.attributes2horizon,
+                                    attributes2discount=self.attributes2discount,
+                                    attributes2income=self.attributes2income,
+                                    attributes2consumption=self.attributes2consumption,
                                     price_behavior=self._price_behavior)
 
         self.area_all = building_all.to_area()
@@ -1343,7 +1343,7 @@ class HousingStock:
         energy_cash_flows = HousingStock.mul_consumption(consumption_conventional, energy_price)
         self.energy_cash_flows_all['conventional'] = energy_cash_flows
         self.energy_cash_flows_disc_all['conventional'] = HousingStock.to_discounted(energy_cash_flows,
-                                                                                     building_all.label2discount)
+                                                                                     building_all.attributes2discount)
 
 
 class HousingStockRenovated(HousingStock):
@@ -1369,18 +1369,19 @@ class HousingStockRenovated(HousingStock):
         _stock_seg_mobile & _stock_seg_mobile_dict
     """
 
-    def __init__(self, stock_seg, levels_values, year=2018,
+    def __init__(self, stock_seg, attributes_values, year=2018,
                  residual_rate=0.0, destruction_rate=0.0,
                  rate_renovation_ini=None, learning_year=None,
                  npv_min=None, rate_max=None, rate_min=None,
-                 label2area=None, label2horizon=None, label2discount=None, label2income=None, label2consumption=None):
+                 attributes2area=None, attributes2horizon=None, attributes2discount=None, attributes2income=None,
+                 attributes2consumption=None):
 
-        super().__init__(stock_seg, levels_values, year,
-                         label2area=label2area,
-                         label2horizon=label2horizon,
-                         label2discount=label2discount,
-                         label2income=label2income,
-                         label2consumption=label2consumption)
+        super().__init__(stock_seg, attributes_values, year,
+                         attributes2area=attributes2area,
+                         attributes2horizon=attributes2horizon,
+                         attributes2discount=attributes2discount,
+                         attributes2income=attributes2income,
+                         attributes2consumption=attributes2consumption)
 
         self.residual_rate = residual_rate
         self._destruction_rate = destruction_rate
@@ -1403,7 +1404,8 @@ class HousingStockRenovated(HousingStock):
         self._dm_share_tot = stock_seg.groupby(['Occupancy status', 'Housing type']).sum() / stock_seg.sum()
 
         # calibration
-        self.rho_seg = pd.Series()
+        self.rate_renovation_ini = rate_renovation_ini
+        self.rho = pd.Series()
         self._npv_min = npv_min
         self._rate_max = rate_max
         self._rate_min = rate_min
@@ -1520,7 +1522,7 @@ class HousingStockRenovated(HousingStock):
                               cost_intangible=cost_intangible,
                               policies=policies)
         renovation_rate_seg = npv_seg.reset_index().apply(HousingStockRenovated.renovate_rate_func,
-                                                          args=[self.rho_seg, self._npv_min, self._rate_max,
+                                                          args=[self.rho, self._npv_min, self._rate_max,
                                                                 self._rate_min], axis=1)
         renovation_rate_seg.index = npv_seg.index
         self.renovation_rate_dict[tuple(transition)][self.year] = renovation_rate_seg
@@ -1566,7 +1568,7 @@ class HousingStockRenovated(HousingStock):
 
         # indicators
         renovation_rate_aggr = flow_renovation_seg.sum() / stock_seg.sum()
-        renovation_rate_dm = flow_renovation_seg.groupby(['Occupancy status', 'Housing type']).sum() / stock_seg.groupby(['Occupancy status', 'Housing type']).sum()
+        renovation_rate_dm = flow_renovation_seg.groupby(['Occupancy status', 'Housing type']).sum() / stock_seg[stock_seg.index.get_level_values('Energy performance') != 'A'].groupby(['Occupancy status', 'Housing type']).sum()
         self.renovation_rate_dm[self.year] = renovation_rate_dm
 
         if self.year in self.market_share[tuple(transition)]:
@@ -1587,9 +1589,9 @@ class HousingStockRenovated(HousingStock):
     def to_flow_renovation_ep_energy(self, energy_prices, consumption='conventional', cost_invest=None,
                                      cost_intangible=None, policies=None, renovation_obligation=None, mutation=0.0,
                                      rotation=0.0):
-        """De-aggregate stock_renovation_label by final heating energy.
+        """De-aggregate stock_renovation_attributes by final heating energy.
 
-        stock_renovation columns segmented by final label and final heating energy.
+        stock_renovation columns segmented by final attributes and final heating energy.
 
         Parameters
         ----------
@@ -1613,19 +1615,19 @@ class HousingStockRenovated(HousingStock):
                                                    consumption=consumption,
                                                    policies=policies)[0]
 
-        ms_temp = pd.concat([market_share_seg_he.T] * len(self.levels_values['Energy performance']),
-                            keys=self.levels_values['Energy performance'], names=['Energy performance final'])
+        ms_temp = pd.concat([market_share_seg_he.T] * len(self.attributes_values['Energy performance']),
+                            keys=self.attributes_values['Energy performance'], names=['Energy performance final'])
 
-        flow_renovation_seg_label = self.to_flow_renovation_ep(energy_prices,
-                                                               consumption=consumption,
-                                                               cost_invest=cost_invest,
-                                                               cost_intangible=cost_intangible,
-                                                               policies=policies,
-                                                               renovation_obligation=renovation_obligation,
-                                                               mutation=mutation, rotation=rotation)
+        flow_renovation_seg_attributes = self.to_flow_renovation_ep(energy_prices,
+                                                                    consumption=consumption,
+                                                                    cost_invest=cost_invest,
+                                                                    cost_intangible=cost_intangible,
+                                                                    policies=policies,
+                                                                    renovation_obligation=renovation_obligation,
+                                                                    mutation=mutation, rotation=rotation)
 
-        sr_temp = pd.concat([flow_renovation_seg_label.T] * len(self.levels_values['Heating energy']),
-                            keys=self.levels_values['Heating energy'], names=['Heating energy final'])
+        sr_temp = pd.concat([flow_renovation_seg_attributes.T] * len(self.attributes_values['Heating energy']),
+                            keys=self.attributes_values['Heating energy'], names=['Heating energy final'])
         flow_renovation_label_energy = (sr_temp * ms_temp).T
         self.flow_renovation_label_energy_dict[self.year] = flow_renovation_label_energy
 
@@ -1664,7 +1666,7 @@ class HousingStockRenovated(HousingStock):
                                                                                 mutation=mutation, rotation=rotation
                                                                                 )
 
-        area_seg = reindex_mi(self.label2area, flow_renovation_label_energy_seg.index, self.label2area.index.names)
+        area_seg = reindex_mi(self.attributes2area, flow_renovation_label_energy_seg.index, self.attributes2area.index.names)
         flow_area_renovation_seg = (area_seg * flow_renovation_label_energy_seg.T).T
 
         flow_renovation_initial_seg = flow_renovation_label_energy_seg.sum(axis=1)
@@ -1694,7 +1696,7 @@ class HousingStockRenovated(HousingStock):
     def to_flow_demolition_dm(self):
         flow_demolition = self._stock_seg.sum() * self._destruction_rate
         flow_demolition_dm = self._dm_share_tot * flow_demolition
-        # flow_area_demolition_seg_dm = flow_demolition_seg_dm * self.label2area
+        # flow_area_demolition_seg_dm = flow_demolition_seg_dm * self.attributes2area
         return flow_demolition_dm
 
     def to_flow_demolition_seg(self):
@@ -1703,7 +1705,7 @@ class HousingStockRenovated(HousingStock):
         Buildings to destroy are chosen in stock_mobile.
         1. type_housing_demolition is respected to match decision-maker proportion; - type_housing_demolition_reindex
         2. income_class, income_class_owner, heating_energy match stock_remaining proportion; - type_housing_demolition_wo_performance
-        3. worst energy_performance_label for each segment are targeted. - stock_demolition
+        3. worst energy_performance_attributes for each segment are targeted. - stock_demolition
 
         Returns
         -------
@@ -1718,8 +1720,8 @@ class HousingStockRenovated(HousingStock):
         segments_mobile = segments_mobile.droplevel('Energy performance')
         segments_mobile = segments_mobile.drop_duplicates()
 
-        def worst_label(seg_mobile, st_mobile):
-            """Returns worst label for each segment with stock > 1.
+        def worst_certificate(seg_mobile, st_mobile):
+            """Returns worst certificate for each segment with stock > 1.
 
             Parameters
             __________
@@ -1731,16 +1733,16 @@ class HousingStockRenovated(HousingStock):
 
             Returns
             _______
-            worst_label_idx, list
-            Index with the worst Energy Performance value
+            worst_cert_idx, list
+            Index with the worst Energy Performance certificate value
 
-            worst_label_dict, dict
-            Worst label for each segment
+            worst_cert_idx, dict
+            Worst certificate for each segment
             """
             worst_lbl_idx = []
             worst_lbl_dict = dict()
             for seg in seg_mobile:
-                for lbl in self.levels_values['Energy performance']:
+                for lbl in self.attributes_values['Energy performance']:
                     indx = (seg[0], seg[1], seg[2], seg[3], lbl, seg[4])
                     if st_mobile.loc[indx] > 1:
                         worst_lbl_idx.append(indx)
@@ -1748,12 +1750,13 @@ class HousingStockRenovated(HousingStock):
                         break
             return worst_lbl_idx, worst_lbl_dict
 
-        worst_label_idx, worst_label_dict = worst_label(segments_mobile, stock_mobile)
+        worst_certificate_idx, worst_certificate_dict = worst_certificate(segments_mobile, stock_mobile)
 
         # we know type_demolition, then we calculate nb_housing_demolition_ini based on proportion of stock remaining
         levels = ['Occupancy status', 'Housing type']
         levels_wo_performance = [lvl for lvl in self._levels if lvl != 'Energy performance']
-        stock_remaining_woperformance = self._stock_seg.groupby(levels_wo_performance).sum()
+        stock_remaining_woperformance = stock_mobile.groupby(levels_wo_performance).sum()
+        stock_remaining_woperformance = stock_remaining_woperformance[stock_remaining_woperformance > 0]
         stock_share_dm = val2share(stock_remaining_woperformance, levels, option='column')
         flow_demolition_dm_re = reindex_mi(flow_demolition_dm, stock_share_dm.index, levels)
         flow_demolition_wo_ep = (flow_demolition_dm_re * stock_share_dm.T).T
@@ -1762,38 +1765,38 @@ class HousingStockRenovated(HousingStock):
         np.testing.assert_almost_equal(flow_demolition_dm.sum(), flow_demolition_wo_ep.sum(),
                                        err_msg='Not normal')
 
-        # we don't have the information about which labels are going to be destroyed first
-        prop_stock_worst_label = stock_mobile.loc[worst_label_idx] / stock_mobile_ini.loc[
-            worst_label_idx]
+        # we don't have the information about which certificates are going to be destroyed first
+        prop_stock_worst_certificate = stock_mobile.loc[worst_certificate_idx] / stock_mobile_ini.loc[
+            worst_certificate_idx]
 
-        # initialize labels with worst_label
-        flow_demolition_ini = reindex_mi(flow_demolition_wo_ep, prop_stock_worst_label.index,
+        # initialize attributes with worst_attributes
+        flow_demolition_ini = reindex_mi(flow_demolition_wo_ep, prop_stock_worst_certificate.index,
                                          levels_wo_performance)
-        # initialize flow_demolition_remain with worst label based on how much have been demolition so far
-        flow_demolition_remain = prop_stock_worst_label * flow_demolition_ini
+        # initialize flow_demolition_remain with worst certificate based on how much have been demolition so far
+        flow_demolition_remain = prop_stock_worst_certificate * flow_demolition_ini
 
-        # we year with the worst label and we stop when nb_housing_demolition_theo == 0
+        # we year with the worst attributes and we stop when nb_housing_demolition_theo == 0
         flow_demolition = pd.Series(0, index=stock_mobile.index, dtype='float64')
         for segment in segments_mobile:
             # dangerous conditions
-            if segment in worst_label_dict.keys():
-                label = worst_label_dict[segment]
+            if segment in worst_certificate_dict.keys():
+                certificate = worst_certificate_dict[segment]
             else:
-                break
-            num = self.levels_values['Energy performance'].index(label)
-            idx_w_ep = (segment[0], segment[1], segment[2], segment[3], label, segment[4])
+                continue
+            num = self.attributes_values['Energy performance'].index(certificate)
+            idx_w_ep = (segment[0], segment[1], segment[2], segment[3], certificate, segment[4])
 
             while flow_demolition_remain.loc[idx_w_ep] != 0:
                 # stock_demolition cannot be sup to stock_mobile and to flow_demolition_theo
                 flow_demolition.loc[idx_w_ep] = min(stock_mobile.loc[idx_w_ep], flow_demolition_remain.loc[idx_w_ep])
 
-                if label != 'A':
+                if certificate != 'A':
                     num += 1
-                    label = self.levels_values['Energy performance'][num]
-                    labels = [lbl for lbl in self.levels_values['Energy performance'] if lbl > label]
+                    certificate = self.attributes_values['Energy performance'][num]
+                    certificates = [c for c in self.attributes_values['Energy performance'] if c > certificate]
                     idx_wo_ep = (segment[0], segment[1], segment[2], segment[3], segment[4])
-                    idx_w_ep = (segment[0], segment[1], segment[2], segment[3], label, segment[4])
-                    list_idx = [(segment[0], segment[1], segment[2], segment[3], label, segment[4]) for label in labels]
+                    idx_w_ep = (segment[0], segment[1], segment[2], segment[3], certificate, segment[4])
+                    list_idx = [(segment[0], segment[1], segment[2], segment[3], c, segment[4]) for c in certificates]
 
                     # flow_demolition_remain: remaining housing that need to be destroyed for this segment
                     flow_demolition_remain[idx_w_ep] = flow_demolition_wo_ep.loc[idx_wo_ep] - flow_demolition.loc[list_idx].sum()
@@ -1829,36 +1832,36 @@ class HousingStockRenovated(HousingStock):
 
         # knowledge_renovation_ini depends on energy performance final
 
-        def flow_area2knowledge(flow, flow_area_ep, label1, label2):
-            """Very specific function aggregating two energy performance label to calculate knowledge.
+        def flow_area2knowledge(flow, flow_area_ep, certificate1, certificate2):
+            """Very specific function aggregating two energy performance certificate to calculate knowledge.
 
             Parameters
             ----------
             flow: pd.Series
                 Data array containing knowledge.
             flow_area_ep: pd.Series or pd.DataFrame
-            label1: str, {'A', 'B', 'C', 'D', 'E', 'F', 'G'}
-            label2: str, {'A', 'B', 'C', 'D', 'E', 'F', 'G'}
+            certificate1: str, {'A', 'B', 'C', 'D', 'E', 'F', 'G'}
+            certificate2: str, {'A', 'B', 'C', 'D', 'E', 'F', 'G'}
 
             Returns
             -------
             spd.Series
             """
-            if label1 in flow_area_ep.index and label2 in flow_area_ep.index:
-                flow.loc[label1] = flow_area_ep.loc[label1] + flow_area_ep.loc[
-                    label2]
-                flow.loc[label2] = flow_area_ep.loc[label1] + flow_area_ep.loc[
-                    label2]
-            elif label2 not in flow_area_ep.index:
-                flow.loc[label1] = flow_area_ep.loc[label1]
-                flow.loc[label2] = flow_area_ep.loc[label1]
+            if certificate1 in flow_area_ep.index and certificate2 in flow_area_ep.index:
+                flow.loc[certificate1] = flow_area_ep.loc[certificate1] + flow_area_ep.loc[
+                    certificate2]
+                flow.loc[certificate2] = flow_area_ep.loc[certificate1] + flow_area_ep.loc[
+                    certificate2]
+            elif certificate2 not in flow_area_ep.index:
+                flow.loc[certificate1] = flow_area_ep.loc[certificate1]
+                flow.loc[certificate2] = flow_area_ep.loc[certificate1]
             else:
-                flow.loc[label1] = flow_area_ep.loc[label2]
-                flow.loc[label2] = flow_area_ep.loc[label2]
+                flow.loc[certificate1] = flow_area_ep.loc[certificate2]
+                flow.loc[certificate2] = flow_area_ep.loc[certificate2]
             return flow
 
         flow_knowledge_renovation = pd.Series(dtype='float64',
-                                              index=[ep for ep in self.levels_values['Energy performance'] if
+                                              index=[ep for ep in self.attributes_values['Energy performance'] if
                                                      ep != 'G'])
 
         flow_knowledge_renovation = flow_area2knowledge(flow_knowledge_renovation, flow_area_renovated_ep, 'A', 'B')
@@ -1881,11 +1884,11 @@ class HousingStockRenovated(HousingStock):
                                     cost_invest=None, cost_intangible=None, policies=None):
         """Calibration of ρ parameter of the renovation rate function (logistic function of the NPV).
 
-        Renovation rate of dwellings labelled is calculated as a logistic function of the NPV.
+        Renovation rate of dwellings attributesled is calculated as a logistic function of the NPV.
         The logistic form captures heterogeneity in heating preference and habits,
         assuming they are normally distributed.
 
-        Parameter ρ is calibrated, for each type of decision-maker and each initial label (i.e., 6x6=36 values),
+        Parameter ρ is calibrated, for each type of decision-maker and each initial certificates (i.e., 6x6=36 values),
         so that the NPVs calculated with the subsidies in effect in 2012 (see main article)
         reproduce the observed renovation rates.
 
@@ -1922,8 +1925,12 @@ class HousingStockRenovated(HousingStock):
         rho = (np.log(self._rate_max / self._rate_min - 1) - np.log(
             self._rate_max / renovation_rate_obj - 1)) / (npv - self._npv_min)
 
+        levels = ['Occupancy status', 'Housing type', 'Energy performance']
+        weight = val2share(self.stock_seg, levels, option='column')
+        rho_temp = rho.unstack(['Income class', 'Heating energy', 'Income class owner'])
+        rho_weighted = (weight * rho_temp).fillna(0).sum(axis=1)
 
-        """self.rho_seg = rho
+        """self.rho = rho
         renovation_rate_bis = self.to_renovation_rate(energy_prices,
                                                         transition=['Energy performance'],
                                                         consumption='conventional',
@@ -1935,24 +1942,6 @@ class HousingStockRenovated(HousingStock):
                                                         consumption='conventional',
                                                         cost_invest=cost_invest,
                                                         cost_intangible=cost_intangible)
-        """
-        # TODO: check with LG
-        # TODO: weight_dm doesn't make a lot of sense
-        """stock_ini_wo_owner = self.stock_seg.groupby(
-            [lvl for lvl in self._levels if lvl != 'Income class owner']).sum()
-        seg_stock_dm = stock_ini_wo_owner.to_frame().pivot_table(index=['Occupancy status', 'Housing type'],
-                                                                 columns=['Energy performance', 'Heating energy',
-                                                                        'Income class'])
-        seg_stock_dm = seg_stock_dm.droplevel(None, axis=1)
-
-        weight_dm = (stock_ini_wo_owner.groupby(['Occupancy status', 'Housing type']).sum() ** -1 * seg_stock_dm.T).T
-        # TODO: very strange as rho depends on Income class owner
-        rho = rho.droplevel('Income class owner', axis=0)
-        rho = rho[~rho.index.duplicated()]
-        rho_df = rho.to_frame().pivot_table(index=weight_dm.index.names, columns=weight_dm.columns.names)
-        rho_df = rho_df.droplevel(None, axis=1)
-        rho_dm = (rho_df * weight_dm).sum(axis=1)
-        rho_seg = reindex_mi(rho_dm, self._segments, rho_dm.index.names)
         """
 
         return rho
@@ -1975,24 +1964,24 @@ class HousingStockRenovated(HousingStock):
 
 
 class HousingStockConstructed(HousingStock):
-    def __init__(self, stock, levels_values, year, stock_needed_ts,
+    def __init__(self, stock, attributes_values, year, stock_needed_ts,
                  param_share_multi_family=None,
                  os_share_ht=None,
                  io_share_seg=None,
                  stock_area_existing_seg=None,
-                 label2area=None,
-                 label2horizon=None,
-                 label2discount=None,
-                 label2income=None,
-                 label2consumption=None):
+                 attributes2area=None,
+                 attributes2horizon=None,
+                 attributes2discount=None,
+                 attributes2income=None,
+                 attributes2consumption=None):
 
-        super().__init__(stock, levels_values,
+        super().__init__(stock, attributes_values,
                          year=year,
-                         label2area=label2area,
-                         label2discount=label2discount,
-                         label2income=label2income,
-                         label2consumption=label2consumption,
-                         label2horizon=label2horizon)
+                         attributes2area=attributes2area,
+                         attributes2discount=attributes2discount,
+                         attributes2income=attributes2income,
+                         attributes2consumption=attributes2consumption,
+                         attributes2horizon=attributes2horizon)
 
         self._flow_constructed = 0
         self._flow_constructed_dict = {self.year: self._flow_constructed}
@@ -2024,7 +2013,7 @@ class HousingStockConstructed(HousingStock):
             self._flow_area_constructed_he_ep = self.to_flow_area_constructed_ini(stock_area_existing_seg)
             # to initialize knowledge
             self.flow_area_constructed_he_ep = self._flow_area_constructed_he_ep
-        self._area_construction_dict = {self.year: self.label2area}
+        self._area_construction_dict = {self.year: self.attributes2area}
 
     @property
     def year(self):
@@ -2060,7 +2049,7 @@ class HousingStockConstructed(HousingStock):
         """
         self.add_flow(val)
 
-        flow_area_constructed_seg = HousingStockConstructed.data2area(self.label2area, val)
+        flow_area_constructed_seg = HousingStockConstructed.data2area(self.attributes2area, val)
         self.flow_area_constructed_he_ep = flow_area_constructed_seg.groupby(
             ['Energy performance', 'Heating energy']).sum()
 
@@ -2213,8 +2202,8 @@ class HousingStockConstructed(HousingStock):
         # same repartition of income class
         seg_index = flow_constructed_seg.index
         seg_names = flow_constructed_seg.index.names
-        val = 1 / len(self.levels_values["Income class"])
-        temp = pd.Series(val, index=self.levels_values["Income class"])
+        val = 1 / len(self.attributes_values["Income class"])
+        temp = pd.Series(val, index=self.attributes_values["Income class"])
         ic_share_seg = pd.concat([temp] * len(seg_index), axis=1).T
         ic_share_seg.index = seg_index
 
@@ -2316,7 +2305,7 @@ class HousingStockConstructed(HousingStock):
 
         assert (lcc_final.index == market_share_objective.index).all()
 
-        labels_final = lcc_final.columns
+        attributes_final = lcc_final.columns
         idx_list, lambda_list, intangible_list = [], [], []
         for idx in lcc_final.index:
             for lambda_current in range(int(lambda_min * 100), int(lambda_max * 100), int(step * 100)):
@@ -2327,13 +2316,43 @@ class HousingStockConstructed(HousingStock):
                 if ier == 1:
                     lambda_list += [lambda_current]
                     idx_list += [idx]
-                    intangible_list += [pd.Series(root ** 2, index=labels_final)]
+                    intangible_list += [pd.Series(root ** 2, index=attributes_final)]
                     break
 
         intangible_cost = pd.concat(intangible_list, axis=1).T
         intangible_cost.index = pd.MultiIndex.from_tuples(idx_list)
         intangible_cost.index.names = lcc_final.index.names
         return intangible_cost
+
+    @staticmethod
+    def evolution_area_construction(area_construction_prev, area_construction_ini, area_max_construction,
+                                    elasticity_area, available_income_ratio):
+        """Evolution of new buildings area based on total available income. Function represents growth.
+
+        Parameters
+        ----------
+        area_construction_prev: pd.Series
+        area_construction_ini: pd.Series
+        area_max_construction: pd.Series
+        elasticity_area: float
+        available_income_ratio: float
+
+        Returns
+        -------
+        pd.Series
+        """
+        area_max_construction = area_max_construction.reorder_levels(area_construction_ini.index.names)
+
+        eps_area_new = (area_max_construction - area_construction_prev) / (
+                area_max_construction - area_construction_ini)
+        eps_area_new = eps_area_new.apply(lambda x: max(0, min(1, x)))
+        elasticity_area_new = eps_area_new.multiply(elasticity_area)
+
+        factor_area_new = elasticity_area_new * max(0, available_income_ratio - 1)
+
+        area_construction = pd.concat([area_max_construction, area_construction_prev * (1 + factor_area_new)],
+                                      axis=1).min(axis=1)
+        return area_construction
 
     def update_area_construction(self, elasticity_area_new_ini, available_income_real_pop_ds, area_max_construction):
         """Every year, average area of new buildings increase with available income.
@@ -2351,8 +2370,16 @@ class HousingStockConstructed(HousingStock):
 
         area_construction_ini = self._area_construction_dict[self._calibration_year]
         area_construction_prev = self._area_construction_dict[self.year - 1]
-        area_max_construction = area_max_construction.reorder_levels(area_construction_ini.index.names)
 
+        available_income_real_pop_ini = available_income_real_pop_ds.loc[self._calibration_year]
+        available_income_real_pop = available_income_real_pop_ds.loc[self.year]
+
+        area_construction = HousingStockConstructed.evolution_area_construction(area_construction_prev,
+                                                                                area_construction_ini,
+                                                                                area_max_construction,
+                                                                                elasticity_area_new_ini,
+                                                                                available_income_real_pop / available_income_real_pop_ini)
+        """
         eps_area_new = (area_max_construction - area_construction_prev) / (
                 area_max_construction - area_construction_ini)
         eps_area_new = eps_area_new.apply(lambda x: max(0, min(1, x)))
@@ -2366,8 +2393,9 @@ class HousingStockConstructed(HousingStock):
 
         area_construction = pd.concat([area_max_construction, area_construction_prev * (1 + factor_area_new)],
                                       axis=1).min(axis=1)
-        self.label2area = area_construction
-        self._area_construction_dict[self.year] = self.label2area
+        """
+        self.attributes2area = area_construction
+        self._area_construction_dict[self.year] = self.attributes2area
 
     def to_flow_area_constructed_ini(self, stock_area_existing_seg):
         """To initialize construction knowledge returns area of 2.5 A DPE and 2 B DPE.
@@ -2379,5 +2407,5 @@ class HousingStockConstructed(HousingStock):
             [2.5 * stock_area_new_existing_seg.sum(), 2 * stock_area_new_existing_seg.sum()], index=['BBC', 'BEPOS'])
         flow_area_constructed_ep.index.names = ['Energy performance']
         flow_area_constructed_he_ep = add_level(flow_area_constructed_ep,
-                                                pd.Index(self.levels_values['Heating energy'], name='Heating energy'))
+                                                pd.Index(self.attributes_values['Heating energy'], name='Heating energy'))
         return flow_area_constructed_he_ep

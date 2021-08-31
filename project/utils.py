@@ -351,7 +351,7 @@ def val2share(ds, levels, func=lambda x: x, option='row'):
     """Returns the share of value based on levels.
 
     Get the proportion for every other levels than levels in ds.index.names.
-    If option = 'columns', return pd DataFrame with levels in index. Sum of each row is equal to 1.
+    If option = 'column', return pd DataFrame with levels in index. Sum of each row is equal to 1.
     """
     # TODO: column option mandatory caused row is very confusing
     denum = reindex_mi(ds.apply(func).groupby(levels).sum(), ds.index)

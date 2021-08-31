@@ -6,7 +6,7 @@ from utils import apply_linear_rate, reindex_mi
 
 
 def dict2series(item_dict):
-    """Return pd.Series from a dict containing val and index labels.
+    """Return pd.Series from a dict containing val and index attributess.
     """
     if len(item_dict['index']) == 1:
         ds = pd.Series(item_dict['val'])
@@ -129,108 +129,66 @@ def forecast2myopic(forecast_price, yr):
     return myopic
 
 
-def parameters_input(folder, scenario_dict, calibration_year, stock_sum):
-    """Parse input that are not implicitly subject to a scenario.
-
-    - Demographic and macro-economic variable,
-    - Numerical value of stock attributes (final consumption for label D or yearly income for D10 class),
+def parse_building_stock(config):
+    """
+    Parses and returns building stock and attributes to match Res-IRF input requirement.
 
     Parameters
     ----------
-    folder : dict
-        Folder where to look for input files.
-    scenario_dict: dict
-    calibration_year : int
-    stock_sum : float
-        Number of buildings in stock data.
+    config: dict
+    household_income_rate: float
 
     Returns
     -------
-    dict_parameters : dict
-        Mainly contains demographic and macro-economic variables. Also contains function parameter (lbd).
-    levels_dict :  dict
-        Keys are stock attributes and values are list of all possible values taken by each attribute.
-    levels_dict_construction : dict
-        Keys are stock attributes and values are list of all possible values taken by each attribute.
-    sources_dict : dict
-        Containing path to calibration file.
-    attributes : dict
-        Numerical values of stock attributes (income for D1, consumption for F label, etc...)..
-    rate_renovation_ini : pd.DataFrame
-        Observed renovation rate in calibration year.
-    ms_renovation_ini : pd.DataFrame
-        Observed market share in calibration year.
-    ms_construction_ini : pd.DataFrame
-        Observed market share in calibration year.
-    summary_param: pd.DataFrame
+    stock_ini : pd.Series
+        Initial buildings stock. Attributes are stored as MultiIndex.
+    attributes :  dict
+        Multiple information regarding stock attributes.
+        All values that could possibly taken buildings attributes.
+        Conversion of attributes in numerical values (energy performance certificate, etc...).
     """
 
+    # 1. Read building stock data
+
+    name_file = os.path.join(os.getcwd(), config['stock_buildings']['source'])
+    stock_ini = pd.read_pickle(name_file)
+    stock_ini = stock_ini.reorder_levels(
+        ['Occupancy status', 'Housing type', 'Income class', 'Heating energy', 'Energy performance', 'Income class owner'])
+
+    # 2. Numerical value of stock attributes
+
+    calibration_year = config['stock_buildings']['year']
     # years for input time series
+    # maximum investment horizon is 30 years and model horizon is 2040. Input must be extended at least to 2070.
     last_year = 2080
     index_input_year = range(calibration_year, last_year + 1, 1)
 
-    # 1. Parameters
-
-    name_file = os.path.join(os.getcwd(), scenario_dict['parameters']['source'])
-    dict_parameters = parse_json(name_file)
-
-    # 2. Demographic and macro-economic variable
-
-    name_file = os.path.join(os.getcwd(), scenario_dict['population']['source'])
-    dict_parameters['Population total'] = pd.read_csv(os.path.join(folder['input'], name_file), sep=',', header=None,
-                                                      index_col=[0],
-                                                      squeeze=True)
-    # sizing_factor < 1 --> all extensive results are calibrated by the size of the initial parc
-    sizing_factor = stock_sum / dict_parameters['Stock total ini {}'.format(calibration_year)]
-    dict_parameters['Sizing factor'] = sizing_factor
-    dict_parameters['Population'] = dict_parameters['Population total'] * sizing_factor
-
-    dict_parameters['Available income'] = apply_linear_rate(dict_parameters['Available income ini {}'.format(calibration_year)],
-                                                            dict_parameters['Available income rate'], index_input_year)
-
-    # inflation
-    dict_parameters['Price index'] = pd.Series(1, index=index_input_year)
-    dict_parameters['Available income real'] = dict_parameters['Available income'] / dict_parameters['Price index']
-    dict_parameters['Available income real population'] = dict_parameters['Available income real'] / dict_parameters[
-        'Population total']
-
-    population_housing_min = dict_parameters['Population housing min']
-    population_housing = dict()
-    population_housing[calibration_year] = dict_parameters['Population'].loc[calibration_year] / stock_sum
-    max_year = max(dict_parameters['Population'].index)
-
-    stock_needed = dict()
-    stock_needed[calibration_year] = dict_parameters['Population'].loc[calibration_year] / population_housing[
-        calibration_year]
-
-    for year in index_input_year[1:]:
-        if year > max_year:
-            break
-        population_housing[year] = population_housing_dynamic(population_housing[year - 1],
-                                                              population_housing_min,
-                                                              population_housing[calibration_year],
-                                                              dict_parameters['Factor population housing ini'])
-        stock_needed[year] = dict_parameters['Population'].loc[year] / population_housing[year]
-
-    dict_parameters['Population housing'] = pd.Series(population_housing)
-    dict_parameters['Stock needed'] = pd.Series(stock_needed)
-
-    # 3. Numerical value of stock attributes
-
-    name_file = os.path.join(os.getcwd(), scenario_dict['label2info']['source'])
+    name_file = os.path.join(os.getcwd(), config['attributes']['source'])
     attributes = parse_json(name_file)
 
-    attributes['label2income'] = attributes['label2income'].apply(apply_linear_rate, args=(
-        dict_parameters['Household income rate'], index_input_year))
-    attributes['label2consumption_heater'] = attributes['label2primary_consumption'] * attributes['label2heater']
-    attributes['label2consumption'] = final2consumption(attributes['label2consumption_heater'],
-                                                        attributes['label2final_energy'] ** -1)
-    attributes['label2consumption_heater_construction'] = attributes['label2primary_consumption_construction'] * attributes[
-        'label2heater_construction']
-    attributes['label2consumption_construction'] = final2consumption(attributes['label2consumption_heater_construction'],
-                                                                     attributes['label2final_energy'] ** -1)
+    attributes['attributes2income'] = attributes['attributes2income'].apply(apply_linear_rate, args=(
+        config['Household income rate'], index_input_year))
+    attributes['attributes2consumption_heater'] = attributes['attributes2primary_consumption'] * attributes[
+        'attributes2heater']
+    attributes['attributes2consumption'] = final2consumption(attributes['attributes2consumption_heater'],
+                                                             attributes['attributes2final_energy'] ** -1)
+    attributes['attributes2consumption_heater_construction'] = attributes[
+                                                                   'attributes2primary_consumption_construction'] * \
+                                                               attributes[
+                                                                   'attributes2heater_construction']
+    attributes['attributes2consumption_construction'] = final2consumption(
+        attributes['attributes2consumption_heater_construction'],
+        attributes['attributes2final_energy'] ** -1)
 
-    file_dict = attributes['levels_dict']
+    # function of config
+    attributes2horizon = dict()
+    attributes['attributes2horizon_heater'] = attributes['attributes2horizon_heater'][config['investor']]
+    attributes['attributes2horizon_envelope'] = attributes['attributes2horizon_envelope'][config['investor']]
+    attributes2horizon[('Energy performance',)] = attributes['attributes2horizon_envelope']
+    attributes2horizon[('Heating energy',)] = attributes['attributes2horizon_heater']
+    attributes['attributes2horizon'] = attributes2horizon
+
+    file_dict = attributes['attributes_dict']
     keys = ['Housing type', 'Occupancy status', 'Heating energy', 'Energy performance', 'Income class']
     attributes['housing_stock_renovated'] = {key: file_dict[key] for key in keys}
     attributes['housing_stock_renovated']['Income class owner'] = file_dict['Income class']
@@ -240,89 +198,50 @@ def parameters_input(folder, scenario_dict, calibration_year, stock_sum):
     attributes['housing_stock_constructed']['Income class owner'] = file_dict['Income class']
     attributes['housing_stock_constructed']['Energy performance'] = file_dict['Energy performance construction']
     attributes['housing_stock_constructed'].pop('Energy performance construction')
-    
-    # 4. Observed data for calibration
 
-    name_file = os.path.join(os.getcwd(), scenario_dict['rate_renovation_ini']['source'])
-    rate_renovation_ini = pd.read_csv(name_file, index_col=[0, 1], header=[0], squeeze=True)
-
-    name_file = os.path.join(os.getcwd(), scenario_dict['ms_renovation_ini']['source'])
-    ms_renovation_ini = pd.read_csv(name_file, index_col=[0], header=[0])
-    ms_renovation_ini.index.set_names(['Energy performance'], inplace=True)
-
-    name_file = os.path.join(os.getcwd(), scenario_dict['ms_construction_ini']['source'])
-    ms_construction_ini = pd.read_csv(name_file, index_col=[0, 1], header=[0, 1])
-    ms_construction_ini.index.set_names(['Occupancy status', 'Housing type'], inplace=True)
-
-    # 5. Summary
-
-    summary_param = dict()
-    summary_param['Total population (Millions)'] = dict_parameters['Population'] / 10**6
-    summary_param['Income (Billions €)'] = dict_parameters['Available income real'] * sizing_factor / 10**9
-    summary_param['Buildings stock (Millions)'] = pd.Series(stock_needed) / 10**6
-    summary_param['Person by housing'] = pd.Series(population_housing)
-    summary_param = pd.DataFrame(summary_param)
-
-    income = attributes['label2income'].T
-    income.columns = ['Income {} (€)'.format(c) for c in income.columns]
-    summary_param = pd.concat((summary_param, income), axis=1)
-
-    summary_param = summary_param.loc[calibration_year:, :]
-
-    return dict_parameters, attributes, rate_renovation_ini, ms_renovation_ini, ms_construction_ini, summary_param
+    return stock_ini, attributes
 
 
-def parse_input(folder, scenario_dict):
-    """Parse input based on scenario.json file.
+def parse_input(folder, config):
+    """Parses prices and costs input to match Res-IRF input requirement.
 
     Parameters
     ----------
-    folder : dict
-    scenario_dict : dict
+    folder : str
+    config : dict
 
     Returns
     -------
-    stock_ini : pd.Series
-        Buildings stock initial. Attributes are stored as MultiIndex.
     energy_prices : pd.DataFrame
     cost_invest : dict
         Keys are transition cost_envelope = cost_invest(tuple([Energy performance]).
     cost_invest_construction : dict
     co2_content_data : pd.DataFrame
-    dict_policies : dict
+    policies : dict
     summary_input: pd.DataFrame
     """
 
-    calibration_year = scenario_dict['stock_buildings']['year']
-
-    # years for input time series
-    # maximum investment horizon is 30 years and model horizon is 2040. Input must be extended at least to 2070.
+    calibration_year = config['stock_buildings']['year']
     last_year = 2080
-    index_input_year = range(calibration_year, last_year + 1, 1)
 
-    name_file = os.path.join(os.getcwd(), scenario_dict['stock_buildings']['source'])
-    stock_ini = pd.read_pickle(name_file)
-    stock_ini = stock_ini.reorder_levels(
-        ['Occupancy status', 'Housing type', 'Income class', 'Heating energy', 'Energy performance', 'Income class owner'])
+    name_file = os.path.join(os.getcwd(), config['policies']['source'])
+    policies = parse_json(name_file)
 
-    name_file = os.path.join(os.getcwd(), scenario_dict['policies']['source'])
-    dict_policies = parse_json(name_file)
-
-    carbon_tax = pd.read_csv(os.path.join(os.getcwd(), scenario_dict['carbon_tax_value']['source']), index_col=[0]) / 1000000
+    carbon_tax = pd.read_csv(os.path.join(os.getcwd(), config['carbon_tax_value']['source']), index_col=[0]) / 1000000
     carbon_tax = carbon_tax.T
     carbon_tax.index.set_names('Heating energy', inplace=True)
-    dict_policies['carbon_tax']['value'] = carbon_tax
+    policies['carbon_tax']['value'] = carbon_tax
 
     # cost_invest
     cost_invest = dict()
-    name_file = os.path.join(os.getcwd(), scenario_dict['cost_renovation']['source'])
+    name_file = os.path.join(os.getcwd(), config['cost_renovation']['source'])
     cost_envelope = pd.read_csv(name_file, sep=',', header=[0], index_col=[0])
     cost_envelope.index.set_names('Energy performance', inplace=True)
     cost_envelope.columns.set_names('Energy performance final', inplace=True)
     cost_envelope = cost_envelope * (1 + 0.1) / (1 + 0.055)
     cost_invest['Energy performance'] = cost_envelope
 
-    name_file = os.path.join(os.getcwd(), scenario_dict['cost_switch_fuel']['source'])
+    name_file = os.path.join(os.getcwd(), config['cost_switch_fuel']['source'])
     cost_switch_fuel = pd.read_csv(name_file, index_col=[0], header=[0])
     cost_switch_fuel.index.set_names('Heating energy', inplace=True)
     cost_switch_fuel.columns.set_names('Heating energy final', inplace=True)
@@ -330,13 +249,13 @@ def parse_input(folder, scenario_dict):
     cost_invest['Heating energy'] = cost_switch_fuel
 
     cost_invest_construction = dict()
-    name_file = os.path.join(os.getcwd(), scenario_dict['cost_construction']['source'])
-    cost_construction = pd.read_csv(os.path.join(folder['input'], name_file), sep=',', header=[0, 1], index_col=[0])
+    name_file = os.path.join(os.getcwd(), config['cost_construction']['source'])
+    cost_construction = pd.read_csv(os.path.join(folder, name_file), sep=',', header=[0, 1], index_col=[0])
     cost_construction.index.set_names('Housing type', inplace=True)
     cost_invest_construction['Energy performance'] = cost_construction
     cost_invest_construction['Heating energy'] = None
 
-    name_file = os.path.join(os.getcwd(), scenario_dict['energy_prices_bt']['source'])
+    name_file = os.path.join(os.getcwd(), config['energy_prices_bt']['source'])
     energy_prices_bt = pd.read_csv(name_file, index_col=[0], header=[0]).T
     energy_prices_bt.index.set_names('Heating energy', inplace=True)
     energy_prices = energy_prices_bt
@@ -346,15 +265,15 @@ def parse_input(folder, scenario_dict):
     for col in energy_prices.columns:
         energy_taxes[col].values[:] = 0
 
-    if scenario_dict['energy_taxes']['vta']:
+    if config['energy_taxes']['vta']:
         vta = pd.Series([0.16, 0.16, 0.2, 0.2], index=['Power', 'Natural gas', 'Oil fuel', 'Wood fuel'])
         vta.index.set_names('Heating energy', inplace=True)
         vta_energy = (energy_prices_bt.T * vta).T
         energy_prices = energy_prices + vta_energy
         energy_taxes = energy_taxes + vta_energy
 
-    if scenario_dict['energy_taxes']['activated']:
-        name_file = os.path.join(os.getcwd(), scenario_dict['energy_taxes']['source'])
+    if config['energy_taxes']['activated']:
+        name_file = os.path.join(os.getcwd(), config['energy_taxes']['source'])
         energy_tax = pd.read_csv(name_file, index_col=[0], header=[0]).T
         energy_tax.index.set_names('Heating energy', inplace=True)
 
@@ -370,9 +289,9 @@ def parse_input(folder, scenario_dict):
         temp.columns = add_yrs
         energy_prices = pd.concat((energy_prices, temp), axis=1)
 
-    if scenario_dict['energy_prices_evolution'] == 'forecast':
+    if config['energy_prices_evolution'] == 'forecast':
         energy_prices = energy_prices.loc[:, calibration_year:]
-    elif scenario_dict['energy_prices_evolution'] == 'constant':
+    elif config['energy_prices_evolution'] == 'constant':
         energy_prices = pd.Series(energy_prices.loc[:, calibration_year], index=energy_prices.index)
         energy_prices.index.set_names('Heating energy', inplace=True)
         idx_yrs = range(calibration_year, last_year + 1, 1)
@@ -381,7 +300,7 @@ def parse_input(folder, scenario_dict):
     else:
         raise ValueError("energy_prices_evolution should be 'forecast' or 'constant'")
 
-    name_file = os.path.join(os.getcwd(), scenario_dict['co2_content']['source'])
+    name_file = os.path.join(os.getcwd(), config['co2_content']['source'])
     co2_content = pd.read_csv(name_file, index_col=[0], header=[0]).T
     co2_content.index.set_names('Heating energy', inplace=True)
 
@@ -415,5 +334,122 @@ def parse_input(folder, scenario_dict):
     summary_input = pd.DataFrame(summary_input)
     summary_input = summary_input.loc[calibration_year:, :]
 
-    return stock_ini, energy_prices, energy_taxes, cost_invest, cost_invest_construction, co2_content, dict_policies, summary_input
+    return energy_prices, energy_taxes, cost_invest, cost_invest_construction, co2_content, policies, summary_input
+
+
+def parse_parameters(folder, config, stock_sum):
+    """Parse input that are not implicitly subject to a scenario.
+
+    Parameters
+    ----------
+    folder : str
+        Folder where to look for input files.
+    config: dict
+    stock_sum : float
+        Number of buildings in stock data.
+
+    Returns
+    -------
+    parameters : dict
+        Mainly contains demographic and macro-economic variables. Also contains function parameter (lbd).
+    summary_param: pd.DataFrame
+    """
+
+    # years for input time series
+    calibration_year = config['stock_buildings']['year']
+
+    last_year = 2080
+    index_input_year = range(calibration_year, last_year + 1, 1)
+
+    # 1. Parameters
+
+    name_file = os.path.join(os.getcwd(), config['parameters']['source'])
+    parameters = parse_json(name_file)
+
+    # 2. Demographic and macro-economic variable
+
+    name_file = os.path.join(os.getcwd(), config['population']['source'])
+    parameters['Population total'] = pd.read_csv(os.path.join(folder, name_file), sep=',', header=None,
+                                                 index_col=[0],
+                                                 squeeze=True)
+    # sizing_factor < 1 --> all extensive results are calibrated by the size of the initial parc
+    sizing_factor = stock_sum / parameters['Stock total ini {}'.format(calibration_year)]
+    parameters['Sizing factor'] = sizing_factor
+    parameters['Population'] = parameters['Population total'] * sizing_factor
+
+    parameters['Available income'] = apply_linear_rate(parameters['Available income ini {}'.format(calibration_year)],
+                                                       parameters['Available income rate'], index_input_year)
+
+    # inflation
+    parameters['Price index'] = pd.Series(1, index=index_input_year)
+    parameters['Available income real'] = parameters['Available income'] / parameters['Price index']
+    parameters['Available income real population'] = parameters['Available income real'] / parameters[
+        'Population total']
+
+    population_housing_min = parameters['Population housing min']
+    population_housing = dict()
+    population_housing[calibration_year] = parameters['Population'].loc[calibration_year] / stock_sum
+    max_year = max(parameters['Population'].index)
+
+    stock_needed = dict()
+    stock_needed[calibration_year] = parameters['Population'].loc[calibration_year] / population_housing[
+        calibration_year]
+
+    for year in index_input_year[1:]:
+        if year > max_year:
+            break
+        population_housing[year] = population_housing_dynamic(population_housing[year - 1],
+                                                              population_housing_min,
+                                                              population_housing[calibration_year],
+                                                              parameters['Factor population housing ini'])
+        stock_needed[year] = parameters['Population'].loc[year] / population_housing[year]
+
+    parameters['Population housing'] = pd.Series(population_housing)
+    parameters['Stock needed'] = pd.Series(stock_needed)
+
+    # 5. Summary
+
+    summary_param = dict()
+    summary_param['Total population (Millions)'] = parameters['Population'] / 10**6
+    summary_param['Income (Billions €)'] = parameters['Available income real'] * sizing_factor / 10**9
+    summary_param['Buildings stock (Millions)'] = pd.Series(stock_needed) / 10**6
+    summary_param['Person by housing'] = pd.Series(population_housing)
+    summary_param = pd.DataFrame(summary_param)
+    summary_param = summary_param.loc[calibration_year:, :]
+
+    return parameters, summary_param
+
+
+def parse_observed_data(config):
+    """Parses and returns observed data to match Res-IRF input requirement.
+
+    Parameters
+    ----------
+    config: dict
+
+    Returns
+    -------
+    rate_renovation_ini : pd.DataFrame
+        Observed renovation rate in calibration year.
+    ms_renovation_ini : pd.DataFrame
+        Observed market share in calibration year.
+    ms_construction_ini : pd.DataFrame
+        Observed market share in calibration year.
+    """
+
+    name_file = os.path.join(os.getcwd(), config['renovation_rate_ini']['source'])
+    renovation_rate_ini = pd.read_csv(name_file, header=[0], squeeze=True)
+    columns = list(renovation_rate_ini.columns[:renovation_rate_ini.shape[1] - 1])
+    renovation_rate_ini = renovation_rate_ini.set_index(columns).iloc[:, 0]
+
+    name_file = os.path.join(os.getcwd(), config['ms_renovation_ini']['source'])
+    ms_renovation_ini = pd.read_csv(name_file, index_col=[0], header=[0])
+    ms_renovation_ini.index.set_names(['Energy performance'], inplace=True)
+
+    name_file = os.path.join(os.getcwd(), config['ms_construction_ini']['source'])
+    ms_construction_ini = pd.read_csv(name_file, index_col=[0, 1], header=[0, 1])
+    ms_construction_ini.index.set_names(['Occupancy status', 'Housing type'], inplace=True)
+
+    return renovation_rate_ini, ms_renovation_ini, ms_construction_ini
+
 

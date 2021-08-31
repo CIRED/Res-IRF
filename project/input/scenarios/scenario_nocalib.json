@@ -1,20 +1,28 @@
 {
   "Phebus ZP no calib": {
-    "end": 2014,
-    "investor": "Green value",
+    "end": 2015,
+    "investor": "Reference",
     "stock_buildings": {
       "source": "project/input/stock_buildings_phebus2012.pkl",
       "year": 2012,
       "type": "pd.Series"
     },
+    "attributes": {
+      "type": "file",
+      "source": "project/input/attributes_2012.json"
+    },
+    "parameters": {
+    "type": "file",
+    "source": "project/input/parameters.json"
+  },
     "cost_intangible": true,
     "cost_intangible_source": {
-      "source_type": "function",
-      "source": "project/intermediate/cost_intangible_phebus2012_zp.pkl"
+      "source_type": "file",
+      "source": "project/intermediate/cost_intangible_phebus2012.pkl"
     },
     "cost_intangible_construction_source": {
-      "source_type": "function",
-      "source": "project/intermediate/cost_intangible_construction_phebus2012_zp.pkl"
+      "source_type": "file",
+      "source": "project/intermediate/cost_intangible_construction_phebus2012.pkl"
     },
     "lbd_renovation": false,
     "info_renovation": false,
@@ -32,6 +40,10 @@
 
     },
     "energy_prices_evolution": "forecast",
+    "policies": {
+      "type": "file",
+      "source": "project/input/policies.json"
+    },
     "population": {
       "type": "file",
       "source": "project/input/projection_population_2012.csv"
@@ -39,7 +51,7 @@
     "carbon_tax": {
       "activated": true,
       "start": 2012,
-      "end": 2013,
+      "end": 2015,
       "calibration": true
     },
     "carbon_tax_value": {
@@ -53,7 +65,7 @@
     "cite": {
       "activated": true,
       "start": 2012,
-      "end": 2012,
+      "end": 2014,
       "calibration": true
     },
     "cite_plus": {
@@ -71,7 +83,7 @@
     "cee_taxes": {
       "activated": true,
       "start": 2012,
-      "end": 2013,
+      "end": 2015,
       "calibration": true
     },
     "reduced_tax": {
@@ -98,21 +110,13 @@
       "end": 2040,
       "calibration": false
     },
-    "policies": {
-      "type": "file",
-      "source": "project/input/policies.json"
-    },
-    "parameters": {
-    "type": "file",
-    "source": "project/input/parameters.json"
-  },
     "rho": {
-    "source_type": "function",
-    "source": "project/intermediate/rho_phebus2012_zp.pkl"
+    "source_type": "file",
+    "source": "project/intermediate/rho_phebus2012.pkl"
   },
-    "rate_renovation_ini":{
+    "renovation_rate_ini":{
       "type": "file",
-      "source": "project/input/rate_renovation_ini.csv"
+      "source": "project/input/renovation_rate_ini_2012.csv"
     },
     "ms_renovation_ini":{
       "type": "file",
@@ -140,9 +144,6 @@
       "type": "file",
       "source": "project/input/cost_switch_fuel.csv"
     },
-    "label2info": {
-      "type": "file",
-      "source": "project/input/label2info_quintile2012.json"
-    }
+    "Household income rate": 0.012
   }
 }

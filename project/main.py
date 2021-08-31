@@ -13,18 +13,20 @@ from itertools import product
 
 from buildings import HousingStock, HousingStockRenovated, HousingStockConstructed
 from policies import EnergyTaxes, Subsidies, RegulatedLoan, RenovationObligation
-from parse_output import parse_output
+from parse_output import parse_output, quick_graphs
 
 
 def res_irf(calibration_year, end_year, folder, config, parameters, policies_parameters, attributes, energy_prices_bp,
-            energy_taxes, cost_invest, cost_invest_construction, stock_ini, co2_content_data,
+            energy_taxes, cost_invest, cost_invest_construction, stock_ini, co2_content,
             rate_renovation_ini, ms_renovation_ini, ms_construction_ini, logging):
     """Res-IRF main function.
 
     Parameters
     ----------
+    calibration_year: int
     folder: dict
         Path to a scenario-specific folder used to store all outputs.
+    end_year: int
     config: dict
         Dictionary with all scenarios configurations parameters.
     parameters: dict
@@ -36,10 +38,11 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
         Attributes also contain a list of each attribute.
     energy_prices_bp: pd.DataFrame
         After VTA and other energy taxes but before any endogenous energy taxes.
+    energy_taxes: pd.DataFrame
     cost_invest: dict
     cost_invest_construction: dict
     stock_ini: pd.Series
-    co2_content_data: pd.DataFrame
+    co2_content: pd.DataFrame
     rate_renovation_ini: pd.Series
     ms_renovation_ini: pd.DataFrame
     ms_construction_ini: pd.DataFrame
@@ -66,14 +69,6 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
     output['Cost construction'][calibration_year] = cost_invest_construction['Energy performance']
 
     logging.debug('Initialization')
-
-    # function of config
-    label2horizon = dict()
-    attributes['label2horizon_heater'] = attributes['label2horizon_heater'][config['investor']]
-    attributes['label2horizon_envelope'] = attributes['label2horizon_envelope'][config['investor']]
-    label2horizon[('Energy performance', )] = attributes['label2horizon_envelope']
-    label2horizon[('Heating energy', )] = attributes['label2horizon_heater']
-    attributes['label2horizon'] = label2horizon
 
     logging.debug('Initialize public policies')
     subsidies_dict = {}
@@ -110,10 +105,11 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
                                                                        columns=range(calibration_year, 2081, 1))
 
     policies = list(subsidies_dict.values())
-
+    energy_taxes_detailed = dict()
+    energy_taxes_detailed['energy_taxes'] = energy_taxes
     total_taxes = None
     for _, tax in energy_taxes_dict.items():
-        val = tax.price_to_taxes(energy_prices=energy_prices_bp, co2_content=co2_content_data)
+        val = tax.price_to_taxes(energy_prices=energy_prices_bp, co2_content=co2_content)
         # if not indexed by heating energy
         if isinstance(val, pd.Series):
             val = pd.concat([val] * len(attributes['housing_stock_renovated']['Heating energy']), axis=1).T
@@ -125,6 +121,8 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
         else:
             total_taxes = total_taxes + val
 
+        energy_taxes_detailed[tax.name] = val
+
     if total_taxes is not None:
         temp = total_taxes.reindex(energy_prices_bp.columns, axis=1).fillna(0)
         energy_prices = energy_prices_bp + temp
@@ -134,11 +132,11 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
 
     logging.debug('Creating HousingStockRenovated Python object')
     buildings = HousingStockRenovated(stock_ini, attributes['housing_stock_renovated'], calibration_year,
-                                      label2area=attributes['label2area'],
-                                      label2horizon=attributes['label2horizon'],
-                                      label2discount=attributes['label2discount'],
-                                      label2income=attributes['label2income'],
-                                      label2consumption=attributes['label2consumption'],
+                                      attributes2area=attributes['attributes2area'],
+                                      attributes2horizon=attributes['attributes2horizon'],
+                                      attributes2discount=attributes['attributes2discount'],
+                                      attributes2income=attributes['attributes2income'],
+                                      attributes2consumption=attributes['attributes2consumption'],
                                       residual_rate=parameters['Residual destruction rate'],
                                       destruction_rate=parameters['Destruction rate'],
                                       rate_renovation_ini=rate_renovation_ini,
@@ -162,11 +160,11 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
                                                     os_share_ht=parameters['Occupancy status share housing type'],
                                                     io_share_seg=io_share_seg,
                                                     stock_area_existing_seg=stock_area_existing_seg,
-                                                    label2area=attributes['label2area_construction'],
-                                                    label2horizon=attributes['label2horizon_construction'],
-                                                    label2discount=attributes['label2discount_construction'],
-                                                    label2income=attributes['label2income'],
-                                                    label2consumption=attributes['label2consumption_construction'])
+                                                    attributes2area=attributes['attributes2area_construction'],
+                                                    attributes2horizon=attributes['attributes2horizon_construction'],
+                                                    attributes2discount=attributes['attributes2discount_construction'],
+                                                    attributes2income=attributes['attributes2income'],
+                                                    attributes2consumption=attributes['attributes2consumption_construction'])
 
     cost_intangible_construction = None
     cost_intangible = None
@@ -220,19 +218,19 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
     name_file = config['rho']['source']
     source = config['rho']['source_type']
     if source == 'function':
-        rho_seg = buildings.calibration_renovation_rate(energy_prices, rate_renovation_ini,
-                                                        cost_invest=cost_invest,
-                                                        cost_intangible=cost_intangible,
-                                                        policies=policies_calibration)
+        rho = buildings.calibration_renovation_rate(energy_prices, rate_renovation_ini,
+                                                    cost_invest=cost_invest,
+                                                    cost_intangible=cost_intangible,
+                                                    policies=policies_calibration)
         logging.debug('End of calibration and dumping: {}'.format(name_file))
-        rho_seg.to_pickle(name_file)
+        rho.to_pickle(name_file)
     elif source == 'file':
         logging.debug('Loading intangible_cost from {}'.format(name_file))
-        rho_seg = pd.read_pickle(name_file)
+        rho = pd.read_pickle(name_file)
     else:
-        rho_seg = None
+        rho = None
 
-    buildings.rho_seg = rho_seg
+    buildings.rho = rho
 
     years = range(calibration_year, end_year, 1)
     logging.debug('Launching iterations')
@@ -297,7 +295,7 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
         logging.debug('Construction of: {:,.0f} buildings'.format(flow_constructed))
         buildings_constructed.flow_constructed = flow_constructed
 
-        logging.debug('Updating label2area_construction')
+        logging.debug('Updating attributes2area_construction')
         buildings_constructed.update_area_construction(parameters['Elasticity area construction'],
                                                        parameters['Available income real population'],
                                                        parameters['Area max construction'])
@@ -332,8 +330,9 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
                 year, buildings.stock_seg.sum(), flow_demolition_seg.sum(), parameters['Stock needed'].loc[year],
                 buildings.flow_renovation_label_energy_dict[year].sum().sum(), flow_constructed))
 
-    parse_output(output, buildings, buildings_constructed, energy_prices, energy_taxes, co2_content_data,
-                 parameters['Aggregated consumption coefficient {}'.format(calibration_year)], folder['output'])
+    parse_output(output, buildings, buildings_constructed, energy_prices, energy_taxes, energy_taxes_detailed,
+                 co2_content, parameters['Aggregated consumption coefficient {}'.format(calibration_year)],
+                 folder['output'], lbd_output=True)
 
     end = time.time()
     logging.debug('Time for the module: {:,.0f} seconds.'.format(end - start))
@@ -342,11 +341,13 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
 
 if __name__ == '__main__':
 
+    print(os.getcwd())
+
     import copy
     from multiprocessing import Process
     import argparse
     import json
-    from parse_input import parse_input, parameters_input
+    from parse_input import parse_building_stock, parse_input, parse_parameters, parse_observed_data
 
     folder = dict()
     folder['input'] = os.path.join(os.getcwd(), 'project', 'input')
@@ -368,6 +369,8 @@ if __name__ == '__main__':
                         filemode='a',
                         level=logging.DEBUG,
                         format='%(asctime)s - (%(lineno)s) - %(message)s')
+    logging.getLogger('matplotlib.font_manager').disabled = True
+
     root_logger = logging.getLogger("")
     log_formatter = logging.Formatter('%(asctime)s - (%(lineno)s) - %(message)s')
     console_handler = logging.StreamHandler()
@@ -386,11 +389,11 @@ if __name__ == '__main__':
 
         calibration_year = config['stock_buildings']['year']
 
-        stock_ini, energy_prices, energy_taxes, cost_invest, cost_invest_construction, co2_content_data, policies_parameters, summary_input = parse_input(
-            folder, config)
-
-        parameters, attributes, rate_renovation_ini, ms_renovation_ini, ms_construction_ini, summary_param = parameters_input(
-            folder, config, calibration_year, stock_ini.sum())
+        stock_ini, attributes = parse_building_stock(config)
+        parameters, summary_param = parse_parameters(folder['input'], config, stock_ini.sum())
+        energy_prices, energy_taxes, cost_invest, cost_invest_construction, co2_content, policies_parameters, summary_input = parse_input(
+            folder['input'], config)
+        rate_renovation_ini, ms_renovation_ini, ms_construction_ini = parse_observed_data(config)
 
         end_year = config['end']
         if args.year_end:
@@ -400,19 +403,24 @@ if __name__ == '__main__':
         folder_scenario['output'] = os.path.join(folder['output'], key.replace(' ', '_'))
         os.mkdir(folder_scenario['output'])
 
+        income = attributes['attributes2income'].T
+        income.columns = ['Income {} (€)'.format(c) for c in income.columns]
+        summary_param = pd.concat((summary_param, income), axis=1)
         pd.concat((summary_input, summary_param), axis=1).T.loc[:, calibration_year:].to_csv(os.path.join(folder_scenario['output'], 'summary_input.csv'))
 
         processes_list += [Process(target=res_irf,
                                    args=(calibration_year, end_year, folder_scenario, config, parameters, 
                                          policies_parameters, attributes,
                                          energy_prices, energy_taxes, cost_invest, cost_invest_construction,
-                                         stock_ini, co2_content_data,
+                                         stock_ini, co2_content,
                                          rate_renovation_ini, ms_renovation_ini, ms_construction_ini, logging))]
 
     for p in processes_list:
         p.start()
     for p in processes_list:
         p.join()
+
+    quick_graphs(folder['output'])
 
     end = time.time()
     logging.debug('Time for the module: {:,.0f} seconds.'.format(end - start))
