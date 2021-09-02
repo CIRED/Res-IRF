@@ -209,13 +209,20 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
         source = config['cost_intangible_source']['source_type']
         if source == 'function':
 
-            cost_intangible['Energy performance'] = buildings.calibration_market_share(energy_prices,
-                                                                                       ms_renovation_ini,
-                                                                                       cost_invest=cost_invest,
-                                                                                       consumption='conventional',
-                                                                                       policies=policies_calibration)
+            cost_intangible['Energy performance'], ms_calibration = buildings.calibration_market_share(energy_prices,
+                                                                                                       ms_renovation_ini,
+                                                                                                       cost_invest=cost_invest,
+                                                                                                       consumption='conventional',
+                                                                                                       policies=policies_calibration,
+                                                                                                       weighted=config[
+                                                                                                           'cost_intangible_source'][
+                                                                                                           'weighted'])
+
             logging.debug('End of calibration and dumping: {}'.format(name_file))
             cost_intangible['Energy performance'].to_pickle(name_file)
+            if ms_calibration is not None:
+                ms_calibration.to_csv(os.path.join(folder['output'], 'ms_calibration.csv'))
+
         elif source == 'file':
             logging.debug('Loading intangible_cost from {}'.format(name_file))
             cost_intangible['Energy performance'] = pd.read_pickle(name_file)
@@ -237,7 +244,9 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
                                                                                  weighted=config['rho']['weighted'])
         logging.debug('End of calibration and dumping: {}'.format(name_file))
         rho.to_pickle(name_file)
-        renovation_rate_calibration.to_csv(os.path.join(folder['output'], 'renovation_rate_calibration.csv'))
+
+        if renovation_rate_calibration is not None:
+            renovation_rate_calibration.to_csv(os.path.join(folder['output'], 'renovation_rate_calibration.csv'))
 
     elif source == 'file':
         logging.debug('Loading intangible_cost from {}'.format(name_file))
@@ -248,9 +257,16 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
 
     for _, tax in energy_taxes_dict.items():
         if tax.policy == 'subsidy_tax':
-            val = tax.price_to_taxes(energy_prices=energy_prices_bp, co2_content=co2_content)
-            tax.tax_revenue[calibration_year] = buildings.energy_expenditure(
-                val).sum()
+            val = tax.price_to_taxes(energy_prices=energy_prices_bp, co2_content=co2_content).loc[:, calibration_year]
+
+            consumption_new = buildings_constructed.to_consumption_actual(energy_prices).loc[:,
+                              calibration_year] * buildings_constructed.stock_seg * buildings_constructed.to_area()
+            consumption = buildings.to_consumption_actual(energy_prices).loc[:,
+                          calibration_year] * buildings.stock_seg * buildings.to_area()
+            consumption = pd.concat((consumption, consumption_new.reorder_levels(consumption.index.names)), axis=0)
+
+            consumption = (consumption.groupby('Heating energy').sum().T * parameters['Calibration consumption']).T
+            tax.tax_revenue[calibration_year] = (consumption * val).sum()
             # add buildings_constructed.energy_expenditure(val).sum()
 
     years = range(calibration_year, end_year, 1)
@@ -349,9 +365,16 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
         logging.debug('Calculating tax revenue')
         for _, tax in energy_taxes_dict.items():
             if tax.policy == 'subsidy_tax':
-                val = tax.price_to_taxes(energy_prices=energy_prices_bp, co2_content=co2_content)
-                tax.tax_revenue[year] = buildings.energy_expenditure(val).sum()
-                # buildings_constructed.energy_expenditure(val).sum()
+                val = tax.price_to_taxes(energy_prices=energy_prices_bp, co2_content=co2_content).loc[:, year]
+
+                consumption_new = buildings_constructed.to_consumption_actual(energy_prices).loc[:,
+                                  year] * buildings_constructed.stock_seg * buildings_constructed.to_area()
+                consumption = buildings.to_consumption_actual(energy_prices).loc[:,
+                              year] * buildings.stock_seg * buildings.to_area()
+                consumption = pd.concat((consumption, consumption_new.reorder_levels(consumption.index.names)), axis=0)
+
+                consumption = (consumption.groupby('Heating energy').sum().T * parameters['Calibration consumption']).T
+                tax.tax_revenue[year] = (consumption * val).sum()
 
         logging.debug(
             '\nSummary:\nYear: {}\nStock after demolition: {:,.0f}\nDemolition: {:,.0f}\nNeeded: {:,.0f}\nRenovation: {:,.0f}\nConstruction: {:,.0f}'.format(
@@ -359,8 +382,7 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
                 buildings.flow_renovation_label_energy_dict[year].sum().sum(), flow_constructed))
 
     parse_output(output, buildings, buildings_constructed, energy_prices, energy_taxes, energy_taxes_detailed,
-                 co2_content, parameters['Aggregated consumption coefficient {}'.format(calibration_year)],
-                 folder['output'], lbd_output=True)
+                 co2_content, parameters['Calibration consumption'], folder['output'], lbd_output=True)
 
     end = time.time()
     logging.debug('Time for the module: {:,.0f} seconds.'.format(end - start))

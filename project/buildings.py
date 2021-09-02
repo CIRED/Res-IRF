@@ -298,13 +298,18 @@ class HousingStock:
         return discount * df
 
     def to_consumption_conventional(self, scenario=None, segments=None):
-        if self.consumption_conventional is not None:
+
+        if segments is None:
+            segments = self._segments
+
+        idx = segments.sort_values()
+
+        if self.consumption_conventional is not None and self.consumption_conventional.index.sort_values().equals(idx):
             return self.consumption_conventional
+
         else:
             if self.attributes2consumption is None:
                 raise AttributeError('Need to define a table from attributes2consumption')
-            if segments is None:
-                segments = self._segments
             return HousingStock._attributes2(segments, self.attributes2consumption, scenario=scenario)
 
     def to_consumption_actual(self, energy_prices, detailed_output=False, segments=None):
@@ -844,7 +849,8 @@ class HousingStock:
                         capex_intangible += c
 
         self.capex[tuple(transition)][self.year] = capex
-        self.capex_intangible[tuple(transition)][self.year] = capex_intangible
+        if capex_intangible is not None:
+            self.capex_intangible[tuple(transition)][self.year] = capex_intangible
         self.capex_total[tuple(transition)][self.year] = capex_total
 
         self.policies_detailed[tuple(transition)][self.year] = dict()
@@ -988,8 +994,8 @@ class HousingStock:
         self.npv[tuple(transition)][self.year] = npv
         return npv
 
-    def calibration_market_share(self, energy_prices, market_share_objective, cost_invest=None,
-                                 consumption='conventional', policies=None):
+    def calibration_market_share(self, energy_prices, market_share_ini, cost_invest=None,
+                                 consumption='conventional', policies=None, weighted=True):
         """Returns intangible costs by calibrating market_share.
 
         Intangible costs are calibrated so that the observed market shares are reproduced in the initial year.
@@ -1012,8 +1018,8 @@ class HousingStock:
         Parameters:
         -----------
         energy_prices: pd.DataFrame
-        market_share_objective: pd.DataFrame
-            observed market share to match
+        market_share_ini: pd.DataFrame
+            Observed market share to match during calibration_year.
         folder_output: str, optional
             if not None, will dump cost_intangible in .pkl file
         cost_invest: pd.DataFrame, optional
@@ -1024,7 +1030,9 @@ class HousingStock:
         Returns:
         --------
         pd.DataFrame
-            Intangible cost,
+            Intangible cost
+        pd.DataFrame
+            Market share calculated and observed
         """
 
         lcc_final = self.to_lcc_final(energy_prices, consumption=consumption, cost_invest=cost_invest,
@@ -1039,8 +1047,7 @@ class HousingStock:
         lcc_useful = remove_rows(lcc_useful, 'Energy performance', 'B')
 
         market_share_temp = HousingStock.lcc2market_share(lcc_useful)
-        market_share_objective = reindex_mi(market_share_objective, market_share_temp.index,
-                                            market_share_objective.index.names)
+        market_share_objective = reindex_mi(market_share_ini, market_share_temp.index)
         market_share_objective = market_share_objective.reindex(market_share_temp.columns, axis=1)
 
         def approximate_ms_objective(ms_obj, ms):
@@ -1119,7 +1126,30 @@ class HousingStock:
                                     pd.Index(self.attributes_values['Income class'], name='Income class'),
                                     axis=0)
 
-        return intangible_cost
+        market_share_calibration = None
+        if weighted:
+            levels = list(market_share_ini.index.names)
+            weight = val2share(self.stock_seg, levels, option='column')
+            ic_temp = intangible_cost.unstack(weight.columns.names)
+            weight_re = reindex_mi(weight, ic_temp.columns, axis=1).loc[ic_temp.index, :]
+            ic_weighted = (weight_re * ic_temp).fillna(0).groupby('Energy performance final', axis=1).sum()
+            intangible_cost = reindex_mi(ic_weighted, intangible_cost.index)
+
+            cost_intangible = dict()
+            cost_intangible['Energy performance'] = intangible_cost
+            market_share, _ = self.to_market_share(energy_prices,
+                                                   transition=['Energy performance'],
+                                                   consumption=consumption,
+                                                   cost_invest=cost_invest,
+                                                   cost_intangible=cost_intangible,
+                                                   policies=policies)
+
+            market_share = market_share.unstack(weight.columns.names)
+            market_share_weighted = (market_share * weight_re).fillna(0).groupby('Energy performance final', axis=1).sum()
+            market_share_weighted.name = 'Market share calculated after calibration'
+            market_share_calibration = pd.concat((market_share_ini.stack(), market_share_weighted.stack()), axis=1)
+
+        return intangible_cost, market_share_calibration
 
     def to_segments_construction(self, lvl2drop, new_lvl_dict):
         """Returns segments_new from segments.
@@ -1633,6 +1663,7 @@ class HousingStockRenovated(HousingStock):
         for policy in policies:
             if policy.policy == 'subsidy_tax':
 
+                policy.value = policy.value_max
                 value_max = policy.value
                 value_min = 0.0
 
@@ -1664,6 +1695,9 @@ class HousingStockRenovated(HousingStock):
 
                 policy.subsidy_value[self.year] = policy.value
                 policy.subsidy_expense[self.year] = subsidy_expense
+
+                print('{:,.0f}'.format(tax_revenue))
+                print('{:,.0f}'.format(subsidy_expense))
 
         return flow_renovation_ep
 
@@ -2026,7 +2060,7 @@ class HousingStockRenovated(HousingStock):
                                                       cost_intangible=cost_intangible, policies=policies, rho=rho)
 
             renovation_rate = renovation_rate.unstack(weight.columns.names)
-            renovation_rate_weighted = (renovation_rate * rho_temp).fillna(0).sum(axis=1)
+            renovation_rate_weighted = (renovation_rate * weight).fillna(0).sum(axis=1)
             renovation_rate_weighted.name = 'Renovation rate calculated after calibration'
             renovation_rate_calibration = pd.concat((renovation_rate_ini, renovation_rate_weighted), axis=1)
 

@@ -167,7 +167,10 @@ def reindex_mi(df, miindex, levels=None, axis=0):
     """
 
     if levels is None:
-        levels = df.index.names
+        if axis == 0:
+            levels = df.index.names
+        else:
+            levels = df.columns.names
 
     if len(levels) > 1:
         tuple_index = (miindex.get_level_values(level).tolist() for level in levels)

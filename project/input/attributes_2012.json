@@ -218,39 +218,48 @@
     "unit": "%"
   },
   "attributes2discount": {
-    "val": {
-      "C1": {
-        "Single-family": 0.15,
-        "Multi-family": 0.37,
-        "Social-housing": 0.04
+    "Reference": {
+      "val": {
+        "C1": {
+          "Single-family": 0.15,
+          "Multi-family": 0.37,
+          "Social-housing": 0.04
+        },
+        "C2": {
+          "Single-family": 0.1,
+          "Multi-family": 0.24,
+          "Social-housing": 0.04
+        },
+        "C3": {
+          "Single-family": 0.07,
+          "Multi-family": 0.15,
+          "Social-housing": 0.04
+        },
+        "C4": {
+          "Single-family": 0.05,
+          "Multi-family": 0.07,
+          "Social-housing": 0.04
+        },
+        "C5": {
+          "Single-family": 0.04,
+          "Multi-family": 0.05,
+          "Social-housing": 0.04
+        }
       },
-      "C2": {
-        "Single-family": 0.1,
-        "Multi-family": 0.24,
-        "Social-housing": 0.04
-      },
-      "C3": {
-        "Single-family": 0.07,
-        "Multi-family": 0.15,
-        "Social-housing": 0.04
-      },
-      "C4": {
-        "Single-family": 0.05,
-        "Multi-family": 0.07,
-        "Social-housing": 0.04
-      },
-      "C5": {
-        "Single-family": 0.04,
-        "Multi-family": 0.05,
-        "Social-housing": 0.04
-      }
+      "index": [
+        "Income class owner",
+        "Housing type"
+      ],
+      "unit": "%/yr",
+      "type": "pd.Series"
     },
-    "index": [
-      "Income class owner",
-      "Housing type"
-    ],
-    "unit": "%/yr",
-    "type": "pd.Series"
+    "No budget constraint": {
+      "type": "int", "val": 0.07
+    },
+    "Public investment": {
+      "type": "int", "val": 0.04
+    },
+    "type": "dict_to_parse"
   },
   "attributes2discount_construction": {
     "val": {

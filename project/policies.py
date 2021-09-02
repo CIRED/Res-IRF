@@ -195,7 +195,8 @@ class SubsidiesRecyclingTax(PublicPolicy):
         subsidy_unit : {'%', '€/kWh', '€/tCO2'}
             Unit of measure of the value attribute.
         subsidy_value: float, pd.Series or pd.DataFrame
-            Initial value of energy subsidies. Should be high enough to tax revenue.
+            Initial value of energy subsidies.
+            Should be high enough to create subsidy expenses bigger than tax revenues, then a dichotomy takes place.
         calibration : bool, default: False
             Should policy be used for the calibration step?
         """
@@ -208,6 +209,7 @@ class SubsidiesRecyclingTax(PublicPolicy):
 
         self.unit = subsidy_unit
         self._value = subsidy_value
+        self.value_max = subsidy_value
 
         self._energy_tax = EnergyTaxes('{} tax'.format(name), start, end, tax_unit, tax_value)
         self._subsidy = Subsidies('{} subsidy', start + 1, end, self.unit, self._value, transition=transition)

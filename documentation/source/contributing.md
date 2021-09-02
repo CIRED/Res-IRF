@@ -1,4 +1,9 @@
-# Documentation
+# Contributing
+
+
+## Updating Documentation
+
+### Overview
 
 Documentation is available: https://lucas-vivier.github.io/Res-IRF/
 
@@ -14,7 +19,7 @@ Documentation is organized in 2 different folders:
     - _documentation/build_ contains .html files.
 - docs : used by GitHub pages to create a static website.
 
-## Quickstart
+### Quickstart
 
 ### Update content (modification of .md file or docstring in .py file)
 - Run sphinx make file

@@ -19,6 +19,8 @@ Welcome to Res-IRF's documentation!
    future_development
    technical_documentation
    contributing
+   variant_input_variables
+   variant_input_capitalization
 
 Indices and tables
 ==================

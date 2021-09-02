@@ -136,7 +136,6 @@ def parse_building_stock(config):
     Parameters
     ----------
     config: dict
-    household_income_rate: float
 
     Returns
     -------
@@ -182,11 +181,13 @@ def parse_building_stock(config):
 
     # function of config
     attributes2horizon = dict()
-    attributes['attributes2horizon_heater'] = attributes['attributes2horizon_heater'][config['investor']]
-    attributes['attributes2horizon_envelope'] = attributes['attributes2horizon_envelope'][config['investor']]
+    attributes['attributes2horizon_heater'] = attributes['attributes2horizon_heater'][config['green_value']]
+    attributes['attributes2horizon_envelope'] = attributes['attributes2horizon_envelope'][config['green_value']]
     attributes2horizon[('Energy performance',)] = attributes['attributes2horizon_envelope']
     attributes2horizon[('Heating energy',)] = attributes['attributes2horizon_heater']
     attributes['attributes2horizon'] = attributes2horizon
+
+    attributes['attributes2discount'] = attributes['attributes2discount'][config['budget_constraint']]
 
     file_dict = attributes['attributes_dict']
     keys = ['Housing type', 'Occupancy status', 'Heating energy', 'Energy performance', 'Income class']
@@ -368,6 +369,7 @@ def parse_parameters(folder, config, stock_sum):
     parameters = parse_json(name_file)
 
     # 2. Demographic and macro-economic variable
+    parameters['Calibration consumption'] = parameters['Aggregated consumption coefficient {}'.format(calibration_year)]
 
     name_file = os.path.join(os.getcwd(), config['population']['source'])
     parameters['Population total'] = pd.read_csv(os.path.join(folder, name_file), sep=',', header=None,
@@ -459,6 +461,7 @@ def parse_observed_data(config):
     name_file = os.path.join(os.getcwd(), config['ms_renovation_ini']['source'])
     ms_renovation_ini = pd.read_csv(name_file, index_col=[0], header=[0])
     ms_renovation_ini.index.set_names(['Energy performance'], inplace=True)
+    ms_renovation_ini.columns.set_names(['Energy performance final'], inplace=True)
 
     name_file = os.path.join(os.getcwd(), config['ms_construction_ini']['source'])
     ms_construction_ini = pd.read_csv(name_file, index_col=[0, 1], header=[0, 1])

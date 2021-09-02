@@ -99,7 +99,9 @@
 <li class="toctree-l1"><a class="reference internal" href="TODO.html">Todo</a></li>
 <li class="toctree-l1"><a class="reference internal" href="future_development.html">Future developments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="technical_documentation.html">Technical documentation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="contributing.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="variant_input_variables.html">Variants on the input variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="variant_input_capitalization.html">Influence of the determinants of capitalization</a></li>
 </ul>
 
             
@@ -296,7 +298,7 @@ The rate of decrease (learning_rate) is set at 25% for a doubling of cumulative 
 
 <dl class="py method">
 <dt class="sig sig-object py" id="buildings.HousingStock.calibration_market_share">
-<span class="sig-name descname"><span class="pre">calibration_market_share</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy_prices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">market_share_objective</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_invest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'conventional'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#buildings.HousingStock.calibration_market_share" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">calibration_market_share</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy_prices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">market_share_ini</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_invest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'conventional'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weighted</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#buildings.HousingStock.calibration_market_share" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns intangible costs by calibrating market_share.</p>
 <p>Intangible costs are calibrated so that the observed market shares are reproduced in the initial year.
 Intangible costs are calibrated so that the life-cycle cost model, fed with the investment costs,
@@ -312,9 +314,9 @@ Heating energy initial, Energy performance final)</p>
 <p>NB: Observed market share only depends on Energy performance initial and Energy performance final.
 Each segment with the same performance transition need to match the same observed market shares.</p>
 <p>energy_prices: pd.DataFrame
-market_share_objective: pd.DataFrame</p>
+market_share_ini: pd.DataFrame</p>
 <blockquote>
-<div><p>observed market share to match</p>
+<div><p>Observed market share to match during calibration_year.</p>
 </div></blockquote>
 <dl class="simple">
 <dt>folder_output: str, optional</dt><dd><p>if not None, will dump cost_intangible in .pkl file</p>
@@ -327,7 +329,9 @@ policies: list, optional</p>
 <div><p>policies to consider in the market share</p>
 </div></blockquote>
 <dl class="simple">
-<dt>pd.DataFrame</dt><dd><p>Intangible cost,</p>
+<dt>pd.DataFrame</dt><dd><p>Intangible cost</p>
+</dd>
+<dt>pd.DataFrame</dt><dd><p>Market share calculated and observed</p>
 </dd>
 </dl>
 </dd></dl>
