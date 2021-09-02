@@ -3,17 +3,73 @@
   <component name="ChangeListManager">
     <list default="true" id="5a27c1bc-6d7f-41bf-89e9-22387bb7bdb3" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/buildings.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/buildings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/parameters.json" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/parameters.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/policies.json" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/policies.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/scenarios/scenario_cite_test.json" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/scenarios/scenario_cite_test.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/scenarios/scenario_nocalib.json" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/scenarios/scenario_nocalib.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/scenarios/scenario_test.json" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/scenarios/scenario_test.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/parse_input.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/parse_input.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/parse_output.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/parse_output.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/policies.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/policies.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/ui_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/ui_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/.doctrees/CHANGELOG.doctree" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/.doctrees/Documentation.doctree" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/.doctrees/LICENSE.doctree" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/.doctrees/README.doctree" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/.doctrees/TEST.doctree" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/.doctrees/TODO.doctree" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/.doctrees/appendix.doctree" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/.doctrees/contributing.doctree" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/.doctrees/environment.pickle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/.doctrees/future_development.doctree" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/.doctrees/index.doctree" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/.doctrees/input.doctree" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/.doctrees/installation.doctree" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/.doctrees/modules.doctree" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/.doctrees/nbsphinx/tutorials.ipynb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/.doctrees/nbsphinx/tutorials_14_0.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/.doctrees/nbsphinx/tutorials_14_1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/.doctrees/nbsphinx/tutorials_26_0.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/.doctrees/nbsphinx/tutorials_30_0.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/.doctrees/nbsphinx/tutorials_33_0.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/.doctrees/nbsphinx/tutorials_48_1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/.doctrees/nbsphinx/tutorials_60_0.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/.doctrees/nbsphinx/tutorials_60_1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/.doctrees/nbsphinx/tutorials_60_2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/.doctrees/nbsphinx/tutorials_60_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/.doctrees/nbsphinx/tutorials_60_4.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/.doctrees/nbsphinx/tutorials_60_5.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/.doctrees/nbsphinx/tutorials_8_0.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/.doctrees/policies_assessment.doctree" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/.doctrees/readme_link.doctree" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/.doctrees/technical_documentation.doctree" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/.doctrees/testtest.doctree" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/.doctrees/tutorials.doctree" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/CHANGELOG.html" beforeDir="false" afterPath="$PROJECT_DIR$/docs/CHANGELOG.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/Documentation.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/LICENSE.html" beforeDir="false" afterPath="$PROJECT_DIR$/docs/LICENSE.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/README.html" beforeDir="false" afterPath="$PROJECT_DIR$/docs/README.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/TODO.html" beforeDir="false" afterPath="$PROJECT_DIR$/docs/TODO.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/_images/tutorials_14_0.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/_images/tutorials_14_1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/_images/tutorials_26_0.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/_images/tutorials_30_0.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/_images/tutorials_33_0.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/_images/tutorials_48_1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/_images/tutorials_60_0.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/_images/tutorials_60_1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/_images/tutorials_60_2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/_images/tutorials_60_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/_images/tutorials_60_4.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/_images/tutorials_60_5.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/_images/tutorials_8_0.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/_sources/Documentation.md.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/_sources/TEST.md.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/_sources/installation.md.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/_sources/readme_link.rst.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/_sources/testtest.rst.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/_sources/tutorials.ipynb.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/_static/alabaster.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/_static/custom.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/appendix.html" beforeDir="false" afterPath="$PROJECT_DIR$/docs/appendix.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/contributing.html" beforeDir="false" afterPath="$PROJECT_DIR$/docs/contributing.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/future_development.html" beforeDir="false" afterPath="$PROJECT_DIR$/docs/future_development.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/input.html" beforeDir="false" afterPath="$PROJECT_DIR$/docs/input.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/policies_assessment.html" beforeDir="false" afterPath="$PROJECT_DIR$/docs/policies_assessment.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/searchindex.js" beforeDir="false" afterPath="$PROJECT_DIR$/docs/searchindex.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/tutorials.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/tutorials.ipynb" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,7 +119,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/project/input/scenarios" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/docs" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
@@ -72,8 +128,8 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/project/input/scenarios" />
       <recent name="$PROJECT_DIR$/docs" />
+      <recent name="$PROJECT_DIR$/project/input/scenarios" />
       <recent name="$PROJECT_DIR$/documentation/source" />
       <recent name="$PROJECT_DIR$/project/input" />
       <recent name="$PROJECT_DIR$/docs/source" />
@@ -459,7 +515,7 @@
       <workItem from="1630312649000" duration="5842000" />
       <workItem from="1630330740019" duration="9027000" />
       <workItem from="1630393162998" duration="21111000" />
-      <workItem from="1630480263820" duration="26445000" />
+      <workItem from="1630480263820" duration="28522000" />
     </task>
     <task id="LOCAL-00001" summary="major update - work still ongoing">
       <created>1613665046411</created>
@@ -790,7 +846,14 @@
       <option name="project" value="LOCAL" />
       <updated>1630416460239</updated>
     </task>
-    <option name="localTasksCounter" value="48" />
+    <task id="LOCAL-00048" summary="cleaning and organizing">
+      <created>1630568288265</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1630568288265</updated>
+    </task>
+    <option name="localTasksCounter" value="49" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -851,7 +914,7 @@
     <SUITE FILE_PATH="coverage/Res_IRF$main_class.coverage" NAME="main_class Coverage Results" MODIFIED="1621694976447" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$payback_project.coverage" NAME="payback_project Coverage Results" MODIFIED="1616162554355" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$buildings.coverage" NAME="buildings Coverage Results" MODIFIED="1625125787045" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/project" />
-    <SUITE FILE_PATH="coverage/Res_IRF$Sphinx_Task_in_Sphinx_Task_in_Sphinx_Task_in_Sphinx_Task_in_Sphinx_Task_in_.coverage" NAME="Sphinx Task in Sphinx Task in Sphinx Task in Sphinx Task in Sphinx Task in  Coverage Results" MODIFIED="1629893888108" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/Res_IRF$Sphinx_Task_in_Sphinx_Task_in_Sphinx_Task_in_Sphinx_Task_in_Sphinx_Task_in_.coverage" NAME="Sphinx Task in Sphinx Task in Sphinx Task in Sphinx Task in Sphinx Task in  Coverage Results" MODIFIED="1630570081955" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/Res_IRF$main_phebus.coverage" NAME="main_phebus Coverage Results" MODIFIED="1630416566799" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$read_pkl.coverage" NAME="read_pkl Coverage Results" MODIFIED="1621265812061" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/" />
     <SUITE FILE_PATH="coverage/Res_IRF$func_co2_cost.coverage" NAME="func_co2_cost Coverage Results" MODIFIED="1616424071313" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
