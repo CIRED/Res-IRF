@@ -711,8 +711,8 @@ def grouped_scenarios(output_dict, level, func='sum'):
     return {k: pd.DataFrame(output[k]) for k in output.keys()}
 
 
-def multi_scenario_plot(data, idx_ref, title, xlabel, ylabel, leg=False, version='simple',
-                        format_y=None, format_x=None):
+def uncertainty_area_plot(data, idx_ref, title, xlabel, ylabel, leg=False, version='simple',
+                          format_y=None, format_x=None):
     """Plot multi scenarios and uncertainty area between lower value and higher value of scenarios.
 
     Parameters
@@ -751,9 +751,9 @@ def multi_scenario_plot(data, idx_ref, title, xlabel, ylabel, leg=False, version
         if format_y == 'percent':
             format_y = lambda y, _: '{:,.0f}%'.format(y * 100)
         elif format_y == 'million':
-            format_y = lambda y, _: '{:,.0f}M'.format(y / 10**6)
+            format_y = lambda y, _: '{:,.0f}M'.format(y / 10 ** 6)
         elif format_y == 'billion':
-            format_y = lambda y, _: '{:,.0f}B'.format(y / 10**9)
+            format_y = lambda y, _: '{:,.0f}B'.format(y / 10 ** 9)
         ax.yaxis.set_major_formatter(plt.FuncFormatter(format_y))
 
     if format_x is not None:

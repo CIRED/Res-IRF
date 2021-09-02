@@ -52,7 +52,7 @@
       ],
       "type": "pd.DataFrame"
     },
-    "kind": "%",
+    "unit": "%",
     "transition": [
       "Energy performance"
     ],
@@ -63,7 +63,7 @@
     "name": "cite",
     "policy": "subsidies",
     "value": 0.17,
-    "kind": "%",
+    "unit": "%",
     "transition": ["Energy performance"],
     "type": "dict_to_parse"
   },
@@ -72,7 +72,7 @@
     "name": "cee_subsidy",
     "policy": "subsidies",
     "value": 0.004,
-    "kind": "€/kWh",
+    "unit": "€/kWh",
     "transition": ["Energy performance"],
     "type": "dict_to_parse"
   },
@@ -81,7 +81,7 @@
     "name": "cee_taxes",
     "policy": "energy_taxes",
     "value": 0.004,
-    "kind": "€/kWh",
+    "unit": "€/kWh",
     "transition": ["Energy performance"],
     "type": "dict_to_parse"
   },
@@ -90,7 +90,7 @@
     "name": "carbon_tax",
     "policy": "energy_taxes",
     "value": "project/input/carbon_tax.csv",
-    "kind": "€/gCO2",
+    "unit": "€/tCO2",
     "type": "dict_to_parse"
   },
   "reduced_tax":
@@ -98,7 +98,7 @@
     "name": "reduced_tax",
     "policy": "subsidies",
     "value": 0.04,
-    "kind": "%",
+    "unit": "%",
     "transition": ["Energy performance"],
     "type": "dict_to_parse"
   },
@@ -212,7 +212,16 @@
         "Energy performance"
       ],
       "type": "pd.Series"
-    },
-    "calibration": false
+    }
+  },
+  "subsidy_recycling_tax": 
+  {
+    "name": "subsidy_recycling_tax",
+    "policy": "subsidy_tax",
+    "type": "dict_to_parse",
+    "tax_unit": "€/tCO2",
+    "tax_value": 50,
+    "subsidy_unit": "€/kWh",
+    "subsidy_value": 0.004
   }
 }

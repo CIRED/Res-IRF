@@ -243,6 +243,8 @@ def parse_output(output, buildings, buildings_constructed, energy_prices, energy
     output_flow_transition['Flow transition'] = flow_renovation
     output_flow_transition['Flow transition (m2)'] = (flow_renovation.T * reindex_mi(buildings.area, flow_renovation.index)).T
 
+    output_stock['Renovation'] = flow_renovation.groupby(output_stock['Renovation rate (%) - Renovation'].index.names).sum()
+
     # final just represent energy performance transition and doesn't consider new heating energy
     energy_lcc_final = reindex_mi(dict_pd2df(buildings.energy_lcc_final[('Energy performance',)]['conventional']), flow_renovation.index)
     output_flow_transition['Energy cost final (€/m2)'] = energy_lcc_final
@@ -320,8 +322,8 @@ def parse_output(output, buildings, buildings_constructed, energy_prices, energy
     temp.index = [c + 1 for c in temp.index]
     summary['Aggregated renovation rate renovation (%)'] = summary['Flow transition renovation'] / temp
 
-    summary['Capex renovation (€)'] = output_flow_transition['Capex (€)'].sum(axis=0)
-    summary['Subsidies renovation (€)'] = output_flow_transition['Subsidies (€)'].sum(axis=0)
+    summary['Annual renovation expenditure (€)'] = output_flow_transition['Capex (€)'].sum(axis=0)
+    summary['Annual subsidies (€)'] = output_flow_transition['Subsidies (€)'].sum(axis=0)
     summary['Energy poverty'] = output_stock['Stock'][output_stock['Budget share (%)'] > 0.1].sum(axis=0)
     summary = pd.DataFrame(summary)
     summary.dropna(axis=0, thresh=4, inplace=True)
@@ -358,14 +360,21 @@ def parse_output(output, buildings, buildings_constructed, energy_prices, energy
 
     detailed.update(gap_number(flow_renovation))
     df = flow_renovation.groupby(['Occupancy status', 'Housing type']).sum()
-    df.index = df.index.values
+    for dm in df.index:
+        detailed['Renovation {} - {} (Thousands)'.format(dm[0], dm[1])] = df.loc[dm, :] / 10**3
+
+    for attribute in ['Income class owner', 'Energy performance', 'Heating energy']:
+
+        df = flow_renovation.groupby([attribute]).sum()
+        for idx in df.index:
+            detailed['Renovation {} (Thousands)'.format(idx)] = df.loc[idx, :] / 10**3
 
     temp = buildings.rate_renovation_ini
     temp = temp.groupby(['Occupancy status', 'Housing type']).mean()
     temp.name = 2012
     temp = pd.concat((temp, dict_pd2df(buildings.renovation_rate_dm)), axis=1)
     for dm in temp.index:
-        detailed['Renovation rate {} (%)'.format(dm)] = temp.loc[dm, : ]
+        detailed['Renovation rate {} (%)'.format(dm)] = temp.loc[dm, :]
 
     detailed['Annual renovation expenditure (Billions €)'] = output_flow_transition['Capex (€)'].sum(axis=0) / 10**9
     detailed['Annual subsidies (Billions €)'] = output_flow_transition['Subsidies (€)'].sum(axis=0) / 10**9
@@ -432,10 +441,30 @@ def quick_graphs(folder_output):
     simple_pd_plot(summaries['Flow transition renovation'] / 10 ** 3, 'Years', 'Flow renovation (Thousands)',
                    save=os.path.join(folder_output, 'flow_renovation.png'))
 
+    scenario_grouped_subplots(grouped_scenarios(output_stock['Renovation'], 'Energy performance'),
+                              suptitle='Evolution flow renovation (Thousands)',
+                              format_y=lambda y, _: '{:,.0f}'.format(y / 10 ** 3), n_columns=7, rotation=90, nbins=4,
+                              save=os.path.join(folder_output, 'renovation_performance.png'))
+
+    scenario_grouped_subplots(grouped_scenarios(output_stock['Renovation'], 'Heating energy'),
+                              suptitle='Evolution flow renovation (Thousands)',
+                              format_y=lambda y, _: '{:,.0f}'.format(y / 10 ** 3), n_columns=4, rotation=90, nbins=4,
+                              save=os.path.join(folder_output, 'renovation_energy.png'))
+
+    scenario_grouped_subplots(grouped_scenarios(output_stock['Renovation'], 'Income class owner'),
+                              suptitle='Evolution flow renovation (Thousands)',
+                              format_y=lambda y, _: '{:,.0f}'.format(y / 10 ** 3), n_columns=5, rotation=90, nbins=4,
+                              save=os.path.join(folder_output, 'renovation_income_class.png'))
+
+    scenario_grouped_subplots(grouped_scenarios(output_stock['Renovation'], ['Occupancy status', 'Housing type']),
+                              suptitle='Evolution flow renovation (Thousands)',
+                              format_y=lambda y, _: '{:,.0f}'.format(y / 10 ** 3), n_columns=3, rotation=90, nbins=4,
+                              save=os.path.join(folder_output, 'renovation_decision_maker.png'))
+
+    simple_pd_plot(summaries['Energy poverty'] / 10 ** 6, 'Years', 'Energy poverty (Millions)',
+                   save=os.path.join(folder_output, 'energy_poverty.png'))
+
     scenario_grouped_subplots(grouped_scenarios(output_stock['Stock - Renovation'], 'Energy performance'),
                               suptitle='Evolution buildings stock (Millions)',
                               format_y=lambda y, _: '{:,.0f}'.format(y / 10 ** 6), n_columns=7, rotation=90, nbins=4,
                               save=os.path.join(folder_output, 'stock_performance.png'))
-
-    simple_pd_plot(summaries['Energy poverty'] / 10 ** 6, 'Years', 'Energy poverty (Millions)',
-                   save=os.path.join(folder_output, 'energy_poverty.png'))

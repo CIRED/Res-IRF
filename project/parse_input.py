@@ -202,7 +202,7 @@ def parse_building_stock(config):
     return stock_ini, attributes
 
 
-def parse_input(folder, config):
+def parse_exogenous_input(folder, config):
     """Parses prices and costs input to match Res-IRF input requirement.
 
     Parameters
@@ -213,10 +213,11 @@ def parse_input(folder, config):
     Returns
     -------
     energy_prices : pd.DataFrame
+    energy_taxes : pd.DataFrame
     cost_invest : dict
         Keys are transition cost_envelope = cost_invest(tuple([Energy performance]).
     cost_invest_construction : dict
-    co2_content_data : pd.DataFrame
+    co2_content : pd.DataFrame
     policies : dict
     summary_input: pd.DataFrame
     """
@@ -227,7 +228,7 @@ def parse_input(folder, config):
     name_file = os.path.join(os.getcwd(), config['policies']['source'])
     policies = parse_json(name_file)
 
-    carbon_tax = pd.read_csv(os.path.join(os.getcwd(), config['carbon_tax_value']['source']), index_col=[0]) / 1000000
+    carbon_tax = pd.read_csv(os.path.join(os.getcwd(), config['carbon_tax_value']['source']), index_col=[0])
     carbon_tax = carbon_tax.T
     carbon_tax.index.set_names('Heating energy', inplace=True)
     policies['carbon_tax']['value'] = carbon_tax
@@ -408,6 +409,8 @@ def parse_parameters(folder, config, stock_sum):
     parameters['Stock needed'] = pd.Series(stock_needed)
 
     # 5. Others
+
+    parameters['Renovation rate max'] = parameters['Renovation rate max {}'.format(calibration_year)]
 
     proba_performance = parameters['Probability disease performance']
     proba_income = parameters['Probability disease income {}'.format(calibration_year)]

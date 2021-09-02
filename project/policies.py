@@ -40,7 +40,7 @@ class EnergyTaxes(PublicPolicy):
         Year policy ends.
     calibration : bool, default: False
         Should policy be used for the calibration step?
-    kind : {'%', '€/kWh', '€/gCO2'}
+    unit : {'%', '€/kWh', '€/tCO2'}
         Unit of measure of the value attribute.
     value: float, pd.Series or pd.DataFrame
         Value of energy taxes.
@@ -50,7 +50,7 @@ class EnergyTaxes(PublicPolicy):
     price_to_taxes(energy_prices=None, co2_content=None)
         Calculate energy taxes cost.
     """
-    def __init__(self, name, start, end, kind, value, calibration=False):
+    def __init__(self, name, start, end, unit, value, calibration=False):
         """EnergyTaxes constructor.
 
         Parameters
@@ -63,20 +63,20 @@ class EnergyTaxes(PublicPolicy):
             Year policy ends.
         calibration : bool, default: False
             Should policy be used for the calibration step?
-        kind : {'%', '€/kWh', '€/gCO2'}
+        unit : {'%', '€/kWh', '€/tCO2'}
             Unit of measure of the value attribute.
         value: float, pd.Series or pd.DataFrame
             Value of energy taxes.
         """
         super().__init__(name, start, end, 'energy_taxes', calibration)
 
-        self.list_kind = ['%', '€/kWh', '€/gCO2']
-        self.kind = kind
+        self.list_unit = ['%', '€/kWh', '€/tCO2']
+        self.unit = unit
         self.value = value
         self.calibration = calibration
 
     def price_to_taxes(self, energy_prices=None, co2_content=None):
-        """Calculate energy taxes cost based on self.kind unit of measure.
+        """Calculate energy taxes cost based on self.unit unit of measure.
 
         Parameters
         ----------
@@ -90,22 +90,25 @@ class EnergyTaxes(PublicPolicy):
         pd.Series
             Energy tax cost in €/kWh.
         """
-        if self.kind == '%':
-            val =  energy_prices * self.value
+        if self.unit == '%':
+            val = energy_prices * self.value
 
-        elif self.kind == '€/kWh':
+        elif self.unit == '€/kWh':
             val = self.value
 
-        elif self.kind == '€/gCO2':
+        elif self.unit == '€/tCO2':
             # €/tCO2 * gCO2/kWh / 1000000 -> €/kWh
             value = self.value
-            idx = value.columns.union(co2_content.columns)
-            value = value.reindex(idx, axis=1)
-            co2_content = co2_content.reindex(idx, axis=1)
+            if isinstance(value, int):
+                value = pd.Series(value, co2_content.columns)
+            else:
+                idx = value.columns.union(co2_content.columns)
+                value = value.reindex(idx, axis=1)
+                co2_content = co2_content.reindex(idx, axis=1)
             taxes = value * co2_content
             taxes.fillna(0, inplace=True)
             taxes = taxes.reindex(energy_prices.columns, axis=1)
-            val = energy_prices * taxes
+            val = energy_prices * taxes / 10**6
 
         else:
             raise AttributeError
@@ -129,7 +132,7 @@ class Subsidies(PublicPolicy):
         Year policy ends.
     calibration : bool, default: False
         Should policy be used for the calibration step?
-    kind : {'%', '€/kWh', '€/gCO2'}
+    unit : {'%', '€/kWh', '€/tCO2'}
         Unit of measure of the value attribute.
     value : float, pd.Series or pd.DataFrame
         Value of subsidies.
@@ -141,7 +144,7 @@ class Subsidies(PublicPolicy):
         Maximum subsidy.
     """
 
-    def __init__(self, name, start, end, kind, value,
+    def __init__(self, name, start, end, unit, value,
                  transition=None, cost_max=None, subsidy_max=None, calibration=False):
         super().__init__(name, start, end, 'subsidies', calibration)
 
@@ -151,17 +154,17 @@ class Subsidies(PublicPolicy):
             self.transition = transition
 
         # self.targets = targets
-        self.list_kind = ['%', '€/kWh', '€/tCO2', '€']
-        self.kind = kind
+        self.list_unit = ['%', '€/kWh', '€/tCO2', '€']
+        self.unit = unit
         self.cost_max = cost_max
         self.subsidy_max = subsidy_max
         self.value = value
 
     def to_subsidy(self, cost=None, energy_saving=None):
 
-        if self.kind == '€':
+        if self.unit == '€':
             return self.value
-        if self.kind == '%':
+        if self.unit == '%':
             # subsidy apply to one target
             if isinstance(self.value, pd.Series):
                 val = reindex_mi(self.value, cost.index, self.value.index.names, axis=0)
@@ -172,8 +175,69 @@ class Subsidies(PublicPolicy):
                 cost[cost > self.cost_max] = cost
 
             return val * cost
-        if self.kind == '€/kWh':
+        if self.unit == '€/kWh':
             return self.value * energy_saving
+
+
+class SubsidiesRecyclingTax(PublicPolicy):
+    def __init__(self, name, start, end, tax_unit, tax_value, subsidy_unit, subsidy_value, calibration=False,
+                 transition=None):
+        """EnergyTaxes constructor.
+
+        Parameters
+        ----------
+        name : str
+            Name of the policy.
+        start : int
+            Year policy starts.
+        end : int
+            Year policy ends.
+        subsidy_unit : {'%', '€/kWh', '€/tCO2'}
+            Unit of measure of the value attribute.
+        subsidy_value: float, pd.Series or pd.DataFrame
+            Initial value of energy subsidies. Should be high enough to tax revenue.
+        calibration : bool, default: False
+            Should policy be used for the calibration step?
+        """
+        super().__init__(name, start, end, 'subsidy_tax', calibration)
+        
+        if transition is None:
+            self.transition = ['Energy performance']
+        else:
+            self.transition = transition
+
+        self.unit = subsidy_unit
+        self._value = subsidy_value
+
+        self._energy_tax = EnergyTaxes('{} tax'.format(name), start, end, tax_unit, tax_value)
+        self._subsidy = Subsidies('{} subsidy', start + 1, end, self.unit, self._value, transition=transition)
+
+        self.tax_revenue = dict()
+        self.subsidy_expense = dict()
+        self.subsidy_value = dict()
+
+    @property
+    def subsidy(self):
+        return self._subsidy
+    
+    @property
+    def value(self):
+        return self._value
+    
+    @value.setter
+    def value(self, val):
+        self._value = val
+        self._subsidy.value = val
+
+    def price_to_taxes(self, energy_prices=None, co2_content=None):
+        return self._energy_tax.price_to_taxes(energy_prices=energy_prices, co2_content=co2_content)
+
+    def to_subsidy(self, cost=None, energy_saving=None):
+        return self._subsidy.to_subsidy(cost=cost, energy_saving=energy_saving)
+
+
+
+
 
 
 class RegulatedLoan(PublicPolicy):
@@ -382,12 +446,13 @@ class RegulatedLoan(PublicPolicy):
 
 
 class RenovationObligation:
-    def __init__(self, name, start_targets, participation_rate=1.0, columns=None):
+    def __init__(self, name, start_targets, participation_rate=1.0, columns=None, calibration=False):
         self.name = name
         self.policy = 'renovation_obligation'
         self.start_targets = start_targets
         self.targets = self.to_targets(columns)
         self.participation_rate = participation_rate
+        self.calibration = calibration
 
     def to_targets(self, columns=None):
         if columns is None:

@@ -95,11 +95,6 @@
 <li class="toctree-l1"><a class="reference internal" href="CHANGELOG.html">Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="TODO.html">Todo</a></li>
 <li class="toctree-l1"><a class="reference internal" href="future_development.html">Future developments</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials Res-IRF fondation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials.html#Building-stock">Building stock</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials.html#Energy-use">Energy use</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials.html#Transition-economics">Transition economics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials.html#Stock-dynamics">Stock dynamics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="technical_documentation.html">Technical documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Documentation</a></li>
 </ul>
@@ -180,7 +175,6 @@
  | <a href="#G"><strong>G</strong></a>
  | <a href="#H"><strong>H</strong></a>
  | <a href="#I"><strong>I</strong></a>
- | <a href="#K"><strong>K</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#N"><strong>N</strong></a>
@@ -199,13 +193,23 @@
 </li>
       <li><a href="modules.html#utils.add_level">add_level() (in module utils)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules.html#utils.add_level_nan">add_level_nan() (in module utils)</a>
 </li>
       <li><a href="modules.html#utils.apply_linear_rate">apply_linear_rate() (in module utils)</a>
 </li>
       <li><a href="modules.html#policies.RegulatedLoan.apply_targets">apply_targets() (policies.RegulatedLoan method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules.html#buildings.HousingStock.attributes2area">attributes2area (buildings.HousingStock attribute)</a>
+</li>
+      <li><a href="modules.html#buildings.HousingStock.attributes2consumption">attributes2consumption (buildings.HousingStock attribute)</a>
+</li>
+      <li><a href="modules.html#buildings.HousingStock.attributes2discount">attributes2discount (buildings.HousingStock attribute)</a>
+</li>
+      <li><a href="modules.html#buildings.HousingStock.attributes2horizon">attributes2horizon (buildings.HousingStock attribute)</a>
+</li>
+      <li><a href="modules.html#buildings.HousingStock.attributes2income">attributes2income (buildings.HousingStock attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -236,6 +240,12 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules.html#buildings.HousingStock.calibration_market_share">calibration_market_share() (buildings.HousingStock method)</a>
+
+      <ul>
+        <li><a href="modules.html#buildings.HousingStockConstructed.calibration_market_share">(buildings.HousingStockConstructed method)</a>
+</li>
+      </ul></li>
       <li><a href="modules.html#buildings.HousingStockRenovated.calibration_renovation_rate">calibration_renovation_rate() (buildings.HousingStockRenovated method)</a>
 </li>
       <li><a href="modules.html#policies.Subsidies.cost_max">cost_max (policies.Subsidies attribute)</a>
@@ -272,7 +282,11 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules.html#buildings.HousingStock.energy_expenditure">energy_expenditure() (buildings.HousingStock method)</a>
+</li>
       <li><a href="modules.html#policies.EnergyTaxes">EnergyTaxes (class in policies)</a>
+</li>
+      <li><a href="modules.html#buildings.HousingStockConstructed.evolution_area_construction">evolution_area_construction() (buildings.HousingStockConstructed static method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -281,6 +295,10 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules.html#buildings.HousingStockRenovated.flow_area_renovated_seg_ini">flow_area_renovated_seg_ini() (buildings.HousingStockRenovated method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules.html#buildings.HousingStockRenovated.flow_renovation_ep">flow_renovation_ep() (buildings.HousingStockRenovated method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -335,35 +353,13 @@
   </ul></td>
 </tr></table>
 
-<h2 id="K">K</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules.html#policies.EnergyTaxes.kind">kind (policies.EnergyTaxes attribute)</a>
-
-      <ul>
-        <li><a href="modules.html#policies.Subsidies.kind">(policies.Subsidies attribute)</a>
-</li>
-      </ul></li>
-  </ul></td>
-</tr></table>
-
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules.html#buildings.HousingStock.label2area">label2area (buildings.HousingStock attribute)</a>
-</li>
-      <li><a href="modules.html#buildings.HousingStock.label2consumption">label2consumption (buildings.HousingStock attribute)</a>
-</li>
-      <li><a href="modules.html#buildings.HousingStock.label2discount">label2discount (buildings.HousingStock attribute)</a>
+      <li><a href="modules.html#buildings.HousingStock.lcc2market_share">lcc2market_share() (buildings.HousingStock static method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules.html#buildings.HousingStock.label2horizon">label2horizon (buildings.HousingStock attribute)</a>
-</li>
-      <li><a href="modules.html#buildings.HousingStock.label2income">label2income (buildings.HousingStock attribute)</a>
-</li>
-      <li><a href="modules.html#buildings.HousingStock.lcc2market_share">lcc2market_share() (buildings.HousingStock static method)</a>
-</li>
       <li><a href="modules.html#buildings.HousingStock.learning_by_doing">learning_by_doing() (buildings.HousingStock static method)</a>
 </li>
   </ul></td>
@@ -468,6 +464,8 @@
 </li>
       <li><a href="modules.html#policies.Subsidies">Subsidies (class in policies)</a>
 </li>
+      <li><a href="modules.html#policies.SubsidiesRecyclingTax">SubsidiesRecyclingTax (class in policies)</a>
+</li>
       <li><a href="modules.html#policies.Subsidies.subsidy_max">subsidy_max (policies.Subsidies attribute)</a>
 </li>
   </ul></td>
@@ -478,12 +476,6 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules.html#policies.RegulatedLoan.targets">targets (policies.RegulatedLoan attribute)</a>
 </li>
-      <li><a href="modules.html#buildings.HousingStock.to_calibration_market_share">to_calibration_market_share() (buildings.HousingStock method)</a>
-
-      <ul>
-        <li><a href="modules.html#buildings.HousingStockConstructed.to_calibration_market_share">(buildings.HousingStockConstructed method)</a>
-</li>
-      </ul></li>
       <li><a href="modules.html#buildings.HousingStock.to_consumption">to_consumption() (buildings.HousingStock method)</a>
 </li>
       <li><a href="modules.html#buildings.HousingStock.to_consumption_actual">to_consumption_actual() (buildings.HousingStock method)</a>, <a href="modules.html#id0">[1]</a>
@@ -510,10 +502,10 @@
 </li>
       <li><a href="modules.html#buildings.HousingStockConstructed.to_flow_constructed_seg">to_flow_constructed_seg() (buildings.HousingStockConstructed method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules.html#buildings.HousingStockRenovated.to_flow_demolition_seg">to_flow_demolition_seg() (buildings.HousingStockRenovated method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules.html#buildings.HousingStockRenovated.to_flow_knowledge">to_flow_knowledge() (buildings.HousingStockRenovated method)</a>
 </li>
       <li><a href="modules.html#buildings.HousingStockRenovated.to_flow_remained">to_flow_remained() (buildings.HousingStockRenovated method)</a>
@@ -552,12 +544,18 @@
 <h2 id="U">U</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules.html#buildings.HousingStockConstructed.update_area_construction">update_area_construction() (buildings.HousingStockConstructed method)</a>
+      <li><a href="modules.html#policies.EnergyTaxes.unit">unit (policies.EnergyTaxes attribute)</a>
+
+      <ul>
+        <li><a href="modules.html#policies.Subsidies.unit">(policies.Subsidies attribute)</a>
 </li>
-      <li><a href="modules.html#buildings.HousingStockConstructed.update_flow_constructed_seg">update_flow_constructed_seg() (buildings.HousingStockConstructed method)</a>
+      </ul></li>
+      <li><a href="modules.html#buildings.HousingStockConstructed.update_area_construction">update_area_construction() (buildings.HousingStockConstructed method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules.html#buildings.HousingStockConstructed.update_flow_constructed_seg">update_flow_constructed_seg() (buildings.HousingStockConstructed method)</a>
+</li>
       <li>
     utils
 

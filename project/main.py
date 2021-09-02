@@ -12,7 +12,7 @@ from shutil import copyfile
 from itertools import product
 
 from buildings import HousingStock, HousingStockRenovated, HousingStockConstructed
-from policies import EnergyTaxes, Subsidies, RegulatedLoan, RenovationObligation
+from policies import EnergyTaxes, Subsidies, RegulatedLoan, RenovationObligation, SubsidiesRecyclingTax
 from parse_output import parse_output, quick_graphs
 from policy_indicators import run_indicators
 
@@ -75,17 +75,18 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
     subsidies_dict = {}
     energy_taxes_dict = {}
     renovation_obligation_dict = {}
+    subsidy_tax = None
     for pol, item in policies_parameters.items():
         if config[item['name']]['activated']:
             logging.debug('Considering: {}'.format(pol))
             if item['policy'] == 'subsidies':
                 subsidies_dict[pol] = Subsidies(item['name'], config[item['name']]['start'],
-                                                config[item['name']]['end'], item['kind'], item['value'],
+                                                config[item['name']]['end'], item['unit'], item['value'],
                                                 transition=item['transition'],
                                                 calibration=config[item['name']]['calibration'])
             elif item['policy'] == 'energy_taxes':
                 energy_taxes_dict[pol] = EnergyTaxes(item['name'], config[item['name']]['start'],
-                                                     config[item['name']]['end'], item['kind'],
+                                                     config[item['name']]['end'], item['unit'],
                                                      item['value'],
                                                      calibration=config[item['name']]['calibration'])
 
@@ -103,7 +104,17 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
             elif item['policy'] == 'renovation_obligation':
                 renovation_obligation_dict[pol] = RenovationObligation(item['name'], item['start_targets'],
                                                                        participation_rate=item['participation_rate'],
-                                                                       columns=range(calibration_year, 2081, 1))
+                                                                       columns=range(calibration_year, 2081, 1),
+                                                                       calibration=config[item['name']]['calibration'])
+
+            elif item['policy'] == 'subsidy_tax':
+                subsidy_tax = SubsidiesRecyclingTax(item['name'], config[item['name']]['start'],
+                                                    config[item['name']]['end'], item['tax_unit'],
+                                                    item['tax_value'], item['subsidy_unit'],
+                                                    subsidy_value=item['subsidy_value'],
+                                                    calibration=config[item['name']]['calibration'])
+                subsidies_dict[pol] = subsidy_tax
+                energy_taxes_dict[pol] = subsidy_tax
 
     policies = list(subsidies_dict.values())
     energy_taxes_detailed = dict()
@@ -178,7 +189,7 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
         name_file = config['cost_intangible_construction_source']['source']
         source = config['cost_intangible_construction_source']['source_type']
         if source == 'function':
-            cost_intangible_construction['Energy performance'] = buildings_constructed.to_calibration_market_share(
+            cost_intangible_construction['Energy performance'] = buildings_constructed.calibration_market_share(
                 energy_prices,
                 ms_construction_ini,
                 cost_invest=cost_invest_construction,
@@ -198,11 +209,11 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
         source = config['cost_intangible_source']['source_type']
         if source == 'function':
 
-            cost_intangible['Energy performance'] = buildings.to_calibration_market_share(energy_prices,
-                                                                                          ms_renovation_ini,
-                                                                                          cost_invest=cost_invest,
-                                                                                          consumption='conventional',
-                                                                                          policies=policies_calibration)
+            cost_intangible['Energy performance'] = buildings.calibration_market_share(energy_prices,
+                                                                                       ms_renovation_ini,
+                                                                                       cost_invest=cost_invest,
+                                                                                       consumption='conventional',
+                                                                                       policies=policies_calibration)
             logging.debug('End of calibration and dumping: {}'.format(name_file))
             cost_intangible['Energy performance'].to_pickle(name_file)
         elif source == 'file':
@@ -219,19 +230,28 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
     name_file = config['rho']['source']
     source = config['rho']['source_type']
     if source == 'function':
-        rho = buildings.calibration_renovation_rate(energy_prices, rate_renovation_ini,
-                                                    cost_invest=cost_invest,
-                                                    cost_intangible=cost_intangible,
-                                                    policies=policies_calibration)
+        rho, renovation_rate_calibration = buildings.calibration_renovation_rate(energy_prices, rate_renovation_ini,
+                                                                                 cost_invest=cost_invest,
+                                                                                 cost_intangible=cost_intangible,
+                                                                                 policies=policies_calibration,
+                                                                                 weighted=config['rho']['weighted'])
         logging.debug('End of calibration and dumping: {}'.format(name_file))
         rho.to_pickle(name_file)
+        renovation_rate_calibration.to_csv(os.path.join(folder['output'], 'renovation_rate_calibration.csv'))
+
     elif source == 'file':
         logging.debug('Loading intangible_cost from {}'.format(name_file))
         rho = pd.read_pickle(name_file)
     else:
         rho = None
-
     buildings.rho = rho
+
+    for _, tax in energy_taxes_dict.items():
+        if tax.policy == 'subsidy_tax':
+            val = tax.price_to_taxes(energy_prices=energy_prices_bp, co2_content=co2_content)
+            tax.tax_revenue[calibration_year] = buildings.energy_expenditure(
+                val).sum()
+            # add buildings_constructed.energy_expenditure(val).sum()
 
     years = range(calibration_year, end_year, 1)
     logging.debug('Launching iterations')
@@ -326,6 +346,13 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
                 cost_lim=parameters['Cost construction lim'])
             output['Cost construction'][year] = cost_invest_construction['Energy performance']
 
+        logging.debug('Calculating tax revenue')
+        for _, tax in energy_taxes_dict.items():
+            if tax.policy == 'subsidy_tax':
+                val = tax.price_to_taxes(energy_prices=energy_prices_bp, co2_content=co2_content)
+                tax.tax_revenue[year] = buildings.energy_expenditure(val).sum()
+                # buildings_constructed.energy_expenditure(val).sum()
+
         logging.debug(
             '\nSummary:\nYear: {}\nStock after demolition: {:,.0f}\nDemolition: {:,.0f}\nNeeded: {:,.0f}\nRenovation: {:,.0f}\nConstruction: {:,.0f}'.format(
                 year, buildings.stock_seg.sum(), flow_demolition_seg.sum(), parameters['Stock needed'].loc[year],
@@ -348,7 +375,7 @@ if __name__ == '__main__':
     from multiprocessing import Process
     import argparse
     import json
-    from parse_input import parse_building_stock, parse_input, parse_parameters, parse_observed_data
+    from parse_input import parse_building_stock, parse_exogenous_input, parse_parameters, parse_observed_data
 
     folder = dict()
     folder['input'] = os.path.join(os.getcwd(), 'project', 'input')
@@ -399,7 +426,7 @@ if __name__ == '__main__':
 
         stock_ini, attributes = parse_building_stock(config)
         parameters, summary_param = parse_parameters(folder['input'], config, stock_ini.sum())
-        energy_prices, energy_taxes, cost_invest, cost_invest_construction, co2_content, policies_parameters, summary_input = parse_input(
+        energy_prices, energy_taxes, cost_invest, cost_invest_construction, co2_content, policies_parameters, summary_input = parse_exogenous_input(
             folder['input'], config)
         rate_renovation_ini, ms_renovation_ini, ms_construction_ini = parse_observed_data(config)
 
