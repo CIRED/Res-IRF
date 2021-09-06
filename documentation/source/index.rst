@@ -15,12 +15,13 @@ Welcome to Res-IRF's documentation!
    modules
    LICENSE
    CHANGELOG
-   TODO
    future_development
    technical_documentation
-   contributing
    variant_input_variables
    variant_input_capitalization
+   variant_input_credit
+   contributing
+
 
 Indices and tables
 ==================

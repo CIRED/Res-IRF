@@ -2,35 +2,24 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5a27c1bc-6d7f-41bf-89e9-22387bb7bdb3" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/documentation/source/img/consumption_actual_capitalization.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/documentation/source/img/consumption_actual_input.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/documentation/source/img/energy_poverty_capitalization.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/documentation/source/img/energy_poverty_input.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/documentation/source/img/flow_renovation_capitalization.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/documentation/source/img/flow_renovation_input.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/documentation/source/img/heating_intensity_capitalization.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/documentation/source/img/heating_intensity_input.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/documentation/source/img/stock_performance_capitalization.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/documentation/source/img/stock_performance_input.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/documentation/source/technical_documentation.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/documentation/source/variant_input_capitalization.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/documentation/source/variant_input_variables.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/input/scenarios/scenario_budget_constraints.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/documentation/source/img/consumption_actual_credit.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/documentation/source/img/dwelling_count_owners_3.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/documentation/source/img/energy_consumption_3.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/documentation/source/img/energy_poverty_credit.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/documentation/source/img/flow_renovation_credit.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/documentation/source/img/heating_intensity_3.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/documentation/source/img/heating_intensity_credit.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/documentation/source/img/income_categories_3.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/documentation/source/img/income_landlords_tenants.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/documentation/source/img/statistics_energy_consumption.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/documentation/source/img/stock_performance_credit.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/documentation/source/img/surface_3.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/documentation/source/variant_input_credit.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/documentation/source/contributing.md" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/contributing.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/documentation/source/TODO.md" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/documentation/source/index.rst" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/index.rst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/buildings.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/buildings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/documentation/source/technical_documentation.md" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/technical_documentation.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/input/attributes_2012.json" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/attributes_2012.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/scenarios/scenario_cite.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/scenarios/scenario_cite_test.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/scenarios/scenario_input.json" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/scenarios/scenario_input.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/scenarios/scenario_nocalib.json" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/scenarios/scenario_nocalib.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/scenarios/scenario_phebus.json" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/scenarios/scenario_green_value.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/scenarios/scenario_test.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/parse_input.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/parse_input.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/policies.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/policies.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -91,16 +80,16 @@
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/documentation/source/img" />
       <recent name="$PROJECT_DIR$/documentation/source" />
-      <recent name="$PROJECT_DIR$/project/input/scenarios" />
       <recent name="$PROJECT_DIR$/docs" />
+      <recent name="$PROJECT_DIR$/project/input/scenarios" />
       <recent name="$PROJECT_DIR$/project/input" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/documentation/source/img" />
       <recent name="$PROJECT_DIR$/project" />
       <recent name="$PROJECT_DIR$/project/input/old" />
       <recent name="$PROJECT_DIR$/project/input/scenarios" />
       <recent name="$PROJECT_DIR$/project/input/test" />
-      <recent name="$PROJECT_DIR$/project/input" />
     </key>
   </component>
   <component name="RunManager" selected="Python.main_budget_constraints">
@@ -431,14 +420,8 @@
       <workItem from="1630330740019" duration="9027000" />
       <workItem from="1630393162998" duration="21111000" />
       <workItem from="1630480263820" duration="46852000" />
-      <workItem from="1630597706283" duration="1624000" />
-    </task>
-    <task id="LOCAL-00001" summary="major update - work still ongoing">
-      <created>1613665046411</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1613665046411</updated>
+      <workItem from="1630597706283" duration="3028000" />
+      <workItem from="1630920924703" duration="4567000" />
     </task>
     <task id="LOCAL-00002" summary="major update - work still ongoing">
       <created>1613779061738</created>
@@ -776,7 +759,14 @@
       <option name="project" value="LOCAL" />
       <updated>1630571027676</updated>
     </task>
-    <option name="localTasksCounter" value="50" />
+    <task id="LOCAL-00050" summary="cleaning and organizing">
+      <created>1630599515352</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1630599515353</updated>
+    </task>
+    <option name="localTasksCounter" value="51" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
