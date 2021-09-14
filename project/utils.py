@@ -147,9 +147,9 @@ def reindex_mi(df, miindex, levels=None, axis=0):
 
     Parameters
     -----------
-    df: pd.DataFrame or pd.Series
+    df: pd.DataFrame, pd.Series
         data to reindex
-    miindex: pd.MultiIndex
+    miindex: pd.MultiIndex, pd.Index
         master to index to reindex df
     levels: list, default df.index.names
         list of levels to use to reindex df
@@ -158,10 +158,10 @@ def reindex_mi(df, miindex, levels=None, axis=0):
 
     Returns
     --------
-    pd.DataFrame or pd.Series
+    pd.DataFrame, pd.Series
 
-    Example:
-    --------
+    Example
+    -------
         reindex_mi(surface_ds, segments, ['Occupancy status', 'Housing type']))
         reindex_mi(cost_invest_ds, segments, ['Heating energy final', 'Heating energy']))
     """

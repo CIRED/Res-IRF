@@ -4,13 +4,24 @@
 [phebus_sdes_energy_performance_percent]: img/phebus_sdes_energy_performance_percent.png "phebus_sdes_energy_performance_percent"
 [phebus_sdes_energy_percent]: img/phebus_sdes_energy_percent.png "phebus_sdes_energy_percent"
 
+[comparison_across_databases]: img/comparison_databases.png
+[energy_performance_3]: img/energy_performance_3.png
 
+[dwelling_count_owners_3]: img/dwelling_count_owners_3.png
+[energy_consumption_3]: img/energy_consumption_3.png
+[income_categories_3]: img/income_categories_3.png
+[income_landlords_tenants]: img/income_landlords_tenants.png
+
+[statistics_energy_consumption]: img/statistics_energy_consumption.png
+[surface_3]: img/surface_3.png
+[heating_intensity_3]: img/heating_intensity_3.png
 
 # Technical documentation
 
 [[toc]]
 
 ## Context
+### Overview of the model
 
 The Res-IRF model [^e630] is a tool for simulating energy consumption for space heating in the French residential
 sector. Its main characteristic is to integrate a detailed description of the energy performance of the dwelling stock
@@ -46,21 +57,27 @@ Table 1.
 
 **Overview of achievements with Res-IRF**
 
-| Version                                     | **Main additions to preceding version**                                                                                        | **Main data source**                                                                                                                                          | **Peer-reviewed publications**            | **Approach**                                                                                                                                                              | **Main results**                                                                                                                                                               |
-| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 1.0                                         |                                                                                                                                | ANAH (2008)                                                                                                                                                   | Giraudet et al., _Energy Journal_, 2011   | Policy analysis                                                                                                                                                           | Policy portfolio considered (energy efficiency subsidies, carbon tax, building codes) does not permit attainment of sectoral energy saving targets                             |
-| Giraudet et al., _Energy Economics_, 2012\* | Sensitivity analysis                                                                                                           | Business as usual reduction in energy use of 37% to 2050, with an additional 21% if barriers to energy efficiency are removed                                 |
-| Mathy et al., _Energy Policy_, 2015         | Policy analysis                                                                                                                | Carbon dioxide emission reductions of 58% to 81% by 2050                                                                                                      |
-| 2.0                                         | Updating of retrofit costs and heating intensity parameters; introduction of fuel wood and social housing.                     | Branger et al., _Environmental Modelling & Software_, 2015\*                                                                                                  | Sensitivity analysis                      | Monte Carlo simulations point to 13% overall uncertainty in model outputs. Morris method of elementary effects identifies energy prices as the most influential variable. |
-| 3.0                                         | Comprehensive updating of model parameters; calibration on base year 2012 ; disaggregation of households by income categories. | Phébus (2013)                                                                                                                                                 | Giraudet et al., working paper, 2018      | Policy analysis                                                                                                                                                           | Policy interactions imply a 10% variation in policy effectiveness                                                                                                              |
-| Bourgeois et al., _ECEEE proceedings_, 2019 | Policy analysis                                                                                                                | Carbon tax generates more environmental, social and economic benefits when its revenue is recycled as energy efficiency subsidies than as a lump-sum transfer |
-| 3.1                                         | Calibration of version 3.0 on base year 1984 (instead of 2012).                                                                | CEREN archives                                                                                                                                                | Glotin et al., _Energy Economics_, 2019\* | Backtesting                                                                                                                                                               | Model reproduces past energy consumption with an average percentage error of 1.5%. Analysis reveals inaccuracies in fuel switch due to off-model, politically-driven processes |
+| Version | Main additions to preceding version                                                                                            | Main data source                          | Peer-reviewed publications                                 | Approach                                                                                                                                                      | Main results                                                                                                                                                                   |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1       |                                                                                                                             | ANAH (2008)                               | Giraudet et al., Energy Journal, 2011                      | Policy analysis                                                                                                                                               | Policy portfolio considered (energy efficiency subsidies, carbon tax, building codes) does not permit attainment of sectoral energy saving targets                             |
+| 1       |                                                                                                                             | ANAH (2008)                               | Giraudet et al., Energy Economics, 2012\*                  | Sensitivity analysis                                                                                                                                          | Business as usual reduction in energy use of 37% to 2050, with an additional 21% if barriers to energy efficiency are removed                                                  |
+| 1       |                                                                                                                                | ANAH (2008)                               | Mathy et al., Energy Policy, 2015                          | Policy analysis                                                                                                                                               | Carbon dioxide emission reductions of 58% to 81% by 2050                                                                                                                       |
+| 2       | Updating of retrofit costs and heating intensity parameters; introduction of fuel wood and social housing.                     | ANAH (2008)                               | Branger et al., Environmental Modelling & Software, 2015\* | Sensitivity analysis                                                                                                                                          | Monte Carlo simulations point to 13% overall uncertainty in model outputs. Morris method of elementary effects identifies energy prices as the most influential variable.      |
+| 3       | Comprehensive updating of model parameters; calibration on base year 2012 ; disaggregation of households by income categories. | Phébus (2013)                             | Giraudet et al., working paper, 2018                       | Policy analysis                                                                                                                                               | Policy interactions imply a 10% variation in policy effectiveness                                                                                                              |
+|         | Phébus (2013)                                                                                                                  | Bourgeois et al., ECEEE proceedings, 2019 | Policy analysis                                            | Carbon tax generates more environmental, social and economic benefits when its revenue is recycled as energy efficiency subsidies than as a lump-sum transfer |
+| 3.1     | Calibration of version 3.0 on base year 1984 (instead of 2012).                                                                | CEREN archives                            | Glotin et al., Energy Economics, 2019\*                    | Backtesting                                                                                                                                                   | Model reproduces past energy consumption with an average percentage error of 1.5%. Analysis reveals inaccuracies in fuel switch due to off-model, politically-driven processes |
 
-*Note : The symbol * points to the reference that contains the most comprehensive description of the associated version of the model. The most comprehensive description of version 3.0 is to be found in the present document.*
+*Note : The symbol * points to the reference that contains the most comprehensive description of the associated version
+of the model. The most comprehensive description of version 3.0 is to be found in the present document.*
 
+
+## Specification of Version 3.0
+
+The model is calibrated on base year 2012. What we refer to as existing dwellings corresponds to the stock of dwellings
+available in 2012, minus annual destructions. What we refer to as new dwellings is the cumulative sum of dwellings
+constructed after 2012.
 
 ### Data used in version 3.0
-
 Previous versions of Res-IRF were parameterized on data published in 2008 by the Agence nationale de l’habitat (ANAH,
 2008). A major step forward for the time, this database aggregated data of varying quality from different sources. A
 number of extrapolations made up for missing (e.g., the number of dwellings built before 1975) or imprecise (e.g.,
@@ -109,21 +126,7 @@ reference for most projections of energy consumption in France.
 | **Income**                  | Available for occupants                                            | Not available                                                    | Not available                           |
 | **Energy consumption**      | Actual, adjusted from energy bills                                 | Conventional, as predicted by the EPC label                      | Actual, from measurement and estimation |
 
-### Data used in version 4.0
 
-As explained in the previous section, the core of Res-IRF is a stock matrix that describes the structure of the residential stock at an original year. Until recently, the model was based on the image of the residential stock derived from the 2012 Phébus survey data. This is what will be called the 2012 version of Res-IRF.
-
-For greater accuracy of the model projections, a new stock matrix corresponding to the image of the residential stock in 2018 was imported. This matrix was built up using data provided by the SDES as part of the research agreement between the CGDD and the CIRED in which this work is included.
-
-Another dataset was also provided to us concerning the correspondence between the incomes of landlords and those of tenants in the private rental stock.
-
-These two data sets are described in the following sections. They have been constituted by the SDES from data coming from the Fidéli 2018 database, from the DPE 2017 and 2018 database of the ADEME and from the Enerter model of the company Energies Demain for the dwellings built before 1948 (2).
-
-## Specification of Version 3.0
-
-The model is calibrated on base year 2012. What we refer to as existing dwellings corresponds to the stock of dwellings
-available in 2012, minus annual destructions. What we refer to as new dwellings is the cumulative sum of dwellings
-constructed after 2012.
 
 ### Building stock
 
@@ -144,8 +147,196 @@ by excluding from the Phébus sample: those dwellings heated with fuels with low
 petroleum gas (LPG) and district heating; some dwellings for which it was not possible to identify a principal energy
 carrier; some dwellings for which the Phébus data were missing.
 
+![comparison_across_databases][comparison_across_databases]
+
+*Comparison of dwelling counts across databases*
+
+#### Energy performance
+
+The number of dwellings in each EPC band is directly given by Phébus-DPE. Figure 3 compares the distribution of EPC
+labels in versions 2.0 and 3.0 of the model. The stock in the latter is less energy efficient in year 2012 than was that
+of the former in year 2008, with more dwellings in lower EPC bands (G-E) and fewer in upper bands (D-A).
+
+![energy_performance_3][energy_performance_3]
+*Distribution of EPC labels in Res-IRF, version 3.0 (based on Phébus data) and 2.0 (based on ANAH data)*
+
+#### Building characteristics and occupancy status
+
+Table 4 specifies the joint distribution of building characteristics (singe- and multi-family dwellings) and types of
+investors (owner-occupied, landlord, social housing manager). Figure 4 shows that this distribution does not
+substantially differ from that previously used. Note that, although the Phébus database makes it possible to separate
+single- and multi-family dwellings within social housing stock, the two categories are collapsed in the figure to
+facilitate comparison.
+
+*Joint distribution of building and investor characteristics in Res-IRF 3.0*
+|                        | **Single-family** | **Multi-family** | **_Total_**  |
+| ---------------------- | ----------------- | ---------------- | ------------ |
+| Owner-occupier         | 49.0%             | 11.9%            | **_60.9%_**  |
+| Landlord               | 8.8%              | 15.6%            | **_24.4%_**  |
+| Social housing manager | 3.2%              | 11.5%            | **_14.7%_**  |
+| **_Total_**            | **_61.0%_**       | **_39.0%_**      | **_100.0%_** |
+
+![dwelling_count_owners_3][dwelling_count_owners_3]
+
+#### Heating fuel
+
+The model covers energy use for heating from electricity, natural gas, fuel oil and fuel wood. This cope covers 16% of
+final energy consumption in France. We consider only the main heating fuel used in each dwelling. To identify it from
+the Phébus-Clode database, we proceed as follows:
+1. We retain the main heating fuel when declared as such by the respondents.
+2. When several main fuels are declared, we assign to the dwelling a heating fuel according to the following order of
+   priority: district heating > collective boiler > individual boiler > all-electric > heat pump > other.
+3. When no main fuel is reported, we retain the main fuel declared as auxiliary, determined with the following order
+   of priority: electric heater > all-electric > mixed base > fixed non-electric > chimney.
+
+*Energy consumption in Phébus*
+![energy_consumption_3][energy_consumption_3]
+
+Figure 5 compares the total consumption of each fuel in the Phébus database and in the model. It shows that retaining
+only one fuel for each dwelling leads us to consider much less electricity and wood consumption than reported in Phébus.
+This is due for the most part to our exclusion of auxiliary heating, which predominantly uses electricity and wood, and
+to a lesser extent to our exclusion of the specific electricity consumption that is reported in Phébus.
+
+#### Household income
+
+A major advance of version 3.0, the introduction of income categories was intended to capture heterogeneity in (i) the
+propensity of owners to invest in energy retrofits and (ii) the intensity of use of heating infrastructure by occupants.
+The level of detail of the Phébus database made this development possible. Yet since the income data it contains only
+relates to occupants, additional data were needed to set income parameters for landlords.
+
+##### Occupant
+
+The disposable income of occupants – owner-occupiers and tenants – is segmented into five categories delineated by the
+same income boundaries as those defining income quintiles in France, according to the national statistical office for
+2012. The use of these quintiles instead of those intrinsic in the Phébus sample ensures consistency between homeowners’
+and tenants’ income (see next section), without introducing too strong biases, as shown in Table 5. Each dwelling is
+then allocated the average income for its category. Figure 6 illustrates the distribution of occupant income in the
+different EPC bands. A clear correlation appears between household income and the energy efficiency of their dwelling.[^1]
+
+[^1]: The low number of dwellings labelled A and B in Phébus makes income distribution statistics less accurate in these bands.
+
+![income_categories_3][income_categories_3]
+
+*Income categories used in Res-IRF 3.0*
+| **Category** | **Boundaries of Insee quintiles (€)** | **Share of total households in Res-IRF** |
+| ------------ | ------------------------------------- | ---------------------------------------- |
+| **C1**       | 0 – 16,830                            | 17%                                      |
+| **C2**       | 16,831 – 24,470                       | 19%                                      |
+| **C3**       | 24,471 – 34,210                       | 23%                                      |
+| **C4**       | 34,211 – 48,680                       | 22%                                      |
+| **C5**       | \> 48,681                             | 19%                                      |
+
+##### Owners
+
+Homeowners’ income overlaps with occupants’. Yet Phébus does not contain any information on the income of landlords,
+which we had to reconstitute by other means. We matched the Phébus-DPE data with INSEE data pre-processed by the Agence
+nationale pour l’information sur le logement (ANIL, 2012). The resulting landlords’ income distribution is described in
+Figure 7 and compared to that of tenants. Here again, significant disparities appear, with households whose annual
+income falls below €34,210 representing 80% of tenants but only 20% of owner-occupiers.
+
+*Distribution of income categories for landlords and tenants in privately rented housing*
+![income_landlords_tenants][income_landlords_tenants]
+
+To build this figure, some adjustments are needed to translate into income categories the ANIL (2012) data that are
+expressed in terms of living standard[^1]:
+
+[^1]: This metric divides household income by consumption units – 1 for the first adult, 0.5 for any other person older
+than 14 and 0.3 for any person under that age. It is generally thought to better represent the financing capacity of a
+household than does income.
+
+1. Income deciles are first grouped into quintiles (row vector A) ;
+2. Living standard quintiles are then converted into income quintiles (row vector C) owing to matrix B, specified with
+   data from the Budget des familles survey for household enjoying non-zero rents;
+3. The transpose of vector C is mutiplied by row vector D that describes the share of rented dwelling by EPC band in
+   Phébus ;
+4. The resulting matrix E is mutiplied by matrix F describing the share of rented dwellings by heating fuel in Phébus,
+   which produces hypermatrix G.
+
+Matrices A to F are detailed below. The income assigned to each landlord corresponds to the average of its category.
+
+*Matrix A : Distribution of living standard categories. Source : ANIL*
+|Living standard|Share of households|
+|--------|-------|
+| **S1** | 4.7% |
+| **S2** | 5.8% |
+| **S3** | 11.2% |
+| **S4** | 17.3% |
+| **S5** | 61.0% |
+
+*Matrix B : Correspondance between income and living standard. Source : Budget des familles, Insee*
+| Income level / Living standard | S1   | S2   | S3   | S4   | S5   |
+| ------------------------------ | ---- | ---- | ---- | ---- | ---- |
+| C1                             | 0.67 | 0.3  | 0    | 0    | 0    |
+| C2                             | 0.18 | 0.22 | 0.19 | 0.09 | 0    |
+| C3                             | 0.11 | 0.26 | 0.37 | 0.21 | 0.05 |
+| C4                             | 0.04 | 0.21 | 0.33 | 0.49 | 0.15 |
+| C5                             | 0    | 0    | 0.12 | 0.21 | 0.8  |
+
+
+*Matrix C : Distribution of income categories (product of matrices A and B)*
+|Income category|Share of households|
+|--------|-------|
+| **C1** | 4.92% |
+| **C2** | 5.76% |
+| **C3** | 12.70% |
+| **C4** | 22.99% |
+| **C5** | 53.63% |
+
+*Matrix D : Distribution of EPC bands. Source : Phébus*
+|EPC Band|Share of households|
+|--------|-------|
+| **G** | 27.4% |
+| **F** | 21.2% |
+| **E** | 29.2% |
+| **D** | 14.5% |
+| **C** | 7.0% |
+| **B** | 0.7% |
+| **A** | 0.0% |
+
+
+*Matrix E : Effectifs des étiquettes DPE par catégorie de revenu (produit des matrices C et D)*
+| Income level/EPC band | G       | F       | E       | D       | C       | B      | A |
+| --------------------- | ------- | ------- | ------- | ------- | ------- | ------ | - |
+| C1                    | 78 624  | 60 781  | 83 778  | 41 648  | 20 130  | 2 021  | 0 |
+| C2                    | 92 040  | 71 153  | 98 074  | 48 755  | 23 565  | 2 366  | 0 |
+| C3                    | 203 100 | 157 009 | 216 414 | 107 584 | 52 001  | 5 220  | 0 |
+| C4                    | 367 655 | 284 220 | 391 756 | 194 750 | 94 132  | 9 449  | 0 |
+| C5                    | 857 593 | 662 973 | 913 811 | 454 275 | 219 573 | 22 041 | 0 |
+
+
+*Share of households by fuel type and decision-maker status*
+| Housing type            | Heating fuel | G      | F      | E      | D      | C      | B      | A     |
+| ----------------------- | ------------ | ------ | ------ | ------ | ------ | ------ | ------ | ----- |
+| Single-family | Electricity  | 15.80% | 15.40% | 13.65% | 12.81% | 5.44%  | 0.00%  | 0.00% |
+|  | Natural gas  | 5.00%  | 5.08%  | 12.26% | 8.69%  | 37.70% | 36.04% | 0.00% |
+|  | Fuel oil     | 9.30%  | 12.39% | 8.98%  | 5.85%  | 3.06%  | 0.00%  | 0.00% |
+|  | Fuel wood    | 3.73%  | 2.38%  | 2.57%  | 6.06%  | 0.00%  | 0.00%  | 0.00% |
+| Multi-family  | Electricity  | 53.94% | 40.06% | 41.80% | 36.54% | 24.65% | 0.00%  | 0.00% |
+|   | Natural gas  | 7.73%  | 12.88% | 19.52% | 28.41% | 27.22% | 63.96  | 0.00% |
+|   | Fuel oil     | 3.31%  | 7.99%  | 1.21%  | 1.64%  | 1.95%  | 0.00%  | 0.00% |
+|   | Fuel wood    | 1.18%  | 3.83%  | 0.00%  | 0.00%  | 0.00%  | 0.00%  | 0.00% |
+
+
+
 
 ## Specification of Version 4.0
+### Data used in version 4.0
+
+As explained in the previous section, the core of Res-IRF is a stock matrix that describes the structure of the
+residential stock at an original year. Until recently, the model was based on the image of the residential stock derived
+from the 2012 Phébus survey data. This is what will be called the 2012 version of Res-IRF.
+
+For greater accuracy of the model projections, a new stock matrix corresponding to the image of the residential stock in
+2018 was imported. This matrix was built up using data provided by the SDES as part of the research agreement between
+the CGDD and the CIRED in which this work is included.
+
+Another dataset was also provided to us concerning the correspondence between the incomes of landlords and those of
+tenants in the private rental stock.
+
+These two data sets are described in the following sections. They have been constituted by the SDES from data coming
+from the Fidéli 2018 database, from the DPE 2017 and 2018 database of the ADEME and from the Enerter model of the
+company Energies Demain for the dwellings built before 1948 (2).
+
 
 ### Building stock
 
@@ -177,73 +368,86 @@ These data had to be reprocessed before they could be imported into Res-IRF. The
 
 #### Scope
 
-This new structure is compared to the old version of Res-IRF, calibrated from the 2012 Phebus data. We look at both the original 2012 fleet matrix and the projection that this 2012 calibrated version gives for the year 2018.
-For the analysis of the results that follows, it is important to keep in mind that we are not comparing staff of identical size.
+This new structure is compared to the old version of Res-IRF, calibrated from the 2012 Phebus data. We look at both the
+original 2012 fleet matrix and the projection that this 2012 calibrated version gives for the year 2018. For the
+analysis of the results that follows, it is important to keep in mind that we are not comparing staff of identical size.
 
-Indeed, the stock matrix used in 2012 had to be truncated even more than the one used in 2018 to be usable in Res-IRF: it indicated a residential stock of 23.9 million dwellings in 2012 and the projection for 2018 reaches 25.5 million dwellings. In comparison, the new data show a stock of 26.7 million dwellings in 2018.
-
-
+Indeed, the stock matrix used in 2012 had to be truncated even more than the one used in 2018 to be usable in Res-IRF:
+it indicated a residential stock of 23.9 million dwellings in 2012 and the projection for 2018 reaches 25.5 million
+dwellings. In comparison, the new data show a stock of 26.7 million dwellings in 2018.
 
 **Comparison Phebus-2012 building stocks and SDES-2018**
 ![phebus_sdes_percent][phebus_sdes_percent]
 ![phebus_sdes_millions][phebus_sdes_millions]
 
 Note:
-- SDES building stock got a decile segmentation for income class. We aggregate them in figures in order to make the comparison possible.
+
+- SDES building stock got a decile segmentation for income class. We aggregate them in figures in order to make the
+  comparison possible.
 - All images come from comparison.iynb a Jupyter notebook available in the project.
 
 #### Energy performance
 
-The number of dwellings in each EPC band is directly given by Phébus-DPE and SDES database. Figure compares the distribution of EPC labels in versions 3.0 and 4.0 of the model. The stock in the latter is more energy efficient in year 2018 than was that of the former in year 2012, with less dwellings in lower EPC bands (G-E) and more in upper bands (D-A).
+The number of dwellings in each EPC band is directly given by Phébus-DPE and SDES database. Figure compares the
+distribution of EPC labels in versions 3.0 and 4.0 of the model. The stock in the latter is more energy efficient in
+year 2018 than was that of the former in year 2012, with less dwellings in lower EPC bands (G-E) and more in upper
+bands (D-A).
 
 ![phebus_sdes_energy_performance_percent][phebus_sdes_energy_performance_percent]
 
-
 #### Heating Energy
 
-The model covers energy use for heating from electricity, natural gas, fuel oil and fuel wood. This cope covers 16% of final energy consumption in France.[^f04b] We consider only the main heating fuel used in each dwelling.
+The model covers energy use for heating from electricity, natural gas, fuel oil and fuel wood. This cope covers 16% of
+final energy consumption in France.[^f04b] We consider only the main heating fuel used in each dwelling.
 
-[^f04b]: Residential buildings in France contribute 26% of total energy consumption, 67% of which is devoted to heating, 91% of which is covered by electricity, natural gas, heating oil and wood energy (ADEME, 2015).
+[^f04b]: Residential buildings in France contribute 26% of total energy consumption, 67% of which is devoted to heating,
+91% of which is covered by electricity, natural gas, heating oil and wood energy (ADEME, 2015).
 
 ![phebus_sdes_energy_percent][phebus_sdes_energy_percent]
-
 
 #### Household income
 
 
 #### Renovation rate
-
 In Res-IRF 3.0, the renovation rates used to calibrate Res-IRF were differentiated by decision maker and by ECD label.
 
-Due to the lack of robustness of the data on renovation rates by EPC and the problematic results they generated with the new image of the stock (SDES 2018), the renovation rates are now only differentiated by decision-makers. The latter have been recalculated from data already used in the old parameterization of the renovation rates but also with other additional data sources.
+Due to the lack of robustness of the data on renovation rates by EPC and the problematic results they generated with the
+new image of the stock (SDES 2018), the renovation rates are now only differentiated by decision-makers. The latter have
+been recalculated from data already used in the old parameterization of the renovation rates but also with other
+additional data sources.
 
-The 2012 version of Res-IRF (calibrated on Phébus) replicated the renovation rates observed in the French housing stock according to the DPE and the decision maker of a dwelling. This meant using a matrix of 6 * 6 = 36 renovation rates, which the calibration of  parameters of the model (rho parameters of the renovation rate function) should make it possible to replicate in the original year.
-
-
+The 2012 version of Res-IRF (calibrated on Phébus) replicated the renovation rates observed in the French housing stock
+according to the DPE and the decision maker of a dwelling. This meant using a matrix of 6 * 6 = 36 renovation rates,
+which the calibration of parameters of the model (rho parameters of the renovation rate function) should make it
+possible to replicate in the original year.
 
 ## Energy use
-
 The model uses two metrics for energy use: the conventional consumption predicted by the EPC label of the dwelling; and
 the actual consumption that determines energy expenditure. The two are linked by the intensity of heating of the heating
 infrastructure, which is an endogenous function of the model.
 
 ### Conventional energy use
-
 Integrating new data on specific consumption (kWh/m²/year) and housing surface area (m²) allowed us to improve the
 accuracy of total consumption parameters (kWh/year).
 
 #### Specific consumption
-
-The conventional specfic consumption of an existing dwelling is directly given by its EPC label. In Res-IRF 2.0, each
+The conventional specfic consumption of an existing dwelling is directly given by its EPC label[^1]. In Res-IRF 2.0, each
 label was assigned an energy consumption equal to the middle of EPC band. By including a precise measurement of the
 conventional energy consumption of each dwelling, the Phébus-DPE database made it possible to estimate for each band an
 average consumption. The resulting values are those used in version 3.0; they compared to the previous ones in Figure 8.
+
+[^1] : Final energy consumption is deducted from primary energy consumption by a coefficient of 1 for natural gas,
+heating oil and wood energy and by the conventional coefficient of 1/2.58 that applies to electricity in France.
+
+*Descriptive statistics of energy consumption by EPC bands in Phébus (vertical axis in log scale)*
+![statistics_energy_consumption][statistics_energy_consumption]
 
 Since the EPC covers energy consumption for heating, hot water and air conditioning, adjustments are needed to isolate
 the part specifically dedicated to heating. In Res-IRF 2.0, this part was set to 0.8, based on CEREN data. Here again,
 the Phébus-DPE database, by distinguishing energy between heating use, hot water use and photovoltaic production, makes
 it possible to estimate an average share dedicated to heating for each EPC band.
 
+*Conventional primary energy consumption*
 | **EPC band** | **Average consumption (kWh/m²/year)** | **Share dedicated to heating** | **Average consumption for heating in Res-IRF (kWh/m²/an)** |
 | ------|-----|------|---------|
 | **G** | 596 | 0.85 | **507** |
@@ -266,16 +470,21 @@ Our focus on gross consumption leads us to apply a coefficient that is greater t
 in Table 6.
 
 ##### Surface area
-
 The same approach was used to re-set surface area parameters bases on average values estimated on Phébus data, by
 category of dwelling. Descriptive statistics are provided in Figure 9 and compared to the values used in version 2.0.
 
-#### Actual energy use
+*Surface area, by category of dwelling*
+![surface_3][surface_3]
 
+#### Actual energy use
 A growing number of academic studies point to a gap between the conventional energy consumption predicted by energy
 performance certificates and actual energy consumption. The most common explanation is a more intense heating of the
 heating infrastructure after an energy efficiency improvement – a phenomenon commonly referred to as the “rebound
 effect.” [^213a]
+
+[^213a]: See for example Aydin et al (2017). Another explanation sometimes put forward is the pre-bound effect,
+according to which consumption before renovation, from which energy savings are predicted, is overestimated (
+Sunikka-Blank et al., 2012).
 
 In versions 1.0 and 2.0, the intensity of use was determined by conventional heating expenditure, based on work carried
 out by EDF R&D (Allibe, 2015)[^52c2]. It therefore depended on two variables: the energy performance of the dwelling,
@@ -283,6 +492,8 @@ measured by its EPC label, and the price of energy. In version 3.0, we included 
 development was made possible by several improvements in the data available, including the Phébus database and
 additional work by EDF R&D (Cayla and Osso, 2013), which now connects heating intensity to the income share devoted to
 heating, i.e. conventional expenditure as a percentage of income.
+
+[^52c2]: The relationaship was: $intensity of use = 3.5309 *exp(-0.643 *log (conventional expenditure per m2))$
 
 Heating intensity in Res-IRF now follows the following equation:
 $$ Heating Intensity=-0,191*log⁡(Income Share)+0,1105 $$
@@ -293,10 +504,8 @@ $$ Heating Intensity= (Actual energy use)/(Conventional energy use) $$
 and:
 $$ Income Share=(Energy price*Surface*Conventional energy use)/Income $$
 
-[^213a]: See for example Aydin et al (2017). Another explanation sometimes put forward is the pre-bound effect,
-according to which consumption before renovation, from which energy savings are predicted, is overestimated (
-Sunikka-Blank et al., 2012).
-[^52c2]: The relationaship was: $intensity of use = 3.5309 *exp(-0.643 *log (conventional expenditure per m2))$
+*Heating intensity in the current and previous versions of Res-IRF*
+![heating_intensity_3][heating_intensity_3]
 
 Figure 10 compares the relationship used in Res-IRF version 3.0 with that used in version 2.0, based on an average
 surface area of 85m² and an average annual income of €30,000. The new relationship is less steep, reflecting a
@@ -305,7 +514,6 @@ formula, the aggregate heating intensity in Res-IRF is now 0.74 at the initial y
 version.
 
 #### Total energy use
-
 The total final actual energy consumption generated by Res-IRF from the Phébus data for the initial year differs from
 the values produced by CEREN. As mentioned above (see Figures 2 and 5), these differences are due to differing scopes
 between the Phébus and CEREN databases and to the adjustments needed to select the main heating fuel (see Section 2.1.4)
@@ -331,9 +539,7 @@ TOTAL_**|
 1.14_** |
 
 ## Energy efficiency improvements
-
 ### Stock dynamics
-
 The number of dwellings and their surface area are determined each year in Res-IRF by exogenous projections of
 population and aggregate household income projection. The former is based on INSEE (2006); in the absence of an
 authoritative scenario, the latter is based on a growth assumption of 1.2%/year, which extrapolates the trend given by
@@ -362,7 +568,6 @@ Figure 11). This relationship in particular reflects urbanization effects. The s
 dwellings is held constant.
 
 ### Investment decisions – general case
-
 The energy performance of the housing stock in Res-IRF is affected by both the construction of new dwellings and the
 renovation of existing ones. Both effects are modelled by discrete choice functions. Generally speaking, the owner of a
 dwelling of initial performance i∈{1…n} chooses to upgrade it to an option of final performance f∈{i+1,…,n} by comparing

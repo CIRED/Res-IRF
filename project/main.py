@@ -66,7 +66,7 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
 
     output['Population total'] = parameters['Population total']
     output['Population'] = parameters['Population']
-    output['Population housing'] = parameters['Population housing']
+    # output['Population housing'] = parameters['Population housing']
     output['Stock needed'] = parameters['Stock needed']
     output['Cost envelope'] = dict()
     output['Cost envelope'][calibration_year] = cost_invest['Energy performance']
@@ -172,7 +172,7 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
     buildings_constructed = HousingStockConstructed(pd.Series(0, dtype='float64', index=segments_construction),
                                                     attributes['housing_stock_constructed'], calibration_year,
                                                     parameters['Stock needed'],
-                                                    param_share_multi_family=parameters['Factor share multi-family'],
+                                                    share_multi_family=parameters['Share multi-family'],
                                                     os_share_ht=parameters['Occupancy status share housing type'],
                                                     io_share_seg=io_share_seg,
                                                     stock_area_existing_seg=stock_area_existing_seg,
@@ -245,7 +245,7 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
                                                                                  cost_invest=cost_invest,
                                                                                  cost_intangible=cost_intangible,
                                                                                  policies=policies_calibration,
-                                                                                 weighted=config['rho']['weighted'])
+                                                                                 option=config['rho']['option'])
         logging.debug('End of calibration and dumping: {}'.format(name_file))
         rho.to_pickle(name_file)
 
@@ -283,14 +283,16 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
 
         # logging.debug('Calculate energy consumption actual')
         # buildings.to_consumption_actual(energy_price)
+        flow_demolition_sum = 0
+        if parameters['Destruction rate'] > 0:
+            logging.debug('Demolition dynamic')
+            flow_demolition_seg = buildings.to_flow_demolition_seg()
+            logging.debug('Demolition: {:,.0f} buildings, i.e.: {:.2f}%'.format(flow_demolition_seg.sum(),
+                                                                                flow_demolition_seg.sum() / buildings.stock_seg.sum() * 100))
+            logging.debug('Update demolition')
+            buildings.add_flow(- flow_demolition_seg)
 
-        logging.debug('Demolition dynamic')
-        flow_demolition_seg = buildings.to_flow_demolition_seg()
-        logging.debug('Demolition: {:,.0f} buildings, i.e.: {:.2f}%'.format(flow_demolition_seg.sum(),
-                                                                            flow_demolition_seg.sum() / buildings.stock_seg.sum() * 100))
-
-        logging.debug('Update demolition')
-        buildings.add_flow(- flow_demolition_seg)
+            flow_demolition_sum = flow_demolition_seg.sum()
 
         logging.debug('Renovation dynamic')
         renovation_obligation = None
@@ -342,7 +344,7 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
                                                        parameters['Area max construction'])
         logging.debug('Updating flow_constructed segmented')
         # update_flow_constructed_seg will automatically update area constructed and so construction knowledge
-        if flow_constructed > 0:
+        if flow_constructed > 1:
             buildings_constructed.update_flow_constructed_seg(energy_prices,
                                                               cost_intangible=cost_intangible_construction,
                                                               cost_invest=cost_invest_construction,
@@ -368,6 +370,7 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
             output['Cost construction'][year] = cost_invest_construction['Energy performance']
 
         logging.debug('Calculating tax revenue')
+
         for _, tax in energy_taxes_dict.items():
             if tax.policy == 'subsidy_tax':
                 val = tax.price_to_taxes(energy_prices=energy_prices_bp, co2_content=co2_content).loc[:, year]
@@ -383,7 +386,7 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
 
         logging.debug(
             '\nSummary:\nYear: {}\nStock after demolition: {:,.0f}\nDemolition: {:,.0f}\nNeeded: {:,.0f}\nRenovation: {:,.0f}\nConstruction: {:,.0f}'.format(
-                year, buildings.stock_seg.sum(), flow_demolition_seg.sum(), parameters['Stock needed'].loc[year],
+                year, buildings.stock_seg.sum(), flow_demolition_sum, parameters['Stock needed'].loc[year],
                 buildings.flow_renovation_label_energy_dict[year].sum().sum(), flow_constructed))
 
     parse_output(output, buildings, buildings_constructed, energy_prices, energy_taxes, energy_taxes_detailed,

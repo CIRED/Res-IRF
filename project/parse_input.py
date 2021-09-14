@@ -1,7 +1,7 @@
 import pandas as pd
 import os
 import json
-
+import numpy as np
 from utils import apply_linear_rate, reindex_mi, add_level
 
 
@@ -116,6 +116,53 @@ def population_housing_dynamic(pop_housing_prev, pop_housing_min, pop_housing_in
     eps_pop_housing = max(0, min(1, eps_pop_housing))
     factor_pop_housing = factor * eps_pop_housing
     return max(pop_housing_min, pop_housing_prev * (1 + factor_pop_housing))
+
+
+def to_share_multi_family_tot(stock_needed, param):
+    """Calculate share of multi-family buildings in the total stock.
+
+    In Res-IRF 2.0, the share of single- and multi-family dwellings was held constant in both existing and new
+    housing stocks, but at different levels; it therefore evolved in the total stock by a simple composition
+    effect. These dynamics are now more precisely parameterized in Res-IRF 3.0 thanks to recent empirical
+    work linking the increase in the share of multi-family housing in the total stock to the rate of growth of
+    the total stock housing growth (Fisch et al., 2015).
+    This relationship in particular reflects urbanization effects.
+
+    Parameters
+    ----------
+    stock_needed: pd.Series
+    param: float
+
+    Returns
+    -------
+    dict
+        Dictionary with year as keys and share of multi-family in the total stock as value.
+        {2012: 0.393, 2013: 0.394, 2014: 0.395}
+    """
+
+    def func(stock, stock_ini, p):
+        """Share of multi-family dwellings as a function of the growth rate of the dwelling stock.
+
+        Parameters
+        ----------
+        stock: float
+        stock_ini: float
+        p: float
+
+        Returns
+        -------
+        float
+        """
+        trend_housing = (stock - stock_ini) / stock * 100
+        share = 0.1032 * np.log(10.22 * trend_housing / 10 + 79.43) * p
+        return share
+
+    share_multi_family_tot = {}
+    stock_needed_ini = stock_needed.iloc[0]
+    for year in stock_needed.index:
+        share_multi_family_tot[year] = func(stock_needed.loc[year], stock_needed_ini, param)
+
+    return pd.Series(share_multi_family_tot)
 
 
 def forecast2myopic(forecast_price, yr):
@@ -340,7 +387,8 @@ def parse_exogenous_input(folder, config):
 
 
 def parse_parameters(folder, config, stock_sum):
-    """Parse input that are not implicitly subject to a scenario.
+    """
+    Parse input that are not implicitly subject to a scenario.
 
     Parameters
     ----------
@@ -352,9 +400,9 @@ def parse_parameters(folder, config, stock_sum):
 
     Returns
     -------
-    parameters : dict
+    dict
         Mainly contains demographic and macro-economic variables. Also contains function parameter (lbd).
-    summary_param: pd.DataFrame
+    pd.DataFrame
     """
 
     # years for input time series
@@ -364,22 +412,57 @@ def parse_parameters(folder, config, stock_sum):
     index_input_year = range(calibration_year, last_year + 1, 1)
 
     # 1. Parameters
-
     name_file = os.path.join(os.getcwd(), config['parameters']['source'])
     parameters = parse_json(name_file)
 
-    # 2. Demographic and macro-economic variable
+    # 2. Demographic variables
     parameters['Calibration consumption'] = parameters['Aggregated consumption coefficient {}'.format(calibration_year)]
 
     name_file = os.path.join(os.getcwd(), config['population']['source'])
     parameters['Population total'] = pd.read_csv(os.path.join(folder, name_file), sep=',', header=None,
                                                  index_col=[0],
                                                  squeeze=True)
+
     # sizing_factor < 1 --> all extensive results are calibrated by the size of the initial parc
     sizing_factor = stock_sum / parameters['Stock total ini {}'.format(calibration_year)]
     parameters['Sizing factor'] = sizing_factor
     parameters['Population'] = parameters['Population total'] * sizing_factor
 
+    if parameters['Stock needed']['source_type'] == 'function':
+        population_housing_min = parameters['Stock needed']['Population housing min']
+        population_housing = dict()
+        population_housing[calibration_year] = parameters['Population'].loc[calibration_year] / stock_sum
+        max_year = max(parameters['Population'].index)
+
+        stock_needed = dict()
+        stock_needed[calibration_year] = parameters['Population'].loc[calibration_year] / population_housing[
+            calibration_year]
+
+        for year in index_input_year[1:]:
+            if year > max_year:
+                break
+            population_housing[year] = population_housing_dynamic(population_housing[year - 1],
+                                                                  population_housing_min,
+                                                                  population_housing[calibration_year],
+                                                                  parameters['Stock needed']['Factor population housing ini'])
+            stock_needed[year] = parameters['Population'].loc[year] / population_housing[year]
+
+        parameters['Population housing'] = pd.Series(population_housing)
+        parameters['Stock needed'] = pd.Series(stock_needed)
+    elif parameters['Stock needed']['source_type'] == 'file':
+        parameters['Stock needed'] = pd.read_csv(parameters['Stock needed']['source'], index_col=[0], header=[0])
+        parameters['Population housing'] = parameters['Population'] / parameters['Stock needed']
+    else:
+        raise ValueError('Stock needed source_type must be defined as a function or a file')
+
+    if parameters['Share multi-family']['source_type'] == 'function':
+        parameters['Share multi-family'] = to_share_multi_family_tot(parameters['Stock needed'], parameters['Share multi-family']['factor'])
+    elif parameters['Share multi-family']['source_type'] == 'file':
+        parameters['Share multi-family'] = pd.read_csv(parameters['Share multi-family']['source'], index_col=[0], header=[0])
+    else:
+        raise ValueError('Share multi-family source_type must be defined as a function or a file')
+
+    # 5. Macro-economic variables
     parameters['Available income'] = apply_linear_rate(parameters['Available income ini {}'.format(calibration_year)],
                                                        parameters['Available income rate'], index_input_year)
 
@@ -389,29 +472,7 @@ def parse_parameters(folder, config, stock_sum):
     parameters['Available income real population'] = parameters['Available income real'] / parameters[
         'Population total']
 
-    population_housing_min = parameters['Population housing min']
-    population_housing = dict()
-    population_housing[calibration_year] = parameters['Population'].loc[calibration_year] / stock_sum
-    max_year = max(parameters['Population'].index)
-
-    stock_needed = dict()
-    stock_needed[calibration_year] = parameters['Population'].loc[calibration_year] / population_housing[
-        calibration_year]
-
-    for year in index_input_year[1:]:
-        if year > max_year:
-            break
-        population_housing[year] = population_housing_dynamic(population_housing[year - 1],
-                                                              population_housing_min,
-                                                              population_housing[calibration_year],
-                                                              parameters['Factor population housing ini'])
-        stock_needed[year] = parameters['Population'].loc[year] / population_housing[year]
-
-    parameters['Population housing'] = pd.Series(population_housing)
-    parameters['Stock needed'] = pd.Series(stock_needed)
-
-    # 5. Others
-
+    # 6. Others
     parameters['Renovation rate max'] = parameters['Renovation rate max {}'.format(calibration_year)]
 
     proba_performance = parameters['Probability disease performance']
@@ -428,8 +489,8 @@ def parse_parameters(folder, config, stock_sum):
     summary_param = dict()
     summary_param['Total population (Millions)'] = parameters['Population'] / 10**6
     summary_param['Income (Billions €)'] = parameters['Available income real'] * sizing_factor / 10**9
-    summary_param['Buildings stock (Millions)'] = pd.Series(stock_needed) / 10**6
-    summary_param['Person by housing'] = pd.Series(population_housing)
+    summary_param['Buildings stock (Millions)'] = parameters['Stock needed'] / 10**6
+    summary_param['Person by housing'] = parameters['Population housing']
     summary_param = pd.DataFrame(summary_param)
     summary_param = summary_param.loc[calibration_year:, :]
 

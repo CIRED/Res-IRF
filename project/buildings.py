@@ -8,7 +8,6 @@ from itertools import product
 from utils import reindex_mi, val2share, logistic, get_levels_values, remove_rows, add_level, de_aggregate_series
 
 # TODO: put exogenous parameters outside the script (heating intensity + lambda)
-# TODO: use 4% for calibration cf. 2012 paper
 
 
 class HousingStock:
@@ -1301,9 +1300,10 @@ class HousingStock:
         self.energy_cash_flows_disc['conventional'] = HousingStock.to_discounted(
             self.energy_cash_flows['conventional'], self.attributes2discount)
 
+    """
     @staticmethod
     def to_share_multi_family_tot(stock_needed, param):
-        """Calculate share of multi-family buildings in the total stock.
+        'Calculate share of multi-family buildings in the total stock.
 
         In Res-IRF 2.0, the share of single- and multi-family dwellings was held constant in both existing and new
         housing stocks, but at different levels; it therefore evolved in the total stock by a simple composition
@@ -1322,10 +1322,10 @@ class HousingStock:
         dict
             Dictionary with year as keys and share of multi-family in the total stock as value.
             {2012: 0.393, 2013: 0.394, 2014: 0.395}
-        """
+        '
 
         def func(stock, stock_ini, p):
-            """Share of multi-family dwellings as a function of the growth rate of the dwelling stock.
+            Share of multi-family dwellings as a function of the growth rate of the dwelling stock.
 
             Parameters
             ----------
@@ -1336,7 +1336,7 @@ class HousingStock:
             Returns
             -------
             float
-            """
+            
             trend_housing = (stock - stock_ini) / stock * 100
             share = 0.1032 * np.log(10.22 * trend_housing / 10 + 79.43) * p
             return share
@@ -1347,45 +1347,7 @@ class HousingStock:
             share_multi_family_tot[year] = func(stock_needed.loc[year], stock_needed_ini, param)
 
         return share_multi_family_tot
-
-    # TODO: not used
-    def ini_all_indexes(self, energy_price, levels='all'):
-        """Initialize values for all segments and transition.
-
-        Parameters
-        __________
-        energy_price: pd.DataFrame
-        levels: list, optional
-            stock built will only consider levels as input
-        """
-
-        if levels == 'all':
-            tpl = (self.attributes_values.values())
-            tpl_names = self.attributes_values.keys()
-        else:
-            tpl = (self.attributes_values[lvl] for lvl in levels)
-            tpl_names = levels
-
-        idx_all = pd.MultiIndex.from_tuples(list(product(*tuple(tpl))))
-        idx_all.names = tpl_names
-        building_all = HousingStock(pd.Series(0, index=idx_all), self.attributes_values,
-                                    year=self.year,
-                                    attributes2area=self.attributes2area,
-                                    attributes2horizon=self.attributes2horizon,
-                                    attributes2discount=self.attributes2discount,
-                                    attributes2income=self.attributes2income,
-                                    attributes2consumption=self.attributes2consumption,
-                                    price_behavior=self._price_behavior)
-
-        self.area_all = building_all.to_area()
-        consumption_conventional = building_all.to_consumption_conventional()
-        self.consumption_conventional_all = consumption_conventional
-        self.energy_cash_flows_all = dict()
-        self.energy_cash_flows_disc_all = dict()
-        energy_cash_flows = HousingStock.mul_consumption(consumption_conventional, energy_price)
-        self.energy_cash_flows_all['conventional'] = energy_cash_flows
-        self.energy_cash_flows_disc_all['conventional'] = HousingStock.to_discounted(energy_cash_flows,
-                                                                                     building_all.attributes2discount)
+    """
 
 
 class HousingStockRenovated(HousingStock):
@@ -2044,7 +2006,7 @@ class HousingStockRenovated(HousingStock):
             rate_max / renovation_rate_target - 1)) / (npv - npv_min)
 
     def calibration_renovation_rate(self, energy_prices, renovation_rate_ini, consumption='conventional',
-                                    cost_invest=None, cost_intangible=None, policies=None, weighted=True):
+                                    cost_invest=None, cost_intangible=None, policies=None, option=0):
         """
         Calibration of ρ parameter of the renovation rate function (logistic function of the NPV).
 
@@ -2069,8 +2031,12 @@ class HousingStockRenovated(HousingStock):
         cost_invest: dict
         cost_intangible: dict
         policies: list
-        weighted: bool, default True
-            Should rho parameter
+        option: int, default 0
+            0: rho for each agent_mean (based on a NPV mean)
+            1: unique calibration function for all agents (rho, npv_min, rate_min, rate_max)
+            2: segmented rho for each individual agent
+            3: calculate rho mean for group of agents
+
 
         Returns
         -------
@@ -2080,6 +2046,10 @@ class HousingStockRenovated(HousingStock):
             Concatenation of renovation_rate_ini, renovation_rate_calculated.
         """
 
+        # weight to calculate weighted average of variable
+        levels = renovation_rate_ini.index.names
+        weight = val2share(self.stock_seg, levels, option='column')
+
         npv = self.to_npv(energy_prices,
                           transition=['Energy performance'],
                           consumption=consumption,
@@ -2087,31 +2057,68 @@ class HousingStockRenovated(HousingStock):
                           cost_intangible=cost_intangible,
                           policies=policies)
 
-        renovation_rate_obj = reindex_mi(renovation_rate_ini, npv.index)
-        rho = HousingStockRenovated.calibration_rho(npv, renovation_rate_obj, self._rate_max, self._rate_min,
-                                                    self._npv_min)
-        """
-        rho_test = np.log(self._rate_max * ((self._rate_max / renovation_rate_obj - 1) * self._rate_min)**-1) / (
-                    npv - self._npv_min)
-                
-        """
-        # aggregate rho to match renovation_rate_obj
+        if option == 0 or option == 1:
+            # calculate agent_mean npv
+            npv_mean = npv.unstack(weight.columns.names)
+            # npv_mean = (weight * npv_mean).fillna(0).sum(axis=1)
+            npv_mean = (weight * npv_mean).dropna(axis=1).dropna().sum(axis=1)
+
+            # solution 0: calculate rho for each agent_mean
+            rho_agent_mean = HousingStockRenovated.calibration_rho(npv_mean, renovation_rate_ini, self._rate_max, self._rate_min,
+                                                                   self._npv_min)
+            # if na find assign the value to the  closest group
+            rho_agent_mean = rho_agent_mean.sort_index()
+            idx = rho_agent_mean.index[rho_agent_mean.isna()]
+            for i in idx:
+                try:
+                    rho_agent_mean.loc[i] = rho_agent_mean.iloc[list(rho_agent_mean.index).index(i) + 1]
+                except IndexError:
+                    rho_agent_mean.loc[i] = rho_agent_mean.iloc[list(rho_agent_mean.index).index(i) - 1]
+
+            rho = reindex_mi(rho_agent_mean, npv.index)
+
+        if option == 1:
+            # solution 1.: calculate unique renovation function
+            from scipy.optimize import curve_fit
+
+            df = pd.concat((npv_mean, renovation_rate_ini), axis=1).dropna()
+            df.to_csv('test.csv')
+            popt, _ = curve_fit(HousingStockRenovated.renovation_rate, df.iloc[:, 0], df.iloc[:, 1],
+                                p0=[rho_agent_mean.mean(), self._npv_min, self._rate_max, self._rate_min],
+                                bounds=((0, -1000, 0.1, 10**-5), (1, npv_mean.min(), 0.5, renovation_rate_ini.min())))
+
+            rho = pd.Series(popt[0], index=npv.index)
+            self._npv_min = popt[1]
+            self._rate_max = popt[2]
+            self._rate_min = popt[3]
+
+        if option == 2 or option == 3:
+            # solution 2: calculate rho for each individual agent
+            renovation_rate_obj = reindex_mi(renovation_rate_ini, npv.index)
+            rho = HousingStockRenovated.calibration_rho(npv, renovation_rate_obj, self._rate_max, self._rate_min,
+                                                        self._npv_min)
+
         renovation_rate_calibration = None
-        if weighted:
-            levels = renovation_rate_ini.index.names
-            weight = val2share(self.stock_seg, levels, option='column')
+        if option == 3:
+            # solution 3: calculate rho_mean for group of agents
             rho_temp = rho.unstack(weight.columns.names)
             rho_weighted = (weight * rho_temp).fillna(0).sum(axis=1)
             rho = reindex_mi(rho_weighted, npv.index)
 
-            renovation_rate = self.to_renovation_rate(energy_prices, transition=['Energy performance'],
-                                                      consumption='conventional', cost_invest=cost_invest,
-                                                      cost_intangible=cost_intangible, policies=policies, rho=rho)
+        else:
+            ValueError('option should be in [0, 1, 2, 3]')
 
-            renovation_rate = renovation_rate.unstack(weight.columns.names)
-            renovation_rate_weighted = (renovation_rate * weight).fillna(0).sum(axis=1)
-            renovation_rate_weighted.name = 'Renovation rate calculated after calibration'
-            renovation_rate_calibration = pd.concat((renovation_rate_ini, renovation_rate_weighted), axis=1)
+        # verification
+        renovation_rate = self.to_renovation_rate(energy_prices, transition=['Energy performance'],
+                                                  consumption='conventional', cost_invest=cost_invest,
+                                                  cost_intangible=cost_intangible, policies=policies, rho=rho)
+        renovation_rate = renovation_rate.unstack(weight.columns.names)
+        renovation_rate_weighted = (renovation_rate * weight).fillna(0).sum(axis=1)
+        renovation_rate_weighted.name = 'Renovation rate calculated after calibration'
+        renovation_rate_calibration = pd.concat((renovation_rate_ini, renovation_rate_weighted), axis=1)
+
+        if option == 1:
+            renovation_rate_calibration = pd.concat((npv_mean, renovation_rate_calibration), axis=1)
 
         return rho, renovation_rate_calibration
 
@@ -2134,7 +2141,7 @@ class HousingStockRenovated(HousingStock):
 
 class HousingStockConstructed(HousingStock):
     def __init__(self, stock, attributes_values, year, stock_needed_ts,
-                 param_share_multi_family=None,
+                 share_multi_family=None,
                  os_share_ht=None,
                  io_share_seg=None,
                  stock_area_existing_seg=None,
@@ -2162,9 +2169,8 @@ class HousingStockConstructed(HousingStock):
         self._stock_needed_ts = stock_needed_ts
         self._stock_needed = stock_needed_ts.loc[self._calibration_year]
         # used to estimate share of housing type
-        # TODO: to_share_multi_family_tot is exogenous and must be done elsewhere
-        self._share_multi_family_tot_dict = HousingStock.to_share_multi_family_tot(stock_needed_ts,
-                                                                                   param_share_multi_family)
+
+        self._share_multi_family_tot_dict = share_multi_family
         self._share_multi_family_tot = self._share_multi_family_tot_dict[self._calibration_year]
 
         # used to let share of occupancy status in housing type constant

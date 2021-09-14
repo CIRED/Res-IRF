@@ -7,4 +7,4 @@ calculation seems particularly suitable at first sight because it allows the mar
 be isolated each year. The cost-efficiency indicator (CE score) relates the additional investment costs to the benefits
 they generate in terms of energy savings and CO2 emissions.
 
-## Double difference or marginal difference
+# Double difference or marginal difference

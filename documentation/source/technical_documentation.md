@@ -176,7 +176,7 @@ facilitate comparison.
 | Social housing manager | 3.2%              | 11.5%            | **_14.7%_**  |
 | **_Total_**            | **_61.0%_**       | **_39.0%_**      | **_100.0%_** |
 
-![dwelling_count_owners_3](dwelling_count_owners_3)
+![dwelling_count_owners_3][dwelling_count_owners_3]
 
 #### Heating fuel
 
@@ -190,7 +190,7 @@ the Phébus-Clode database, we proceed as follows:
    of priority: electric heater > all-electric > mixed base > fixed non-electric > chimney.
 
 *Energy consumption in Phébus*
-![energy_consumption_3](energy_consumption_3)
+![energy_consumption_3][energy_consumption_3]
 
 Figure 5 compares the total consumption of each fuel in the Phébus database and in the model. It shows that retaining
 only one fuel for each dwelling leads us to consider much less electricity and wood consumption than reported in Phébus.
@@ -215,7 +215,7 @@ different EPC bands. A clear correlation appears between household income and th
 
 [^1]: The low number of dwellings labelled A and B in Phébus makes income distribution statistics less accurate in these bands.
 
-![income_categories_3](income_categories_3)
+![income_categories_3][income_categories_3]
 
 *Income categories used in Res-IRF 3.0*
 | **Category** | **Boundaries of Insee quintiles (€)** | **Share of total households in Res-IRF** |
@@ -235,7 +235,7 @@ Figure 7 and compared to that of tenants. Here again, significant disparities ap
 income falls below €34,210 representing 80% of tenants but only 20% of owner-occupiers.
 
 *Distribution of income categories for landlords and tenants in privately rented housing*
-![income_landlords_tenants](income_landlords_tenants)
+![income_landlords_tenants][income_landlords_tenants]
 
 To build this figure, some adjustments are needed to translate into income categories the ANIL (2012) data that are
 expressed in terms of living standard[^1]:
@@ -440,7 +440,7 @@ average consumption. The resulting values are those used in version 3.0; they co
 heating oil and wood energy and by the conventional coefficient of 1/2.58 that applies to electricity in France.
 
 *Descriptive statistics of energy consumption by EPC bands in Phébus (vertical axis in log scale)*
-![statistics_energy_consumption](statistics_energy_consumption)
+![statistics_energy_consumption][statistics_energy_consumption]
 
 Since the EPC covers energy consumption for heating, hot water and air conditioning, adjustments are needed to isolate
 the part specifically dedicated to heating. In Res-IRF 2.0, this part was set to 0.8, based on CEREN data. Here again,
@@ -474,7 +474,7 @@ The same approach was used to re-set surface area parameters bases on average va
 category of dwelling. Descriptive statistics are provided in Figure 9 and compared to the values used in version 2.0.
 
 *Surface area, by category of dwelling*
-![surface_3](surface_3)
+![surface_3][surface_3]
 
 #### Actual energy use
 A growing number of academic studies point to a gap between the conventional energy consumption predicted by energy
@@ -505,7 +505,7 @@ and:
 $$ Income Share=(Energy price*Surface*Conventional energy use)/Income $$
 
 *Heating intensity in the current and previous versions of Res-IRF*
-![heating_intensity_3](heating_intensity_3)
+![heating_intensity_3][heating_intensity_3]
 
 Figure 10 compares the relationship used in Res-IRF version 3.0 with that used in version 2.0, based on an average
 surface area of 85m² and an average annual income of €30,000. The new relationship is less steep, reflecting a
