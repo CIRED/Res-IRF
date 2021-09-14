@@ -62,7 +62,7 @@ def simple_plot(x, y, xlabel, ylabel, format_x=None, format_y=None, save=None):
         plt.savefig(save)
     
     
-def simple_pd_plot(df, xlabel, ylabel, colors=None, format_x=None, format_y=None, save=None, figsize='big'):
+def simple_pd_plot(df, xlabel, ylabel, colors=None, format_x=None, format_y=None, save=None, figsize='big', scatter_list=None):
     """Make pretty simple Line2D plot.
     
     Parameters
@@ -105,6 +105,10 @@ def simple_pd_plot(df, xlabel, ylabel, colors=None, format_x=None, format_y=None
         elif format_x == 'million':
             format_x = lambda x, _: '{:,.0f}M'.format(x / 1000000)
         ax.xaxis.set_major_formatter(plt.FuncFormatter(format_x))
+        
+        
+    if scatter_list is not None:
+        ax.scatter(scatter_list[0], scatter_list[1])
 
     try:
         ax.get_legend().remove()
@@ -681,14 +685,15 @@ def comparison_stock_attributes(stock1, stock2, dict_order={}, suptitle='Buildin
         plt.setp(ax.xaxis.get_majorticklabels(), rotation=0)
 
 
-def grouped_scenarios(output_dict, level, func='sum'):
+def grouped_scenarios(output_dict, level, func='sum', weight=None):
     """
     Parameters
     ----------
     output_dict: dict
         {scenario: pd.DataFrame(index=segments, column=years)}
     level: str
-    func: str, {'sum', 'mean'}, default 'sum'
+    func: str, {'sum', 'mean', 'weighted_mean'}, default 'sum'
+    weight: dict, optional
     
     Returns
     -------
@@ -706,6 +711,8 @@ def grouped_scenarios(output_dict, level, func='sum'):
             output[key] = output_dict[key].groupby(level).sum().T.to_dict()
         elif func == 'mean':
             output[key] = output_dict[key].groupby(level).mean().T.to_dict()
+        elif func == 'weighted_mean':
+            output[key] = ((output_dict[key] * weight[key]).groupby(level).sum() / weight[key].groupby(level).sum()).T.to_dict()
 
     output = reverse_nested_dict(output)
     return {k: pd.DataFrame(output[k]) for k in output.keys()}

@@ -1,16 +1,16 @@
 {
   "ZP Reference": {
-    "end": 2030,
+    "end": 2050,
     "green_value": "Reference",
     "budget_constraint": "Reference",
     "stock_buildings": {
-      "source": "project/input/stock_buildings_phebus2012.pkl",
-      "year": 2012,
+      "source": "project/input/stock_buildings_sdes2018.pkl",
+      "year": 2018,
       "type": "pd.Series"
     },
     "attributes": {
       "type": "file",
-      "source": "project/input/attributes_2012.json"
+      "source": "project/input/attributes_2018.json"
     },
     "parameters": {
     "type": "file",
@@ -19,12 +19,12 @@
     "cost_intangible": true,
     "cost_intangible_source": {
       "source_type": "function",
-      "source": "project/intermediate/cost_intangible_phebus2012.pkl",
+      "source": "project/intermediate/cost_intangible_sdes2018.pkl",
       "weighted": true
     },
     "cost_intangible_construction_source": {
       "source_type": "function",
-      "source": "project/intermediate/cost_intangible_construction_phebus2012.pkl"
+      "source": "project/intermediate/cost_intangible_construction_sdes2018.pkl"
     },
     "lbd_renovation": true,
     "info_renovation": true,
@@ -32,13 +32,13 @@
     "info_construction": true,
     "energy_prices_bt": {
       "type": "file",
-      "source": "project/input/energy_prices_2012.csv"
+      "source": "project/input/energy_prices_2018.csv"
     },
     "energy_taxes": {
-      "activated": false,
+      "activated": true,
       "type": "file",
       "source": "project/input/energy_taxes.csv",
-      "vta": false
+      "vta": true
     },
     "energy_prices_evolution": "forecast",
     "policies": {
@@ -47,7 +47,7 @@
     },
     "population": {
       "type": "file",
-      "source": "project/input/projection_population_2012.csv"
+      "source": "project/input/projection_population_2018.csv"
     },
     "carbon_tax": {
       "activated": true,
@@ -61,70 +61,70 @@
     },
     "co2_content": {
       "type": "file",
-      "source": "project/input/CO2_content_2012.csv"
+      "source": "project/input/CO2_content_2018.csv"
     },
     "cite": {
       "activated": true,
-      "start": 2012,
-      "end": 2013,
+      "start": 2018,
+      "end": 2019,
       "calibration": true
     },
     "cite_plus": {
       "activated": false,
-      "start": 2012,
-      "end": 2018,
+      "start": 2018,
+      "end": 2019,
       "calibration": false
     },
     "cee_subsidy": {
       "activated": true,
-      "start": 2012,
-      "end": 2013,
+      "start": 2018,
+      "end": 2019,
       "calibration": true
     },
     "cee_taxes": {
       "activated": true,
-      "start": 2012,
-      "end": 2013,
+      "start": 2018,
+      "end": 2019,
       "calibration": true
     },
     "reduced_tax": {
       "activated": true,
-      "start": 2012,
-      "end": 2013,
+      "start": 2018,
+      "end": 2019,
       "calibration": true
     },
     "eptz": {
       "activated": true,
-      "start": 2012,
-      "end": 2013,
+      "start": 2018,
+      "end": 2019,
       "calibration": true
     },
     "eptz_plus": {
       "activated": false,
-      "start": 2012,
-      "end": 2040,
+      "start": 2018,
+      "end": 2019,
       "calibration": false
     },
     "subsidy_recycling_tax": {
       "activated": false,
-      "start": 2012,
-      "end": 2012,
+      "start": 2018,
+      "end": 2019,
       "calibration": false
     },
     "renovation_obligation": {
       "activated": false,
-      "start": 2012,
-      "end": 2040,
+      "start": 2018,
+      "end": 2019,
       "calibration": false
     },
     "rho": {
       "source_type": "function",
-      "source": "project/intermediate/rho_phebus2012.pkl",
+      "source": "project/intermediate/rho_sdes2018.pkl",
       "weighted": true
   },
     "renovation_rate_ini":{
       "type": "file",
-      "source": "project/input/renovation_rate_ini_2012.csv"
+      "source": "project/input/renovation_rate_ini_2018.csv"
     },
     "ms_renovation_ini":{
       "type": "file",
@@ -154,18 +154,18 @@
     },
     "Household income rate": 0.012
   },
-  "ZP wo learning": {
-    "end": 2030,
+  "ZP No budget constraint": {
+    "end": 2050,
     "green_value": "Reference",
-    "budget_constraint": "Reference",
+    "budget_constraint": "No budget constraint",
     "stock_buildings": {
-      "source": "project/input/stock_buildings_phebus2012.pkl",
-      "year": 2012,
+      "source": "project/input/stock_buildings_sdes2018.pkl",
+      "year": 2018,
       "type": "pd.Series"
     },
     "attributes": {
       "type": "file",
-      "source": "project/input/attributes_2012.json"
+      "source": "project/input/attributes_2018.json"
     },
     "parameters": {
     "type": "file",
@@ -174,26 +174,26 @@
     "cost_intangible": true,
     "cost_intangible_source": {
       "source_type": "function",
-      "source": "project/intermediate/cost_intangible_phebus2012.pkl",
+      "source": "project/intermediate/cost_intangible_sdes2018.pkl",
       "weighted": true
     },
     "cost_intangible_construction_source": {
       "source_type": "function",
-      "source": "project/intermediate/cost_intangible_construction_phebus2012.pkl"
+      "source": "project/intermediate/cost_intangible_construction_sdes2018.pkl"
     },
-    "lbd_renovation": false,
-    "info_renovation": false,
-    "lbd_construction": false,
-    "info_construction": false,
+    "lbd_renovation": true,
+    "info_renovation": true,
+    "lbd_construction": true,
+    "info_construction": true,
     "energy_prices_bt": {
       "type": "file",
-      "source": "project/input/energy_prices_2012.csv"
+      "source": "project/input/energy_prices_2018.csv"
     },
     "energy_taxes": {
-      "activated": false,
+      "activated": true,
       "type": "file",
       "source": "project/input/energy_taxes.csv",
-      "vta": false
+      "vta": true
     },
     "energy_prices_evolution": "forecast",
     "policies": {
@@ -202,7 +202,7 @@
     },
     "population": {
       "type": "file",
-      "source": "project/input/projection_population_2012.csv"
+      "source": "project/input/projection_population_2018.csv"
     },
     "carbon_tax": {
       "activated": true,
@@ -216,70 +216,70 @@
     },
     "co2_content": {
       "type": "file",
-      "source": "project/input/CO2_content_2012.csv"
+      "source": "project/input/CO2_content_2018.csv"
     },
     "cite": {
       "activated": true,
-      "start": 2012,
-      "end": 2013,
+      "start": 2018,
+      "end": 2019,
       "calibration": true
     },
     "cite_plus": {
       "activated": false,
-      "start": 2012,
-      "end": 2018,
+      "start": 2018,
+      "end": 2019,
       "calibration": false
     },
     "cee_subsidy": {
       "activated": true,
-      "start": 2012,
-      "end": 2013,
+      "start": 2018,
+      "end": 2019,
       "calibration": true
     },
     "cee_taxes": {
       "activated": true,
-      "start": 2012,
-      "end": 2013,
+      "start": 2018,
+      "end": 2019,
       "calibration": true
     },
     "reduced_tax": {
       "activated": true,
-      "start": 2012,
-      "end": 2013,
+      "start": 2018,
+      "end": 2019,
       "calibration": true
     },
     "eptz": {
       "activated": true,
-      "start": 2012,
-      "end": 2013,
+      "start": 2018,
+      "end": 2019,
       "calibration": true
     },
     "eptz_plus": {
       "activated": false,
-      "start": 2012,
-      "end": 2040,
+      "start": 2018,
+      "end": 2019,
       "calibration": false
     },
     "subsidy_recycling_tax": {
       "activated": false,
-      "start": 2012,
-      "end": 2012,
+      "start": 2018,
+      "end": 2019,
       "calibration": false
     },
     "renovation_obligation": {
       "activated": false,
-      "start": 2012,
-      "end": 2040,
+      "start": 2018,
+      "end": 2019,
       "calibration": false
     },
     "rho": {
       "source_type": "function",
-      "source": "project/intermediate/rho_phebus2012.pkl",
+      "source": "project/intermediate/rho_sdes2018.pkl",
       "weighted": true
   },
     "renovation_rate_ini":{
       "type": "file",
-      "source": "project/input/renovation_rate_ini_2012.csv"
+      "source": "project/input/renovation_rate_ini_2018.csv"
     },
     "ms_renovation_ini":{
       "type": "file",
@@ -309,18 +309,18 @@
     },
     "Household income rate": 0.012
   },
-  "ZP wo learning price constant": {
-    "end": 2030,
+  "ZP Public investment": {
+    "end": 2050,
     "green_value": "Reference",
-    "budget_constraint": "Reference",
+    "budget_constraint": "Public investment",
     "stock_buildings": {
-      "source": "project/input/stock_buildings_phebus2012.pkl",
-      "year": 2012,
+      "source": "project/input/stock_buildings_sdes2018.pkl",
+      "year": 2018,
       "type": "pd.Series"
     },
     "attributes": {
       "type": "file",
-      "source": "project/input/attributes_2012.json"
+      "source": "project/input/attributes_2018.json"
     },
     "parameters": {
     "type": "file",
@@ -329,35 +329,35 @@
     "cost_intangible": true,
     "cost_intangible_source": {
       "source_type": "function",
-      "source": "project/intermediate/cost_intangible_phebus2012.pkl",
+      "source": "project/intermediate/cost_intangible_sdes2018.pkl",
       "weighted": true
     },
     "cost_intangible_construction_source": {
       "source_type": "function",
-      "source": "project/intermediate/cost_intangible_construction_phebus2012.pkl"
+      "source": "project/intermediate/cost_intangible_construction_sdes2018.pkl"
     },
-    "lbd_renovation": false,
-    "info_renovation": false,
-    "lbd_construction": false,
-    "info_construction": false,
+    "lbd_renovation": true,
+    "info_renovation": true,
+    "lbd_construction": true,
+    "info_construction": true,
     "energy_prices_bt": {
       "type": "file",
-      "source": "project/input/energy_prices_2012.csv"
+      "source": "project/input/energy_prices_2018.csv"
     },
     "energy_taxes": {
-      "activated": false,
+      "activated": true,
       "type": "file",
       "source": "project/input/energy_taxes.csv",
-      "vta": false
+      "vta": true
     },
-    "energy_prices_evolution": "constant",
+    "energy_prices_evolution": "forecast",
     "policies": {
       "type": "file",
       "source": "project/input/policies.json"
     },
     "population": {
       "type": "file",
-      "source": "project/input/projection_population_2012.csv"
+      "source": "project/input/projection_population_2018.csv"
     },
     "carbon_tax": {
       "activated": true,
@@ -371,70 +371,70 @@
     },
     "co2_content": {
       "type": "file",
-      "source": "project/input/CO2_content_2012.csv"
+      "source": "project/input/CO2_content_2018.csv"
     },
     "cite": {
       "activated": true,
-      "start": 2012,
-      "end": 2013,
+      "start": 2018,
+      "end": 2019,
       "calibration": true
     },
     "cite_plus": {
       "activated": false,
-      "start": 2012,
-      "end": 2018,
+      "start": 2018,
+      "end": 2019,
       "calibration": false
     },
     "cee_subsidy": {
       "activated": true,
-      "start": 2012,
-      "end": 2013,
+      "start": 2018,
+      "end": 2019,
       "calibration": true
     },
     "cee_taxes": {
       "activated": true,
-      "start": 2012,
-      "end": 2013,
+      "start": 2018,
+      "end": 2019,
       "calibration": true
     },
     "reduced_tax": {
       "activated": true,
-      "start": 2012,
-      "end": 2013,
+      "start": 2018,
+      "end": 2019,
       "calibration": true
     },
     "eptz": {
       "activated": true,
-      "start": 2012,
-      "end": 2013,
+      "start": 2018,
+      "end": 2019,
       "calibration": true
     },
     "eptz_plus": {
       "activated": false,
-      "start": 2012,
-      "end": 2040,
+      "start": 2018,
+      "end": 2019,
       "calibration": false
     },
     "subsidy_recycling_tax": {
       "activated": false,
-      "start": 2012,
-      "end": 2012,
+      "start": 2018,
+      "end": 2019,
       "calibration": false
     },
     "renovation_obligation": {
       "activated": false,
-      "start": 2012,
-      "end": 2040,
+      "start": 2018,
+      "end": 2019,
       "calibration": false
     },
     "rho": {
       "source_type": "function",
-      "source": "project/intermediate/rho_phebus2012.pkl",
+      "source": "project/intermediate/rho_sdes2018.pkl",
       "weighted": true
   },
     "renovation_rate_ini":{
       "type": "file",
-      "source": "project/input/renovation_rate_ini_2012.csv"
+      "source": "project/input/renovation_rate_ini_2018.csv"
     },
     "ms_renovation_ini":{
       "type": "file",
@@ -463,160 +463,5 @@
       "source": "project/input/cost_switch_fuel.csv"
     },
     "Household income rate": 0.012
-  },
-  "ZP wo learning price income constant": {
-    "end": 2030,
-    "green_value": "Reference",
-    "budget_constraint": "Reference",
-    "stock_buildings": {
-      "source": "project/input/stock_buildings_phebus2012.pkl",
-      "year": 2012,
-      "type": "pd.Series"
-    },
-    "attributes": {
-      "type": "file",
-      "source": "project/input/attributes_2012.json"
-    },
-    "parameters": {
-    "type": "file",
-    "source": "project/input/parameters.json"
-  },
-    "cost_intangible": true,
-    "cost_intangible_source": {
-      "source_type": "function",
-      "source": "project/intermediate/cost_intangible_phebus2012.pkl",
-      "weighted": true
-    },
-    "cost_intangible_construction_source": {
-      "source_type": "function",
-      "source": "project/intermediate/cost_intangible_construction_phebus2012.pkl"
-    },
-    "lbd_renovation": false,
-    "info_renovation": false,
-    "lbd_construction": false,
-    "info_construction": false,
-    "energy_prices_bt": {
-      "type": "file",
-      "source": "project/input/energy_prices_2012.csv"
-    },
-    "energy_taxes": {
-      "activated": false,
-      "type": "file",
-      "source": "project/input/energy_taxes.csv",
-      "vta": false
-    },
-    "energy_prices_evolution": "constant",
-    "policies": {
-      "type": "file",
-      "source": "project/input/policies.json"
-    },
-    "population": {
-      "type": "file",
-      "source": "project/input/projection_population_2012.csv"
-    },
-    "carbon_tax": {
-      "activated": true,
-      "start": 2012,
-      "end": 2013,
-      "calibration": true
-    },
-    "carbon_tax_value": {
-      "type": "file",
-      "source": "project/input/carbon_tax.csv"
-    },
-    "co2_content": {
-      "type": "file",
-      "source": "project/input/CO2_content_2012.csv"
-    },
-    "cite": {
-      "activated": true,
-      "start": 2012,
-      "end": 2013,
-      "calibration": true
-    },
-    "cite_plus": {
-      "activated": false,
-      "start": 2012,
-      "end": 2018,
-      "calibration": false
-    },
-    "cee_subsidy": {
-      "activated": true,
-      "start": 2012,
-      "end": 2013,
-      "calibration": true
-    },
-    "cee_taxes": {
-      "activated": true,
-      "start": 2012,
-      "end": 2013,
-      "calibration": true
-    },
-    "reduced_tax": {
-      "activated": true,
-      "start": 2012,
-      "end": 2013,
-      "calibration": true
-    },
-    "eptz": {
-      "activated": true,
-      "start": 2012,
-      "end": 2013,
-      "calibration": true
-    },
-    "eptz_plus": {
-      "activated": false,
-      "start": 2012,
-      "end": 2040,
-      "calibration": false
-    },
-    "subsidy_recycling_tax": {
-      "activated": false,
-      "start": 2012,
-      "end": 2012,
-      "calibration": false
-    },
-    "renovation_obligation": {
-      "activated": false,
-      "start": 2012,
-      "end": 2040,
-      "calibration": false
-    },
-    "rho": {
-      "source_type": "function",
-      "source": "project/intermediate/rho_phebus2012.pkl",
-      "weighted": true
-  },
-    "renovation_rate_ini":{
-      "type": "file",
-      "source": "project/input/renovation_rate_ini_2012.csv"
-    },
-    "ms_renovation_ini":{
-      "type": "file",
-      "source": "project/input/ms_renovation_ini.csv"
-    },
-    "ms_construction_ini":{
-      "type": "file",
-      "source": "project/input/ms_construction_ini.csv"
-    },
-    "cost_renovation": {
-      "type": "file",
-      "source": "project/input/cost_renovation.csv",
-      "index_names": [
-        "Energy performance"
-      ],
-      "columns_names": [
-        "Energy performance final"
-      ]
-    },
-    "cost_construction": {
-      "type": "file",
-      "source": "project/input/cost_construction.csv"
-    },
-    "cost_switch_fuel": {
-      "type": "file",
-      "source": "project/input/cost_switch_fuel.csv"
-    },
-    "Household income rate": 0
   }
 }

@@ -6,7 +6,7 @@
 [energy_poverty_input]: img/energy_poverty_input.png "phebus_sdes_energy_percent"
 
 
-### Variants on the input variables
+# Influence of input variables
 
 The influence of technological progress, energy prices and aggregate household income is assessed by comparing the
 reference scenario to alternatives in which they are frozen one after the other.[^1]

@@ -7,8 +7,6 @@ from itertools import product
 
 from utils import reindex_mi, val2share, logistic, get_levels_values, remove_rows, add_level, de_aggregate_series
 
-# TODO: calibration_renovation_rate // rho should depends on Income class owner and Heating energy initial
-# TODO: clean HousingStockConstructed
 # TODO: put exogenous parameters outside the script (heating intensity + lambda)
 # TODO: use 4% for calibration cf. 2012 paper
 
@@ -31,11 +29,6 @@ class HousingStock:
         pd.Series that returns income (€/yr) of the building owner based on archetypes attribute
     attributes2consumption : pd.Series
         pd.Series that returns conventional consumption (kWh/m2.yr) of the building based on archetypes attribute
-
-    Methods
-    -------
-    to_consumption_actual(scenario=None)
-        returns actual consumption considering household specific behavior
     """
 
     def __init__(self, stock_seg, attributes_values,
@@ -808,7 +801,7 @@ class HousingStock:
             define transition. Transition can be defined as attributes transition, energy transition, or attributes-energy transition.
         policies: list, optional
             list of Policies object
-        segments: pd.MultiIndex, optional
+        segments: pd.MultiIndex or pd.Index, optional
 
         Returns
         -------
@@ -937,6 +930,7 @@ class HousingStock:
             List of Policies object
         segments: pd.MultiIndex, optional
         nu: float or int, default 8.0
+
         Returns
         -------
         pd.DataFrame
@@ -996,7 +990,8 @@ class HousingStock:
 
     def calibration_market_share(self, energy_prices, market_share_ini, cost_invest=None,
                                  consumption='conventional', policies=None, weighted=True):
-        """Returns intangible costs by calibrating market_share.
+        """
+        Returns intangible costs by calibrating market_share.
 
         Intangible costs are calibrated so that the observed market shares are reproduced in the initial year.
         Intangible costs are calibrated so that the life-cycle cost model, fed with the investment costs,
@@ -1010,25 +1005,22 @@ class HousingStock:
         Solver finds Intangible cost for each segment to match the observed market share.
         --> Intangible cost(Occupancy status, Housing type, Income class owner, Energy performance initial,
         Heating energy initial, Energy performance final)
-
         NB: Observed market share only depends on Energy performance initial and Energy performance final.
         Each segment with the same performance transition need to match the same observed market shares.
 
-
-        Parameters:
-        -----------
+        Parameters
+        ----------
         energy_prices: pd.DataFrame
         market_share_ini: pd.DataFrame
             Observed market share to match during calibration_year.
-        folder_output: str, optional
-            if not None, will dump cost_intangible in .pkl file
-        cost_invest: pd.DataFrame, optional
+        cost_invest: dict, optional
         consumption: {'conventional', 'actual'}, default 'conventional'
         policies: list, optional
-            policies to consider in the market share
+            Policies to consider in the market share
+        weighted: bool, default True
 
-        Returns:
-        --------
+        Returns
+        -------
         pd.DataFrame
             Intangible cost
         pd.DataFrame
@@ -1532,7 +1524,44 @@ class HousingStockRenovated(HousingStock):
         return self._stock_area_seg
 
     @staticmethod
+    def renovation_rate(npv, rho, npv_min, rate_max, rate_min):
+        """Renovation rate for float values.
+
+        Parameters
+        ----------
+        npv: float
+        rho: float
+        npv_min: float
+        rate_max: float
+        rate_min: float
+
+        Returns
+        -------
+        float
+        """
+        return logistic(npv - npv_min,
+                        a=rate_max / rate_min - 1,
+                        r=rho,
+                        k=rate_max)
+
+    @staticmethod
     def renovate_rate_func(npv, rho, npv_min, rate_max, rate_min):
+        """Calculate renovation rate for indexed pd.Series rho and indexed pd.Series npv.
+
+        Parameters
+        ----------
+        npv: pd.Series
+            Indexes are the first elements of NPV and last value is the actual NPV value.
+        rho: pd.Series
+            Rho MultiIndex pd.Series containing rho values and indexed by stock attributes.
+        npv_min: float
+        rate_max: float
+        rate_min: float
+
+        Returns
+        -------
+        float
+        """
         if isinstance(rho, pd.Series):
             rho_f = rho.loc[tuple(npv.iloc[:-1].tolist())]
         else:
@@ -1541,10 +1570,7 @@ class HousingStockRenovated(HousingStock):
         if np.isnan(rho_f):
             return float('nan')
         else:
-            return logistic(npv.loc[0] - npv_min,
-                            a=rate_max / rate_min - 1,
-                            r=rho_f,
-                            k=rate_max)
+            return HousingStockRenovated.renovation_rate(npv.loc[0], rho_f, npv_min, rate_max, rate_min)
 
     def to_renovation_rate(self, energy_prices, transition=None, consumption='conventional', cost_invest=None,
                            cost_intangible=None, policies=None, rho=None):
@@ -1995,6 +2021,28 @@ class HousingStockRenovated(HousingStock):
             flow_knowledge_renovation = self.to_flow_knowledge(flow_area_renovation_seg)
             self.flow_knowledge_ep = flow_knowledge_renovation
 
+    @staticmethod
+    def calibration_rho(npv, renovation_rate_target, rate_max, rate_min, npv_min):
+        """
+        Function that returns rho in order to match the targeted renovation rate.
+
+        Parameters
+        ----------
+        npv: pd.Series
+            Net present value calculated.
+        renovation_rate_target: pd.Series
+            Targeted renovation rate.
+        rate_max: float
+        rate_min: float
+        npv_min: float
+
+        Returns
+        -------
+        pd.Series
+        """
+        return (np.log(rate_max / rate_min - 1) - np.log(
+            rate_max / renovation_rate_target - 1)) / (npv - npv_min)
+
     def calibration_renovation_rate(self, energy_prices, renovation_rate_ini, consumption='conventional',
                                     cost_invest=None, cost_intangible=None, policies=None, weighted=True):
         """
@@ -2003,18 +2051,15 @@ class HousingStockRenovated(HousingStock):
         Renovation rate of dwellings attributes led is calculated as a logistic function of the NPV.
         The logistic form captures heterogeneity in heating preference and habits,
         assuming they are normally distributed.
-
         Parameter ρ is calibrated, for each type of attributes. It is then agregated or not, depending of weighted
         parameter.
+
         For instance, ρ was calibrated in 2012, for each type of  decision-maker and each initial certificates
         (i.e., 6x6=36 values), so that the NPVs calculated with the subsidies in effect in 2012 (see main article)
         reproduce the observed renovation rates.
-
         Renovation rate observed depends on (Occupancy status, Housing type)
-        NPV that depends on MS and so LCC: (Energy performance initial,
-                                            Occupancy status, Housing type, Income class owner)
-        So parameter ρ first depends on  (Occupancy status, Housing type, Energy performance initial,
-                                            Heating energy initial, Income class owner)
+        NPV that depends on MS and so LCC: (Energy performance initial, Occupancy status, Housing type, Income class owner)
+        So parameter ρ first depends on  (Occupancy status, Housing type, Energy performance initial, Heating energy initial, Income class owner)
 
         Parameters
         ----------
@@ -2043,9 +2088,13 @@ class HousingStockRenovated(HousingStock):
                           policies=policies)
 
         renovation_rate_obj = reindex_mi(renovation_rate_ini, npv.index)
-        rho = (np.log(self._rate_max / self._rate_min - 1) - np.log(
-            self._rate_max / renovation_rate_obj - 1)) / (npv - self._npv_min)
-
+        rho = HousingStockRenovated.calibration_rho(npv, renovation_rate_obj, self._rate_max, self._rate_min,
+                                                    self._npv_min)
+        """
+        rho_test = np.log(self._rate_max * ((self._rate_max / renovation_rate_obj - 1) * self._rate_min)**-1) / (
+                    npv - self._npv_min)
+                
+        """
         # aggregate rho to match renovation_rate_obj
         renovation_rate_calibration = None
         if weighted:
@@ -2077,7 +2126,7 @@ class HousingStockRenovated(HousingStock):
 
         target_stock = mutation_stock + rotation_stock
         target = renovation_obligation.targets.loc[:, self.year]
-        target = reindex_mi(target, target_stock.index, target.index.names)
+        target = reindex_mi(target, target_stock.index)
         flow_renovation_obligation = target * target_stock * renovation_obligation.participation_rate
         self.flow_renovation_obligation[self.year] = flow_renovation_obligation
         return flow_renovation_obligation
@@ -2376,6 +2425,24 @@ class HousingStockConstructed(HousingStock):
     def calibration_market_share(self, energy_price, market_share_objective, cost_invest=None,
                                  consumption='conventional', policies=None):
         """Returns intangible costs construction by calibrating market_share.
+
+        Parameters
+        ----------
+        energy_price: pd.DataFrame
+        market_share_objective: pd.DataFrame
+            Observed market share to match during calibration_year.
+        cost_invest: dict, optional
+        consumption: {'conventional', 'actual'}, default 'conventional'
+        policies: list, optional
+            Policies to consider in the market share
+
+        Returns
+        -------
+        pd.DataFrame
+            Intangible cost
+        pd.DataFrame
+            Market share calculated and observed
+
         """
 
         lcc_final = self.to_lcc_final(energy_price, cost_invest=cost_invest, policies=policies,

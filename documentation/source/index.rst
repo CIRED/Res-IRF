@@ -17,9 +17,11 @@ Welcome to Res-IRF's documentation!
    CHANGELOG
    future_development
    technical_documentation
+   input_variables
    variant_input_variables
    variant_input_capitalization
    variant_input_credit
+   policies_assessment
    contributing
 
 

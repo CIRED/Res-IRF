@@ -6,7 +6,7 @@
 [energy_poverty_capitalization]: img/energy_poverty_capitalization.png "phebus_sdes_energy_percent"
 
 
-### Influence of the determinants of capitalization
+# Influence of the determinants of capitalization
 
 Here we compare the four scenarios specified in Table 19 (the scenario without the landlord-tenant dilemma corresponding
 to full capitalization). The absence of capitalization results in a reduction in the number and quality of renovations (

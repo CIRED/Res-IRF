@@ -468,3 +468,38 @@ def quick_graphs(folder_output):
                               suptitle='Evolution buildings stock (Millions)',
                               format_y=lambda y, _: '{:,.0f}'.format(y / 10 ** 6), n_columns=7, rotation=90, nbins=4,
                               save=os.path.join(folder_output, 'stock_performance.png'))
+
+    weight = dict()
+    for key, item in output_stock['Stock - Renovation'].items():
+        weight[key] = item[item.index.get_level_values('Energy performance') != 'A']
+        weight[key].columns = [c + 1 for c in weight[key].columns]
+        weight[key] = weight[key].iloc[:, :-1]
+
+
+    scenario_grouped_subplots(
+        grouped_scenarios(output_stock['Renovation rate (%) - Renovation'], 'Energy performance', func='weighted_mean',
+                          weight=weight),
+        suptitle='Renovation rate (%)',
+        format_y=lambda y, _: '{:.1%}'.format(y), n_columns=7, rotation=90, nbins=4,
+        save=os.path.join(folder_output, 'renovation_rate_performance.png'))
+
+    scenario_grouped_subplots(
+        grouped_scenarios(output_stock['Renovation rate (%) - Renovation'], 'Heating energy', func='weighted_mean',
+                          weight=weight),
+        suptitle='Renovation rate (%)',
+        format_y=lambda y, _: '{:.1%}'.format(y), n_columns=4, rotation=90, nbins=4,
+        save=os.path.join(folder_output, 'renovation_rate_energy.png'))
+
+    scenario_grouped_subplots(
+        grouped_scenarios(output_stock['Renovation rate (%) - Renovation'], 'Income class owner', func='weighted_mean',
+                          weight=weight),
+        suptitle='Renovation rate (%)',
+        format_y=lambda y, _: '{:.1%}'.format(y), n_columns=5, rotation=90, nbins=4,
+        save=os.path.join(folder_output, 'renovation_rate_income_class.png'))
+
+    scenario_grouped_subplots(
+        grouped_scenarios(output_stock['Renovation rate (%) - Renovation'], ['Occupancy status', 'Housing type'],
+                          func='weighted_mean', weight=weight),
+        suptitle='Renovation rate (%)',
+        format_y=lambda y, _: '{:.1%}'.format(y), n_columns=3, rotation=90, nbins=4,
+        save=os.path.join(folder_output, 'renovation_rate_decision_maker.png'))

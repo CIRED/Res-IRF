@@ -6,7 +6,7 @@ from utils import apply_linear_rate, reindex_mi, add_level
 
 
 def dict2series(item_dict):
-    """Return pd.Series from a dict containing val and index attributess.
+    """Return pd.Series from a dict containing val and index attributes.
     """
     if len(item_dict['index']) == 1:
         ds = pd.Series(item_dict['val'])

@@ -223,64 +223,73 @@
     "unit": "%"
   },
   "attributes2discount": {
-    "val": {
-      "D1": {
-        "Single-family": 0.15,
-        "Multi-family": 0.37,
-        "Social-housing": 0.04
+    "Reference": {
+      "val": {
+        "D1": {
+          "Single-family": 0.15,
+          "Multi-family": 0.37,
+          "Social-housing": 0.04
+        },
+        "D2": {
+          "Single-family": 0.15,
+          "Multi-family": 0.37,
+          "Social-housing": 0.04
+        },
+        "D3": {
+          "Single-family": 0.1,
+          "Multi-family": 0.24,
+          "Social-housing": 0.04
+        },
+        "D4": {
+          "Single-family": 0.1,
+          "Multi-family": 0.24,
+          "Social-housing": 0.04
+        },
+        "D5": {
+          "Single-family": 0.07,
+          "Multi-family": 0.15,
+          "Social-housing": 0.04
+        },
+        "D6": {
+          "Single-family": 0.07,
+          "Multi-family": 0.15,
+          "Social-housing": 0.04
+        },
+        "D7": {
+          "Single-family": 0.05,
+          "Multi-family": 0.07,
+          "Social-housing": 0.04
+        },
+        "D8": {
+          "Single-family": 0.05,
+          "Multi-family": 0.07,
+          "Social-housing": 0.04
+        },
+        "D9": {
+          "Single-family": 0.04,
+          "Multi-family": 0.05,
+          "Social-housing": 0.04
+        },
+        "D10": {
+          "Single-family": 0.04,
+          "Multi-family": 0.05,
+          "Social-housing": 0.04
+        }
       },
-      "D2": {
-        "Single-family": 0.15,
-        "Multi-family": 0.37,
-        "Social-housing": 0.04
-      },
-      "D3": {
-        "Single-family": 0.1,
-        "Multi-family": 0.24,
-        "Social-housing": 0.04
-      },
-      "D4": {
-        "Single-family": 0.1,
-        "Multi-family": 0.24,
-        "Social-housing": 0.04
-      },
-      "D5": {
-        "Single-family": 0.07,
-        "Multi-family": 0.15,
-        "Social-housing": 0.04
-      },
-      "D6": {
-        "Single-family": 0.07,
-        "Multi-family": 0.15,
-        "Social-housing": 0.04
-      },
-      "D7": {
-        "Single-family": 0.05,
-        "Multi-family": 0.07,
-        "Social-housing": 0.04
-      },
-      "D8": {
-        "Single-family": 0.05,
-        "Multi-family": 0.07,
-        "Social-housing": 0.04
-      },
-      "D9": {
-        "Single-family": 0.04,
-        "Multi-family": 0.05,
-        "Social-housing": 0.04
-      },
-      "D10": {
-        "Single-family": 0.04,
-        "Multi-family": 0.05,
-        "Social-housing": 0.04
-      }
+      "index": [
+        "Income class owner",
+        "Housing type"
+      ],
+      "unit": "%/yr",
+      "type": "pd.Series"
     },
-    "index": [
-      "Income class owner",
-      "Housing type"
-    ],
-    "unit": "%/yr",
-    "type": "pd.Series"
+    "No budget constraint": {
+      "type": "int", "val": 0.07
+    },
+    "Public investment": {
+      "type": "int", "val": 0.04
+    },
+    "type": "dict_to_parse"
   },
   "attributes2discount_construction": {
     "val": {

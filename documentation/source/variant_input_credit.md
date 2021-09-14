@@ -6,7 +6,7 @@
 [energy_poverty_credit]: img/energy_poverty_credit.png "phebus_sdes_energy_percent"
 
 
-### Influence of credit constraints
+# Influence of credit constraints
 
 To assess the influence of credit constraints, we set discount rates as follows:
 - **Reference**: the discount rates are those described in Table 15;

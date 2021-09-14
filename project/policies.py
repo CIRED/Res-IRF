@@ -44,11 +44,6 @@ class EnergyTaxes(PublicPolicy):
         Unit of measure of the value attribute.
     value: float, pd.Series or pd.DataFrame
         Value of energy taxes.
-
-    Methods
-    -------
-    price_to_taxes(energy_prices=None, co2_content=None)
-        Calculate energy taxes cost.
     """
     def __init__(self, name, start, end, unit, value, calibration=False):
         """EnergyTaxes constructor.
@@ -238,10 +233,6 @@ class SubsidiesRecyclingTax(PublicPolicy):
         return self._subsidy.to_subsidy(cost=cost, energy_saving=energy_saving)
 
 
-
-
-
-
 class RegulatedLoan(PublicPolicy):
     """Loan backed by the state to buy technology capex.
 
@@ -266,17 +257,6 @@ class RegulatedLoan(PublicPolicy):
 
     loan_approximate2subsidy(principal): calculate subsidies as opportunity cost for the household for a principal.
     principal is a capex from a initial state to a final state.
-
-    Examples
-    --------
-    eptz = RegulatedLoan('test', 2018, 2030,
-                        ir_regulated=None, ir_market=0.05,
-                        principal_max=1000,
-                        horizon=10)
-    >>> eptz.to_opportunity_cost(1000)
-
-    >>> eptz.to_opportunity_cost(2000)
-
     """
 
     def __init__(self, name, start, end, ir_regulated=None, ir_market=None,

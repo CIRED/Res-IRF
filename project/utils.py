@@ -145,7 +145,7 @@ def miiindex_loc(ds, slicing_midx):
 def reindex_mi(df, miindex, levels=None, axis=0):
     """Return re-indexed DataFrame based on miindex using only few labels.
 
-    Parameters:
+    Parameters
     -----------
     df: pd.DataFrame or pd.Series
         data to reindex
@@ -156,7 +156,7 @@ def reindex_mi(df, miindex, levels=None, axis=0):
     axis: {0, 1}, default 0
         axis to reindex df
 
-    Returns:
+    Returns
     --------
     pd.DataFrame or pd.Series
 
@@ -197,12 +197,12 @@ def add_level_nan(ds, level):
 
     Value of pd.Series doesn't change.
 
-    Parameters:
+    Parameters
     -----------
     ds: pd.Series
     level: str
 
-    Returns:
+    Returns
     --------
     pd.Series
     """
@@ -217,13 +217,13 @@ def add_level(data, index, axis=0):
 
     Values of data does not depend on the new level (i.e. only defined by other levels).
 
-    Parameters:
+    Parameters
     -----------
-    ds: pd.Series
+    data: pd.Series
     index: pd.Index or list-like
     axis: {0, 1}, default 0
 
-    Returns:
+    Returns
     --------
     pd.Series
     """
@@ -307,7 +307,7 @@ def de_aggregate_series(ds_val, df_share):
         index: segments, columns: new level,
         ds_share and ds_val segment must share at least on level.
 
-    Returns:
+    Returns
     --------
     pd.Series
         MultiIndex series with
@@ -316,38 +316,6 @@ def de_aggregate_series(ds_val, df_share):
     # reindex_mi add missing levels to df_share
     df_share_r = reindex_mi(df_share, ds_val.index, levels_shared)
     return(ds_val * df_share_r.T).T.stack()
-
-"""
-def de_aggregate_value(serie, ds_prop, val, level_val, list_val, level_key):
-
-
-    good_index = serie.index.get_level_values(level_val) == val
-    ds_keep = serie[~good_index]
-    ds_de_aggregate = serie[good_index]
-
-    ds = pd.Series(dtype='float64')
-    for v in list_val:
-        ds = ds.append(replace(ds_de_aggregate, {val: v}))
-
-    # ds = ds.loc[ds.index.drop_duplicates(keep=False)]
-    ds.index = pd.MultiIndex.from_tuples(ds.index)
-    ds.index.names = serie.index.names
-
-    ds = multi_index2tuple(ds, [level_val, level_key])
-    idx_fuel = ds.index.get_level_values(0)
-    ds_prop = multi_index2tuple(ds_prop, [level_val, level_key])
-    ds_prop = ds_prop.reindex(idx_fuel)
-    ds = pd.Series(ds.values * ds_prop.values, index=ds.index)
-
-    df_index = pd.DataFrame(ds.index.get_level_values(0).tolist(), columns=[level_val, level_key])
-    ds.index = ds.index.droplevel(level=0)
-    ds = ds.reset_index()
-    ds = pd.concat((df_index, ds), axis=1)
-    ds.set_index(serie.index.names, drop=True, inplace=True)
-
-    ds = ds.iloc[:, 0].append(ds_keep)
-    return ds
-    """
 
 
 def val2share(ds, levels, func=lambda x: x, option='row'):

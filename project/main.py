@@ -3,6 +3,10 @@
 This script requires that 'pandas' be installed within the Python
 environment you are running this script in.
 """
+
+# TODO: calibration public policies.
+#  Check than subsidies are considered and why are not there in summary_policies for the first year.
+
 import os
 import time
 import logging
@@ -338,11 +342,12 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
                                                        parameters['Area max construction'])
         logging.debug('Updating flow_constructed segmented')
         # update_flow_constructed_seg will automatically update area constructed and so construction knowledge
-        buildings_constructed.update_flow_constructed_seg(energy_prices,
-                                                          cost_intangible=cost_intangible_construction,
-                                                          cost_invest=cost_invest_construction,
-                                                          nu=parameters['Nu construction'],
-                                                          policies=None)
+        if flow_constructed > 0:
+            buildings_constructed.update_flow_constructed_seg(energy_prices,
+                                                              cost_intangible=cost_intangible_construction,
+                                                              cost_invest=cost_invest_construction,
+                                                              nu=parameters['Nu construction'],
+                                                              policies=None)
 
         if config['info_construction']:
             logging.debug('Information acceleration - construction')
