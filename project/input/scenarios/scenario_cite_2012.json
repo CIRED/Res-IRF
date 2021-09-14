@@ -30,7 +30,7 @@
     "Policy - 2040": "AP - 2040"
   },
   "ZP Reference": {
-    "end": 2050,
+    "end": 2036,
     "green_value": "Reference",
     "budget_constraint": "Reference",
     "stock_buildings": {
@@ -150,7 +150,7 @@
     "rho": {
       "source_type": "function",
       "source": "project/intermediate/rho_phebus2012.pkl",
-      "weighted": true
+      "option": 3
     },
     "renovation_rate_ini": {
       "type": "file",
@@ -162,7 +162,7 @@
     },
     "ms_construction_ini": {
       "type": "file",
-      "source": "project/input/ms_construction_ini_2012.csv"
+      "source": "project/input/ms_construction_ini.csv"
     },
     "cost_renovation": {
       "type": "file",
@@ -185,7 +185,7 @@
     "Household income rate": 0.012
   },
   "ZP + CITE": {
-    "end": 2050,
+    "end": 2036,
     "green_value": "Reference",
     "budget_constraint": "Reference",
     "stock_buildings": {
@@ -305,7 +305,7 @@
     "rho": {
       "source_type": "function",
       "source": "project/intermediate/rho_phebus2012.pkl",
-      "weighted": true
+      "option": 3
     },
     "renovation_rate_ini": {
       "type": "file",
@@ -317,7 +317,7 @@
     },
     "ms_construction_ini": {
       "type": "file",
-      "source": "project/input/ms_construction_ini_2012.csv"
+      "source": "project/input/ms_construction_ini.csv"
     },
     "cost_renovation": {
       "type": "file",
@@ -340,7 +340,7 @@
     "Household income rate": 0.012
   },
   "AP Reference": {
-    "end": 2050,
+    "end": 2036,
     "green_value": "Reference",
     "budget_constraint": "Reference",
     "stock_buildings": {
@@ -460,7 +460,7 @@
     "rho": {
       "source_type": "function",
       "source": "project/intermediate/rho_phebus2012.pkl",
-      "weighted": true
+      "option": 3
     },
     "renovation_rate_ini": {
       "type": "file",
@@ -472,7 +472,7 @@
     },
     "ms_construction_ini": {
       "type": "file",
-      "source": "project/input/ms_construction_ini_2012.csv"
+      "source": "project/input/ms_construction_ini.csv"
     },
     "cost_renovation": {
       "type": "file",
@@ -495,7 +495,7 @@
     "Household income rate": 0.012
   },
   "AP - CITE": {
-    "end": 2050,
+    "end": 2036,
     "green_value": "Reference",
     "budget_constraint": "Reference",
     "stock_buildings": {
@@ -615,7 +615,7 @@
     "rho": {
       "source_type": "function",
       "source": "project/intermediate/rho_phebus2012.pkl",
-      "weighted": true
+      "option": 3
     },
     "renovation_rate_ini": {
       "type": "file",
@@ -627,7 +627,7 @@
     },
     "ms_construction_ini": {
       "type": "file",
-      "source": "project/input/ms_construction_ini_2012.csv"
+      "source": "project/input/ms_construction_ini.csv"
     },
     "cost_renovation": {
       "type": "file",
@@ -650,7 +650,7 @@
     "Household income rate": 0.012
   },
   "AP - 2020": {
-    "end": 2050,
+    "end": 2036,
     "green_value": "Reference",
     "budget_constraint": "Reference",
     "stock_buildings": {
@@ -770,7 +770,7 @@
     "rho": {
       "source_type": "function",
       "source": "project/intermediate/rho_phebus2012.pkl",
-      "weighted": true
+      "option": 3
     },
     "renovation_rate_ini": {
       "type": "file",
@@ -782,7 +782,7 @@
     },
     "ms_construction_ini": {
       "type": "file",
-      "source": "project/input/ms_construction_ini_2012.csv"
+      "source": "project/input/ms_construction_ini.csv"
     },
     "cost_renovation": {
       "type": "file",
@@ -805,7 +805,7 @@
     "Household income rate": 0.012
   },
   "AP - 2025": {
-    "end": 2050,
+    "end": 2036,
     "green_value": "Reference",
     "budget_constraint": "Reference",
     "stock_buildings": {
@@ -925,7 +925,7 @@
     "rho": {
       "source_type": "function",
       "source": "project/intermediate/rho_phebus2012.pkl",
-      "weighted": true
+      "option": 3
     },
     "renovation_rate_ini": {
       "type": "file",
@@ -937,7 +937,7 @@
     },
     "ms_construction_ini": {
       "type": "file",
-      "source": "project/input/ms_construction_ini_2012.csv"
+      "source": "project/input/ms_construction_ini.csv"
     },
     "cost_renovation": {
       "type": "file",
@@ -960,7 +960,7 @@
     "Household income rate": 0.012
   },
   "AP - 2030": {
-    "end": 2050,
+    "end": 2036,
     "green_value": "Reference",
     "budget_constraint": "Reference",
     "stock_buildings": {
@@ -1080,7 +1080,7 @@
     "rho": {
       "source_type": "function",
       "source": "project/intermediate/rho_phebus2012.pkl",
-      "weighted": true
+      "option": 3
     },
     "renovation_rate_ini": {
       "type": "file",
@@ -1092,7 +1092,7 @@
     },
     "ms_construction_ini": {
       "type": "file",
-      "source": "project/input/ms_construction_ini_2012.csv"
+      "source": "project/input/ms_construction_ini.csv"
     },
     "cost_renovation": {
       "type": "file",
@@ -1115,7 +1115,7 @@
     "Household income rate": 0.012
   },
   "AP - 2035": {
-    "end": 2050,
+    "end": 2036,
     "green_value": "Reference",
     "budget_constraint": "Reference",
     "stock_buildings": {
@@ -1235,7 +1235,7 @@
     "rho": {
       "source_type": "function",
       "source": "project/intermediate/rho_phebus2012.pkl",
-      "weighted": true
+      "option": 3
     },
     "renovation_rate_ini": {
       "type": "file",
@@ -1247,7 +1247,7 @@
     },
     "ms_construction_ini": {
       "type": "file",
-      "source": "project/input/ms_construction_ini_2012.csv"
+      "source": "project/input/ms_construction_ini.csv"
     },
     "cost_renovation": {
       "type": "file",

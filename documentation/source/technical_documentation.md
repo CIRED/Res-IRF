@@ -64,7 +64,7 @@ Table 1.
 | 1       |                                                                                                                                | ANAH (2008)                               | Mathy et al., Energy Policy, 2015                          | Policy analysis                                                                                                                                               | Carbon dioxide emission reductions of 58% to 81% by 2050                                                                                                                       |
 | 2       | Updating of retrofit costs and heating intensity parameters; introduction of fuel wood and social housing.                     | ANAH (2008)                               | Branger et al., Environmental Modelling & Software, 2015\* | Sensitivity analysis                                                                                                                                          | Monte Carlo simulations point to 13% overall uncertainty in model outputs. Morris method of elementary effects identifies energy prices as the most influential variable.      |
 | 3       | Comprehensive updating of model parameters; calibration on base year 2012 ; disaggregation of households by income categories. | Phébus (2013)                             | Giraudet et al., working paper, 2018                       | Policy analysis                                                                                                                                               | Policy interactions imply a 10% variation in policy effectiveness                                                                                                              |
-|         | Phébus (2013)                                                                                                                  | Bourgeois et al., ECEEE proceedings, 2019 | Policy analysis                                            | Carbon tax generates more environmental, social and economic benefits when its revenue is recycled as energy efficiency subsidies than as a lump-sum transfer |
+|         |                                                                                                                  | Phébus (2013)  | Bourgeois et al., ECEEE proceedings, 2019                                            | Policy analysis | Carbon tax generates more environmental, social and economic benefits when its revenue is recycled as energy efficiency subsidies than as a lump-sum transfer
 | 3.1     | Calibration of version 3.0 on base year 1984 (instead of 2012).                                                                | CEREN archives                            | Glotin et al., Energy Economics, 2019\*                    | Backtesting                                                                                                                                                   | Model reproduces past energy consumption with an average percentage error of 1.5%. Analysis reveals inaccuracies in fuel switch due to off-model, politically-driven processes |
 
 *Note : The symbol * points to the reference that contains the most comprehensive description of the associated version
@@ -90,7 +90,6 @@ information (in particular on household income) and improved accuracy of previou
 advances now permit assessment of the distributional aspects of residential energy consumption.
 
 The Phébus survey has two components:
-
 - The so-called “Clode” sample details the characteristics of dwellings, their occupants and their energy expenditure.
   Specific weights are assigned to each household type to ensure that the sample is representative of the French
   population.
@@ -129,7 +128,6 @@ reference for most projections of energy consumption in France.
 
 
 ### Building stock
-
 The model contains 1,080 types of dwellings divided into:
 
 - Nine energy performance levels – EPC labels A to G for existing dwellings, Low Energy Building (LE) and Net Zero
@@ -140,46 +138,43 @@ The model contains 1,080 types of dwellings divided into:
 - Five categories of household income, the boundaries of which are aligned with those of INSEE quintiles.
 
 #### Scope
-
 Res-IRF 3.0 covers 23.9 million principal residences in metropolitan France among the 27.1 million covered by the
 Phébus-Clode survey for the year 2012. This scope differs from that of other databases (see Figure 2). It was delineated
 by excluding from the Phébus sample: those dwellings heated with fuels with low market shares, such as liquefied
 petroleum gas (LPG) and district heating; some dwellings for which it was not possible to identify a principal energy
 carrier; some dwellings for which the Phébus data were missing.
 
+**Comparison of dwelling counts across databases**
 ![comparison_across_databases][comparison_across_databases]
 
-*Comparison of dwelling counts across databases*
-
 #### Energy performance
-
 The number of dwellings in each EPC band is directly given by Phébus-DPE. Figure 3 compares the distribution of EPC
 labels in versions 2.0 and 3.0 of the model. The stock in the latter is less energy efficient in year 2012 than was that
 of the former in year 2008, with more dwellings in lower EPC bands (G-E) and fewer in upper bands (D-A).
 
+**Distribution of EPC labels in Res-IRF, version 3.0 (based on Phébus data) and 2.0 (based on ANAH data)**
 ![energy_performance_3][energy_performance_3]
-*Distribution of EPC labels in Res-IRF, version 3.0 (based on Phébus data) and 2.0 (based on ANAH data)*
 
 #### Building characteristics and occupancy status
-
 Table 4 specifies the joint distribution of building characteristics (singe- and multi-family dwellings) and types of
 investors (owner-occupied, landlord, social housing manager). Figure 4 shows that this distribution does not
 substantially differ from that previously used. Note that, although the Phébus database makes it possible to separate
 single- and multi-family dwellings within social housing stock, the two categories are collapsed in the figure to
 facilitate comparison.
 
-*Joint distribution of building and investor characteristics in Res-IRF 3.0*
-|                        | **Single-family** | **Multi-family** | **_Total_**  |
+**Joint distribution of building and investor characteristics in Res-IRF 3.0**
+
+| Occupancy status / Housing type | **Single-family** | **Multi-family** | **_Total_**  |
 | ---------------------- | ----------------- | ---------------- | ------------ |
 | Owner-occupier         | 49.0%             | 11.9%            | **_60.9%_**  |
 | Landlord               | 8.8%              | 15.6%            | **_24.4%_**  |
 | Social housing manager | 3.2%              | 11.5%            | **_14.7%_**  |
 | **_Total_**            | **_61.0%_**       | **_39.0%_**      | **_100.0%_** |
 
+**Dwelling count by building and owner characteristics, version 3.0 (based on Phébus data) et 2.0 (based on ANAH data)**  
 ![dwelling_count_owners_3][dwelling_count_owners_3]
 
 #### Heating fuel
-
 The model covers energy use for heating from electricity, natural gas, fuel oil and fuel wood. This cope covers 16% of
 final energy consumption in France. We consider only the main heating fuel used in each dwelling. To identify it from
 the Phébus-Clode database, we proceed as follows:
@@ -187,9 +182,9 @@ the Phébus-Clode database, we proceed as follows:
 2. When several main fuels are declared, we assign to the dwelling a heating fuel according to the following order of
    priority: district heating > collective boiler > individual boiler > all-electric > heat pump > other.
 3. When no main fuel is reported, we retain the main fuel declared as auxiliary, determined with the following order
-   of priority: electric heater > all-electric > mixed base > fixed non-electric > chimney.
+   of priority: *electric heater > all-electric > mixed base > fixed non-electric > chimney*.
 
-*Energy consumption in Phébus*
+**Energy consumption in Phébus**  
 ![energy_consumption_3][energy_consumption_3]
 
 Figure 5 compares the total consumption of each fuel in the Phébus database and in the model. It shows that retaining
@@ -198,14 +193,12 @@ This is due for the most part to our exclusion of auxiliary heating, which predo
 to a lesser extent to our exclusion of the specific electricity consumption that is reported in Phébus.
 
 #### Household income
-
 A major advance of version 3.0, the introduction of income categories was intended to capture heterogeneity in (i) the
 propensity of owners to invest in energy retrofits and (ii) the intensity of use of heating infrastructure by occupants.
 The level of detail of the Phébus database made this development possible. Yet since the income data it contains only
 relates to occupants, additional data were needed to set income parameters for landlords.
 
 ##### Occupant
-
 The disposable income of occupants – owner-occupiers and tenants – is segmented into five categories delineated by the
 same income boundaries as those defining income quintiles in France, according to the national statistical office for
 2012. The use of these quintiles instead of those intrinsic in the Phébus sample ensures consistency between homeowners’
@@ -215,9 +208,11 @@ different EPC bands. A clear correlation appears between household income and th
 
 [^1]: The low number of dwellings labelled A and B in Phébus makes income distribution statistics less accurate in these bands.
 
+**Distribution of income categories within EPC bands (Source: Phébus)**  
 ![income_categories_3][income_categories_3]
 
-*Income categories used in Res-IRF 3.0*
+**Income categories used in Res-IRF 3.0**
+
 | **Category** | **Boundaries of Insee quintiles (€)** | **Share of total households in Res-IRF** |
 | ------------ | ------------------------------------- | ---------------------------------------- |
 | **C1**       | 0 – 16,830                            | 17%                                      |
@@ -227,14 +222,13 @@ different EPC bands. A clear correlation appears between household income and th
 | **C5**       | \> 48,681                             | 19%                                      |
 
 ##### Owners
-
 Homeowners’ income overlaps with occupants’. Yet Phébus does not contain any information on the income of landlords,
 which we had to reconstitute by other means. We matched the Phébus-DPE data with INSEE data pre-processed by the Agence
 nationale pour l’information sur le logement (ANIL, 2012). The resulting landlords’ income distribution is described in
 Figure 7 and compared to that of tenants. Here again, significant disparities appear, with households whose annual
 income falls below €34,210 representing 80% of tenants but only 20% of owner-occupiers.
 
-*Distribution of income categories for landlords and tenants in privately rented housing*
+**Distribution of income categories for landlords and tenants in privately rented housing**  
 ![income_landlords_tenants][income_landlords_tenants]
 
 To build this figure, some adjustments are needed to translate into income categories the ANIL (2012) data that are
@@ -254,7 +248,8 @@ household than does income.
 
 Matrices A to F are detailed below. The income assigned to each landlord corresponds to the average of its category.
 
-*Matrix A : Distribution of living standard categories. Source : ANIL*
+**Matrix A : Distribution of living standard categories. Source : ANIL**
+
 |Living standard|Share of households|
 |--------|-------|
 | **S1** | 4.7% |
@@ -263,7 +258,8 @@ Matrices A to F are detailed below. The income assigned to each landlord corresp
 | **S4** | 17.3% |
 | **S5** | 61.0% |
 
-*Matrix B : Correspondance between income and living standard. Source : Budget des familles, Insee*
+**Matrix B : Correspondance between income and living standard. Source : Budget des familles, Insee**
+
 | Income level / Living standard | S1   | S2   | S3   | S4   | S5   |
 | ------------------------------ | ---- | ---- | ---- | ---- | ---- |
 | C1                             | 0.67 | 0.3  | 0    | 0    | 0    |
@@ -273,7 +269,8 @@ Matrices A to F are detailed below. The income assigned to each landlord corresp
 | C5                             | 0    | 0    | 0.12 | 0.21 | 0.8  |
 
 
-*Matrix C : Distribution of income categories (product of matrices A and B)*
+**Matrix C : Distribution of income categories (product of matrices A and B)**
+
 |Income category|Share of households|
 |--------|-------|
 | **C1** | 4.92% |
@@ -282,7 +279,8 @@ Matrices A to F are detailed below. The income assigned to each landlord corresp
 | **C4** | 22.99% |
 | **C5** | 53.63% |
 
-*Matrix D : Distribution of EPC bands. Source : Phébus*
+**Matrix D : Distribution of EPC bands. Source : Phébus**
+
 |EPC Band|Share of households|
 |--------|-------|
 | **G** | 27.4% |
@@ -294,17 +292,19 @@ Matrices A to F are detailed below. The income assigned to each landlord corresp
 | **A** | 0.0% |
 
 
-*Matrix E : Effectifs des étiquettes DPE par catégorie de revenu (produit des matrices C et D)*
+**Matrix E : Share of EPC band by income level (Matrix C x Matrix D)**
+
 | Income level/EPC band | G       | F       | E       | D       | C       | B      | A |
-| --------------------- | ------- | ------- | ------- | ------- | ------- | ------ | - |
-| C1                    | 78 624  | 60 781  | 83 778  | 41 648  | 20 130  | 2 021  | 0 |
-| C2                    | 92 040  | 71 153  | 98 074  | 48 755  | 23 565  | 2 366  | 0 |
-| C3                    | 203 100 | 157 009 | 216 414 | 107 584 | 52 001  | 5 220  | 0 |
-| C4                    | 367 655 | 284 220 | 391 756 | 194 750 | 94 132  | 9 449  | 0 |
-| C5                    | 857 593 | 662 973 | 913 811 | 454 275 | 219 573 | 22 041 | 0 |
+| --------------------- | ------- | ------- | ------- | ------- | ------- | ------ | --- |
+| C1                    | 78,624  | 60,781  | 83,778  | 41,648  | 20,130  | 2,021  | 0 |
+| C2                    | 92,040  | 71,153  | 98,074  | 48,755  | 23,565  | 2,366  | 0 |
+| C3                    | 203,100 | 157,009 | 216,414 | 107,584 | 52,001  | 5,220  | 0 |
+| C4                    | 367,655 | 284,220 | 391,756 | 194,750 | 94,132  | 9,449  | 0 |
+| C5                    | 857,593 | 662,973 | 913,811 | 454,275 | 219,573 | 22,041 | 0 |
 
 
-*Share of households by fuel type and decision-maker status*
+**Share of households by fuel type and decision-maker status**
+
 | Housing type            | Heating fuel | G      | F      | E      | D      | C      | B      | A     |
 | ----------------------- | ------------ | ------ | ------ | ------ | ------ | ------ | ------ | ----- |
 | Single-family | Electricity  | 15.80% | 15.40% | 13.65% | 12.81% | 5.44%  | 0.00%  | 0.00% |
@@ -315,8 +315,6 @@ Matrices A to F are detailed below. The income assigned to each landlord corresp
 |   | Natural gas  | 7.73%  | 12.88% | 19.52% | 28.41% | 27.22% | 63.96  | 0.00% |
 |   | Fuel oil     | 3.31%  | 7.99%  | 1.21%  | 1.64%  | 1.95%  | 0.00%  | 0.00% |
 |   | Fuel wood    | 1.18%  | 3.83%  | 0.00%  | 0.00%  | 0.00%  | 0.00%  | 0.00% |
-
-
 
 
 ## Specification of Version 4.0
@@ -530,13 +528,10 @@ in dwellings that are mainly heated with electricity but use wood as auxiliary h
 converting different forms of wood (logs, pellets, etc.) into TWh can also explain the differences observed in wood
 consumption.
 
-|                                                 |**Electricity**|**Natural gas**|**Fuel oil**|**Fuel wood**|**_
-TOTAL_**|
+|                                                 |**Electricity**|**Natural gas**|**Fuel oil**|**Fuel wood**|**_TOTAL_**|
 |-------------------------------------------------|---------------|---------------|------------|-------------|-----------|
-|**CEREN values to be reproduced in 2012 (TWhEF)**|44.4           |119.7          |55.5        |73.3         |**_
-292.9_**|
-|**Correction factor applied to Res-IRF**         |0.79           |1.06           |1.03        |2.14         |**_
-1.14_** |
+|**CEREN values to be reproduced in 2012 (TWhEF)**|44.4           |119.7          |55.5        |73.3         |**_292.9_**|
+|**Correction factor applied to Res-IRF**         |0.79           |1.06           |1.03        |2.14         |**_1.14_** |
 
 ## Energy efficiency improvements
 ### Stock dynamics
@@ -571,8 +566,8 @@ dwellings is held constant.
 The energy performance of the housing stock in Res-IRF is affected by both the construction of new dwellings and the
 renovation of existing ones. Both effects are modelled by discrete choice functions. Generally speaking, the owner of a
 dwelling of initial performance i∈{1…n} chooses to upgrade it to an option of final performance f∈{i+1,…,n} by comparing
-its life-cycle cost to that of other options. The life-cycle cost $LCC_{i,f}$ of an option is the sum of three terms:
-$$ LCC_{i,f}= INV_{i,f}+ γ * ENER_f + IC_{i,f} $$
+its life-cycle cost to that of other options. The life-cycle cost $LCC_{i,f}$ of an option is the sum of three terms:  
+$$LCC_{i,f}= INV_{i,f}+ γ * ENER_f + IC_{i,f}$$
 
 where INV is the investment cost; ENER is the life-cycle discounted cost of conventional energy use, calculated using
 the energy price for the year under consideration; IC are some “intangible costs,” representing non-energy attributes of
@@ -670,13 +665,13 @@ The matrix equally applies to single- and multi-family dwellings, in both privat
 
 **Initial market shares of energy efficiency upgrades**
 
-|                     | **F**  | **E**  | **D**  | **C**  | **B** | **A**  |
-| ----------------- | ----- | ------ | ------ | ------ | ------ | ------ | ------ |
-| **G**  |  25,00% | 27,00% | 27,00% | 20,98% | 0,01% | 0,01%  |
-| **F** | |40,40% | 26,30% | 31,30% | 1,99%  | 0,01% |
-| **E**  | |       | 66,00% | 28,00% | 5,99%  | 0,01% |
-| **D**   |  |      |        | 95,00% | 4,99%  | 0,01% |
-| **C**   |   |     |        |        | 90,91% | 9,09% |
+| Energy performance  | **F**  | **E**  | **D**  | **C**  | **B** | **A**  |
+| ----------------- | ----- | ------ | ------ | ------ | ------ | ------ |
+| **G**  |  25.00% | 27.00% | 27.00% | 20.98% | 0.01% | 0.01%  |
+| **F** | |40.40% | 26.30% | 31.30% | 1.99%  | 0.01% |
+| **E**  | |       | 66.00% | 28.00% | 5.99%  | 0.01% |
+| **D**   |  |      |        | 95.00% | 4.99%  | 0.01% |
+| **C**   |   |     |        |        | 90.91% | 9.09% |
 | **B**    |   |     |        |        |        | 100%  |
 
 
@@ -734,7 +729,7 @@ with $τ_{min}=0,001%$, $NPV_{min}=-1 000€$ and $τ_{max}=20%$. The logistic f
 #### Behavioural parameters
 In private housing, discount rates are differentiated by housing type in order to capture the heterogeneous constraints faced by investors (Table 15). Specifically, the discount rates decrease with the owner’s income so as to reflect tighter credit constraints faced by lower-income households. Discount rates are also higher in multi-family housing than in single-family homes to capture the difficulties associated with decision-making within homeowner associations. In social housing, on the other hand, the discount rate is set at 4%, the value commonly used in public decision-making.
 
-**Discount rates**
+**Discount rates** 
 
 | **Income category**                                 | **Single-family housing** | **Multi-family housing** | **Social housing** |
 | --------------------------------------------------- | ------------------------- | ------------------------ | ------------------ |
@@ -762,7 +757,6 @@ The investment horizon is subject to different scenario variants, reflecting dif
 | No capitalization in rents nor sales | 30 (16) years       | 7 years                   | 3 years                   |
 
 #### Endogenous technical change
-
 In both new construction and renovation, the life-cycle costs of the various energy efficiency options decrease endogenously with their cumulative production. These mechanisms are calibrated as in the previous version of the model as follows:
 
 - Investment costs decrease exponentially with the cumulative sum of operations so as to capture the classical “learning-by-doing” process. The rate of cost reduction is set at 15% in new construction and 10% in renovation for a doubling of production. The lower value in the former case is motivated by the fact the renovation technologies tend to be more mature.
@@ -771,12 +765,10 @@ In both new construction and renovation, the life-cycle costs of the various ene
 In both cases, reductions in the life-cycle cost of an option increase its market share compared to that of alternative options.
 
 ## Illustrative simulations
-
 To sum up, model outputs are determined by three exogenous inputs: population, household income and energy prices. The first two inputs determine the number and size of new dwellings, which influence the “extensive” margin of investment. Energy prices impact the market shares of the different renovation and construction options, thus influencing the “intensive” margin of investment. Finally, household income and energy prices influence the intensity with which the heating system is used.
 We discuss below a few simulations meant to illustrate the influence of key variables and parameters. Note that, while the calibration of the model incorporates a number of energy efficiency policies detailed in Giraudet et al. (2018), for the sake of illustrating its core mechanisms these policies are removed from the model at the end of the calibration in the simulations presented here.
 
 ### Input variables
-
 The model is fed with input variables parameterized as follows:
 - Population growth [^7ac6]: based on a projection from INSEE (2006) equivalent to an average annual growth rate of 0.3%/year over the period 2012-2050.
 - Growth in household income: extrapolates the average trend of 1.2%/year given by INSEE (see paragraph 2.3.1) uniformly across all income categories.

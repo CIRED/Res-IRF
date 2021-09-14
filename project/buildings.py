@@ -7,8 +7,6 @@ from itertools import product
 
 from utils import reindex_mi, val2share, logistic, get_levels_values, remove_rows, add_level, de_aggregate_series
 
-# TODO: put exogenous parameters outside the script (heating intensity + lambda)
-
 
 class HousingStock:
     """
@@ -2008,20 +2006,18 @@ class HousingStockRenovated(HousingStock):
     def calibration_renovation_rate(self, energy_prices, renovation_rate_ini, consumption='conventional',
                                     cost_invest=None, cost_intangible=None, policies=None, option=0):
         """
-        Calibration of ρ parameter of the renovation rate function (logistic function of the NPV).
+        Calibration of the ρ parameter of the renovation rate function (logistic function of the NPV).
 
         Renovation rate of dwellings attributes led is calculated as a logistic function of the NPV.
         The logistic form captures heterogeneity in heating preference and habits,
         assuming they are normally distributed.
-        Parameter ρ is calibrated, for each type of attributes. It is then agregated or not, depending of weighted
+        Parameter ρ is calibrated, for each type of attributes. It is then aggregated or not, depending of weighted
         parameter.
 
         For instance, ρ was calibrated in 2012, for each type of  decision-maker and each initial certificates
         (i.e., 6x6=36 values), so that the NPVs calculated with the subsidies in effect in 2012 (see main article)
         reproduce the observed renovation rates.
         Renovation rate observed depends on (Occupancy status, Housing type)
-        NPV that depends on MS and so LCC: (Energy performance initial, Occupancy status, Housing type, Income class owner)
-        So parameter ρ first depends on  (Occupancy status, Housing type, Energy performance initial, Heating energy initial, Income class owner)
 
         Parameters
         ----------

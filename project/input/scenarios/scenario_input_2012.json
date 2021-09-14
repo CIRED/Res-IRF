@@ -120,7 +120,7 @@
     "rho": {
       "source_type": "function",
       "source": "project/intermediate/rho_phebus2012.pkl",
-      "weighted": true
+      "option": 3
   },
     "renovation_rate_ini":{
       "type": "file",
@@ -154,7 +154,7 @@
     },
     "Household income rate": 0.012
   },
-  "ZP wo learning": {
+  "ZP Reference no learning": {
     "end": 2030,
     "green_value": "Reference",
     "budget_constraint": "Reference",
@@ -275,7 +275,7 @@
     "rho": {
       "source_type": "function",
       "source": "project/intermediate/rho_phebus2012.pkl",
-      "weighted": true
+      "option": 3
   },
     "renovation_rate_ini":{
       "type": "file",
@@ -309,7 +309,7 @@
     },
     "Household income rate": 0.012
   },
-  "ZP wo learning price constant": {
+  "ZP Reference no learning price constant": {
     "end": 2030,
     "green_value": "Reference",
     "budget_constraint": "Reference",
@@ -430,7 +430,7 @@
     "rho": {
       "source_type": "function",
       "source": "project/intermediate/rho_phebus2012.pkl",
-      "weighted": true
+      "option": 3
   },
     "renovation_rate_ini":{
       "type": "file",
@@ -464,7 +464,7 @@
     },
     "Household income rate": 0.012
   },
-  "ZP wo learning price income constant": {
+  "ZP Reference no learning price income constant": {
     "end": 2030,
     "green_value": "Reference",
     "budget_constraint": "Reference",
@@ -585,7 +585,7 @@
     "rho": {
       "source_type": "function",
       "source": "project/intermediate/rho_phebus2012.pkl",
-      "weighted": true
+      "option": 3
   },
     "renovation_rate_ini":{
       "type": "file",
@@ -617,6 +617,6 @@
       "type": "file",
       "source": "project/input/cost_switch_fuel.csv"
     },
-    "Household income rate": 0
+    "Household income rate": 0.0
   }
 }

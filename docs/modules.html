@@ -980,18 +980,16 @@ Dict cannot be change directly as they depend on stock (only when to change in t
 <dl class="py method">
 <dt class="sig sig-object py" id="buildings.HousingStockRenovated.calibration_renovation_rate">
 <span class="sig-name descname"><span class="pre">calibration_renovation_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy_prices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">renovation_rate_ini</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'conventional'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_invest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_intangible</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#buildings.HousingStockRenovated.calibration_renovation_rate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calibration of ρ parameter of the renovation rate function (logistic function of the NPV).</p>
+<dd><p>Calibration of the ρ parameter of the renovation rate function (logistic function of the NPV).</p>
 <p>Renovation rate of dwellings attributes led is calculated as a logistic function of the NPV.
 The logistic form captures heterogeneity in heating preference and habits,
 assuming they are normally distributed.
-Parameter ρ is calibrated, for each type of attributes. It is then agregated or not, depending of weighted
+Parameter ρ is calibrated, for each type of attributes. It is then aggregated or not, depending of weighted
 parameter.</p>
 <p>For instance, ρ was calibrated in 2012, for each type of  decision-maker and each initial certificates
 (i.e., 6x6=36 values), so that the NPVs calculated with the subsidies in effect in 2012 (see main article)
 reproduce the observed renovation rates.
-Renovation rate observed depends on (Occupancy status, Housing type)
-NPV that depends on MS and so LCC: (Energy performance initial, Occupancy status, Housing type, Income class owner)
-So parameter ρ first depends on  (Occupancy status, Housing type, Energy performance initial, Heating energy initial, Income class owner)</p>
+Renovation rate observed depends on (Occupancy status, Housing type)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
