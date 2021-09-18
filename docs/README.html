@@ -231,33 +231,65 @@
 <ul class="simple">
 <li><p>The environment.yml file is in the Res-IRF folder.</p></li>
 <li><p>Use the <strong>terminal</strong> and go to the Res-IRF folder stored on your computer.</p></li>
-<li><p>Type: <code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">env</span> <span class="pre">create</span> <span class="pre">-f</span> <span class="pre">environment.yml</span></code></p></li>
+<li><p>Type: <code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">env</span> <span class="pre">create</span> <span class="pre">-f</span> <span class="pre">res-irf-env.yml</span></code></p></li>
 </ul>
 <p><strong>Step 3</strong>: <strong>Activate the new environment</strong>.</p>
 <ul class="simple">
 <li><p>The first line of the yml file sets the new environment’s name.</p></li>
-<li><p>Type: <code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">activate</span> <span class="pre">myenv</span></code></p></li>
+<li><p>Type: <code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">activate</span> <span class="pre">Res-IRF</span></code></p></li>
 </ul>
 <p><strong>Step 4</strong>: <strong>Launch Res-IRF</strong></p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">main.py</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">main.py</span> <span class="pre">-n</span> <span class="pre">scenario.json</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">scenario.json</span></code> is the path to the configuration file</p></li>
 </ul>
 </section>
 <section id="usage-example">
 <h2>Usage example<a class="headerlink" href="#usage-example" title="Permalink to this headline">¶</a></h2>
-<p>Project include different scripts and notebook to run the output and analyse its output.<br />
-The standard way to launch Res-IRF:</p>
+<p>Project includes libraries, scripts and notebooks.<br />
+<code class="docutils literal notranslate"><span class="pre">/project</span></code> is the folder containing scripts, notebooks, inputs and outputs.</p>
+<p>The standard way to launch Res-IRF:</p>
 <p><strong>Step 1: Launch Res-IRF main script.</strong><br />
-The model create results in a folder in project/output.<br />
+The model creates results in a folder in project/output.<br />
 Folder name is by default <code class="docutils literal notranslate"><span class="pre">ddmmyyyy_hhmm</span></code> (launching date and hour).
-Results are mainly .pkl (serialize format by the pickle library) or .csv file, and are not designed to be directly readable.<br />
-NB: One file ‘summary.csv’ summarize important outputs.</p>
-<p><strong>Step 2: Launch one of the Jupyter Notebook analysis tool</strong><br />
-There are 3 main notebooks:</p>
+Results are mainly .pkl (serialize format by the pickle library), .csv file and some .png graphs.</p>
+<p>A configuration file must be declared.
+An example of configuration file is in the <code class="docutils literal notranslate"><span class="pre">input</span></code> folder under the name of <code class="docutils literal notranslate"><span class="pre">scenario.json</span></code>.
+The Res-IRF script use Multiprocessing tool to launch multiple scenarios in the same time.</p>
+<p>In the <code class="docutils literal notranslate"><span class="pre">output/ddmmyyyy_hhmm</span></code> folder:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">user_interface.ipynb</span></code>: macro and micro output analysis.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">compare.ipyb</span></code>: macro and micro output comparison.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">assess_public_poclies.ipyb</span></code>: macro and micro output comparison and calculation of efficiency and effectiveness.</p></li>
+<li><p>One folder for each scenario declared in the configuration file with detailed outputs:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">summary_input.csv</span></code> summary of main input</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">summary.csv</span></code> summary of main output</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">detailed.csv</span></code> detailed output readable directly with an Excel-like tool</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">summary_policies</span></code> results of public policies impact and cost</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.pkl</span></code> files contain exhaustive output but need to be read with a programing language</p></li>
+<li><p>copy of <code class="docutils literal notranslate"><span class="pre">parameters.json</span></code> and scenario used for the run</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.png</span></code> graphs that compare scenarios</p></li>
+</ul>
+<p><strong>Step 2 : Launch one of the Jupyter Notebook analysis tool (optional)</strong><br />
+There are 4 main notebooks:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ui_unique.ipynb</span></code>: macro and micro output analysis.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">quick_comparison.ipyb</span></code>: macro and micro output comparison.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ui_comparison.ipyb</span></code>: macro and micro output comparison.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">policy_indicator.ipyb</span></code>: macro and micro output comparison and calculation of efficiency and effectiveness.</p></li>
+</ul>
+<p>Notebook templates are stored in <code class="docutils literal notranslate"><span class="pre">project/nb_template_analysis</span></code>.<br />
+Users should copy and paste the template notebook in another folder to launch it.</p>
+<p>For users that want to contribute, other notebooks are stored in <code class="docutils literal notranslate"><span class="pre">tutorials_notbook</span></code> to insist on a specific Res-IRF
+functions:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">demographic_variables.ipynb</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">heating_intensity.ipynb</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">information_rate.ipynb</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">learning_by_doing.ipynb</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">market_share.ipynb</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">renovation_dynamics.ipynb</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">renovation_rate.ipynb</span></code></p></li>
 </ul>
 </section>
 <section id="documentation">

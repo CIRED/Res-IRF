@@ -294,7 +294,7 @@ The rate of decrease (learning_rate) is set at 25% for a doubling of cumulative 
 
 <dl class="py method">
 <dt class="sig sig-object py" id="buildings.HousingStock.calibration_market_share">
-<span class="sig-name descname"><span class="pre">calibration_market_share</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy_prices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">market_share_ini</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_invest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'conventional'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weighted</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#buildings.HousingStock.calibration_market_share" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">calibration_market_share</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy_prices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">market_share_ini</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_invest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'conventional'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subsidies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#buildings.HousingStock.calibration_market_share" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns intangible costs by calibrating market_share.</p>
 <p>Intangible costs are calibrated so that the observed market shares are reproduced in the initial year.
 Intangible costs are calibrated so that the life-cycle cost model, fed with the investment costs,
@@ -316,8 +316,10 @@ Each segment with the same performance transition need to match the same observe
 <li><p><strong>market_share_ini</strong> (<em>pd.DataFrame</em>) – Observed market share to match during calibration_year.</p></li>
 <li><p><strong>cost_invest</strong> (<em>dict</em><em>, </em><em>optional</em>) – </p></li>
 <li><p><strong>consumption</strong> (<em>{'conventional'</em><em>, </em><em>'actual'}</em><em>, </em><em>default 'conventional'</em>) – </p></li>
-<li><p><strong>policies</strong> (<em>list</em><em>, </em><em>optional</em>) – Policies to consider in the market share</p></li>
-<li><p><strong>weighted</strong> (<em>bool</em><em>, </em><em>default True</em>) – </p></li>
+<li><p><strong>subsidies</strong> (<em>list</em><em>, </em><em>optional</em>) – subsidies to consider in the market share</p></li>
+<li><p><strong>option</strong> (<em>int</em><em>, </em><em>default 0</em>) – 0: intangible cost is segmented
+1: intangible cost is aggregated based on initial market share attributes
+2: intangible cost is aggregated on heating energy level (what was done before)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -354,7 +356,7 @@ Each segment with the same performance transition need to match the same observe
 <p>More info_rate is high, more intangible_cost are low.
 Intangible renovation costs decrease according to a logistic curve with the same cumulative
 production so as to capture peer effects and knowledge diffusion.
-intangible_cost[yr] = intangible_cost[calibrationyear] * info_rate with info rate [1-info_rate_max ; 1]
+intangible_cost[yr] = intangible_cost[calibration_year] * info_rate with info rate [1-info_rate_max ; 1]
 This function calibrate a logistic function, so rate of decrease is set at 25% for a doubling of cumulative
 production.</p>
 <dl class="field-list simple">
@@ -655,8 +657,22 @@ and transition).</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="buildings.HousingStock.to_io_share_seg">
+<span class="sig-name descname"><span class="pre">to_io_share_seg</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#buildings.HousingStock.to_io_share_seg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate share of attributes by income class owner.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>pd.Series</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="buildings.HousingStock.to_lcc_final">
-<span class="sig-name descname"><span class="pre">to_lcc_final</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy_prices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_invest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_intangible</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transition</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'conventional'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">segments</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#buildings.HousingStock.to_lcc_final" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">to_lcc_final</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy_prices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_invest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_intangible</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transition</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'conventional'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subsidies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">segments</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#buildings.HousingStock.to_lcc_final" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate life-cycle-cost of home-energy retrofits for every segment and every possible transition.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -666,7 +682,7 @@ and transition).</p>
 <li><p><strong>cost_intangible</strong> (<em>dict</em><em>, </em><em>optional</em>) – keys are transition (cost_intangible[‘Energy performance’]) and item are pd.DataFrame</p></li>
 <li><p><strong>consumption</strong> (<em>{'conventional'</em><em>, </em><em>'actual'}</em><em>, </em><em>default 'conventional</em>) – </p></li>
 <li><p><strong>transition</strong> (<em>list</em><em>, </em><em>default</em><em> [</em><em>'Energy performance'</em><em>]</em>) – define transition. Transition can be defined as attributes transition, energy transition, or attributes-energy transition.</p></li>
-<li><p><strong>policies</strong> (<em>list</em><em>, </em><em>optional</em>) – list of Policies object</p></li>
+<li><p><strong>subsidies</strong> (<em>list</em><em>, </em><em>optional</em>) – list of subsidies object</p></li>
 <li><p><strong>segments</strong> (<em>pd.MultiIndex</em><em> or </em><em>pd.Index</em><em>, </em><em>optional</em>) – </p></li>
 </ul>
 </dd>
@@ -681,7 +697,7 @@ and transition).</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="buildings.HousingStock.to_market_share">
-<span class="sig-name descname"><span class="pre">to_market_share</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy_prices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transition</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'conventional'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_invest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_intangible</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">segments</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#buildings.HousingStock.to_market_share" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">to_market_share</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy_prices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transition</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'conventional'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_invest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_intangible</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subsidies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">segments</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#buildings.HousingStock.to_market_share" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns market share for each segment and each possible final state.</p>
 <p>Parameter nu characterizing the heterogeneity of preferences is set to 8 in the model.
 Intangible costs are calibrated so that the observed market shares are reproduced in the initial year.</p>
@@ -693,7 +709,7 @@ Intangible costs are calibrated so that the observed market shares are reproduce
 <li><p><strong>cost_intangible</strong> (<em>dict</em><em>, </em><em>optional</em>) – </p></li>
 <li><p><strong>consumption</strong> (<em>{'conventional'</em><em>, </em><em>'actual'}</em><em>, </em><em>default 'conventional</em>) – </p></li>
 <li><p><strong>transition</strong> (<em>list</em><em>, </em><em>{</em><em>[</em><em>'Energy performance'</em><em>]</em><em>, </em><em>[</em><em>'Heating energy'</em><em>]</em><em>, </em><em>[</em><em>'Energy performance'</em><em>, </em><em>'Heating energy'</em><em>]</em><em>}</em><em>,</em>) – default [‘Energy performance’]</p></li>
-<li><p><strong>policies</strong> (<em>list</em><em>, </em><em>optional</em>) – List of Policies object</p></li>
+<li><p><strong>subsidies</strong> (<em>list</em><em>, </em><em>optional</em>) – List of subsidies object</p></li>
 <li><p><strong>segments</strong> (<em>pd.MultiIndex</em><em>, </em><em>optional</em>) – </p></li>
 <li><p><strong>nu</strong> (<em>float</em><em> or </em><em>int</em><em>, </em><em>default 8.0</em>) – </p></li>
 </ul>
@@ -705,13 +721,6 @@ Intangible costs are calibrated so that the observed market shares are reproduce
 <dd class="field-odd"><p>pd.DataFrame</p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="buildings.HousingStock.to_segments_construction">
-<span class="sig-name descname"><span class="pre">to_segments_construction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lvl2drop</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_lvl_dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#buildings.HousingStock.to_segments_construction" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns segments_new from segments.</p>
-<p>Segments_new doesn’t get Income class owner at first and got other Energy performance value.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -769,7 +778,7 @@ Intangible costs are calibrated so that the observed market shares are reproduce
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">buildings.</span></span><span class="sig-name descname"><span class="pre">HousingStockConstructed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stock</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attributes_values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stock_needed_ts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">share_multi_family</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">os_share_ht</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">io_share_seg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stock_area_existing_seg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attributes2area</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attributes2horizon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attributes2discount</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attributes2income</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attributes2consumption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#buildings.HousingStockConstructed" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="py method">
 <dt class="sig sig-object py" id="buildings.HousingStockConstructed.calibration_market_share">
-<span class="sig-name descname"><span class="pre">calibration_market_share</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy_price</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">market_share_objective</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_invest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'conventional'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#buildings.HousingStockConstructed.calibration_market_share" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">calibration_market_share</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy_price</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">market_share_objective</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_invest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'conventional'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subsidies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#buildings.HousingStockConstructed.calibration_market_share" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns intangible costs construction by calibrating market_share.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -778,7 +787,7 @@ Intangible costs are calibrated so that the observed market shares are reproduce
 <li><p><strong>market_share_objective</strong> (<em>pd.DataFrame</em>) – Observed market share to match during calibration_year.</p></li>
 <li><p><strong>cost_invest</strong> (<em>dict</em><em>, </em><em>optional</em>) – </p></li>
 <li><p><strong>consumption</strong> (<em>{'conventional'</em><em>, </em><em>'actual'}</em><em>, </em><em>default 'conventional'</em>) – </p></li>
-<li><p><strong>policies</strong> (<em>list</em><em>, </em><em>optional</em>) – Policies to consider in the market share</p></li>
+<li><p><strong>subsidies</strong> (<em>list</em><em>, </em><em>optional</em>) – subsidies to consider in the market share</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -840,7 +849,7 @@ Intangible costs are calibrated so that the observed market shares are reproduce
 
 <dl class="py method">
 <dt class="sig sig-object py" id="buildings.HousingStockConstructed.to_flow_constructed_dm_he_ep">
-<span class="sig-name descname"><span class="pre">to_flow_constructed_dm_he_ep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy_price</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_intangible</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_invest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'conventional'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#buildings.HousingStockConstructed.to_flow_constructed_dm_he_ep" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">to_flow_constructed_dm_he_ep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy_price</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_intangible</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_invest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'conventional'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subsidies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#buildings.HousingStockConstructed.to_flow_constructed_dm_he_ep" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns flow of constructed buildings segmented.</p>
 <ol class="arabic simple">
 <li><p>Calculate construction flow segmented by decision-maker:</p></li>
@@ -855,7 +864,7 @@ Intangible costs are calibrated so that the observed market shares are reproduce
 <li><p><strong>cost_invest</strong> (<em>pd.DataFrame</em><em>, </em><em>optional</em>) – </p></li>
 <li><p><strong>consumption</strong> (<em>{'conventional'</em><em>, </em><em>'actual'}</em><em>, </em><em>default 'conventional'</em>) – </p></li>
 <li><p><strong>nu</strong> (<em>float</em><em>, </em><em>default 8.0</em>) – </p></li>
-<li><p><strong>policies</strong> (<em>list</em><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>subsidies</strong> (<em>list</em><em>, </em><em>optional</em>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -870,7 +879,7 @@ Heating energy)</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="buildings.HousingStockConstructed.to_flow_constructed_seg">
-<span class="sig-name descname"><span class="pre">to_flow_constructed_seg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy_price</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_intangible</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_invest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#buildings.HousingStockConstructed.to_flow_constructed_seg" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">to_flow_constructed_seg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy_price</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_intangible</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_invest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subsidies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#buildings.HousingStockConstructed.to_flow_constructed_seg" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add Income class and Income class owner levels to flow_constructed.</p>
 <dl class="simple">
 <dt>io_share_seg: pd.DataFrame</dt><dd><p>for each segment (rows) distribution of income class owner decile (columns)</p>
@@ -886,7 +895,7 @@ Heating energy)</p>
 <li><p><strong>cost_invest</strong> (<em>pd.DataFrame</em><em>, </em><em>optional</em>) – </p></li>
 <li><p><strong>consumption</strong> (<em>{'conventional'</em><em>, </em><em>'actual'}</em><em>, </em><em>default 'conventional'</em>) – </p></li>
 <li><p><strong>nu</strong> (<em>float</em><em>, </em><em>default 8.0</em>) – </p></li>
-<li><p><strong>policies</strong> (<em>list</em><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>subsidies</strong> (<em>list</em><em>, </em><em>optional</em>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -939,7 +948,7 @@ exogenous_dict[‘population_total_ds’]</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="buildings.HousingStockConstructed.update_flow_constructed_seg">
-<span class="sig-name descname"><span class="pre">update_flow_constructed_seg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy_price</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_intangible</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_invest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'conventional'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#buildings.HousingStockConstructed.update_flow_constructed_seg" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">update_flow_constructed_seg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy_price</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_intangible</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_invest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'conventional'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subsidies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#buildings.HousingStockConstructed.update_flow_constructed_seg" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update HousingConstructed object flow_constructed_seg attribute.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -949,7 +958,7 @@ exogenous_dict[‘population_total_ds’]</p>
 <li><p><strong>cost_invest</strong> (<em>dict</em><em>, </em><em>optional</em>) – </p></li>
 <li><p><strong>consumption</strong> (<em>{'conventional'</em><em>, </em><em>'actual'}</em><em>, </em><em>default 'conventional'</em>) – </p></li>
 <li><p><strong>nu</strong> (<em>float</em><em>, </em><em>default 8.0</em>) – </p></li>
-<li><p><strong>policies</strong> (<em>list</em><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>subsidies</strong> (<em>list</em><em>, </em><em>optional</em>) – </p></li>
 </ul>
 </dd>
 </dl>
@@ -979,19 +988,17 @@ Dict cannot be change directly as they depend on stock (only when to change in t
 <p>_stock_seg_mobile &amp; _stock_seg_mobile_dict</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="buildings.HousingStockRenovated.calibration_renovation_rate">
-<span class="sig-name descname"><span class="pre">calibration_renovation_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy_prices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">renovation_rate_ini</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'conventional'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_invest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_intangible</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#buildings.HousingStockRenovated.calibration_renovation_rate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calibration of ρ parameter of the renovation rate function (logistic function of the NPV).</p>
+<span class="sig-name descname"><span class="pre">calibration_renovation_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy_prices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">renovation_rate_ini</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'conventional'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_invest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_intangible</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subsidies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#buildings.HousingStockRenovated.calibration_renovation_rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calibration of the ρ parameter of the renovation rate function (logistic function of the NPV).</p>
 <p>Renovation rate of dwellings attributes led is calculated as a logistic function of the NPV.
 The logistic form captures heterogeneity in heating preference and habits,
 assuming they are normally distributed.
-Parameter ρ is calibrated, for each type of attributes. It is then agregated or not, depending of weighted
+Parameter ρ is calibrated, for each type of attributes. It is then aggregated or not, depending of weighted
 parameter.</p>
 <p>For instance, ρ was calibrated in 2012, for each type of  decision-maker and each initial certificates
 (i.e., 6x6=36 values), so that the NPVs calculated with the subsidies in effect in 2012 (see main article)
 reproduce the observed renovation rates.
-Renovation rate observed depends on (Occupancy status, Housing type)
-NPV that depends on MS and so LCC: (Energy performance initial, Occupancy status, Housing type, Income class owner)
-So parameter ρ first depends on  (Occupancy status, Housing type, Energy performance initial, Heating energy initial, Income class owner)</p>
+Renovation rate observed depends on (Occupancy status, Housing type)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1000,7 +1007,7 @@ So parameter ρ first depends on  (Occupancy status, Housing type, Energy perfor
 <li><p><strong>consumption</strong> (<em>{'conventional'</em><em>, </em><em>'actual'}</em><em>, </em><em>default 'conventional'</em>) – </p></li>
 <li><p><strong>cost_invest</strong> (<em>dict</em>) – </p></li>
 <li><p><strong>cost_intangible</strong> (<em>dict</em>) – </p></li>
-<li><p><strong>policies</strong> (<em>list</em>) – </p></li>
+<li><p><strong>subsidies</strong> (<em>list</em>) – </p></li>
 <li><p><strong>option</strong> (<em>int</em><em>, </em><em>default 0</em>) – 0: rho for each agent_mean (based on a NPV mean)
 1: unique calibration function for all agents (rho, npv_min, rate_min, rate_max)
 2: segmented rho for each individual agent
@@ -1052,7 +1059,7 @@ So parameter ρ first depends on  (Occupancy status, Housing type, Energy perfor
 
 <dl class="py method">
 <dt class="sig sig-object py" id="buildings.HousingStockRenovated.flow_renovation_ep">
-<span class="sig-name descname"><span class="pre">flow_renovation_ep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy_prices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'conventional'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_invest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_intangible</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">renovation_obligation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mutation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#buildings.HousingStockRenovated.flow_renovation_ep" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">flow_renovation_ep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy_prices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'conventional'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_invest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_intangible</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subsidies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">renovation_obligation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mutation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#buildings.HousingStockRenovated.flow_renovation_ep" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate flow renovation by energy performance final.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1061,7 +1068,7 @@ So parameter ρ first depends on  (Occupancy status, Housing type, Energy perfor
 <li><p><strong>cost_invest</strong> (<em>dict</em><em>, </em><em>optional</em>) – </p></li>
 <li><p><strong>cost_intangible</strong> (<em>dict</em><em>, </em><em>optional</em>) – </p></li>
 <li><p><strong>consumption</strong> (<em>str</em><em>, </em><em>default 'conventional'</em>) – </p></li>
-<li><p><strong>policies</strong> (<em>dict</em><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>subsidies</strong> (<em>dict</em><em>, </em><em>optional</em>) – </p></li>
 <li><p><strong>renovation_obligation</strong> (<em>RenovationObligation</em><em>, </em><em>optional</em>) – </p></li>
 <li><p><strong>mutation</strong> (<em>pd.Series</em><em> or </em><em>float</em><em>, </em><em>default 0.0</em>) – </p></li>
 <li><p><strong>rotation</strong> (<em>pd.Series</em><em> or </em><em>float</em><em>, </em><em>default 0.0</em>) – </p></li>
@@ -1153,7 +1160,7 @@ So parameter ρ first depends on  (Occupancy status, Housing type, Energy perfor
 
 <dl class="py method">
 <dt class="sig sig-object py" id="buildings.HousingStockRenovated.to_flow_remained">
-<span class="sig-name descname"><span class="pre">to_flow_remained</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy_prices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'conventional'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_invest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_intangible</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">renovation_obligation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mutation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#buildings.HousingStockRenovated.to_flow_remained" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">to_flow_remained</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy_prices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'conventional'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_invest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_intangible</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subsidies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">renovation_obligation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mutation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#buildings.HousingStockRenovated.to_flow_remained" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate flow_remained for each segment.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1162,7 +1169,7 @@ So parameter ρ first depends on  (Occupancy status, Housing type, Energy perfor
 <li><p><strong>cost_invest</strong> (<em>dict</em><em>, </em><em>optional</em>) – </p></li>
 <li><p><strong>cost_intangible</strong> (<em>dict</em><em>, </em><em>optional</em>) – </p></li>
 <li><p><strong>consumption</strong> (<em>str</em><em>, </em><em>default 'conventional'</em>) – </p></li>
-<li><p><strong>policies</strong> (<em>list</em><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>subsidies</strong> (<em>list</em><em>, </em><em>optional</em>) – </p></li>
 <li><p><strong>renovation_obligation</strong> (<em>RenovationObligation</em><em>, </em><em>optional</em>) – </p></li>
 <li><p><strong>mutation</strong> (<em>pd.Series</em><em> or </em><em>float</em><em>, </em><em>default 0.0</em>) – </p></li>
 <li><p><strong>rotation</strong> (<em>pd.Series</em><em> or </em><em>float</em><em>, </em><em>default 0.0</em>) – </p></li>
@@ -1181,14 +1188,14 @@ negative (-) flow for buildings segment (initial state) that have been renovated
 
 <dl class="py method">
 <dt class="sig sig-object py" id="buildings.HousingStockRenovated.to_flow_renovation_ep">
-<span class="sig-name descname"><span class="pre">to_flow_renovation_ep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy_prices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'conventional'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_invest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_intangible</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">renovation_obligation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mutation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#buildings.HousingStockRenovated.to_flow_renovation_ep" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">to_flow_renovation_ep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy_prices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'conventional'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_invest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_intangible</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subsidies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">renovation_obligation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mutation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#buildings.HousingStockRenovated.to_flow_renovation_ep" title="Permalink to this definition">¶</a></dt>
 <dd><p>Functions only useful if a subsidy_tax is declared. Run a dichotomy to find the subsidy rate that recycle energy
 tax revenue.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="buildings.HousingStockRenovated.to_flow_renovation_ep_energy">
-<span class="sig-name descname"><span class="pre">to_flow_renovation_ep_energy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy_prices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'conventional'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_invest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_intangible</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">renovation_obligation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mutation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#buildings.HousingStockRenovated.to_flow_renovation_ep_energy" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">to_flow_renovation_ep_energy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy_prices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'conventional'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_invest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_intangible</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subsidies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">renovation_obligation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mutation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#buildings.HousingStockRenovated.to_flow_renovation_ep_energy" title="Permalink to this definition">¶</a></dt>
 <dd><p>De-aggregate stock_renovation_attributes by final heating energy.</p>
 <p>stock_renovation columns segmented by final attributes and final heating energy.</p>
 <dl class="field-list simple">
@@ -1198,7 +1205,7 @@ tax revenue.</p>
 <li><p><strong>cost_invest</strong> (<em>dict</em><em>, </em><em>optional</em>) – </p></li>
 <li><p><strong>cost_intangible</strong> (<em>dict</em><em>, </em><em>optional</em>) – </p></li>
 <li><p><strong>consumption</strong> (<em>str</em><em>, </em><em>default 'conventional'</em>) – </p></li>
-<li><p><strong>policies</strong> (<em>list</em><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>subsidies</strong> (<em>list</em><em>, </em><em>optional</em>) – </p></li>
 <li><p><strong>renovation_obligation</strong> (<em>RenovationObligation</em><em>, </em><em>optional</em>) – </p></li>
 <li><p><strong>mutation</strong> (<em>pd.Series</em><em> or </em><em>float</em><em>, </em><em>default 0.0</em>) – </p></li>
 <li><p><strong>rotation</strong> (<em>pd.Series</em><em> or </em><em>float</em><em>, </em><em>default 0.0</em>) – </p></li>
@@ -1215,7 +1222,7 @@ tax revenue.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="buildings.HousingStockRenovated.to_renovation_rate">
-<span class="sig-name descname"><span class="pre">to_renovation_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy_prices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transition</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'conventional'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_invest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_intangible</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#buildings.HousingStockRenovated.to_renovation_rate" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">to_renovation_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy_prices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transition</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'conventional'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_invest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_intangible</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subsidies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#buildings.HousingStockRenovated.to_renovation_rate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Routine calculating renovation rate from segments for a particular yr.</p>
 <p>Cost (energy, investment) &amp; rho parameter are also required.</p>
 <dl class="field-list simple">
@@ -1226,7 +1233,7 @@ tax revenue.</p>
 <li><p><strong>cost_invest</strong> (<em>dict</em><em>, </em><em>optional</em>) – </p></li>
 <li><p><strong>cost_intangible</strong> (<em>dict</em><em>, </em><em>optional</em>) – </p></li>
 <li><p><strong>consumption</strong> (<em>str</em><em>, </em><em>default 'conventional'</em>) – </p></li>
-<li><p><strong>policies</strong> (<em>list</em><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>subsidies</strong> (<em>list</em><em>, </em><em>optional</em>) – </p></li>
 <li><p><strong>rho</strong> (<em>pd.Series</em><em>, </em><em>optional</em>) – </p></li>
 </ul>
 </dd>
@@ -1547,9 +1554,9 @@ tax revenue.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">interest_cost</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">RegulatedLoan</span><span class="o">.</span><span class="n">interest_cost</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
 <span class="go">10</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">interest_cost</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">100000</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">RegulatedLoan</span><span class="o">.</span><span class="n">interest_cost</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">100000</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -1694,6 +1701,48 @@ tax revenue.</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">policies.</span></span><span class="sig-name descname"><span class="pre">SubsidiesRecyclingTax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tax_unit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tax_value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subsidy_unit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subsidy_value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calibration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transition</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#policies.SubsidiesRecyclingTax" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="py class">
+<dt class="sig sig-object py" id="policies.ThermalRegulation">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">policies.</span></span><span class="sig-name descname"><span class="pre">ThermalRegulation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transition</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#policies.ThermalRegulation" title="Permalink to this definition">¶</a></dt>
+<dd><p>ThermalRegulationConstruction represents public policies that require a minimal performance target to build or
+retrofit a building.</p>
+<p>For example, by 2030 all constructions should be Zero Net Building, and by 2040 Positive Energy Building.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="policies.ThermalRegulation.apply_regulation">
+<span class="sig-name descname"><span class="pre">apply_regulation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">attributes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#policies.ThermalRegulation.apply_regulation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove target of possible attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>attributes</strong> (<em>dict</em>) – Key are attribute name (Energy performance) and items are list of possible value taken by attributes.</p></li>
+<li><p><strong>year</strong> (<em>int</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="policies.ThermalRegulation.parse_targets">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">parse_targets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#policies.ThermalRegulation.parse_targets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns pd.Series containing a list of element to remove each year because of the regulation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>target</strong> (<em>pd.Series</em>) – </p></li>
+<li><p><strong>end</strong> (<em>int</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.Series</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 <span class="target" id="module-utils"></span><dl class="py function">
 <dt class="sig sig-object py" id="utils.add_level">
 <span class="sig-prename descclassname"><span class="pre">utils.</span></span><span class="sig-name descname"><span class="pre">add_level</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.add_level" title="Permalink to this definition">¶</a></dt>
@@ -1724,7 +1773,7 @@ tax revenue.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ds</strong> (<em>pd.Series</em>) – </p></li>
+<li><p><strong>ds</strong> (<em>pd.DataFrame</em><em>, </em><em>pd.Series</em>) – </p></li>
 <li><p><strong>level</strong> (<em>str</em>) – </p></li>
 </ul>
 </dd>

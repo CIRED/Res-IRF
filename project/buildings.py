@@ -1,13 +1,9 @@
 import pandas as pd
-import os
 import numpy as np
 from scipy.optimize import fsolve
 from copy import deepcopy
-from itertools import product
 
 from utils import reindex_mi, val2share, logistic, get_levels_values, remove_rows, add_level, de_aggregate_series
-
-# TODO: put exogenous parameters outside the script (heating intensity + lambda)
 
 
 class HousingStock:
@@ -72,6 +68,7 @@ class HousingStock:
 
         # explains what kind of levels needs to be used
         self.attributes_values = attributes_values
+        self.total_attributes_values = attributes_values
 
         self.attributes2area = attributes2area
         self.attributes2horizon = attributes2horizon
@@ -117,9 +114,9 @@ class HousingStock:
         self.capex = deepcopy(temp)
         self.capex_intangible = deepcopy(temp)
 
-        self.policies_detailed = deepcopy(temp)
-        self.policies_detailed_euro = deepcopy(temp)
-        self.policies_total = deepcopy(temp)
+        self.subsidies_detailed = deepcopy(temp)
+        self.subsidies_detailed_euro = deepcopy(temp)
+        self.subsidies_total = deepcopy(temp)
 
         # energy_lcc depends on transition as investment horizon depends on it
         temp = dict()
@@ -774,7 +771,8 @@ class HousingStock:
                 index = segments
                 for t in transition:
                     if t not in segments.names:
-                        index = add_level(pd.Series(dtype='float64', index=index), pd.Index(self.attributes_values[t], name=t)).index
+                        index = add_level(pd.Series(dtype='float64', index=index),
+                                          pd.Index(self.attributes_values[t], name=t)).index
 
             energy_lcc = self.to_energy_lcc(energy_prices, transition=transition, consumption=consumption,
                                             segments=index)
@@ -784,7 +782,7 @@ class HousingStock:
             return energy_lcc_final
 
     def to_lcc_final(self, energy_prices, cost_invest=None, cost_intangible=None,
-                     transition=None, consumption='conventional', policies=None, segments=None):
+                     transition=None, consumption='conventional', subsidies=None, segments=None):
         """Calculate life-cycle-cost of home-energy retrofits for every segment and every possible transition.
 
         Parameters
@@ -798,8 +796,8 @@ class HousingStock:
         consumption: {'conventional', 'actual'}, default 'conventional
         transition: list, default ['Energy performance']
             define transition. Transition can be defined as attributes transition, energy transition, or attributes-energy transition.
-        policies: list, optional
-            list of Policies object
+        subsidies: list, optional
+            list of subsidies object
         segments: pd.MultiIndex or pd.Index, optional
 
         Returns
@@ -845,12 +843,12 @@ class HousingStock:
             self.capex_intangible[tuple(transition)][self.year] = capex_intangible
         self.capex_total[tuple(transition)][self.year] = capex_total
 
-        self.policies_detailed[tuple(transition)][self.year] = dict()
-        self.policies_detailed_euro[tuple(transition)][self.year] = dict()
+        self.subsidies_detailed[tuple(transition)][self.year] = dict()
+        self.subsidies_detailed_euro[tuple(transition)][self.year] = dict()
 
-        total_policies = None
-        if policies is not None:
-            for policy in policies:
+        total_subsidies = None
+        if subsidies is not None:
+            for policy in subsidies:
                 if policy.transition == transition:
                     if policy.policy == 'subsidies' or policy.policy == 'subsidy_tax':
                         if policy.unit == '%':
@@ -872,19 +870,19 @@ class HousingStock:
                         s = s.reindex(columns, axis=1)
                         s.fillna(0, inplace=True)
 
-                    if total_policies is None:
-                        total_policies = s
+                    if total_subsidies is None:
+                        total_subsidies = s
                     else:
-                        total_policies += s
+                        total_subsidies += s
 
-                    self.policies_detailed[tuple(transition)][self.year]['{} (€/m2)'.format(policy.name)] = s
-                    self.policies_detailed_euro[tuple(transition)][self.year]['{} (€)'.format(policy.name)] = (self.area * s.T).T
-                    self.policies_total[tuple(transition)][self.year] = total_policies
+                    self.subsidies_detailed[tuple(transition)][self.year]['{} (€/m2)'.format(policy.name)] = s
+                    self.subsidies_detailed_euro[tuple(transition)][self.year]['{} (€)'.format(policy.name)] = (self.area * s.T).T
+                    self.subsidies_total[tuple(transition)][self.year] = total_subsidies
 
         if capex is not None:
             lcc_transition_seg += capex
-        if total_policies is not None:
-            lcc_transition_seg -= total_policies
+        if total_subsidies is not None:
+            lcc_transition_seg -= total_subsidies
 
         self.lcc_final[tuple(transition)][self.year] = lcc_transition_seg
         return lcc_transition_seg
@@ -911,7 +909,7 @@ class HousingStock:
             return lcc_reverse_df / lcc_reverse_df.sum()
 
     def to_market_share(self, energy_prices, transition=None, consumption='conventional', cost_invest=None,
-                        cost_intangible=None, policies=None, nu=8.0, segments=None):
+                        cost_intangible=None, subsidies=None, nu=8.0, segments=None):
         """Returns market share for each segment and each possible final state.
 
         Parameter nu characterizing the heterogeneity of preferences is set to 8 in the model.
@@ -925,8 +923,8 @@ class HousingStock:
         consumption: {'conventional', 'actual'}, default 'conventional
         transition: list, {['Energy performance'], ['Heating energy'], ['Energy performance', 'Heating energy']},
             default ['Energy performance']
-        policies: list, optional
-            List of Policies object
+        subsidies: list, optional
+            List of subsidies object
         segments: pd.MultiIndex, optional
         nu: float or int, default 8.0
 
@@ -939,7 +937,7 @@ class HousingStock:
             transition = ['Energy performance']
 
         lcc_final = self.to_lcc_final(energy_prices, cost_invest=cost_invest, cost_intangible=cost_intangible,
-                                      transition=transition, consumption=consumption, policies=policies,
+                                      transition=transition, consumption=consumption, subsidies=subsidies,
                                       segments=segments)
 
         market_share = HousingStock.lcc2market_share(lcc_final, nu=nu)
@@ -948,7 +946,7 @@ class HousingStock:
         return market_share, lcc_final
 
     def to_pv(self, energy_prices, transition=None, consumption='conventional', cost_invest=None, cost_intangible=None,
-              policies=None, nu=8.0):
+              subsidies=None, nu=8.0):
         # TODO: if NA
         if transition is None:
             transition = ['Energy performance']
@@ -958,7 +956,7 @@ class HousingStock:
                                                            consumption=consumption,
                                                            cost_invest=cost_invest,
                                                            cost_intangible=cost_intangible,
-                                                           policies=policies,
+                                                           subsidies=subsidies,
                                                            nu=nu)
 
         pv = (ms_final_seg * lcc_final_seg).dropna(axis=0, how='all').sum(axis=1)
@@ -966,7 +964,7 @@ class HousingStock:
         return pv
 
     def to_npv(self, energy_prices, transition=None, consumption='conventional', cost_invest=None, cost_intangible=None,
-               policies=None, nu=8.0):
+               subsidies=None, nu=8.0):
 
         if transition is None:
             transition = ['Energy performance']
@@ -977,7 +975,7 @@ class HousingStock:
                             consumption=consumption,
                             cost_invest=cost_invest,
                             cost_intangible=cost_intangible,
-                            policies=policies, nu=nu)
+                            subsidies=subsidies, nu=nu)
 
         pv_seg.sort_index(inplace=True)
         energy_lcc_seg.sort_index(inplace=True)
@@ -988,7 +986,7 @@ class HousingStock:
         return npv
 
     def calibration_market_share(self, energy_prices, market_share_ini, cost_invest=None,
-                                 consumption='conventional', policies=None, weighted=True):
+                                 consumption='conventional', subsidies=None, option=0):
         """
         Returns intangible costs by calibrating market_share.
 
@@ -1014,9 +1012,12 @@ class HousingStock:
             Observed market share to match during calibration_year.
         cost_invest: dict, optional
         consumption: {'conventional', 'actual'}, default 'conventional'
-        policies: list, optional
-            Policies to consider in the market share
-        weighted: bool, default True
+        subsidies: list, optional
+            subsidies to consider in the market share
+        option: int, default 0
+            0: intangible cost is segmented
+            1: intangible cost is aggregated based on initial market share attributes
+            2: intangible cost is aggregated on heating energy level (what was done before)
 
         Returns
         -------
@@ -1027,7 +1028,7 @@ class HousingStock:
         """
 
         lcc_final = self.to_lcc_final(energy_prices, consumption=consumption, cost_invest=cost_invest,
-                                      transition=['Energy performance'], policies=policies)
+                                      transition=['Energy performance'], subsidies=subsidies)
 
         # remove income class as MultiIndex and drop duplicated indexes
         lcc_final.reset_index(level='Income class', drop=True, inplace=True)
@@ -1083,7 +1084,7 @@ class HousingStock:
             else:
                 return ier, None
 
-        lambda_min = 0.01
+        lambda_min = 0.15
         lambda_max = 0.6
         step = 0.01
 
@@ -1118,11 +1119,25 @@ class HousingStock:
                                     axis=0)
 
         market_share_calibration = None
-        if weighted:
-            levels = list(market_share_ini.index.names)
+        if option == 1 or option == 2:
+            if option == 1:
+                levels = list(market_share_ini.index.names)
+            elif option == 2:
+                levels = [i for i in self.stock_seg.index.names if i != 'Heating energy']
+            else:
+                raise ValueError('option can only be 0, 1 or 2')
+
             weight = val2share(self.stock_seg, levels, option='column')
             ic_temp = intangible_cost.unstack(weight.columns.names)
-            weight_re = reindex_mi(weight, ic_temp.columns, axis=1).loc[ic_temp.index, :]
+            weight_re = reindex_mi(weight, ic_temp.columns, axis=1)
+            ic_temp = ic_temp.reorder_levels(weight_re.index.names)
+
+            # when adding Income class level some segments has been added that was not in self.stock
+            weight_re = weight_re.reindex(weight_re.index.union(ic_temp.index))
+            idx = weight_re.isna().all(axis=1)
+            weight_re[idx] = 1 / weight_re.shape[1]
+
+            weight_re = weight_re.loc[ic_temp.index, :]
             ic_weighted = (weight_re * ic_temp).fillna(0).groupby('Energy performance final', axis=1).sum()
             intangible_cost = reindex_mi(ic_weighted, intangible_cost.index)
 
@@ -1133,33 +1148,24 @@ class HousingStock:
                                                    consumption=consumption,
                                                    cost_invest=cost_invest,
                                                    cost_intangible=cost_intangible,
-                                                   policies=policies)
+                                                   subsidies=subsidies)
 
             market_share = market_share.unstack(weight.columns.names)
             market_share_weighted = (market_share * weight_re).fillna(0).groupby('Energy performance final', axis=1).sum()
             market_share_weighted.name = 'Market share calculated after calibration'
-            market_share_calibration = pd.concat((market_share_ini.stack(), market_share_weighted.stack()), axis=1)
+            if False:
+                market_share_calibration = pd.concat((market_share_ini.stack(), market_share_weighted.stack()), axis=1)
 
         return intangible_cost, market_share_calibration
 
-    def to_segments_construction(self, lvl2drop, new_lvl_dict):
-        """Returns segments_new from segments.
-
-        Segments_new doesn't get Income class owner at first and got other Energy performance value.
-        """
-        levels_wo = [lvl for lvl in self._levels if lvl not in lvl2drop]
-        segments_new = get_levels_values(self._segments, levels_wo)
-        segments_new = segments_new.drop_duplicates()
-        for level in new_lvl_dict:
-            segments_new = segments_new.droplevel(level)
-            segments_new = segments_new.drop_duplicates()
-            segments_new = pd.concat(
-                [pd.Series(index=segments_new, dtype='float64')] * len(new_lvl_dict[level]),
-                keys=new_lvl_dict[level], names=list(new_lvl_dict.keys()))
-            segments_new = segments_new.reorder_levels(levels_wo).index
-        return segments_new
-
     def to_io_share_seg(self):
+        """
+        Calculate share of attributes by income class owner.
+
+        Returns
+        -------
+        pd.Series
+        """
         levels = [lvl for lvl in self.stock_seg.index.names if lvl not in ['Income class owner', 'Energy performance']]
         temp = val2share(self.stock_seg, levels, option='column')
         io_share_seg = temp.groupby('Income class owner', axis=1).sum()
@@ -1208,7 +1214,7 @@ class HousingStock:
         More info_rate is high, more intangible_cost are low.
         Intangible renovation costs decrease according to a logistic curve with the same cumulative
         production so as to capture peer effects and knowledge diffusion.
-        intangible_cost[yr] = intangible_cost[calibrationyear] * info_rate with info rate [1-info_rate_max ; 1]
+        intangible_cost[yr] = intangible_cost[calibration_year] * info_rate with info rate [1-info_rate_max ; 1]
         This function calibrate a logistic function, so rate of decrease is set at 25% for a doubling of cumulative
         production.
 
@@ -1299,55 +1305,6 @@ class HousingStock:
             self.energy_cash_flows['actual'], self.attributes2discount)
         self.energy_cash_flows_disc['conventional'] = HousingStock.to_discounted(
             self.energy_cash_flows['conventional'], self.attributes2discount)
-
-    """
-    @staticmethod
-    def to_share_multi_family_tot(stock_needed, param):
-        'Calculate share of multi-family buildings in the total stock.
-
-        In Res-IRF 2.0, the share of single- and multi-family dwellings was held constant in both existing and new
-        housing stocks, but at different levels; it therefore evolved in the total stock by a simple composition
-        effect. These dynamics are now more precisely parameterized in Res-IRF 3.0 thanks to recent empirical
-        work linking the increase in the share of multi-family housing in the total stock to the rate of growth of
-        the total stock housing growth (Fisch et al., 2015).
-        This relationship in particular reflects urbanization effects.
-
-        Parameters
-        ----------
-        stock_needed: pd.Series
-        param: float
-
-        Returns
-        -------
-        dict
-            Dictionary with year as keys and share of multi-family in the total stock as value.
-            {2012: 0.393, 2013: 0.394, 2014: 0.395}
-        '
-
-        def func(stock, stock_ini, p):
-            Share of multi-family dwellings as a function of the growth rate of the dwelling stock.
-
-            Parameters
-            ----------
-            stock: float
-            stock_ini: float
-            p: float
-
-            Returns
-            -------
-            float
-            
-            trend_housing = (stock - stock_ini) / stock * 100
-            share = 0.1032 * np.log(10.22 * trend_housing / 10 + 79.43) * p
-            return share
-
-        share_multi_family_tot = {}
-        stock_needed_ini = stock_needed.iloc[0]
-        for year in stock_needed.index:
-            share_multi_family_tot[year] = func(stock_needed.loc[year], stock_needed_ini, param)
-
-        return share_multi_family_tot
-    """
 
 
 class HousingStockRenovated(HousingStock):
@@ -1535,7 +1492,7 @@ class HousingStockRenovated(HousingStock):
             return HousingStockRenovated.renovation_rate(npv.loc[0], rho_f, npv_min, rate_max, rate_min)
 
     def to_renovation_rate(self, energy_prices, transition=None, consumption='conventional', cost_invest=None,
-                           cost_intangible=None, policies=None, rho=None):
+                           cost_intangible=None, subsidies=None, rho=None):
 
         """Routine calculating renovation rate from segments for a particular yr.
 
@@ -1548,7 +1505,7 @@ class HousingStockRenovated(HousingStock):
         cost_invest: dict, optional
         cost_intangible: dict, optional
         consumption: str, default 'conventional'
-        policies: list, optional
+        subsidies: list, optional
         rho: pd.Series, optional
         """
         if transition is None:
@@ -1562,7 +1519,7 @@ class HousingStockRenovated(HousingStock):
                               consumption=consumption,
                               cost_invest=cost_invest,
                               cost_intangible=cost_intangible,
-                              policies=policies)
+                              subsidies=subsidies)
 
         renovation_rate_seg = npv_seg.reset_index().apply(HousingStockRenovated.renovate_rate_func,
                                                           args=[rho, self._npv_min, self._rate_max,
@@ -1572,7 +1529,7 @@ class HousingStockRenovated(HousingStock):
         return renovation_rate_seg
 
     def flow_renovation_ep(self, energy_prices, consumption='conventional', cost_invest=None, cost_intangible=None,
-                              policies=None, renovation_obligation=None, mutation=0.0, rotation=0.0):
+                           subsidies=None, renovation_obligation=None, mutation=0.0, rotation=0.0):
         """Calculate flow renovation by energy performance final.
 
         Parameters
@@ -1581,7 +1538,7 @@ class HousingStockRenovated(HousingStock):
         cost_invest: dict, optional
         cost_intangible: dict, optional
         consumption: str, default 'conventional'
-        policies: dict, optional
+        subsidies: dict, optional
         renovation_obligation: RenovationObligation, optional
         mutation: pd.Series or float, default 0.0
         rotation: pd.Series or float, default 0.0
@@ -1598,9 +1555,7 @@ class HousingStockRenovated(HousingStock):
                                                       consumption=consumption,
                                                       cost_invest=cost_invest,
                                                       cost_intangible=cost_intangible,
-                                                      policies=policies)
-
-        # self.policy_detailed_euro[]
+                                                      subsidies=subsidies)
 
         stock_seg = self.stock_seg
         flow_renovation_obligation = 0
@@ -1625,7 +1580,7 @@ class HousingStockRenovated(HousingStock):
                                                        consumption=consumption,
                                                        cost_invest=cost_invest,
                                                        cost_intangible=cost_intangible,
-                                                       policies=policies)[0]
+                                                       subsidies=subsidies)[0]
 
         flow_renovation_seg_ep = (flow_renovation_seg * market_share_seg_ep.T).T
         self.flow_renovation_label_dict[self.year] = flow_renovation_seg_ep
@@ -1633,7 +1588,7 @@ class HousingStockRenovated(HousingStock):
         return flow_renovation_seg_ep
 
     def to_flow_renovation_ep(self, energy_prices, consumption='conventional', cost_invest=None, cost_intangible=None,
-                              policies=None, renovation_obligation=None, mutation=0.0, rotation=0.0, error=1):
+                              subsidies=None, renovation_obligation=None, mutation=0.0, rotation=0.0, error=1):
         """
         Functions only useful if a subsidy_tax is declared. Run a dichotomy to find the subsidy rate that recycle energy
         tax revenue.
@@ -1644,11 +1599,11 @@ class HousingStockRenovated(HousingStock):
                                                      consumption=consumption,
                                                      cost_invest=cost_invest,
                                                      cost_intangible=cost_intangible,
-                                                     policies=policies,
+                                                     subsidies=subsidies,
                                                      renovation_obligation=renovation_obligation,
                                                      mutation=mutation, rotation=rotation)
 
-        for policy in policies:
+        for policy in subsidies:
             if policy.policy == 'subsidy_tax':
 
                 policy.value = policy.value_max
@@ -1656,7 +1611,7 @@ class HousingStockRenovated(HousingStock):
                 value_min = 0.0
 
                 tax_revenue = policy.tax_revenue[self.year - 1]
-                subsidy_expense = (flow_renovation_ep * self.policies_detailed_euro[('Energy performance',)][self.year][
+                subsidy_expense = (flow_renovation_ep * self.subsidies_detailed_euro[('Energy performance',)][self.year][
                     '{} (€)'.format(policy.name)]).sum().sum()
 
                 while abs(subsidy_expense - tax_revenue) > error:
@@ -1668,12 +1623,12 @@ class HousingStockRenovated(HousingStock):
                                                                  consumption=consumption,
                                                                  cost_invest=cost_invest,
                                                                  cost_intangible=cost_intangible,
-                                                                 policies=policies,
+                                                                 subsidies=subsidies,
                                                                  renovation_obligation=renovation_obligation,
                                                                  mutation=mutation, rotation=rotation)
 
                     subsidy_expense = (
-                                flow_renovation_ep * self.policies_detailed_euro[('Energy performance',)][self.year][
+                                flow_renovation_ep * self.subsidies_detailed_euro[('Energy performance',)][self.year][
                             '{} (€)'.format(policy.name)]).sum().sum()
 
                     if subsidy_expense > tax_revenue:
@@ -1690,7 +1645,7 @@ class HousingStockRenovated(HousingStock):
         return flow_renovation_ep
 
     def to_flow_renovation_ep_energy(self, energy_prices, consumption='conventional', cost_invest=None,
-                                     cost_intangible=None, policies=None, renovation_obligation=None, mutation=0.0,
+                                     cost_intangible=None, subsidies=None, renovation_obligation=None, mutation=0.0,
                                      rotation=0.0):
         """De-aggregate stock_renovation_attributes by final heating energy.
 
@@ -1702,7 +1657,7 @@ class HousingStockRenovated(HousingStock):
         cost_invest: dict, optional
         cost_intangible: dict, optional
         consumption: str, default 'conventional'
-        policies: list, optional
+        subsidies: list, optional
         renovation_obligation: RenovationObligation, optional
         mutation: pd.Series or float, default 0.0
         rotation: pd.Series or float, default 0.0
@@ -1716,7 +1671,7 @@ class HousingStockRenovated(HousingStock):
                                                    transition=['Heating energy'],
                                                    cost_invest=cost_invest,
                                                    consumption=consumption,
-                                                   policies=policies)[0]
+                                                   subsidies=subsidies)[0]
 
         ms_temp = pd.concat([market_share_seg_he.T] * len(self.attributes_values['Energy performance']),
                             keys=self.attributes_values['Energy performance'], names=['Energy performance final'])
@@ -1725,7 +1680,7 @@ class HousingStockRenovated(HousingStock):
                                                                     consumption=consumption,
                                                                     cost_invest=cost_invest,
                                                                     cost_intangible=cost_intangible,
-                                                                    policies=policies,
+                                                                    subsidies=subsidies,
                                                                     renovation_obligation=renovation_obligation,
                                                                     mutation=mutation, rotation=rotation)
 
@@ -1737,7 +1692,7 @@ class HousingStockRenovated(HousingStock):
         return flow_renovation_label_energy
 
     def to_flow_remained(self, energy_prices, consumption='conventional', cost_invest=None, cost_intangible=None,
-                         policies=None, renovation_obligation=None, mutation=0.0, rotation=0.0):
+                         subsidies=None, renovation_obligation=None, mutation=0.0, rotation=0.0):
         """Calculate flow_remained for each segment.
 
         Parameters
@@ -1746,7 +1701,7 @@ class HousingStockRenovated(HousingStock):
         cost_invest: dict, optional
         cost_intangible: dict, optional
         consumption: str, default 'conventional'
-        policies: list, optional
+        subsidies: list, optional
         renovation_obligation: RenovationObligation, optional
         mutation: pd.Series or float, default 0.0
         rotation: pd.Series or float, default 0.0
@@ -1764,7 +1719,7 @@ class HousingStockRenovated(HousingStock):
                                                                              consumption=consumption,
                                                                              cost_invest=cost_invest,
                                                                              cost_intangible=cost_intangible,
-                                                                             policies=policies,
+                                                                             subsidies=subsidies,
                                                                              renovation_obligation=renovation_obligation,
                                                                              mutation=mutation, rotation=rotation
                                                                              )
@@ -1845,7 +1800,7 @@ class HousingStockRenovated(HousingStock):
             worst_lbl_idx = []
             worst_lbl_dict = dict()
             for seg in seg_mobile:
-                for lbl in self.attributes_values['Energy performance']:
+                for lbl in self.total_attributes_values['Energy performance']:
                     indx = (seg[0], seg[1], seg[2], seg[3], lbl, seg[4])
                     if st_mobile.loc[indx] > 1:
                         worst_lbl_idx.append(indx)
@@ -1886,7 +1841,7 @@ class HousingStockRenovated(HousingStock):
                 certificate = worst_certificate_dict[segment]
             else:
                 continue
-            num = self.attributes_values['Energy performance'].index(certificate)
+            num = self.total_attributes_values['Energy performance'].index(certificate)
             idx_w_ep = (segment[0], segment[1], segment[2], segment[3], certificate, segment[4])
 
             while flow_demolition_remain.loc[idx_w_ep] != 0:
@@ -1895,8 +1850,8 @@ class HousingStockRenovated(HousingStock):
 
                 if certificate != 'A':
                     num += 1
-                    certificate = self.attributes_values['Energy performance'][num]
-                    certificates = [c for c in self.attributes_values['Energy performance'] if c > certificate]
+                    certificate = self.total_attributes_values['Energy performance'][num]
+                    certificates = [c for c in self.total_attributes_values['Energy performance'] if c > certificate]
                     idx_wo_ep = (segment[0], segment[1], segment[2], segment[3], segment[4])
                     idx_w_ep = (segment[0], segment[1], segment[2], segment[3], certificate, segment[4])
                     list_idx = [(segment[0], segment[1], segment[2], segment[3], c, segment[4]) for c in certificates]
@@ -1964,7 +1919,7 @@ class HousingStockRenovated(HousingStock):
             return flow
 
         flow_knowledge_renovation = pd.Series(dtype='float64',
-                                              index=[ep for ep in self.attributes_values['Energy performance'] if
+                                              index=[ep for ep in self.total_attributes_values['Energy performance'] if
                                                      ep != 'G'])
 
         flow_knowledge_renovation = flow_area2knowledge(flow_knowledge_renovation, flow_area_renovated_ep, 'A', 'B')
@@ -2006,22 +1961,20 @@ class HousingStockRenovated(HousingStock):
             rate_max / renovation_rate_target - 1)) / (npv - npv_min)
 
     def calibration_renovation_rate(self, energy_prices, renovation_rate_ini, consumption='conventional',
-                                    cost_invest=None, cost_intangible=None, policies=None, option=0):
+                                    cost_invest=None, cost_intangible=None, subsidies=None, option=0):
         """
-        Calibration of ρ parameter of the renovation rate function (logistic function of the NPV).
+        Calibration of the ρ parameter of the renovation rate function (logistic function of the NPV).
 
         Renovation rate of dwellings attributes led is calculated as a logistic function of the NPV.
         The logistic form captures heterogeneity in heating preference and habits,
         assuming they are normally distributed.
-        Parameter ρ is calibrated, for each type of attributes. It is then agregated or not, depending of weighted
+        Parameter ρ is calibrated, for each type of attributes. It is then aggregated or not, depending of weighted
         parameter.
 
         For instance, ρ was calibrated in 2012, for each type of  decision-maker and each initial certificates
         (i.e., 6x6=36 values), so that the NPVs calculated with the subsidies in effect in 2012 (see main article)
         reproduce the observed renovation rates.
         Renovation rate observed depends on (Occupancy status, Housing type)
-        NPV that depends on MS and so LCC: (Energy performance initial, Occupancy status, Housing type, Income class owner)
-        So parameter ρ first depends on  (Occupancy status, Housing type, Energy performance initial, Heating energy initial, Income class owner)
 
         Parameters
         ----------
@@ -2030,7 +1983,7 @@ class HousingStockRenovated(HousingStock):
         consumption: {'conventional', 'actual'}, default 'conventional'
         cost_invest: dict
         cost_intangible: dict
-        policies: list
+        subsidies: list
         option: int, default 0
             0: rho for each agent_mean (based on a NPV mean)
             1: unique calibration function for all agents (rho, npv_min, rate_min, rate_max)
@@ -2055,7 +2008,7 @@ class HousingStockRenovated(HousingStock):
                           consumption=consumption,
                           cost_invest=cost_invest,
                           cost_intangible=cost_intangible,
-                          policies=policies)
+                          subsidies=subsidies)
 
         if option == 0 or option == 1:
             # calculate agent_mean npv
@@ -2111,7 +2064,7 @@ class HousingStockRenovated(HousingStock):
         # verification
         renovation_rate = self.to_renovation_rate(energy_prices, transition=['Energy performance'],
                                                   consumption='conventional', cost_invest=cost_invest,
-                                                  cost_intangible=cost_intangible, policies=policies, rho=rho)
+                                                  cost_intangible=cost_intangible, subsidies=subsidies, rho=rho)
         renovation_rate = renovation_rate.unstack(weight.columns.names)
         renovation_rate_weighted = (renovation_rate * weight).fillna(0).sum(axis=1)
         renovation_rate_weighted.name = 'Renovation rate calculated after calibration'
@@ -2300,7 +2253,7 @@ class HousingStockConstructed(HousingStock):
         return self.flow_constructed * dm_share_tot_construction
 
     def to_flow_constructed_dm_he_ep(self, energy_price, cost_intangible=None, cost_invest=None,
-                                     consumption='conventional', nu=8.0, policies=None):
+                                     consumption='conventional', nu=8.0, subsidies=None):
         """Returns flow of constructed buildings segmented.
 
         1. Calculate construction flow segmented by decision-maker:
@@ -2314,7 +2267,7 @@ class HousingStockConstructed(HousingStock):
         cost_invest:  pd.DataFrame, optional
         consumption: {'conventional', 'actual'}, default 'conventional'
         nu: float, default 8.0
-        policies: list, optional
+        subsidies: list, optional
 
         Returns
         -------
@@ -2331,7 +2284,7 @@ class HousingStockConstructed(HousingStock):
                                                cost_invest=cost_invest,
                                                cost_intangible=cost_intangible,
                                                transition=['Energy performance', 'Heating energy'],
-                                               consumption=consumption, nu=nu, policies=policies, segments=segments)[0]
+                                               consumption=consumption, nu=nu, subsidies=subsidies, segments=segments)[0]
         flow_constructed_dm = flow_constructed_dm.reorder_levels(market_share_dm.index.names)
         flow_constructed_seg = (flow_constructed_dm * market_share_dm.T).T
         flow_constructed_seg = flow_constructed_seg.stack(flow_constructed_seg.columns.names)
@@ -2345,7 +2298,7 @@ class HousingStockConstructed(HousingStock):
         return flow_constructed_seg
 
     def to_flow_constructed_seg(self, energy_price, cost_intangible=None, cost_invest=None,
-                                consumption=None, nu=8.0, policies=None):
+                                consumption=None, nu=8.0, subsidies=None):
         """Add Income class and Income class owner levels to flow_constructed.
 
         io_share_seg: pd.DataFrame
@@ -2361,7 +2314,7 @@ class HousingStockConstructed(HousingStock):
         cost_invest:  pd.DataFrame, optional
         consumption: {'conventional', 'actual'}, default 'conventional'
         nu: float, default 8.0
-        policies: list, optional
+        subsidies: list, optional
 
         Returns
         -------
@@ -2373,12 +2326,12 @@ class HousingStockConstructed(HousingStock):
         flow_constructed_seg = self.to_flow_constructed_dm_he_ep(energy_price,
                                                                  cost_intangible=cost_intangible,
                                                                  cost_invest=cost_invest,
-                                                                 consumption=consumption, nu=nu, policies=policies)
+                                                                 consumption=consumption, nu=nu, subsidies=subsidies)
         # same repartition of income class
         seg_index = flow_constructed_seg.index
         seg_names = flow_constructed_seg.index.names
-        val = 1 / len(self.attributes_values["Income class"])
-        temp = pd.Series(val, index=self.attributes_values["Income class"])
+        val = 1 / len(self.attributes_values['Income class'])
+        temp = pd.Series(val, index=self.attributes_values['Income class'])
         ic_share_seg = pd.concat([temp] * len(seg_index), axis=1).T
         ic_share_seg.index = seg_index
 
@@ -2391,7 +2344,7 @@ class HousingStockConstructed(HousingStock):
         return flow_constructed_seg
 
     def update_flow_constructed_seg(self, energy_price, cost_intangible=None, cost_invest=None,
-                                    consumption='conventional', nu=8.0, policies=None):
+                                    consumption='conventional', nu=8.0, subsidies=None):
         """Update HousingConstructed object flow_constructed_seg attribute.
 
         Parameters
@@ -2402,12 +2355,12 @@ class HousingStockConstructed(HousingStock):
         cost_invest:  dict, optional
         consumption: {'conventional', 'actual'}, default 'conventional'
         nu: float, default 8.0
-        policies: list, optional
+        subsidies: list, optional
         """
         flow_constructed_seg = self.to_flow_constructed_seg(energy_price,
                                                             cost_intangible=cost_intangible,
                                                             cost_invest=cost_invest,
-                                                            consumption=consumption, nu=nu, policies=policies)
+                                                            consumption=consumption, nu=nu, subsidies=subsidies)
 
         self.flow_constructed_seg = flow_constructed_seg
         return flow_constructed_seg
@@ -2429,7 +2382,7 @@ class HousingStockConstructed(HousingStock):
     """
 
     def calibration_market_share(self, energy_price, market_share_objective, cost_invest=None,
-                                 consumption='conventional', policies=None):
+                                 consumption='conventional', subsidies=None):
         """Returns intangible costs construction by calibrating market_share.
 
         Parameters
@@ -2439,8 +2392,8 @@ class HousingStockConstructed(HousingStock):
             Observed market share to match during calibration_year.
         cost_invest: dict, optional
         consumption: {'conventional', 'actual'}, default 'conventional'
-        policies: list, optional
-            Policies to consider in the market share
+        subsidies: list, optional
+            subsidies to consider in the market share
 
         Returns
         -------
@@ -2451,7 +2404,7 @@ class HousingStockConstructed(HousingStock):
 
         """
 
-        lcc_final = self.to_lcc_final(energy_price, cost_invest=cost_invest, policies=policies,
+        lcc_final = self.to_lcc_final(energy_price, cost_invest=cost_invest, subsidies=subsidies,
                                       transition=['Energy performance', 'Heating energy'], consumption=consumption,
                                       segments=market_share_objective.index)
 

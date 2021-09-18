@@ -16,33 +16,53 @@ The development of the Res-IRF model was initiated at CIRED in 2008. Coordinated
 **Step 2**: **Create a conda environment** from the environment.yml file:
    - The environment.yml file is in the Res-IRF folder.
    - Use the **terminal** and go to the Res-IRF folder stored on your computer.
-   - Type: `conda env create -f environment.yml`
+   - Type: `conda env create -f res-irf-env.yml`
 
 **Step 3**: **Activate the new environment**.
    - The first line of the yml file sets the new environment's name.
-   - Type: `conda activate myenv`
+   - Type: `conda activate Res-IRF`
 
 **Step 4**: **Launch Res-IRF**
-   - `python main.py`
+   - `python main.py -n scenario.json`
+   - `scenario.json` is the path to the configuration file
 
 ## Usage example
-Project include different scripts and notebook to run the output and analyse its output.  
+Project includes libraries, scripts and notebooks.  
+`/project` is the folder containing scripts, notebooks, inputs and outputs.  
+
 The standard way to launch Res-IRF:  
 
 **Step 1: Launch Res-IRF main script.**  
-The model create results in a folder in project/output.  
+The model creates results in a folder in project/output.  
 Folder name is by default `ddmmyyyy_hhmm` (launching date and hour).
-Results are mainly .pkl (serialize format by the pickle library) or .csv file, and are not designed to be directly readable.  
-NB: One file 'summary.csv' summarize important outputs.
+Results are mainly .pkl (serialize format by the pickle library), .csv file and some .png graphs.
 
-**Step 2: Launch one of the Jupyter Notebook analysis tool**  
+A configuration file must be declared.
+An example of configuration file is in the `input` folder under the name of `scenario.json`.
+The Res-IRF script use Multiprocessing tool to launch multiple scenarios in the same time. 
+
+In the `output/ddmmyyyy_hhmm` folder:
+- One folder for each scenario declared in the configuration file with detailed outputs:
+    - `summary_input.csv` summary of main input
+    - `summary.csv` summary of main output
+    - `detailed.csv` detailed output readable directly with an Excel-like tool
+    - `summary_policies` results of public policies impact and cost
+    - `.pkl` files contain exhaustive output but need to be read with a programing language
+    - copy of `parameters.json` and scenario used for the run
+- `.png` graphs that compare scenarios
+
+**Step 2 : Launch one of the Jupyter Notebook analysis tool (optional)**  
 There are 4 main notebooks:
 - `ui_unique.ipynb`: macro and micro output analysis.
 - `quick_comparison.ipyb`: macro and micro output comparison.
 - `ui_comparison.ipyb`: macro and micro output comparison.
 - `policy_indicator.ipyb`: macro and micro output comparison and calculation of efficiency and effectiveness. 
 
-Other notebooks are in `tutorials_notbook` to insist on a specific Res-IRF functions.
+Notebook templates are stored in `project/nb_template_analysis`.  
+Users should copy and paste the template notebook in another folder to launch it.
+
+For users that want to contribute, other notebooks are stored in `tutorials_notbook` to insist on a specific Res-IRF
+functions:
 - `demographic_variables.ipynb`
 - `heating_intensity.ipynb`
 - `information_rate.ipynb`
@@ -51,9 +71,7 @@ Other notebooks are in `tutorials_notbook` to insist on a specific Res-IRF funct
 - `renovation_dynamics.ipynb`
 - `renovation_rate.ipynb`
 
-
 ## Documentation
-
 Documentation is available on https://lucas-vivier.github.io/Res-IRF/
 
 ## Meta

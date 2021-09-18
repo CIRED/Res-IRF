@@ -125,3 +125,11 @@ dmypy.json
 .pyre/
 /old_/
 /.idea/
+/project/output/
+/project/input/old/
+/project/input/data_preparation/
+/project/input/hindcast_1984/
+/project/input/input_constant/
+/project/input/test/
+/project/input/scenarios/
+/project/nb_tutorials/_old/

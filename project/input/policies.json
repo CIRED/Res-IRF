@@ -1,6 +1,5 @@
 {
-  "cite_plus":
-  {
+  "cite_plus": {
     "name": "cite_plus",
     "policy": "subsidies",
     "value": {
@@ -58,52 +57,54 @@
     ],
     "type": "dict_to_parse"
   },
-  "cite":
-  {
+  "cite": {
     "name": "cite",
     "policy": "subsidies",
     "value": 0.17,
     "unit": "%",
-    "transition": ["Energy performance"],
+    "transition": [
+      "Energy performance"
+    ],
     "type": "dict_to_parse"
   },
-  "cee_subsidy":
-  {
+  "cee_subsidy": {
     "name": "cee_subsidy",
     "policy": "subsidies",
     "value": 0.004,
     "unit": "€/kWh",
-    "transition": ["Energy performance"],
+    "transition": [
+      "Energy performance"
+    ],
     "type": "dict_to_parse"
   },
-  "cee_taxes":
-  {
+  "cee_taxes": {
     "name": "cee_taxes",
     "policy": "energy_taxes",
     "value": 0.004,
     "unit": "€/kWh",
-    "transition": ["Energy performance"],
+    "transition": [
+      "Energy performance"
+    ],
     "type": "dict_to_parse"
   },
-  "carbon_tax":
-  {
+  "carbon_tax": {
     "name": "carbon_tax",
     "policy": "energy_taxes",
     "value": "project/input/carbon_tax.csv",
     "unit": "€/tCO2",
     "type": "dict_to_parse"
   },
-  "reduced_tax":
-  {
+  "reduced_tax": {
     "name": "reduced_tax",
     "policy": "subsidies",
     "value": 0.04,
     "unit": "%",
-    "transition": ["Energy performance"],
+    "transition": [
+      "Energy performance"
+    ],
     "type": "dict_to_parse"
   },
-  "eptz":
-  {
+  "eptz": {
     "name": "eptz",
     "policy": "regulated_loan",
     "ir_regulated": null,
@@ -177,11 +178,12 @@
       ],
       "type": "pd.DataFrame"
     },
-    "transition": ["Energy performance"],
+    "transition": [
+      "Energy performance"
+    ],
     "type": "dict_to_parse"
   },
-  "eptz_plus":
-  {
+  "eptz_plus": {
     "name": "eptz_plus",
     "policy": "regulated_loan",
     "ir_regulated": null,
@@ -190,11 +192,12 @@
     "principal_min": null,
     "horizon": 10,
     "targets": null,
-    "transition": ["Energy performance"],
+    "transition": [
+      "Energy performance"
+    ],
     "type": "dict_to_parse"
   },
-  "renovation_obligation":
-  {
+  "renovation_obligation": {
     "name": "renovation_obligation",
     "policy": "renovation_obligation",
     "type": "dict_to_parse",
@@ -214,8 +217,7 @@
       "type": "pd.Series"
     }
   },
-  "subsidy_recycling_tax": 
-  {
+  "subsidy_recycling_tax": {
     "name": "subsidy_recycling_tax",
     "policy": "subsidy_tax",
     "type": "dict_to_parse",
@@ -223,5 +225,23 @@
     "tax_value": 50,
     "subsidy_unit": "€/kWh",
     "subsidy_value": 0.004
+  },
+  "thermal_regulation_construction": {
+    "name": "thermal_regulation_construction",
+    "policy": "thermal_regulation_construction",
+    "transition": "Energy performance",
+    "type": "dict_to_parse",
+    "targets": {
+      "val": {
+        "BBC": [
+          2013,
+          2051
+        ]
+      },
+      "index": [
+        "Energy performance"
+      ],
+      "type": "pd.Series"
+    }
   }
 }

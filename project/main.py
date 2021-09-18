@@ -4,19 +4,19 @@ This script requires that 'pandas' be installed within the Python
 environment you are running this script in.
 """
 
-# TODO: calibration public policies.
-#  Check than subsidies are considered and why are not there in summary_policies for the first year.
 
 import os
 import time
 import logging
 import datetime
 import pandas as pd
+from copy import deepcopy
 from shutil import copyfile
 from itertools import product
 
+
 from buildings import HousingStock, HousingStockRenovated, HousingStockConstructed
-from policies import EnergyTaxes, Subsidies, RegulatedLoan, RenovationObligation, SubsidiesRecyclingTax
+from policies import EnergyTaxes, Subsidies, RegulatedLoan, RenovationObligation, SubsidiesRecyclingTax, ThermalRegulation
 from parse_output import parse_output, quick_graphs
 from policy_indicators import run_indicators
 
@@ -79,9 +79,10 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
     subsidies_dict = {}
     energy_taxes_dict = {}
     renovation_obligation_dict = {}
-    subsidy_tax = None
+    thermal_regulation_construction = None
+    thermal_regulation_renovation = None
     for pol, item in policies_parameters.items():
-        if config[item['name']]['activated']:
+        if item['name'] in config.keys() and config[item['name']]['activated']:
             logging.debug('Considering: {}'.format(pol))
             if item['policy'] == 'subsidies':
                 subsidies_dict[pol] = Subsidies(item['name'], config[item['name']]['start'],
@@ -120,7 +121,21 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
                 subsidies_dict[pol] = subsidy_tax
                 energy_taxes_dict[pol] = subsidy_tax
 
-    policies = list(subsidies_dict.values())
+            elif item['policy'] == 'thermal_regulation_construction':
+                thermal_regulation_construction = ThermalRegulation(item['name'],
+                                                                    config[item['name']]['start'],
+                                                                    config[item['name']]['end'],
+                                                                    item['targets'], item['transition']
+                                                                    )
+
+            elif item['policy'] == 'thermal_regulation_renovation':
+                thermal_regulation_renovation = ThermalRegulation(item['name'],
+                                                                  config[item['name']]['start'],
+                                                                  config[item['name']]['end'],
+                                                                  item['targets'], item['transition']
+                                                                  )
+
+    subsidies = list(subsidies_dict.values())
     energy_taxes_detailed = dict()
     energy_taxes_detailed['energy_taxes'] = energy_taxes
     total_taxes = None
@@ -184,7 +199,8 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
 
     cost_intangible_construction = None
     cost_intangible = None
-    policies_calibration = [policy for policy in policies if policy.calibration is True]
+    # policies don't need to start and to end to be used during calibration
+    subsides_calibration = [policy for policy in subsidies if policy.calibration is True]
 
     if config['cost_intangible']:
         cost_intangible = dict()
@@ -197,7 +213,7 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
                 energy_prices,
                 ms_construction_ini,
                 cost_invest=cost_invest_construction,
-                policies=policies_calibration)
+                subsidies=subsides_calibration)
             logging.debug('End of calibration and dumping: {}'.format(name_file))
             cost_intangible_construction['Energy performance'].to_pickle(name_file)
         elif source == 'file':
@@ -217,10 +233,10 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
                                                                                                        ms_renovation_ini,
                                                                                                        cost_invest=cost_invest,
                                                                                                        consumption='conventional',
-                                                                                                       policies=policies_calibration,
-                                                                                                       weighted=config[
+                                                                                                       subsidies=subsides_calibration,
+                                                                                                       option=config[
                                                                                                            'cost_intangible_source'][
-                                                                                                           'weighted'])
+                                                                                                           'option'])
 
             logging.debug('End of calibration and dumping: {}'.format(name_file))
             cost_intangible['Energy performance'].to_pickle(name_file)
@@ -244,7 +260,7 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
         rho, renovation_rate_calibration = buildings.calibration_renovation_rate(energy_prices, rate_renovation_ini,
                                                                                  cost_invest=cost_invest,
                                                                                  cost_intangible=cost_intangible,
-                                                                                 policies=policies_calibration,
+                                                                                 subsidies=subsides_calibration,
                                                                                  option=config['rho']['option'])
         logging.debug('End of calibration and dumping: {}'.format(name_file))
         rho.to_pickle(name_file)
@@ -259,6 +275,7 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
         rho = None
     buildings.rho = rho
 
+    # calculate tax revenues to size recycled subsidy
     for _, tax in energy_taxes_dict.items():
         if tax.policy == 'subsidy_tax':
             val = tax.price_to_taxes(energy_prices=energy_prices_bp, co2_content=co2_content).loc[:, calibration_year]
@@ -278,11 +295,18 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
     for year in years[1:]:
         logging.debug('YEAR: {}'.format(year))
 
-        policies_year = [policy for policy in policies if policy.start <= year < policy.end]
         buildings.year = year
 
-        # logging.debug('Calculate energy consumption actual')
-        # buildings.to_consumption_actual(energy_price)
+        subsidies_year = [policy for policy in subsidies if policy.start <= year < policy.end]
+
+        if thermal_regulation_construction is not None:
+            buildings_constructed.attributes_values = thermal_regulation_construction.apply_regulation(
+                deepcopy(buildings_constructed.total_attributes_values), year)
+
+        if thermal_regulation_renovation is not None:
+            buildings.attributes_values = thermal_regulation_renovation.apply_regulation(
+                deepcopy(buildings.total_attributes_values), year)
+
         flow_demolition_sum = 0
         if parameters['Destruction rate'] > 0:
             logging.debug('Demolition dynamic')
@@ -291,7 +315,6 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
                                                                                 flow_demolition_seg.sum() / buildings.stock_seg.sum() * 100))
             logging.debug('Update demolition')
             buildings.add_flow(- flow_demolition_seg)
-
             flow_demolition_sum = flow_demolition_seg.sum()
 
         logging.debug('Renovation dynamic')
@@ -302,7 +325,7 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
                                                                                  consumption='conventional',
                                                                                  cost_invest=cost_invest,
                                                                                  cost_intangible=cost_intangible,
-                                                                                 policies=policies_year,
+                                                                                 subsidies=subsidies_year,
                                                                                  renovation_obligation=renovation_obligation,
                                                                                  mutation=parameters['Mutation rate'],
                                                                                  rotation=parameters['Rotation rate']
@@ -349,7 +372,7 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
                                                               cost_intangible=cost_intangible_construction,
                                                               cost_invest=cost_invest_construction,
                                                               nu=parameters['Nu construction'],
-                                                              policies=None)
+                                                              subsidies=None)
 
         if config['info_construction']:
             logging.debug('Information acceleration - construction')
@@ -411,6 +434,8 @@ if __name__ == '__main__':
     folder['input'] = os.path.join(os.getcwd(), 'project', 'input')
     folder['output'] = os.path.join(os.getcwd(), 'project', 'output')
     folder['intermediate'] = os.path.join(os.getcwd(), 'project', 'intermediate')
+    if not os.path.isdir(folder['intermediate']):
+        os.mkdir(folder['intermediate'])
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-y', '--year_end', default=False, help='year end')

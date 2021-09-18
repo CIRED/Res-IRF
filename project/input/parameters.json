@@ -14,7 +14,7 @@
     "type": "dict",
     "source_type": "function",
     "factor": 0.87,
-    "source": "input/hindcast/share_multi_family.csv"
+    "source": null
   },
   "Available income ini 2012": 1338000000000,
   "Available income ini 2018": 1421000000000,

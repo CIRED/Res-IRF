@@ -6,7 +6,7 @@ import pandas as pd
 import ui_utils
 
 
-def run_indicators(config, folder, CO2_value, parameters):
+def run_indicators(config, folder, CO2_value, parameters=None):
     """
     Calculate main indicators to assess public policy.
 
@@ -86,7 +86,7 @@ def run_indicators(config, folder, CO2_value, parameters):
         cost_effectiveness.sort_index(inplace=True)
 
         # 2.1 Leverage effect
-        df = summaries['Capex renovation (€)'].copy()
+        df = summaries['Annual renovation expenditure (€)'].copy()
         df.fillna(0, inplace=True)
         marginal_investment = pd.Series(
             [(df[config['All policies']] - df[config['Policy - {}'.format(year)]]).loc[year] for year in list_years],
@@ -189,7 +189,6 @@ def run_indicators(config, folder, CO2_value, parameters):
         share_energy_poverty_buildings.name = 'Share energy poverty difference (%) {}'.format(name)
         result = pd.concat((result, share_energy_poverty_buildings), axis=1)
 
-
     result.to_csv(os.path.join(folder_output, 'policies_effectiveness.csv'))
 
 
@@ -199,4 +198,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     config_policies = pd.read_csv(os.path.join('project', args.config), squeeze=True, header=None, index_col=[0])
-    run_indicators(config_policies.to_dict(), config_policies['Folder name'])
+    config_policies = config_policies.dropna()
+    CO2_value = pd.read_csv('project/input/CO2_value.csv', index_col=[0], squeeze=True, header=None)
+    run_indicators(config_policies.to_dict(), config_policies['Folder name'], CO2_value)

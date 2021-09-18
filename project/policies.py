@@ -322,10 +322,9 @@ class RegulatedLoan(PublicPolicy):
 
         Examples
         ________
-        >>> interest_cost(0.1, 1, 100)
+        >>> RegulatedLoan.interest_cost(0.1, 1, 100)
         10
-        >>> interest_cost(0.1, 10, 100000)
-
+        >>> RegulatedLoan.interest_cost(0.1, 10, 100000)
         """
         period = np.arange(n_period) + 1
         return - npf.ipmt(interest_rate, period, n_period, principal).sum()
@@ -449,3 +448,53 @@ class RenovationObligation:
         df = pd.DataFrame(temp).T
         df.index.name = self.start_targets.index.name
         return df
+
+
+class ThermalRegulation(PublicPolicy):
+    """
+    ThermalRegulationConstruction represents public policies that require a minimal performance target to build or
+    retrofit a building.
+
+    For example, by 2030 all constructions should be Zero Net Building, and by 2040 Positive Energy Building.
+    """
+    def __init__(self, name, start, end, target, transition):
+        super().__init__(name, start, end, 'thermal_regulation', False)
+
+        self.transition = transition
+        self.target = self.parse_targets(target)
+
+    @staticmethod
+    def parse_targets(target):
+        """
+        Returns pd.Series containing a list of element to remove each year because of the regulation.
+
+        Parameters
+        ----------
+        target: pd.Series
+        end: int
+
+        Returns
+        -------
+        pd.Series
+        """
+        parse_target = pd.DataFrame()
+        for idx, yr in target.items():
+            parse_target = pd.concat((parse_target, pd.Series(idx, index=range(yr[0], yr[1]))), axis=1)
+        return parse_target
+
+    def apply_regulation(self, attributes, year):
+        """
+        Remove target of possible attributes.
+
+        Parameters
+        ----------
+        attributes: dict
+            Key are attribute name (Energy performance) and items are list of possible value taken by attributes.
+        year: int
+
+        Returns
+        -------
+        """
+        for val in self.target.loc[year, :]:
+            attributes[self.transition].remove(val)
+        return attributes

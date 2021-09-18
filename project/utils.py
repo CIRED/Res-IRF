@@ -199,7 +199,7 @@ def add_level_nan(ds, level):
 
     Parameters
     -----------
-    ds: pd.Series
+    ds: pd.DataFrame, pd.Series
     level: str
 
     Returns
