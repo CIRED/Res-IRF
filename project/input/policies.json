@@ -55,6 +55,7 @@
     "transition": [
       "Energy performance"
     ],
+    "time_dependent": false,
     "type": "dict_to_parse"
   },
   "cite": {
@@ -65,33 +66,18 @@
     "transition": [
       "Energy performance"
     ],
+    "time_dependent": false,
     "type": "dict_to_parse"
   },
   "cee_subsidy": {
     "name": "cee_subsidy",
     "policy": "subsidies",
-    "value": 0.004,
+    "value": "project/input/cee_subsidy.csv",
     "unit": "€/kWh",
     "transition": [
       "Energy performance"
     ],
-    "type": "dict_to_parse"
-  },
-  "cee_taxes": {
-    "name": "cee_taxes",
-    "policy": "energy_taxes",
-    "value": 0.004,
-    "unit": "€/kWh",
-    "transition": [
-      "Energy performance"
-    ],
-    "type": "dict_to_parse"
-  },
-  "carbon_tax": {
-    "name": "carbon_tax",
-    "policy": "energy_taxes",
-    "value": "project/input/carbon_tax.csv",
-    "unit": "€/tCO2",
+    "time_dependent": true,
     "type": "dict_to_parse"
   },
   "reduced_tax": {
@@ -102,7 +88,8 @@
     "transition": [
       "Energy performance"
     ],
-    "type": "dict_to_parse"
+    "type": "dict_to_parse",
+    "time_dependent": false
   },
   "eptz": {
     "name": "eptz",
@@ -197,6 +184,23 @@
     ],
     "type": "dict_to_parse"
   },
+  "cee_taxes": {
+    "name": "cee_taxes",
+    "policy": "energy_taxes",
+    "value": "project/input/cee_tax.csv",
+    "unit": "€/kWh",
+    "transition": [
+      "Energy performance"
+    ],
+    "type": "dict_to_parse"
+  },
+  "carbon_tax": {
+    "name": "carbon_tax",
+    "policy": "energy_taxes",
+    "value": "project/input/carbon_tax.csv",
+    "unit": "€/tCO2",
+    "type": "dict_to_parse"
+  },
   "renovation_obligation": {
     "name": "renovation_obligation",
     "policy": "renovation_obligation",
@@ -234,7 +238,7 @@
     "targets": {
       "val": {
         "BBC": [
-          2013,
+          2020,
           2051
         ]
       },

@@ -23,7 +23,8 @@ The development of the Res-IRF model was initiated at CIRED in 2008. Coordinated
    - Type: `conda activate Res-IRF`
 
 **Step 4**: **Launch Res-IRF**
-   - `python main.py -n scenario.json`
+   - Launch from Res-IRF root folder:
+   - `python project/main.py -n scenario.json`
    - `scenario.json` is the path to the configuration file
 
 ## Usage example

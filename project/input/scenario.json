@@ -81,11 +81,19 @@
       "end": 2013,
       "calibration": true
     },
+    "cee_subsidy_value": {
+      "type": "file",
+      "source": "project/input/cee_subsidy.csv"
+    },
     "cee_taxes": {
       "activated": true,
       "start": 2012,
       "end": 2013,
       "calibration": true
+    },
+    "cee_tax_value": {
+      "type": "file",
+      "source": "project/input/cee_tax.csv"
     },
     "reduced_tax": {
       "activated": true,
@@ -236,11 +244,19 @@
       "end": 2051,
       "calibration": true
     },
+    "cee_subsidy_value": {
+      "type": "file",
+      "source": "project/input/cee_subsidy.csv"
+    },
     "cee_taxes": {
       "activated": true,
       "start": 2012,
       "end": 2051,
       "calibration": true
+    },
+    "cee_tax_value": {
+      "type": "file",
+      "source": "project/input/cee_tax.csv"
     },
     "reduced_tax": {
       "activated": true,
@@ -391,11 +407,19 @@
       "end": 2013,
       "calibration": true
     },
+    "cee_subsidy_value": {
+      "type": "file",
+      "source": "project/input/cee_subsidy.csv"
+    },
     "cee_taxes": {
       "activated": true,
       "start": 2012,
       "end": 2013,
       "calibration": true
+    },
+    "cee_tax_value": {
+      "type": "file",
+      "source": "project/input/cee_tax.csv"
     },
     "reduced_tax": {
       "activated": true,
@@ -546,11 +570,19 @@
       "end": 2051,
       "calibration": true
     },
+    "cee_subsidy_value": {
+      "type": "file",
+      "source": "project/input/cee_subsidy.csv"
+    },
     "cee_taxes": {
       "activated": true,
       "start": 2012,
       "end": 2051,
       "calibration": true
+    },
+    "cee_tax_value": {
+      "type": "file",
+      "source": "project/input/cee_tax.csv"
     },
     "reduced_tax": {
       "activated": true,

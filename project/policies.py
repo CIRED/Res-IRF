@@ -140,7 +140,7 @@ class Subsidies(PublicPolicy):
     """
 
     def __init__(self, name, start, end, unit, value,
-                 transition=None, cost_max=None, subsidy_max=None, calibration=False):
+                 transition=None, cost_max=None, subsidy_max=None, calibration=False, time_dependent=False):
         super().__init__(name, start, end, 'subsidies', calibration)
 
         if transition is None:
@@ -154,24 +154,50 @@ class Subsidies(PublicPolicy):
         self.cost_max = cost_max
         self.subsidy_max = subsidy_max
         self.value = value
+        self.time_dependent = time_dependent
 
-    def to_subsidy(self, cost=None, energy_saving=None):
+    def to_subsidy(self, year, cost=None, energy_saving=None):
+        """
+        Calculate subsidy value based on subsidies parameters.
+
+        Parameters
+        ----------
+        year: int
+        cost: pd.Series, pd.DataFrame, optional
+            Necessary if self.unit == '%'
+        energy_saving:  pd.Series, pd.DataFrame, optional
+            Necessary if self.unit == '€/kWh'
+
+        Returns
+        -------
+
+        """
+
+        if self.time_dependent:
+            value = self.value[year]
+        else:
+            value = self.value
 
         if self.unit == '€':
-            return self.value
+            return value
+
         if self.unit == '%':
             # subsidy apply to one target
-            if isinstance(self.value, pd.Series):
-                val = reindex_mi(self.value, cost.index, self.value.index.names, axis=0)
+            if isinstance(value, pd.Series):
+                val = reindex_mi(value, cost.index, axis=0)
             else:
-                val = self.value
+                val = value
             # subsidy apply to a maximum cost
             if self.cost_max is not None:
                 cost[cost > self.cost_max] = cost
-
             return val * cost
+
         if self.unit == '€/kWh':
-            return self.value * energy_saving
+            if isinstance(value, pd.Series):
+                val = reindex_mi(value, energy_saving.index, axis=0)
+            else:
+                val = value
+            return (val * energy_saving.T).T
 
 
 class SubsidiesRecyclingTax(PublicPolicy):

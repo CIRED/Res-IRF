@@ -696,7 +696,8 @@ class HousingStock:
         return energy_saving_lc
 
     def to_emission_saving(self, co2_content, transition=None, consumption='conventional'):
-        """Calculate emission saving between initial and final state.
+        """
+        Calculate emission saving between initial and final state.
 
         Parameters
         ----------
@@ -729,7 +730,8 @@ class HousingStock:
             return emission_saving
 
     def to_emission_saving_lc(self, co2_content, transition=None, consumption='conventional', discount=0.04):
-        """Calculate life-cycle emission saving between initial and final state for the entire project duration)
+        """
+        Calculate life-cycle emission saving between initial and final state for the entire project duration)
 
         Parameters
         ----------
@@ -783,7 +785,8 @@ class HousingStock:
 
     def to_lcc_final(self, energy_prices, cost_invest=None, cost_intangible=None,
                      transition=None, consumption='conventional', subsidies=None, segments=None):
-        """Calculate life-cycle-cost of home-energy retrofits for every segment and every possible transition.
+        """
+        Calculate life-cycle-cost of home-energy retrofits for every segment and every possible transition.
 
         Parameters
         ----------
@@ -852,14 +855,14 @@ class HousingStock:
                 if policy.transition == transition:
                     if policy.policy == 'subsidies' or policy.policy == 'subsidy_tax':
                         if policy.unit == '%':
-                            s = policy.to_subsidy(cost=capex)
+                            s = policy.to_subsidy(self.year, cost=capex)
                             s.fillna(0, inplace=True)
                         elif policy.unit == '€/kWh':
                             # energy saving is kWh/m2
                             energy_saving = self.to_energy_saving_lc(transition=transition, consumption=consumption)
                             for t in transition:
                                 energy_saving = energy_saving.unstack('{} final'.format(t))
-                            s = policy.to_subsidy(energy_saving=energy_saving)
+                            s = policy.to_subsidy(self.year, energy_saving=energy_saving)
                             s[s < 0] = 0
                             s.fillna(0, inplace=True)
 
@@ -889,7 +892,8 @@ class HousingStock:
 
     @staticmethod
     def lcc2market_share(lcc_df, nu=8.0):
-        """Returns market share for each segment based on lcc_df.
+        """
+        Returns market share for each segment based on lcc_df.
 
         Parameters
         ----------
@@ -910,7 +914,8 @@ class HousingStock:
 
     def to_market_share(self, energy_prices, transition=None, consumption='conventional', cost_invest=None,
                         cost_intangible=None, subsidies=None, nu=8.0, segments=None):
-        """Returns market share for each segment and each possible final state.
+        """
+        Returns market share for each segment and each possible final state.
 
         Parameter nu characterizing the heterogeneity of preferences is set to 8 in the model.
         Intangible costs are calibrated so that the observed market shares are reproduced in the initial year.

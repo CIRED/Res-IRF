@@ -88,7 +88,9 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
                 subsidies_dict[pol] = Subsidies(item['name'], config[item['name']]['start'],
                                                 config[item['name']]['end'], item['unit'], item['value'],
                                                 transition=item['transition'],
-                                                calibration=config[item['name']]['calibration'])
+                                                calibration=config[item['name']]['calibration'],
+                                                time_dependent=item['time_dependent'])
+
             elif item['policy'] == 'energy_taxes':
                 energy_taxes_dict[pol] = EnergyTaxes(item['name'], config[item['name']]['start'],
                                                      config[item['name']]['end'], item['unit'],
@@ -433,6 +435,9 @@ if __name__ == '__main__':
     folder = dict()
     folder['input'] = os.path.join(os.getcwd(), 'project', 'input')
     folder['output'] = os.path.join(os.getcwd(), 'project', 'output')
+    if not os.path.isdir(folder['output']):
+        os.mkdir(folder['output'])
+
     folder['intermediate'] = os.path.join(os.getcwd(), 'project', 'intermediate')
     if not os.path.isdir(folder['intermediate']):
         os.mkdir(folder['intermediate'])
