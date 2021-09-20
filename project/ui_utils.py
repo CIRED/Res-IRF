@@ -116,10 +116,10 @@ def simple_pd_plot(df, xlabel, ylabel, colors=None, format_x=None, format_y=None
     except AttributeError:
         pass
 
-    plt.show()
-
     if save is not None:
         fig.savefig(save)
+    else:
+        plt.show()
 
 
 def economic_subplots(df, suptitle, format_axtitle=lambda x: x, format_val=lambda x: '{:.0f}'.format(x), n_columns=3):
@@ -235,10 +235,10 @@ def scenario_grouped_subplots(df_dict, suptitle='', n_columns=3, format_y=lambda
     fig.legend(handles, labels, loc='upper right', frameon=False)
     # plt.legend(frameon=False)
 
-    plt.show()
-
     if save is not None:
         fig.savefig(save)
+    else:
+        plt.show()
 
 
 def distribution_scatter(df, column_x, column_y, dict_color, level='Energy performance',

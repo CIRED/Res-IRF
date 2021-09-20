@@ -1,4 +1,15 @@
 {
+  "cite": {
+    "name": "cite",
+    "policy": "subsidies",
+    "value": 0.17,
+    "unit": "%",
+    "transition": [
+      "Energy performance"
+    ],
+    "time_dependent": false,
+    "type": "dict_to_parse"
+  },
   "cite_plus": {
     "name": "cite_plus",
     "policy": "subsidies",
@@ -51,17 +62,6 @@
       ],
       "type": "pd.DataFrame"
     },
-    "unit": "%",
-    "transition": [
-      "Energy performance"
-    ],
-    "time_dependent": false,
-    "type": "dict_to_parse"
-  },
-  "cite": {
-    "name": "cite",
-    "policy": "subsidies",
-    "value": 0.17,
     "unit": "%",
     "transition": [
       "Energy performance"
