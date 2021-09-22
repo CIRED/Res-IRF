@@ -33,8 +33,10 @@ class HousingStock:
                  attributes2discount=None,
                  attributes2income=None,
                  attributes2consumption=None,
-                 price_behavior='myopic'):
-        """Initialize Housing Stock object.
+                 price_behavior='myopic',
+                 kwh_cumac_transition=None):
+        """
+        Initialize Housing Stock object.
 
         Parameters
         ----------
@@ -75,6 +77,7 @@ class HousingStock:
         self.attributes2discount = attributes2discount
         self.attributes2income = attributes2income
         self.attributes2consumption = attributes2consumption
+        self.kwh_cumac_transition = kwh_cumac_transition
 
         self.discount_rate = None
         self.horizon = None
@@ -260,7 +263,8 @@ class HousingStock:
 
     @staticmethod
     def to_discounted(df, rate):
-        """Returns discounted DataFrame from DataFrame.
+        """
+        Returns discounted DataFrame from DataFrame.
 
         Parameters
         __________
@@ -682,7 +686,24 @@ class HousingStock:
             return energy_saving
 
     def to_energy_saving_lc(self, transition=None, consumption='conventional', discount=0.04):
+        """
+        Calculate life-cycle energy saving between initial and final state for the entire project duration.
+
+        Parameters
+        ----------
+        transition: {(Energy performance, ), (Heating energy, ), (Energy performance, Heating energy)
+        consumption: {'conventional', 'actual'}
+        discount: float, default 0.04
+
+        Returns
+        -------
+        dict
+            {transition: {consumption: pd.Series}}
+        """
+
         energy_saving = self.to_energy_saving(transition=transition, consumption=consumption)
+        # energy_saving = HousingStockConstructed.data2area(self.attributes2area, energy_saving)
+
         if consumption == 'conventional':
             energy_saving = pd.concat([energy_saving] * 30, axis=1)
             energy_saving.columns = range(self.year, self.year + 30, 1)
@@ -731,7 +752,7 @@ class HousingStock:
 
     def to_emission_saving_lc(self, co2_content, transition=None, consumption='conventional', discount=0.04):
         """
-        Calculate life-cycle emission saving between initial and final state for the entire project duration)
+        Calculate life-cycle emission saving between initial and final state for the entire project duration.
 
         Parameters
         ----------
@@ -746,6 +767,8 @@ class HousingStock:
             {transition: {consumption: pd.Series}}
         """
         emission_saving = self.to_emission_saving(co2_content, transition=transition, consumption=consumption)
+        # emission_saving = HousingStockConstructed.data2area(self.attributes2area, emission_saving)
+
         if consumption == 'conventional':
             emission_saving = pd.concat([emission_saving] * 30, axis=1)
             emission_saving.columns = range(self.year, self.year + 30, 1)
@@ -856,12 +879,19 @@ class HousingStock:
                     if policy.policy == 'subsidies' or policy.policy == 'subsidy_tax':
                         if policy.unit == '%':
                             s = policy.to_subsidy(self.year, cost=capex)
+                            s = s.reindex(lcc_transition_seg.index, axis=0).reindex(columns, axis=1)
                             s.fillna(0, inplace=True)
+
                         elif policy.unit == '€/kWh':
                             # energy saving is kWh/m2
+                            """
                             energy_saving = self.to_energy_saving_lc(transition=transition, consumption=consumption)
                             for t in transition:
                                 energy_saving = energy_saving.unstack('{} final'.format(t))
+                            """
+                            energy_saving = reindex_mi(self.kwh_cumac_transition, capex.index).reindex(capex.columns,
+                                                                                                       axis=1).fillna(0)
+
                             s = policy.to_subsidy(self.year, energy_saving=energy_saving)
                             s[s < 0] = 0
                             s.fillna(0, inplace=True)
@@ -870,22 +900,26 @@ class HousingStock:
                         capex_euro = (self.to_area() * capex.T).T
                         s = policy.to_opportunity_cost(capex_euro)
                         s = (s.T * (self.to_area() ** -1)).T
-                        s = s.reindex(columns, axis=1)
+                        s = s.reindex(lcc_transition_seg.index, axis=0).reindex(columns, axis=1)
                         s.fillna(0, inplace=True)
 
                     if total_subsidies is None:
-                        total_subsidies = s
+                        total_subsidies = s.copy()
                     else:
                         total_subsidies += s
 
                     self.subsidies_detailed[tuple(transition)][self.year]['{} (€/m2)'.format(policy.name)] = s
                     self.subsidies_detailed_euro[tuple(transition)][self.year]['{} (€)'.format(policy.name)] = (self.area * s.T).T
-                    self.subsidies_total[tuple(transition)][self.year] = total_subsidies
 
         if capex is not None:
-            lcc_transition_seg += capex
+            lcc_transition_seg += capex_total
         if total_subsidies is not None:
+            self.subsidies_total[tuple(transition)][self.year] = total_subsidies
             lcc_transition_seg -= total_subsidies
+
+        if (lcc_transition_seg < 0).any().any():
+            lcc_transition_seg[lcc_transition_seg < 0] = 0
+            print('lcc transition is negative')
 
         self.lcc_final[tuple(transition)][self.year] = lcc_transition_seg
         return lcc_transition_seg
@@ -898,7 +932,6 @@ class HousingStock:
         Parameters
         ----------
         lcc_df : pd.DataFrame or pd.Series
-
         nu: int, optional
 
         Returns
@@ -1021,7 +1054,10 @@ class HousingStock:
             subsidies to consider in the market share
         option: int, default 0
             0: intangible cost is segmented
+                Each agent got its own intangible costs to match the observed market share.
             1: intangible cost is aggregated based on initial market share attributes
+                Each agents group share intangible costs to match the observed market share.
+                This option allows some diversity in the calculated market share between member of each group.
             2: intangible cost is aggregated on heating energy level (what was done before)
 
         Returns
@@ -1340,14 +1376,15 @@ class HousingStockRenovated(HousingStock):
                  rate_renovation_ini=None, learning_year=None,
                  npv_min=None, rate_max=None, rate_min=None,
                  attributes2area=None, attributes2horizon=None, attributes2discount=None, attributes2income=None,
-                 attributes2consumption=None):
+                 attributes2consumption=None, kwh_cumac_transition=None):
 
         super().__init__(stock_seg, attributes_values, year,
                          attributes2area=attributes2area,
                          attributes2horizon=attributes2horizon,
                          attributes2discount=attributes2discount,
                          attributes2income=attributes2income,
-                         attributes2consumption=attributes2consumption)
+                         attributes2consumption=attributes2consumption,
+                         kwh_cumac_transition=kwh_cumac_transition)
 
         self.residual_rate = residual_rate
         self._destruction_rate = destruction_rate
@@ -1407,6 +1444,10 @@ class HousingStockRenovated(HousingStock):
         self._stock_seg_mobile_dict[self.year] = self._stock_seg_mobile
         self._stock_seg_residual = new_stock_seg * self.residual_rate
         self._stock_area_seg = self.to_stock_area_seg()
+
+    @property
+    def stock_mobile(self):
+        return self._stock_seg_mobile
 
     @property
     def flow_knowledge_ep(self):
@@ -1562,19 +1603,19 @@ class HousingStockRenovated(HousingStock):
                                                       cost_intangible=cost_intangible,
                                                       subsidies=subsidies)
 
-        stock_seg = self.stock_seg
+        stock = self.stock_mobile
         flow_renovation_obligation = 0
         if renovation_obligation is not None:
             flow_renovation_obligation = self.to_flow_obligation(renovation_obligation,
                                                                  mutation=mutation, rotation=rotation)
-            stock_seg = stock_seg - flow_renovation_obligation
+            stock = stock - flow_renovation_obligation
 
-        flow_renovation_seg = renovation_rate_seg * stock_seg
+        flow_renovation_seg = renovation_rate_seg * stock
         flow_renovation_seg += flow_renovation_obligation
 
         # indicators
-        renovation_rate_aggr = flow_renovation_seg.sum() / stock_seg.sum()
-        renovation_rate_dm = flow_renovation_seg.groupby(['Occupancy status', 'Housing type']).sum() / stock_seg[stock_seg.index.get_level_values('Energy performance') != 'A'].groupby(['Occupancy status', 'Housing type']).sum()
+        renovation_rate_aggr = flow_renovation_seg.sum() / stock.sum()
+        renovation_rate_dm = flow_renovation_seg.groupby(['Occupancy status', 'Housing type']).sum() / stock[stock.index.get_level_values('Energy performance') != 'A'].groupby(['Occupancy status', 'Housing type']).sum()
         self.renovation_rate_dm[self.year] = renovation_rate_dm
 
         if self.year in self.market_share[tuple(transition)]:
@@ -1756,6 +1797,15 @@ class HousingStockRenovated(HousingStock):
 
         return flow_remained_seg, flow_area_renovation_seg
 
+    def update_stock(self, flow_remained_seg, flow_area_renovation_seg=None):
+
+        # update segmented stock  considering renovation
+        self.add_flow(flow_remained_seg)
+
+        if flow_area_renovation_seg is not None:
+            flow_knowledge_renovation = self.to_flow_knowledge(flow_area_renovation_seg)
+            self.flow_knowledge_ep = flow_knowledge_renovation
+
     def to_flow_demolition_dm(self):
         flow_demolition = self._stock_seg.sum() * self._destruction_rate
         flow_demolition_dm = self._dm_share_tot * flow_demolition
@@ -1933,15 +1983,6 @@ class HousingStockRenovated(HousingStock):
 
         flow_knowledge_renovation.index.set_names('Energy performance final', inplace=True)
         return flow_knowledge_renovation
-
-    def update_stock(self, flow_remained_seg, flow_area_renovation_seg=None):
-
-        # update segmented stock  considering renovation
-        self.add_flow(flow_remained_seg)
-
-        if flow_area_renovation_seg is not None:
-            flow_knowledge_renovation = self.to_flow_knowledge(flow_area_renovation_seg)
-            self.flow_knowledge_ep = flow_knowledge_renovation
 
     @staticmethod
     def calibration_rho(npv, renovation_rate_target, rate_max, rate_min, npv_min):

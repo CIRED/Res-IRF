@@ -100,10 +100,10 @@ class EnergyTaxes(PublicPolicy):
                 idx = value.columns.union(co2_content.columns)
                 value = value.reindex(idx, axis=1)
                 co2_content = co2_content.reindex(idx, axis=1)
-            taxes = value * co2_content
+            taxes = value * co2_content / 10**6
             taxes.fillna(0, inplace=True)
-            taxes = taxes.reindex(energy_prices.columns, axis=1)
-            val = energy_prices * taxes / 10**6
+            val = taxes.reindex(energy_prices.columns, axis=1)
+            # val = energy_prices * taxes
 
         else:
             raise AttributeError
@@ -140,7 +140,8 @@ class Subsidies(PublicPolicy):
     """
 
     def __init__(self, name, start, end, unit, value,
-                 transition=None, cost_max=None, subsidy_max=None, calibration=False, time_dependent=False):
+                 transition=None, cost_max=None, subsidy_max=None, calibration=False, time_dependent=False,
+                 targets=None):
         super().__init__(name, start, end, 'subsidies', calibration)
 
         if transition is None:
@@ -155,6 +156,22 @@ class Subsidies(PublicPolicy):
         self.subsidy_max = subsidy_max
         self.value = value
         self.time_dependent = time_dependent
+        self.target = targets
+
+    @staticmethod
+    def capex_targeted(target, cost_input):
+        cost = cost_input.copy()
+        target_re = reindex_mi(target, cost.index, target.index.names)
+        target_re = reindex_mi(target_re, cost.columns, target.columns.names, axis=1)
+        target_re.fillna(0, inplace=True)
+        cost = cost * target_re
+        cost.replace(0, np.nan, inplace=True)
+        cost.dropna(axis=0, how='all', inplace=True)
+        cost.dropna(axis=1, how='all', inplace=True)
+        return cost
+
+    def apply_targets(self, capex):
+        return Subsidies.capex_targeted(self.target, capex)
 
     def to_subsidy(self, year, cost=None, energy_saving=None):
         """
@@ -178,10 +195,16 @@ class Subsidies(PublicPolicy):
         else:
             value = self.value
 
+        if self.target is not None:
+            if cost is not None:
+                cost = self.apply_targets(cost)
+            if energy_saving is not None:
+                energy_saving = self.apply_targets(energy_saving)
+
         if self.unit == '€':
             return value
 
-        if self.unit == '%':
+        elif self.unit == '%':
             # subsidy apply to one target
             if isinstance(value, pd.Series):
                 val = reindex_mi(value, cost.index, axis=0)
@@ -192,12 +215,15 @@ class Subsidies(PublicPolicy):
                 cost[cost > self.cost_max] = cost
             return val * cost
 
-        if self.unit == '€/kWh':
+        elif self.unit == '€/kWh':
             if isinstance(value, pd.Series):
                 val = reindex_mi(value, energy_saving.index, axis=0)
             else:
                 val = value
             return (val * energy_saving.T).T
+
+        else:
+            raise AttributeError('self.unit must be in {€, %, €/kWh}')
 
 
 class SubsidiesRecyclingTax(PublicPolicy):
@@ -369,17 +395,11 @@ class RegulatedLoan(PublicPolicy):
         -------
         pd.DataFrame
         """
-        targets = reindex_mi(self.targets, principal.index, self.targets.index.names)
-        targets = reindex_mi(targets, principal.columns, self.targets.columns.names, axis=1)
-        targets.fillna(0, inplace=True)
-        principal = principal * targets
-        principal.replace(0, np.nan, inplace=True)
-        principal.dropna(axis=0, how='all', inplace=True)
-        principal.dropna(axis=1, how='all', inplace=True)
-        return principal
+        return Subsidies.capex_targeted(self.targets, principal)
 
     def to_opp_cost(self, ir_market, horizon, principal):
-        """Returns the opportunity cost to get the regulated loan.
+        """R
+        eturns the opportunity cost to get the regulated loan.
 
         Calls self.apply_targets to restrict transition that are targeted by the policy.
 

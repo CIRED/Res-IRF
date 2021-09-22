@@ -128,7 +128,7 @@ dmypy.json
 /project/output/
 /project/input/old/
 /project/input/data_preparation/
-/project/input/hindcast_1984/
+/project/input/input_1984/
 /project/input/input_constant/
 /project/input/test/
 /project/input/scenarios/

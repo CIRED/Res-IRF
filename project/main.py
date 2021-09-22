@@ -89,7 +89,7 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
                                                 config[item['name']]['end'], item['unit'], item['value'],
                                                 transition=item['transition'],
                                                 calibration=config[item['name']]['calibration'],
-                                                time_dependent=item['time_dependent'])
+                                                time_dependent=item['time_dependent'], targets=item['targets'])
 
             elif item['policy'] == 'energy_taxes':
                 energy_taxes_dict[pol] = EnergyTaxes(item['name'], config[item['name']]['start'],
@@ -176,7 +176,8 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
                                       learning_year=parameters['Learning years renovation'],
                                       npv_min=parameters['NPV min'],
                                       rate_max=parameters['Renovation rate max'],
-                                      rate_min=parameters['Renovation rate min'])
+                                      rate_min=parameters['Renovation rate min'],
+                                      kwh_cumac_transition=attributes['kwh_cumac_transition'])
 
     logging.debug('Initialize energy consumption and cash-flows')
     buildings.ini_energy_cash_flows(energy_prices)
@@ -415,7 +416,7 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
                 buildings.flow_renovation_label_energy_dict[year].sum().sum(), flow_constructed))
 
     parse_output(output, buildings, buildings_constructed, energy_prices, energy_taxes, energy_taxes_detailed,
-                 co2_content, parameters['Calibration consumption'], folder['output'], lbd_output=True)
+                 co2_content, parameters['Calibration consumption'], folder['output'], lbd_output=False)
 
     end = time.time()
     logging.debug('Time for the module: {:,.0f} seconds.'.format(end - start))
@@ -457,6 +458,7 @@ if __name__ == '__main__':
                         filemode='a',
                         level=logging.DEBUG,
                         format='%(asctime)s - (%(lineno)s) - %(message)s')
+    # logging.getLogger('matplotlib.font_manager').disabled = True
     logging.getLogger('matplotlib.font_manager').disabled = True
 
     root_logger = logging.getLogger("")
@@ -501,7 +503,8 @@ if __name__ == '__main__':
         income = attributes['attributes2income'].T
         income.columns = ['Income {} (€)'.format(c) for c in income.columns]
         summary_param = pd.concat((summary_param, income), axis=1)
-        pd.concat((summary_input, summary_param), axis=1).T.loc[:, calibration_year:].to_csv(os.path.join(folder_scenario['output'], 'summary_input.csv'))
+        pd.concat((summary_input, summary_param), axis=1).T.loc[:, calibration_year:].to_csv(
+            os.path.join(folder_scenario['output'], 'summary_input.csv'))
 
         processes_list += [Process(target=res_irf,
                                    args=(calibration_year, end_year, folder_scenario, config, parameters, 

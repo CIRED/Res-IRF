@@ -4,7 +4,7 @@
     "green_value": "Reference",
     "budget_constraint": "Reference",
     "stock_buildings": {
-      "source": "project/input/stock_buildings_phebus2012.pkl",
+      "source": "project/input/building_stock_phebus2012.pkl",
       "year": 2012,
       "type": "pd.Series"
     },
@@ -167,7 +167,7 @@
     "green_value": "Reference",
     "budget_constraint": "Reference",
     "stock_buildings": {
-      "source": "project/input/stock_buildings_phebus2012.pkl",
+      "source": "project/input/building_stock_phebus2012.pkl",
       "year": 2012,
       "type": "pd.Series"
     },

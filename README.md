@@ -60,7 +60,7 @@ There are 4 main notebooks:
 - `policy_indicator.ipyb`: macro and micro output comparison and calculation of efficiency and effectiveness. 
 
 Notebook templates are stored in `project/nb_template_analysis`.  
-Users should copy and paste the template notebook in another folder to launch it.
+**Users should copy and paste the template notebook in another folder to launch it.**
 
 For users that want to contribute, other notebooks are stored in `tutorials_notbook` to insist on a specific Res-IRF
 functions:

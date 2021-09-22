@@ -8,6 +8,7 @@
       "Energy performance"
     ],
     "time_dependent": false,
+    "targets": null,
     "type": "dict_to_parse"
   },
   "cite_plus": {
@@ -67,6 +68,7 @@
       "Energy performance"
     ],
     "time_dependent": false,
+    "targets": null,
     "type": "dict_to_parse"
   },
   "cee_subsidy": {
@@ -78,6 +80,7 @@
       "Energy performance"
     ],
     "time_dependent": true,
+    "targets": null,
     "type": "dict_to_parse"
   },
   "reduced_tax": {
@@ -89,6 +92,7 @@
       "Energy performance"
     ],
     "type": "dict_to_parse",
+    "targets": null,
     "time_dependent": false
   },
   "eptz": {
@@ -182,6 +186,66 @@
     "transition": [
       "Energy performance"
     ],
+    "type": "dict_to_parse"
+  },
+  "eptz_subsidy": {
+    "name": "eptz_subsidy",
+    "policy": "subsidies",
+    "value": 0.09,
+    "unit": "%",
+    "transition": [
+      "Energy performance"
+    ],
+    "targets": {
+      "val": {
+        "G": {
+          "F": 0,
+          "E": 0,
+          "D": 1,
+          "C": 1,
+          "B": 1,
+          "A": 1
+        },
+        "F": {
+          "F": 0,
+          "E": 0,
+          "D": 1,
+          "C": 1,
+          "B": 1,
+          "A": 1
+        },
+        "E": {
+          "F": 0,
+          "E": 0,
+          "D": 1,
+          "C": 1,
+          "B": 1,
+          "A": 1
+        },
+        "D": {
+          "F": 0,
+          "E": 0,
+          "D": 0,
+          "C": 0,
+          "B": 1,
+          "A": 1
+        },
+        "C": {
+          "F": 0,
+          "E": 0,
+          "D": 0,
+          "C": 0,
+          "B": 1,
+          "A": 1
+        }
+      },
+      "index": [
+        "Energy performance",
+        "Energy performance final"
+      ],
+      "type": "pd.DataFrame"
+    },
+    "time_dependent": false,
     "type": "dict_to_parse"
   },
   "cee_taxes": {
