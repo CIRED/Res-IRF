@@ -1,4 +1,4 @@
-from utils import reindex_mi
+from utils import reindex_mi, add_level
 import numpy as np
 import numpy_financial as npf
 import pandas as pd
@@ -115,7 +115,9 @@ class EnergyTaxes(PublicPolicy):
 
 
 class Subsidies(PublicPolicy):
-    """Represents energy taxes.
+    """Represents subsidies.
+
+    Subsidies values are in €/m2. Subsidy_max, cost_max or cost_min are transformed in €/m2.
 
     Attributes
     ----------
@@ -140,8 +142,9 @@ class Subsidies(PublicPolicy):
     """
 
     def __init__(self, name, start, end, unit, value,
-                 transition=None, cost_max=None, subsidy_max=None, calibration=False, time_dependent=False,
-                 targets=None):
+                 transition=None, cost_max=None, cost_min=None,
+                 subsidy_max=None, calibration=False, time_dependent=False,
+                 targets=None, area=None):
         super().__init__(name, start, end, 'subsidies', calibration)
 
         if transition is None:
@@ -152,11 +155,43 @@ class Subsidies(PublicPolicy):
         # self.targets = targets
         self.list_unit = ['%', '€/kWh', '€/tCO2', '€']
         self.unit = unit
-        self.cost_max = cost_max
-        self.subsidy_max = subsidy_max
         self.value = value
         self.time_dependent = time_dependent
         self.target = targets
+
+        self.area = area.copy()
+
+        self.cost_min = self.to_unit(cost_min)
+        self.cost_max = self.to_unit(cost_max)
+        self.subsidy_max = self.to_unit(subsidy_max)
+
+    def to_unit(self, value):
+        """
+        Transform € to €/m2.
+
+        Parameters
+        ----------
+        value: int, float, pd.Series
+        Returns
+        -------
+        pd.Series, pd.DataFrame
+        """
+        if value is None:
+
+            return None
+
+        elif isinstance(value, float) or isinstance(value, int):
+            return value / self.area
+        elif isinstance(value, pd.Series):
+
+            area = self.area
+            for level in value.index.names:
+                if level not in self.area.index.names:
+                    idx = pd.Index(value.index.get_level_values(level), name=level)
+                    area = add_level(self.area, idx, axis=0)
+
+            value_re = reindex_mi(value, area.index)
+            return value_re / area
 
     @staticmethod
     def capex_targeted(target, cost_input):
@@ -212,15 +247,42 @@ class Subsidies(PublicPolicy):
                 val = value
             # subsidy apply to a maximum cost
             if self.cost_max is not None:
-                cost[cost > self.cost_max] = cost
-            return val * cost
+                cost_max = reindex_mi(self.cost_max, cost.index)
+                if isinstance(cost, pd.DataFrame):
+                    cost_max = pd.concat([cost_max] * cost.shape[1], axis=1)
+                    cost_max.columns = cost.columns
+                cost[cost > cost_max] = cost_max
+
+            if self.cost_min is not None:
+                cost_min = reindex_mi(self.cost_min, cost.index)
+                if isinstance(cost, pd.DataFrame):
+                    cost_min = pd.concat([cost_min] * cost.shape[1], axis=1)
+                    cost_min.columns = cost.columns
+                cost[cost < cost_min] = 0
+
+            subsidy = val * cost
+
+            if self.subsidy_max is not None:
+                subsidy_max = reindex_mi(self.subsidy_max, subsidy.index)
+                if isinstance(cost, pd.DataFrame):
+                    subsidy_max = pd.concat([subsidy_max] * cost.shape[1], axis=1)
+                    subsidy_max.columns = cost.columns
+                subsidy[subsidy > subsidy_max] = subsidy_max
+
+            return subsidy
 
         elif self.unit == '€/kWh':
             if isinstance(value, pd.Series):
                 val = reindex_mi(value, energy_saving.index, axis=0)
             else:
                 val = value
-            return (val * energy_saving.T).T
+
+            subsidy = (val * energy_saving.T).T
+            if self.subsidy_max is not None:
+                subsidy_max = reindex_mi(self.subsidy_max, subsidy.index)
+                subsidy[subsidy < subsidy_max] = subsidy_max
+
+            return subsidy
 
         else:
             raise AttributeError('self.unit must be in {€, %, €/kWh}')

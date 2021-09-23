@@ -3,7 +3,7 @@ import numpy as np
 from scipy.optimize import fsolve
 from copy import deepcopy
 
-from utils import reindex_mi, val2share, logistic, get_levels_values, remove_rows, add_level, de_aggregate_series
+from utils import reindex_mi, val2share, logistic, get_levels_values, remove_rows, add_level
 
 
 class HousingStock:
@@ -1347,6 +1347,46 @@ class HousingStock:
         self.energy_cash_flows_disc['conventional'] = HousingStock.to_discounted(
             self.energy_cash_flows['conventional'], self.attributes2discount)
 
+    @staticmethod
+    def add_tenant_income(building_stock, tenant_income):
+        """
+        Add Income class level to stock using information of tenant income.
+
+        Homeowners and Social-housing tenant and owner income class are the same.
+
+        Parameters
+        ----------
+        building_stock: pd.Series
+        tenant_income: pd.Series
+
+        Returns
+        -------
+        pd.Series
+        """
+        # building stock without landlords
+        bs = building_stock.copy()
+        building_stock_wolandlords = remove_rows(bs, 'Occupancy status', 'Landlords')
+        temp = pd.Series(building_stock_wolandlords.index.get_level_values('Income class owner'))
+        temp.index = building_stock_wolandlords.index
+
+        building_stock_wolandlords = pd.concat((building_stock_wolandlords, temp), axis=1)
+        building_stock_wolandlords = building_stock_wolandlords.set_index('Income class owner', drop=True,
+                                                                          append=True).iloc[:, 0]
+
+        # landlords
+        building_stock_landlords = building_stock.xs('Landlords', level='Occupancy status', drop_level=False)
+        tenant_income_re = reindex_mi(tenant_income, building_stock_landlords.index)
+        tenant_income_re.columns.names = ['Income class']
+        building_stock_landlords = (building_stock_landlords * tenant_income_re.T).T.stack()
+
+        # concatenate
+        building_stock = pd.concat((building_stock_landlords, building_stock_wolandlords), axis=0)
+        building_stock = building_stock.reorder_levels(
+            ['Housing type', 'Occupancy status', 'Income class', 'Heating energy', 'Energy performance',
+             'Income class owner'])
+
+        return building_stock
+
 
 class HousingStockRenovated(HousingStock):
     """Class that represents an existing buildings stock that can (i) renovate buildings, (ii) demolition buildings.
@@ -2142,7 +2182,7 @@ class HousingStockConstructed(HousingStock):
     def __init__(self, stock, attributes_values, year, stock_needed_ts,
                  share_multi_family=None,
                  os_share_ht=None,
-                 io_share_seg=None,
+                 tenants_income=None,
                  stock_area_existing_seg=None,
                  attributes2area=None,
                  attributes2horizon=None,
@@ -2176,7 +2216,7 @@ class HousingStockConstructed(HousingStock):
         self._os_share_ht = os_share_ht
 
         # used to estimate share of income class owner
-        self._io_share_seg = io_share_seg
+        self._tenants_income = tenants_income
 
         self._flow_knowledge_construction = None
         self._stock_knowledge_construction_dict = {}
@@ -2331,6 +2371,8 @@ class HousingStockConstructed(HousingStock):
                                                cost_intangible=cost_intangible,
                                                transition=['Energy performance', 'Heating energy'],
                                                consumption=consumption, nu=nu, subsidies=subsidies, segments=segments)[0]
+        market_share_dm.to_csv('test.csv')
+
         flow_constructed_dm = flow_constructed_dm.reorder_levels(market_share_dm.index.names)
         flow_constructed_seg = (flow_constructed_dm * market_share_dm.T).T
         flow_constructed_seg = flow_constructed_seg.stack(flow_constructed_seg.columns.names)
@@ -2374,19 +2416,16 @@ class HousingStockConstructed(HousingStock):
                                                                  cost_invest=cost_invest,
                                                                  consumption=consumption, nu=nu, subsidies=subsidies)
         # same repartition of income class
-        seg_index = flow_constructed_seg.index
-        seg_names = flow_constructed_seg.index.names
-        val = 1 / len(self.attributes_values['Income class'])
-        temp = pd.Series(val, index=self.attributes_values['Income class'])
-        ic_share_seg = pd.concat([temp] * len(seg_index), axis=1).T
-        ic_share_seg.index = seg_index
-
-        flow_constructed_seg = de_aggregate_series(flow_constructed_seg, ic_share_seg)
-        flow_constructed_seg.index.names = seg_names + ['Income class']
+        owner_income = pd.DataFrame(1 / len(self.attributes_values['Income class owner']),
+                                    columns=self.attributes_values['Income class owner'],
+                                    index=flow_constructed_seg.index)
+        owner_income.columns.set_names('Income class owner', inplace=True)
+        flow_constructed_seg = (flow_constructed_seg * owner_income.T).T.stack()
 
         # keep the same proportion for income class owner than in the initial parc
-        flow_constructed_seg = de_aggregate_series(flow_constructed_seg, self._io_share_seg)
+        flow_constructed_seg = HousingStock.add_tenant_income(flow_constructed_seg, self._tenants_income)
         flow_constructed_seg = flow_constructed_seg[flow_constructed_seg > 0]
+
         return flow_constructed_seg
 
     def update_flow_constructed_seg(self, energy_price, cost_intangible=None, cost_invest=None,
@@ -2410,22 +2449,6 @@ class HousingStockConstructed(HousingStock):
 
         self.flow_constructed_seg = flow_constructed_seg
         return flow_constructed_seg
-
-    """
-    @staticmethod
-    def to_market_share_objective(os_share_ht_construction, he_share_ht_construction, ht_share_tot_construction,
-                                  ep_share_tot_construction):
-        os_he_share_ht_construction = de_aggregate_columns(os_share_ht_construction, he_share_ht_construction)
-        os_he_ht_share_tot_construction = (ht_share_tot_construction * os_he_share_ht_construction.T).T.stack().stack()
-
-        seg_share_construction = de_aggregating_series(os_he_ht_share_tot_construction,
-                                                       ep_share_tot_construction,
-                                                       level='Energy performance')
-        market_share_objective = val2share(seg_share_construction, ['Occupancy status', 'Housing type'],
-                                           option='column')
-        # market_share_objective = market_share_objective.droplevel(None, axis=1)
-        return market_share_objective
-    """
 
     def calibration_market_share(self, energy_price, market_share_objective, cost_invest=None,
                                  consumption='conventional', subsidies=None):

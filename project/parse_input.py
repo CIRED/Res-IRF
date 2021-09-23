@@ -517,12 +517,14 @@ def parse_observed_data(config):
 
     Returns
     -------
-    rate_renovation_ini : pd.DataFrame
-        Observed renovation rate in calibration year.
-    ms_renovation_ini : pd.DataFrame
-        Observed market share in calibration year.
-    ms_construction_ini : pd.DataFrame
-        Observed market share in calibration year.
+    pd.DataFrame
+        Observed renovation rate in calibration year
+    pd.DataFrame
+        Observed market share in calibration year for existing buildings
+    pd.DataFrame
+        Observed market share in calibration year for construction
+    pd.DataFrame
+        Observed tenant income distribution in constructed building stock
     """
 
     name_file = os.path.join(os.getcwd(), config['renovation_rate_ini']['source'])
@@ -539,6 +541,11 @@ def parse_observed_data(config):
     ms_construction_ini = pd.read_csv(name_file, index_col=[0, 1], header=[0, 1])
     ms_construction_ini.index.set_names(['Occupancy status', 'Housing type'], inplace=True)
 
-    return renovation_rate_ini, ms_renovation_ini, ms_construction_ini
+    name_file = os.path.join(os.getcwd(), config['tenants_income_construction']['source'])
+    income_tenants_construction = pd.read_csv(name_file, index_col=[0, 1], header=[0])
+    income_tenants_construction.index.set_names(['Housing type', 'Energy performance'], inplace=True)
+    income_tenants_construction.columns.set_names('Income class', inplace=True)
+
+    return renovation_rate_ini, ms_renovation_ini, ms_construction_ini, income_tenants_construction
 
 

@@ -357,7 +357,9 @@ def parse_output(output, buildings, buildings_constructed, energy_prices, energy
     summary = pd.concat((summary, summary_taxes), axis=1)
     summary.to_csv(os.path.join(folder_output, 'summary.csv'))
     summary_policies.to_csv(os.path.join(folder_output, 'summary_policies.csv'))
-    policies_stacked_plot(summary_policies / 10**9, save=os.path.join(folder_output, 'summary_policies.png'))
+    summary_policies.loc[buildings.calibration_year:, :]
+    policies_stacked_plot(summary_policies.loc[buildings.calibration_year + 1:, :] / 10 ** 9,
+                          save=os.path.join(folder_output, 'summary_policies.png'))
 
     detailed = dict()
     df = (output_stock['Consumption actual (kWh)'].groupby('Heating energy').sum().T * coefficient).T
