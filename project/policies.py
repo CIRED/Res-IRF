@@ -144,7 +144,7 @@ class Subsidies(PublicPolicy):
     def __init__(self, name, start, end, unit, value,
                  transition=None, cost_max=None, cost_min=None,
                  subsidy_max=None, calibration=False, time_dependent=False,
-                 targets=None, area=None):
+                 targets=None, area=None, priority=False):
         super().__init__(name, start, end, 'subsidies', calibration)
 
         if transition is None:
@@ -157,6 +157,7 @@ class Subsidies(PublicPolicy):
         self.unit = unit
         self.value = value
         self.time_dependent = time_dependent
+        self.priority = priority
         self.target = targets
 
         self.area = area.copy()

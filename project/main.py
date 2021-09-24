@@ -94,6 +94,7 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
                                                 cost_max=item['cost_max'],
                                                 cost_min=item['cost_min'],
                                                 subsidy_max=item['subsidy_max'],
+                                                priority=item['priority'],
                                                 area=attributes['attributes2area'])
 
             elif item['policy'] == 'energy_taxes':
@@ -143,6 +144,9 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
                                                                   )
 
     subsidies = list(subsidies_dict.values())
+    # reorder subsidies to let priority first
+    subsidies = [s for s in subsidies if s.priority is True] + [s for s in subsidies if s.priority is False]
+
     energy_taxes_detailed = dict()
     energy_taxes_detailed['energy_taxes'] = energy_taxes
     total_taxes = None

@@ -173,7 +173,8 @@ class HousingStock:
 
     @staticmethod
     def _attributes2(segments, attributes2, scenario=None):
-        """Returns segmented value based on self._segments and by using attributes2 table.
+        """
+        Returns segmented value based on self._segments and by using attributes2 table.
 
         Parameters
         ----------
@@ -807,7 +808,7 @@ class HousingStock:
             return energy_lcc_final
 
     def to_lcc_final(self, energy_prices, cost_invest=None, cost_intangible=None,
-                     transition=None, consumption='conventional', subsidies=None, segments=None):
+                     transition=None, consumption='conventional', subsidies=None, segments=None, energy_lcc=None):
         """
         Calculate life-cycle-cost of home-energy retrofits for every segment and every possible transition.
 
@@ -825,6 +826,8 @@ class HousingStock:
         subsidies: list, optional
             list of subsidies object
         segments: pd.MultiIndex or pd.Index, optional
+        energy_lcc: pd.Series, optional
+            Allow the user to chose manually an energy_lcc. Otherwise self.to_energy_lcc_final will be launched.
 
         Returns
         -------
@@ -835,18 +838,23 @@ class HousingStock:
         if transition is None:
             transition = ['Energy performance']
 
-        lcc_final_seg = self.to_energy_lcc_final(energy_prices, transition, consumption=consumption, segments=segments)
+        if energy_lcc is None:
+            lcc_final = self.to_energy_lcc_final(energy_prices, transition, consumption=consumption, segments=segments)
+        else:
+            lcc_final = energy_lcc
+            lcc_final = reindex_mi(lcc_final, self.stock_seg.index)
 
-        lcc_transition_seg = lcc_final_seg.copy()
-        columns = lcc_transition_seg.columns
+        lcc_transition = lcc_final.copy()
+        columns = lcc_transition.columns
 
-        capex_total = None
         capex = None
         capex_intangible = None
+        capex_total = None
+
         for t in transition:
             if cost_invest[t] is not None:
-                c = reindex_mi(cost_invest[t], lcc_final_seg.index)
-                c = reindex_mi(c, lcc_final_seg.columns, c.columns.names, axis=1)
+                c = reindex_mi(cost_invest[t], lcc_final.index)
+                c = reindex_mi(c, lcc_final.columns, c.columns.names, axis=1)
                 if capex_total is None:
                     capex_total = c.copy()
                     capex = c.copy()
@@ -855,8 +863,8 @@ class HousingStock:
                     capex += c
             if cost_intangible is not None:
                 if cost_intangible[t] is not None:
-                    c = reindex_mi(cost_intangible[t], lcc_final_seg.index, cost_intangible[t].index.names)
-                    c = reindex_mi(c, lcc_final_seg.columns, c.columns.names, axis=1)
+                    c = reindex_mi(cost_intangible[t], lcc_final.index, cost_intangible[t].index.names)
+                    c = reindex_mi(c, lcc_final.columns, c.columns.names, axis=1)
                     c.fillna(0, inplace=True)
                     capex_total += c
                     if capex_intangible is None:
@@ -864,10 +872,10 @@ class HousingStock:
                     else:
                         capex_intangible += c
 
-        self.capex[tuple(transition)][self.year] = capex
+        self.capex[tuple(transition)][self.year] = capex.copy()
         if capex_intangible is not None:
-            self.capex_intangible[tuple(transition)][self.year] = capex_intangible
-        self.capex_total[tuple(transition)][self.year] = capex_total
+            self.capex_intangible[tuple(transition)][self.year] = capex_intangible.copy()
+        self.capex_total[tuple(transition)][self.year] = capex_total.copy()
 
         self.subsidies_detailed[tuple(transition)][self.year] = dict()
         self.subsidies_detailed_euro[tuple(transition)][self.year] = dict()
@@ -879,7 +887,7 @@ class HousingStock:
                     if policy.policy == 'subsidies' or policy.policy == 'subsidy_tax':
                         if policy.unit == '%':
                             s = policy.to_subsidy(self.year, cost=capex)
-                            s = s.reindex(lcc_transition_seg.index, axis=0).reindex(columns, axis=1)
+                            s = s.reindex(lcc_transition.index, axis=0).reindex(columns, axis=1)
                             s.fillna(0, inplace=True)
 
                         elif policy.unit == '€/kWh':
@@ -896,11 +904,17 @@ class HousingStock:
                             s[s < 0] = 0
                             s.fillna(0, inplace=True)
 
+                        else:
+                            raise AttributeError('Subsidies unit can be €/kWh or %')
+
+                        if policy.priority is True:
+                            capex -= s
+
                     elif policy.policy == 'regulated_loan':
                         capex_euro = (self.to_area() * capex.T).T
                         s = policy.to_opportunity_cost(capex_euro)
                         s = (s.T * (self.to_area() ** -1)).T
-                        s = s.reindex(lcc_transition_seg.index, axis=0).reindex(columns, axis=1)
+                        s = s.reindex(lcc_transition.index, axis=0).reindex(columns, axis=1)
                         s.fillna(0, inplace=True)
 
                     if total_subsidies is None:
@@ -911,18 +925,21 @@ class HousingStock:
                     self.subsidies_detailed[tuple(transition)][self.year]['{} (€/m2)'.format(policy.name)] = s
                     self.subsidies_detailed_euro[tuple(transition)][self.year]['{} (€)'.format(policy.name)] = (self.area * s.T).T
 
-        if capex is not None:
-            lcc_transition_seg += capex_total
+        # idx = pd.IndexSlice
+        # df = df.loc[idx['Homeowners', 'Single-family', 'C1', 'Power', 'G', 'C1'], :]
+
+        if capex_total is not None:
+            lcc_transition += capex_total
         if total_subsidies is not None:
             self.subsidies_total[tuple(transition)][self.year] = total_subsidies
-            lcc_transition_seg -= total_subsidies
+            lcc_transition -= total_subsidies
 
-        if (lcc_transition_seg < 0).any().any():
-            lcc_transition_seg[lcc_transition_seg < 0] = 0
+        if (lcc_transition < 0).any().any():
+            lcc_transition[lcc_transition < 0] = 0
             print('lcc transition is negative')
 
-        self.lcc_final[tuple(transition)][self.year] = lcc_transition_seg
-        return lcc_transition_seg
+        self.lcc_final[tuple(transition)][self.year] = lcc_transition
+        return lcc_transition
 
     @staticmethod
     def lcc2market_share(lcc_df, nu=8.0):
@@ -985,7 +1002,7 @@ class HousingStock:
 
     def to_pv(self, energy_prices, transition=None, consumption='conventional', cost_invest=None, cost_intangible=None,
               subsidies=None, nu=8.0):
-        # TODO: if NA
+
         if transition is None:
             transition = ['Energy performance']
 
@@ -1068,8 +1085,25 @@ class HousingStock:
             Market share calculated and observed
         """
 
+        # following code is written to copy/paste Scilab version
+        energy_consumption = self.to_area() * self.stock_seg * self.to_consumption_conventional()
+        energy_consumption = energy_consumption.groupby(['Occupancy status', 'Housing type', 'Heating energy', 'Energy performance']).sum()
+        share_energy = energy_consumption.groupby('Heating energy').sum() / energy_consumption.sum()
+        energy_price = energy_prices.loc[:, self.calibration_year]
+
+        consumption_conventional = self.attributes2consumption
+        average_energy_cost = (
+                    consumption_conventional * reindex_mi(energy_price, consumption_conventional.index) * reindex_mi(
+                share_energy, consumption_conventional.index)).groupby('Energy performance').sum()
+
+        discount_factor = self.to_discount_factor().droplevel('Heating energy')
+        discount_factor = discount_factor[~discount_factor.index.duplicated(keep='first')]
+        energy_lcc = discount_factor * reindex_mi(average_energy_cost, discount_factor.index)
+        energy_lcc = energy_lcc.unstack('Energy performance')
+        energy_lcc.columns.set_names('Energy performance final', inplace=True)
+
         lcc_final = self.to_lcc_final(energy_prices, consumption=consumption, cost_invest=cost_invest,
-                                      transition=['Energy performance'], subsidies=subsidies)
+                                      transition=['Energy performance'], subsidies=subsidies, energy_lcc=energy_lcc)
 
         # remove income class as MultiIndex and drop duplicated indexes
         lcc_final.reset_index(level='Income class', drop=True, inplace=True)
@@ -1519,10 +1553,10 @@ class HousingStockRenovated(HousingStock):
         Flow area renovation is defined as:
          renovation rate (2.7%/yr) x number of learning years (10 yrs) x renovated area (m2).
         """
-        renovation_rate_dm = reindex_mi(rate_renovation_ini, self._stock_area_seg.index,
-                                        rate_renovation_ini.index.names)
+        renovation_rate = reindex_mi(rate_renovation_ini, self._stock_area_seg.index,
+                                     rate_renovation_ini.index.names)
 
-        return renovation_rate_dm * self._stock_area_seg * learning_year
+        return renovation_rate * self._stock_area_seg * learning_year
 
     @property
     def stock_area_seg(self):
@@ -1984,43 +2018,16 @@ class HousingStockRenovated(HousingStock):
             raise ValueError('Flow area renovated segmented should be a DataFrame (Series for calibration year')
 
         # knowledge_renovation_ini depends on energy performance final
-
-        def flow_area2knowledge(flow, flow_area_ep, certificate1, certificate2):
-            """Very specific function aggregating two energy performance certificate to calculate knowledge.
-
-            Parameters
-            ----------
-            flow: pd.Series
-                Data array containing knowledge.
-            flow_area_ep: pd.Series or pd.DataFrame
-            certificate1: str, {'A', 'B', 'C', 'D', 'E', 'F', 'G'}
-            certificate2: str, {'A', 'B', 'C', 'D', 'E', 'F', 'G'}
-
-            Returns
-            -------
-            spd.Series
-            """
-            if certificate1 in flow_area_ep.index and certificate2 in flow_area_ep.index:
-                flow.loc[certificate1] = flow_area_ep.loc[certificate1] + flow_area_ep.loc[
-                    certificate2]
-                flow.loc[certificate2] = flow_area_ep.loc[certificate1] + flow_area_ep.loc[
-                    certificate2]
-            elif certificate2 not in flow_area_ep.index:
-                flow.loc[certificate1] = flow_area_ep.loc[certificate1]
-                flow.loc[certificate2] = flow_area_ep.loc[certificate1]
-            else:
-                flow.loc[certificate1] = flow_area_ep.loc[certificate2]
-                flow.loc[certificate2] = flow_area_ep.loc[certificate2]
-            return flow
-
         flow_knowledge_renovation = pd.Series(dtype='float64',
                                               index=[ep for ep in self.total_attributes_values['Energy performance'] if
                                                      ep != 'G'])
 
-        flow_knowledge_renovation = flow_area2knowledge(flow_knowledge_renovation, flow_area_renovated_ep, 'A', 'B')
-        flow_knowledge_renovation = flow_area2knowledge(flow_knowledge_renovation, flow_area_renovated_ep, 'C', 'D')
-        flow_knowledge_renovation = flow_area2knowledge(flow_knowledge_renovation, flow_area_renovated_ep, 'E', 'F')
-
+        flow_knowledge_renovation['F'] = flow_area_renovated_ep['G'] + flow_area_renovated_ep['F']
+        flow_knowledge_renovation['E'] = flow_area_renovated_ep['G'] + flow_area_renovated_ep['F']
+        flow_knowledge_renovation['D'] = flow_area_renovated_ep['E'] + flow_area_renovated_ep['D']
+        flow_knowledge_renovation['C'] = flow_area_renovated_ep['E'] + flow_area_renovated_ep['D']
+        flow_knowledge_renovation['B'] = flow_area_renovated_ep['C'] + flow_area_renovated_ep['B']
+        flow_knowledge_renovation['A'] = flow_area_renovated_ep['C'] + flow_area_renovated_ep['B']
         flow_knowledge_renovation.index.set_names('Energy performance final', inplace=True)
         return flow_knowledge_renovation
 
@@ -2476,6 +2483,9 @@ class HousingStockConstructed(HousingStock):
         lcc_final = self.to_lcc_final(energy_price, cost_invest=cost_invest, subsidies=subsidies,
                                       transition=['Energy performance', 'Heating energy'], consumption=consumption,
                                       segments=market_share_objective.index)
+
+
+        # conso_fuel =
 
         market_share_objective.sort_index(inplace=True)
         lcc_final = lcc_final.reorder_levels(market_share_objective.index.names)

@@ -219,39 +219,8 @@
   },
   "attributes2discount": {
     "Reference": {
-      "val": {
-        "C1": {
-          "Single-family": 0.15,
-          "Multi-family": 0.37,
-          "Social-housing": 0.04
-        },
-        "C2": {
-          "Single-family": 0.1,
-          "Multi-family": 0.24,
-          "Social-housing": 0.04
-        },
-        "C3": {
-          "Single-family": 0.07,
-          "Multi-family": 0.15,
-          "Social-housing": 0.04
-        },
-        "C4": {
-          "Single-family": 0.05,
-          "Multi-family": 0.07,
-          "Social-housing": 0.04
-        },
-        "C5": {
-          "Single-family": 0.04,
-          "Multi-family": 0.05,
-          "Social-housing": 0.04
-        }
-      },
-      "index": [
-        "Income class owner",
-        "Housing type"
-      ],
-      "unit": "%/yr",
-      "type": "pd.Series"
+      "source": "project/input/attributes2discount_ref.csv",
+      "type": "file"
     },
     "No budget constraint": {
       "type": "int", "val": 0.07

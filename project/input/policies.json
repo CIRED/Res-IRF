@@ -11,6 +11,7 @@
     "targets": null,
     "cost_min": null,
     "cost_max": null,
+    "priority": false,
     "subsidy_max": 4800,
     "type": "dict_to_parse"
   },
@@ -75,6 +76,7 @@
     "cost_min": null,
     "cost_max": null,
     "subsidy_max": null,
+    "priority": false,
     "type": "dict_to_parse"
   },
   "cee_subsidy": {
@@ -90,12 +92,13 @@
     "cost_min": null,
     "cost_max": null,
     "subsidy_max": null,
+    "priority": false,
     "type": "dict_to_parse"
   },
   "reduced_tax": {
     "name": "reduced_tax",
     "policy": "subsidies",
-    "value": 0.04,
+    "value": 0.040909,
     "unit": "%",
     "transition": [
       "Energy performance"
@@ -105,6 +108,7 @@
     "cost_min": null,
     "cost_max": null,
     "subsidy_max": null,
+    "priority": true,
     "type": "dict_to_parse"
   },
   "eptz_subsidy": {
@@ -190,6 +194,7 @@
       "type": "pd.Series"
     },
     "subsidy_max": null,
+    "priority": false,
     "type": "dict_to_parse"
   },
   "eptz": {

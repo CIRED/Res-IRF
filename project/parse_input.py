@@ -44,7 +44,7 @@ def json2miindex(json_dict):
     elif json_dict['type'] == 'float' or json_dict['type'] == 'int':
         return json_dict['val']
     elif json_dict['type'] == 'file':
-        pass
+        return json_dict['source']
     else:
         print('Need to be done!!')
 
@@ -235,6 +235,8 @@ def parse_building_stock(config):
     attributes['attributes2horizon'] = attributes2horizon
 
     attributes['attributes2discount'] = attributes['attributes2discount'][config['budget_constraint']]
+    if isinstance(attributes['attributes2discount'], str):
+        attributes['attributes2discount'] = pd.read_csv(attributes['attributes2discount'], index_col=[0, 1, 2], squeeze=True)
 
     file_dict = attributes['attributes_dict']
     keys = ['Housing type', 'Occupancy status', 'Heating energy', 'Energy performance', 'Income class']
