@@ -288,6 +288,8 @@ def parse_exogenous_input(folder, config):
     cee_tax.columns = cee_tax.columns.astype('int')
     # adding vta to cee_tax
     policies['cee_taxes']['value'] = cee_tax * (1 + 0.2)
+    # to delete after test
+    # cee_tax.loc[:, 2013:] = cee_tax.loc[:, 2013:] * (1 + 0.2)
 
     cee_subsidy = pd.read_csv(os.path.join(os.getcwd(), config['cee_subsidy_value']['source']), index_col=[0])
     cee_subsidy.index.set_names('Income class', inplace=True)

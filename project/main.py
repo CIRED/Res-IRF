@@ -304,6 +304,18 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
 
     years = range(calibration_year, end_year, 1)
     logging.debug('Launching iterations')
+
+    """ 
+    result = buildings.to_consumption_actual(energy_prices, detailed_output=True)
+    d = dict()
+    for key, item in result.items():
+        if isinstance(item, pd.Series):
+            d[key] = item
+        else:
+            d[key] = item.loc[:, 2012]
+    pd.concat((pd.DataFrame(d), buildings.stock_seg), axis=1).to_csv('test.csv')
+    """
+
     for year in years[1:]:
         logging.debug('YEAR: {}'.format(year))
 

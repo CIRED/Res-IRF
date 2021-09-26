@@ -125,10 +125,10 @@
   },
   "Aggregated consumption coefficient 2012": {
     "val": {
-      "Power": 0.79,
-      "Natural gas": 1.06,
-      "Oil fuel": 1.03,
-      "Wood fuel": 2.14
+      "Power": 0.7822984,
+      "Natural gas": 1.0425802,
+      "Oil fuel": 1.0042604,
+      "Wood fuel": 1.9341951
     },
     "index": [
       "Heating energy"

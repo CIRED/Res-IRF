@@ -1025,18 +1025,18 @@ class HousingStock:
             transition = ['Energy performance']
 
         energy_lcc_seg = self.to_energy_lcc(energy_prices, transition=transition, consumption=consumption)
-        pv_seg = self.to_pv(energy_prices,
-                            transition=transition,
-                            consumption=consumption,
-                            cost_invest=cost_invest,
-                            cost_intangible=cost_intangible,
-                            subsidies=subsidies, nu=nu)
+        pv = self.to_pv(energy_prices,
+                        transition=transition,
+                        consumption=consumption,
+                        cost_invest=cost_invest,
+                        cost_intangible=cost_intangible,
+                        subsidies=subsidies, nu=nu)
 
-        pv_seg.sort_index(inplace=True)
+        pv.sort_index(inplace=True)
         energy_lcc_seg.sort_index(inplace=True)
         # assert energy_lcc_seg.index.equals(pv_seg.index), 'Index should match'
 
-        npv = (energy_lcc_seg - pv_seg).dropna()
+        npv = (energy_lcc_seg - pv).dropna()
         self.npv[tuple(transition)][self.year] = npv
         return npv
 
@@ -2483,9 +2483,6 @@ class HousingStockConstructed(HousingStock):
         lcc_final = self.to_lcc_final(energy_price, cost_invest=cost_invest, subsidies=subsidies,
                                       transition=['Energy performance', 'Heating energy'], consumption=consumption,
                                       segments=market_share_objective.index)
-
-
-        # conso_fuel =
 
         market_share_objective.sort_index(inplace=True)
         lcc_final = lcc_final.reorder_levels(market_share_objective.index.names)

@@ -197,6 +197,84 @@
     "priority": false,
     "type": "dict_to_parse"
   },
+  "eptz_ini": {
+    "name": "eptz_ini",
+    "policy": "subsidies",
+    "value": 0.0917729,
+    "unit": "%",
+    "transition": [
+      "Energy performance"
+    ],
+    "targets": {
+      "val": {
+        "G": {
+          "F": 0,
+          "E": 0,
+          "D": 1,
+          "C": 1,
+          "B": 1,
+          "A": 1
+        },
+        "F": {
+          "F": 0,
+          "E": 0,
+          "D": 1,
+          "C": 1,
+          "B": 1,
+          "A": 1
+        },
+        "E": {
+          "F": 0,
+          "E": 0,
+          "D": 1,
+          "C": 1,
+          "B": 1,
+          "A": 1
+        },
+        "D": {
+          "F": 0,
+          "E": 0,
+          "D": 0,
+          "C": 0,
+          "B": 1,
+          "A": 1
+        }
+      },
+      "index": [
+        "Energy performance",
+        "Energy performance final"
+      ],
+      "type": "pd.DataFrame"
+    },
+    "time_dependent": false,
+    "cost_min": 5000,
+    "cost_max": {
+      "val": {
+        "D1": 16800,
+        "D2": 16800,
+        "D3": 21000,
+        "D4": 21000,
+        "D5": 21000,
+        "D6": 21000,
+        "D7": 21000,
+        "D8": 21000,
+        "D9": 21000,
+        "D10": 21000,
+        "C1": 16800,
+        "C2": 17850,
+        "C3": 18900,
+        "C4": 19950,
+        "C5": 21000
+      },
+      "index": [
+        "Income class owner"
+      ],
+      "type": "pd.Series"
+    },
+    "subsidy_max": null,
+    "priority": false,
+    "type": "dict_to_parse"
+  },
   "eptz": {
     "name": "eptz",
     "policy": "regulated_loan",
