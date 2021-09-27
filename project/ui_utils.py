@@ -184,11 +184,8 @@ def scenario_grouped_subplots(df_dict, suptitle='', n_columns=3, format_y=lambda
     ----------
     df_dict: dict
         df_dict values are pd.DataFrame (index=years, columns=scenario)
-
     suptitle: str, optional
-
     format_y: function, optional
-
     n_columns: int, default 3
     """
     list_keys = list(df_dict.keys())
@@ -228,6 +225,7 @@ def scenario_grouped_subplots(df_dict, suptitle='', n_columns=3, format_y=lambda
             ax.set_title(key, fontweight='bold', fontsize=10, pad=-1.6)
             if k == 0:
                 handles, labels = ax.get_legend_handles_labels()
+                labels = [l.replace('_', ' ') for l in labels]
             ax.get_legend().remove()
         except IndexError:
             ax.axis('off')

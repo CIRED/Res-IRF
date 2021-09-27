@@ -33,13 +33,8 @@ def run_indicators(config, folder, CO2_value, parameters=None):
     discount_factor = (1 - (1 + discount_rate) ** -lifetime) / discount_rate
 
     folder_output = os.path.join(os.getcwd(), 'project', 'output', folder)
-    scenarios = [f for f in os.listdir(folder_output) if os.path.isdir(os.path.join(folder_output, f))]
+    scenarios = [f for f in os.listdir(folder_output) if os.path.isdir(os.path.join(folder_output, f)) and f != 'img']
     folders = {scenario: os.path.join(folder_output, scenario) for scenario in scenarios}
-
-    summaries = {scenario: pd.read_csv(os.path.join(folders[scenario], 'summary.csv'), index_col=[0]) for scenario in
-                 scenarios}
-    summaries = ui_utils.reverse_nested_dict(summaries)
-    summaries = {key: pd.DataFrame(item) for key, item in summaries.items()}
 
     detailed = {scenario: pd.read_csv(os.path.join(folders[scenario], 'detailed.csv'), index_col=[0]).T for scenario in
                 scenarios}
@@ -51,25 +46,25 @@ def run_indicators(config, folder, CO2_value, parameters=None):
         # 1.1 Cost-effectiveness
 
         # 1.1.1 Consumption
-        df = summaries['Consumption actual (kWh)'].copy()
+        df = detailed['Consumption actual (TWh)'].copy()
         marginal_consumption_actual = pd.Series(
             [(df[config['All policies']] - df[config['Policy - {}'.format(year)]]).loc[year] for year in list_years],
             index=list_years)
 
-        df = summaries['Consumption conventional (kWh)'].copy()
+        df = detailed['Consumption conventional (TWh)'].copy()
         marginal_consumption_conventional = pd.Series(
             [(df[config['All policies']] - df[config['Policy - {}'.format(year)]]).loc[year] for year in list_years],
             index=list_years)
 
         # 1.1.2 Emission
-        df = summaries['Emission (gCO2)'].copy()
+        df = detailed['Emission (MtCO2)'].copy()
         marginal_emission = pd.Series(
             [(df[config['All policies']] - df[config['Policy - {}'.format(year)]]).loc[year] for year in list_years],
             index=list_years)
 
         # 1.1.3 Policy cost
 
-        df = summaries['{} (€)'.format(config['Policy name']).replace('_', ' ').capitalize()].copy()
+        df = detailed['{} (euro)'.format(config['Policy name']).replace('_', ' ').capitalize()].copy()
         df.fillna(0, inplace=True)
         marginal_subsidies = pd.Series(
             [(df[config['All policies']] - df[config['Policy - {}'.format(year)]]).loc[year] for year in list_years],
@@ -80,13 +75,13 @@ def run_indicators(config, folder, CO2_value, parameters=None):
                                            marginal_subsidies / (marginal_consumption_conventional * discount_factor),
                                            marginal_subsidies / (marginal_emission * discount_factor) * 10 ** 6),
                                            axis=1))
-        cost_effectiveness.columns = ['Cost-effectiveness actual (€/kWh)',
-                                      'Cost-effectiveness conventional (€/kWh)',
-                                      'Cost-effectiveness emission (€/tCO2)']
+        cost_effectiveness.columns = ['Cost-effectiveness actual (euro/kWh)',
+                                      'Cost-effectiveness conventional (euro/kWh)',
+                                      'Cost-effectiveness emission (euro/tCO2)']
         cost_effectiveness.sort_index(inplace=True)
 
         # 2.1 Leverage effect
-        df = summaries['Annual renovation expenditure (€)'].copy()
+        df = detailed['Annual renovation expenditure (Billions euro)'].copy()
         df.fillna(0, inplace=True)
         marginal_investment = pd.Series(
             [(df[config['All policies']] - df[config['Policy - {}'.format(year)]]).loc[year] for year in list_years],
@@ -112,7 +107,7 @@ def run_indicators(config, folder, CO2_value, parameters=None):
         ref = config[method[0]]
         compare = config[method[1]]
 
-        df = summaries['Consumption actual (kWh)']
+        df = detailed['Consumption actual (TWh)']
         simple_diff = df[ref] - df[compare]
         double_diff = simple_diff.diff()
         double_diff.iloc[0] = simple_diff.iloc[0]
@@ -121,7 +116,7 @@ def run_indicators(config, folder, CO2_value, parameters=None):
         energy_saving.name = 'Energy difference discounted (TWh) {}'.format(name)
         result = pd.concat((result, energy_saving), axis=1)
 
-        df = summaries['Emission (gCO2)']
+        df = detailed['Emission (MtCO2)']
         simple_diff = df[ref] - df[compare]
         double_diff = simple_diff.diff()
         double_diff.iloc[0] = simple_diff.iloc[0]
@@ -132,12 +127,12 @@ def run_indicators(config, folder, CO2_value, parameters=None):
 
         # Cost emission
         emission_cost_saved = (emission_saving * CO2_value).dropna()
-        emission_cost_saved.name = 'Emission cost difference (M€) {}'.format(name)
+        emission_cost_saved.name = 'Emission cost difference (Meuro) {}'.format(name)
 
         # 2.2 Renovation by year
         # 2. Energy renovation of 500,000 homes per year, including 120,000 in social housing;
 
-        df = summaries['Flow transition renovation']
+        df = detailed['Flow transition renovation (Thousands)']
         simple_diff = df[ref] - df[compare]
         additional_renovation = simple_diff.cumsum() / 10 ** 3
         additional_renovation.name = 'Renovation difference (Thousands) {}'.format(name)
@@ -176,14 +171,14 @@ def run_indicators(config, folder, CO2_value, parameters=None):
         result = pd.concat((result, share_low_energy_buildings), axis=1)
 
         # Reducing fuel poverty by 15% by 2020
-        df = summaries['Energy poverty'] / 10 ** 3
+        df = detailed['Energy poverty (Thousands)']
         simple_diff = df[ref] - df[compare]
         energy_poverty_buildings = simple_diff
         energy_poverty_buildings.name = 'Energy poverty difference (Thousands) {}'.format(name)
         result = pd.concat((result, energy_poverty_buildings), axis=1)
 
         # Share of 'fuel poverty' buildings in the total buildings stock
-        df = df / summaries['Stock']
+        df = df / detailed['Stock (Thousands)']
         simple_diff = df[ref] - df[compare]
         share_energy_poverty_buildings = simple_diff
         share_energy_poverty_buildings.name = 'Share energy poverty difference (%) {}'.format(name)

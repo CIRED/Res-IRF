@@ -23,7 +23,8 @@ from policy_indicators import run_indicators
 
 def res_irf(calibration_year, end_year, folder, config, parameters, policies_parameters, attributes, energy_prices_bp,
             energy_taxes, cost_invest, cost_invest_construction, stock_ini, co2_content,
-            rate_renovation_ini, ms_renovation_ini, ms_construction_ini, income_tenants_construction, logging):
+            rate_renovation_ini, ms_renovation_ini, ms_construction_ini, income_tenants_construction, logging,
+            output_detailed):
     """Res-IRF main function.
 
     Parameters
@@ -437,7 +438,8 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
                 buildings.flow_renovation_label_energy_dict[year].sum().sum(), flow_constructed))
 
     parse_output(output, buildings, buildings_constructed, energy_prices, energy_taxes, energy_taxes_detailed,
-                 co2_content, parameters['Calibration consumption'], folder['output'], lbd_output=False)
+                 co2_content, parameters['Calibration consumption'], folder['output'],
+                 lbd_output=False, output_detailed=output_detailed)
 
     end = time.time()
     logging.debug('Time for the module: {:,.0f} seconds.'.format(end - start))
@@ -465,8 +467,8 @@ if __name__ == '__main__':
         os.mkdir(folder['intermediate'])
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('-y', '--year_end', default=False, help='year end')
     parser.add_argument('-n', '--name', default=False, help='name scenarios')
+    parser.add_argument('-o', '--output', default=False, help='detailed output')
 
     args = parser.parse_args()
 
@@ -514,8 +516,6 @@ if __name__ == '__main__':
         rate_renovation_ini, ms_renovation_ini, ms_construction_ini, income_tenants_construction = parse_observed_data(config)
 
         end_year = config['end']
-        if args.year_end:
-            end_year = int(args.year_end)
 
         folder_scenario = copy.copy(folder)
         folder_scenario['output'] = os.path.join(folder['output'], key.replace(' ', '_'))
@@ -533,7 +533,7 @@ if __name__ == '__main__':
                                          energy_prices, energy_taxes, cost_invest, cost_invest_construction,
                                          stock_ini, co2_content,
                                          rate_renovation_ini, ms_renovation_ini, ms_construction_ini,
-                                         income_tenants_construction, logging))]
+                                         income_tenants_construction, logging, args.output))]
 
     for p in processes_list:
         p.start()
@@ -541,7 +541,7 @@ if __name__ == '__main__':
         p.join()
 
     logging.debug('Creating graphs')
-    quick_graphs(folder['output'])
+    quick_graphs(folder['output'], args.output)
 
     if config_runs['Policies indicators']:
         logging.debug('Calculating policies indicators')

@@ -287,9 +287,10 @@ def parse_exogenous_input(folder, config):
     cee_tax.index.set_names('Heating energy', inplace=True)
     cee_tax.columns = cee_tax.columns.astype('int')
     # adding vta to cee_tax
-    policies['cee_taxes']['value'] = cee_tax * (1 + 0.2)
     # to delete after test
-    # cee_tax.loc[:, 2013:] = cee_tax.loc[:, 2013:] * (1 + 0.2)
+    cee_tax.loc[:, 2013:] = cee_tax.loc[:, 2013:] * (1 + 0.2)
+    cee_tax.loc[:, 2016:] = 0
+    policies['cee_taxes']['value'] = cee_tax * (1 + 0.2)
 
     cee_subsidy = pd.read_csv(os.path.join(os.getcwd(), config['cee_subsidy_value']['source']), index_col=[0])
     cee_subsidy.index.set_names('Income class', inplace=True)
@@ -309,7 +310,7 @@ def parse_exogenous_input(folder, config):
     cost_switch_fuel = pd.read_csv(name_file, index_col=[0], header=[0])
     cost_switch_fuel.index.set_names('Heating energy', inplace=True)
     cost_switch_fuel.columns.set_names('Heating energy final', inplace=True)
-    cost_switch_fuel = cost_switch_fuel * (1 + 0.1) / (1 + 0.055)
+    # cost_switch_fuel = cost_switch_fuel * (1 + 0.1) / (1 + 0.055)
     cost_invest['Heating energy'] = cost_switch_fuel
 
     cost_invest_construction = dict()

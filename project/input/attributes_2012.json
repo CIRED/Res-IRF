@@ -156,9 +156,9 @@
     },
     "Reference": {
       "val": {
-        "Homeowners": 20,
+        "Homeowners": 17,
         "Landlords": 3,
-        "Social-housing": 20
+        "Social-housing": 17
       },
       "index": [
         "Occupancy status"

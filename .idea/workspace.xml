@@ -5,11 +5,14 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/buildings.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/buildings.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/input/attributes_2012.json" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/attributes_2012.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/cee_tax.csv" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/cee_tax.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/parameters.json" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/parameters.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/input/config_files/scenario_cite.json" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/config_files/scenario_cite.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/input/policies.json" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/policies.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/parse_input.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/parse_input.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/parse_output.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/parse_output.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/policies.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/policies.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/policy_indicators.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/policy_indicators.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/ui_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/ui_utils.py" afterDir="false" />
     </list>
     <list id="c1475e6c-5c86-4ada-b891-0f5a944b2008" name="Revert &quot;Delete project/input/test directory&quot;" comment="Revert &quot;Delete project/input/test directory&quot;&#10;&#10;This reverts commit b2bb53ac" />
     <option name="SHOW_DIALOG" value="false" />
@@ -123,6 +126,28 @@
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/project/main.py" />
       <option name="PARAMETERS" value="-n scenario.json" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="main_cite" type="PythonConfigurationType" factoryName="Python">
+      <module name="Res-IRF" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="$USER_HOME$/.conda/envs/Res-IRF/bin/python" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/project/main.py" />
+      <option name="PARAMETERS" value="-n config_files/scenario_cite.json" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -253,6 +278,7 @@
     </configuration>
     <list>
       <item itemvalue="Python.main_input" />
+      <item itemvalue="Python.main_cite" />
       <item itemvalue="Python.main" />
       <item itemvalue="Python.main_test" />
       <item itemvalue="Python.parse_input" />
@@ -263,8 +289,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python tests.Doctest EnergyTaxes.price_to_taxes" />
         <item itemvalue="Python.parse_input" />
+        <item itemvalue="Python tests.Doctest EnergyTaxes.price_to_taxes" />
         <item itemvalue="Python tests.Doctests in parse_input" />
         <item itemvalue="Python.buildings" />
       </list>
@@ -407,14 +433,8 @@
       <workItem from="1632383087786" duration="961000" />
       <workItem from="1632387279949" duration="16605000" />
       <workItem from="1632469407540" duration="17485000" />
-      <workItem from="1632572598545" duration="8223000" />
-    </task>
-    <task id="LOCAL-00016" summary="using oop - wo public policies">
-      <created>1620642133824</created>
-      <option name="number" value="00016" />
-      <option name="presentableId" value="LOCAL-00016" />
-      <option name="project" value="LOCAL" />
-      <updated>1620642133824</updated>
+      <workItem from="1632572598545" duration="10135000" />
+      <workItem from="1632726790954" duration="17135000" />
     </task>
     <task id="LOCAL-00017" summary="using oop - wo public policies">
       <created>1620901222116</created>
@@ -752,7 +772,14 @@
       <option name="project" value="LOCAL" />
       <updated>1632488002405</updated>
     </task>
-    <option name="localTasksCounter" value="65" />
+    <task id="LOCAL-00065" summary="cleaning and organizing">
+      <created>1632659879505</created>
+      <option name="number" value="00065" />
+      <option name="presentableId" value="LOCAL-00065" />
+      <option name="project" value="LOCAL" />
+      <updated>1632659879506</updated>
+    </task>
+    <option name="localTasksCounter" value="66" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -798,6 +825,13 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/project/parse_input.py</url>
+          <line>465</line>
+          <option name="timeStamp" value="104" />
+        </line-breakpoint>
+      </breakpoints>
       <default-breakpoints>
         <breakpoint type="python-exception">
           <properties notifyOnTerminate="true" exception="BaseException">
@@ -820,17 +854,17 @@
     <SUITE FILE_PATH="coverage/Res_IRF$test.coverage" NAME="test Coverage Results" MODIFIED="1618423504844" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$func_co2_cost.coverage" NAME="func_co2_cost Coverage Results" MODIFIED="1616424071313" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$Doctest_EnergyTaxes_price_to_taxes.coverage" NAME="Doctest EnergyTaxes.price_to_taxes Coverage Results" MODIFIED="1626337342857" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/project" />
-    <SUITE FILE_PATH="coverage/Res_IRF$main_test.coverage" NAME="main_test Coverage Results" MODIFIED="1632471040904" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/Res_IRF$parse_input.coverage" NAME="parse_input Coverage Results" MODIFIED="1625215572760" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Res_IRF$main_test.coverage" NAME="main_test Coverage Results" MODIFIED="1632746950521" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Res_IRF$parse_input.coverage" NAME="parse_input Coverage Results" MODIFIED="1632747053810" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$buildings_class.coverage" NAME="buildings_class Coverage Results" MODIFIED="1620739724250" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$run_indicators.coverage" NAME="run_indicators Coverage Results" MODIFIED="1631694400145" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$input_payback.coverage" NAME="input_payback Coverage Results" MODIFIED="1616175154626" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/Res_IRF$main_input.coverage" NAME="main_input Coverage Results" MODIFIED="1632659433552" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Res_IRF$main_input.coverage" NAME="main_input Coverage Results" MODIFIED="1632753718774" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$class_test.coverage" NAME="class_test Coverage Results" MODIFIED="1619699024161" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/project" />
     <SUITE FILE_PATH="coverage/Res_IRF$main_budget_constraints.coverage" NAME="main_budget_constraints Coverage Results" MODIFIED="1630599250228" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$Doctests_in_parse_input.coverage" NAME="Doctests in parse_input Coverage Results" MODIFIED="1625212538541" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/project" />
     <SUITE FILE_PATH="coverage/Res_IRF$main_phebus.coverage" NAME="main_phebus Coverage Results" MODIFIED="1630416566799" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/Res_IRF$main_cite.coverage" NAME="main_carbon_tax Coverage Results" MODIFIED="1631722806489" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Res_IRF$main_cite.coverage" NAME="main_cite Coverage Results" MODIFIED="1632748779552" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$main_nocalib.coverage" NAME="main Coverage Results" MODIFIED="1631892108659" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$Sphinx_Task_in_Sphinx_Task_in_.coverage" NAME="Sphinx Task in Sphinx Task in Sphinx Task in  Coverage Results" MODIFIED="1625136809623" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/Res_IRF$main_rho.coverage" NAME="main_rho Coverage Results" MODIFIED="1631627005511" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

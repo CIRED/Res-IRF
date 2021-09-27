@@ -21,7 +21,7 @@ class HousingStock:
     attributes2discount : pd.Series
         pd.Series that returns discount rate (%/yr) of the building owner based on archetypes attribute
     attributes2income : pd.Series
-        pd.Series that returns income (€/yr) of the building owner based on archetypes attribute
+        pd.Series that returns income (euro/yr) of the building owner based on archetypes attribute
     attributes2consumption : pd.Series
         pd.Series that returns conventional consumption (kWh/m2.yr) of the building based on archetypes attribute
     """
@@ -890,7 +890,7 @@ class HousingStock:
                             s = s.reindex(lcc_transition.index, axis=0).reindex(columns, axis=1)
                             s.fillna(0, inplace=True)
 
-                        elif policy.unit == '€/kWh':
+                        elif policy.unit == 'euro/kWh':
                             # energy saving is kWh/m2
                             """
                             energy_saving = self.to_energy_saving_lc(transition=transition, consumption=consumption)
@@ -905,7 +905,7 @@ class HousingStock:
                             s.fillna(0, inplace=True)
 
                         else:
-                            raise AttributeError('Subsidies unit can be €/kWh or %')
+                            raise AttributeError('Subsidies unit can be euro/kWh or %')
 
                         if policy.priority is True:
                             capex -= s
@@ -922,8 +922,8 @@ class HousingStock:
                     else:
                         total_subsidies += s
 
-                    self.subsidies_detailed[tuple(transition)][self.year]['{} (€/m2)'.format(policy.name)] = s
-                    self.subsidies_detailed_euro[tuple(transition)][self.year]['{} (€)'.format(policy.name)] = (self.area * s.T).T
+                    self.subsidies_detailed[tuple(transition)][self.year]['{} (euro/m2)'.format(policy.name)] = s
+                    self.subsidies_detailed_euro[tuple(transition)][self.year]['{} (euro)'.format(policy.name)] = (self.area * s.T).T
 
         # idx = pd.IndexSlice
         # df = df.loc[idx['Homeowners', 'Single-family', 'C1', 'Power', 'G', 'C1'], :]
@@ -1464,9 +1464,9 @@ class HousingStockRenovated(HousingStock):
         self._destruction_rate = destruction_rate
 
         # slave stock of stock_seg property
-        self._stock_seg_mobile = stock_seg * (1 - residual_rate)
-        self._stock_seg_mobile_dict = {year: stock_seg * (1 - residual_rate)}
         self._stock_seg_residual = stock_seg * residual_rate
+        self._stock_seg_mobile = stock_seg - self._stock_seg_residual
+        self._stock_seg_mobile_dict = {year: self._stock_seg_mobile}
         self._stock_area_seg = self.to_stock_area_seg()
 
         # initializing knowledge
@@ -1514,9 +1514,8 @@ class HousingStockRenovated(HousingStock):
 
         self._stock_seg = new_stock_seg
         self._stock_seg_dict[self.year] = new_stock_seg
-        self._stock_seg_mobile = new_stock_seg * (1 - self.residual_rate)
+        self._stock_seg_mobile = new_stock_seg - self._stock_seg_residual
         self._stock_seg_mobile_dict[self.year] = self._stock_seg_mobile
-        self._stock_seg_residual = new_stock_seg * self.residual_rate
         self._stock_area_seg = self.to_stock_area_seg()
 
     @property
@@ -1732,7 +1731,7 @@ class HousingStockRenovated(HousingStock):
 
                 tax_revenue = policy.tax_revenue[self.year - 1]
                 subsidy_expense = (flow_renovation_ep * self.subsidies_detailed_euro[('Energy performance',)][self.year][
-                    '{} (€)'.format(policy.name)]).sum().sum()
+                    '{} (euro)'.format(policy.name)]).sum().sum()
 
                 while abs(subsidy_expense - tax_revenue) > error:
                     # function grows with policy.value
@@ -1749,7 +1748,7 @@ class HousingStockRenovated(HousingStock):
 
                     subsidy_expense = (
                                 flow_renovation_ep * self.subsidies_detailed_euro[('Energy performance',)][self.year][
-                            '{} (€)'.format(policy.name)]).sum().sum()
+                            '{} (euro)'.format(policy.name)]).sum().sum()
 
                     if subsidy_expense > tax_revenue:
                         value_max = policy.value
@@ -1787,26 +1786,41 @@ class HousingStockRenovated(HousingStock):
         pd.DataFrame
         """
 
-        market_share_seg_he = self.to_market_share(energy_prices,
+        market_share_energy = self.to_market_share(energy_prices,
                                                    transition=['Heating energy'],
                                                    cost_invest=cost_invest,
                                                    consumption=consumption,
                                                    subsidies=subsidies)[0]
 
+       #  market_share_energy.index.rename('Energy performance', 'Energy performance final', inplace=True)
+
+        names_final = list(market_share_energy.index.names)
+        names_final[names_final.index('Energy performance')] = 'Energy performance final'
+        market_share_energy.index.names = names_final
+
+        """
         ms_temp = pd.concat([market_share_seg_he.T] * len(self.attributes_values['Energy performance']),
                             keys=self.attributes_values['Energy performance'], names=['Energy performance final'])
+        """
 
-        flow_renovation_seg_attributes = self.to_flow_renovation_ep(energy_prices,
-                                                                    consumption=consumption,
-                                                                    cost_invest=cost_invest,
-                                                                    cost_intangible=cost_intangible,
-                                                                    subsidies=subsidies,
-                                                                    renovation_obligation=renovation_obligation,
-                                                                    mutation=mutation, rotation=rotation)
+        flow_renovation = self.to_flow_renovation_ep(energy_prices,
+                                                     consumption=consumption,
+                                                     cost_invest=cost_invest,
+                                                     cost_intangible=cost_intangible,
+                                                     subsidies=subsidies,
+                                                     renovation_obligation=renovation_obligation,
+                                                     mutation=mutation, rotation=rotation)
 
-        sr_temp = pd.concat([flow_renovation_seg_attributes.T] * len(self.attributes_values['Heating energy']),
-                            keys=self.attributes_values['Heating energy'], names=['Heating energy final'])
-        flow_renovation_label_energy = (sr_temp * ms_temp).T
+        """
+        sr_temp = pd.concat([flow_renovation.T] * len(self.attributes_values['Heating energy']),
+                            keys=self.attributes_values['Heating energy'], names=['Heating energy final']).T
+        """
+
+        flow_renovation_temp = flow_renovation.stack()
+        market_share_energy_re = reindex_mi(market_share_energy, flow_renovation_temp.index)
+        flow_renovation_label_energy = (flow_renovation_temp * market_share_energy_re.T).T
+        flow_renovation_label_energy = flow_renovation_label_energy.unstack('Energy performance final')
+
         self.flow_renovation_label_energy_dict[self.year] = flow_renovation_label_energy
 
         return flow_renovation_label_energy
@@ -2021,13 +2035,14 @@ class HousingStockRenovated(HousingStock):
         flow_knowledge_renovation = pd.Series(dtype='float64',
                                               index=[ep for ep in self.total_attributes_values['Energy performance'] if
                                                      ep != 'G'])
+        flow_area_renovated_ep.sort_index(ascending=False, inplace=True)
 
-        flow_knowledge_renovation['F'] = flow_area_renovated_ep['G'] + flow_area_renovated_ep['F']
-        flow_knowledge_renovation['E'] = flow_area_renovated_ep['G'] + flow_area_renovated_ep['F']
-        flow_knowledge_renovation['D'] = flow_area_renovated_ep['E'] + flow_area_renovated_ep['D']
-        flow_knowledge_renovation['C'] = flow_area_renovated_ep['E'] + flow_area_renovated_ep['D']
-        flow_knowledge_renovation['B'] = flow_area_renovated_ep['C'] + flow_area_renovated_ep['B']
-        flow_knowledge_renovation['A'] = flow_area_renovated_ep['C'] + flow_area_renovated_ep['B']
+        flow_knowledge_renovation['F'] = flow_area_renovated_ep.iloc[0] + flow_area_renovated_ep.iloc[1]
+        flow_knowledge_renovation['E'] = flow_area_renovated_ep.iloc[0] + flow_area_renovated_ep.iloc[1]
+        flow_knowledge_renovation['D'] = flow_area_renovated_ep.iloc[2] + flow_area_renovated_ep.iloc[3]
+        flow_knowledge_renovation['C'] = flow_area_renovated_ep.iloc[2] + flow_area_renovated_ep.iloc[3]
+        flow_knowledge_renovation['B'] = flow_area_renovated_ep.iloc[4] + flow_area_renovated_ep.iloc[5]
+        flow_knowledge_renovation['A'] = flow_area_renovated_ep.iloc[4] + flow_area_renovated_ep.iloc[5]
         flow_knowledge_renovation.index.set_names('Energy performance final', inplace=True)
         return flow_knowledge_renovation
 

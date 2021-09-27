@@ -83,7 +83,7 @@
     "name": "cee_subsidy",
     "policy": "subsidies",
     "value": "project/input/cee_subsidy.csv",
-    "unit": "€/kWh",
+    "unit": "euro/kWh",
     "transition": [
       "Energy performance"
     ],
@@ -377,7 +377,7 @@
     "name": "cee_taxes",
     "policy": "energy_taxes",
     "value": "project/input/cee_tax.csv",
-    "unit": "€/kWh",
+    "unit": "euro/kWh",
     "transition": [
       "Energy performance"
     ],
@@ -387,7 +387,7 @@
     "name": "carbon_tax",
     "policy": "energy_taxes",
     "value": "project/input/carbon_tax.csv",
-    "unit": "€/tCO2",
+    "unit": "euro/tCO2",
     "type": "dict_to_parse"
   },
   "renovation_obligation": {
@@ -414,9 +414,9 @@
     "name": "subsidy_recycling_tax",
     "policy": "subsidy_tax",
     "type": "dict_to_parse",
-    "tax_unit": "€/tCO2",
+    "tax_unit": "euro/tCO2",
     "tax_value": 50,
-    "subsidy_unit": "€/kWh",
+    "subsidy_unit": "euro/kWh",
     "subsidy_value": 0.004
   },
   "thermal_regulation_construction": {

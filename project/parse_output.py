@@ -127,7 +127,7 @@ def parse_subsidies(buildings, flow_renovation_label, area):
                 df = df.reindex(flow_area_renovation_label.index)
 
                 subsides_euro = (flow_area_renovation_label.loc[:, yr] * df.T).T
-                subsides_euro.columns = [c.replace('€/m2', '€') for c in list(subsides_euro.columns)]
+                subsides_euro.columns = [c.replace('euro/m2', 'euro') for c in list(subsides_euro.columns)]
 
                 subsides_year[yr] = pd.concat((subsides_year[yr], subsides_euro), axis=1)
 
@@ -135,20 +135,20 @@ def parse_subsidies(buildings, flow_renovation_label, area):
                 bool_subsidies[bool_subsidies < 0] = 0
                 bool_subsidies[bool_subsidies > 0] = 1
                 nb_subsidies_year[yr] = (flow_renovation_label.loc[:, yr] * bool_subsidies.T).T
-                nb_subsidies_year[yr].columns = [c.replace(' (€/m2)', '') for c in list(nb_subsidies_year[yr].columns)]
-                nb_subsidies_year[yr] = nb_subsidies_year[yr].sum()
+                nb_subsidies_year[yr].columns = [c.replace(' (euro/m2)', ' (Thousands)') for c in list(nb_subsidies_year[yr].columns)]
+                nb_subsidies_year[yr] = nb_subsidies_year[yr].sum() / 10**3
 
     # 2. dict with subsidies as key and time DataFrame
     subsides_dict = parse_dict(reverse_dict(d))
 
     for key in list(subsides_dict.keys()):
-        subsides_dict[key.replace('€/m2', '€')] = subsides_dict[key] * flow_area_renovation_label
+        subsides_dict[key.replace('euro/m2', 'euro')] = subsides_dict[key] * flow_area_renovation_label
     subsides_dict_copy = {key.replace('_', ' ').capitalize(): subsides_dict[key] for key in list(subsides_dict.keys())}
 
     # summary_subsidies contains total subsidies expenditures by year and number of beneficiaries
     summary_subsidies = dict()
     for year, df in subsides_year.items():
-        summary_subsidies[year] = df.loc[:, [c for c in df.columns if '(€)' in c]].sum()
+        summary_subsidies[year] = df.loc[:, [c for c in df.columns if '(euro)' in c]].sum()
     summary_subsidies = pd.DataFrame(summary_subsidies).T
 
     summary_subsidies = pd.concat((summary_subsidies, pd.DataFrame(nb_subsidies_year).T), axis=1)
@@ -157,7 +157,7 @@ def parse_subsidies(buildings, flow_renovation_label, area):
 
 
 def parse_output(output, buildings, buildings_constructed, energy_prices, energy_taxes, energy_taxes_detailed,
-                 co2_content_data, coefficient, folder_output, lbd_output=False):
+                 co2_content_data, coefficient, folder_output, lbd_output=False, output_detailed=False):
     """
     Parse Res-IRF output to return understandable data.
 
@@ -168,8 +168,8 @@ def parse_output(output, buildings, buildings_constructed, energy_prices, energy
         - Conventional energy consumption (kWh/m2)
         - Actual energy consumption (kWh)
         - Actual energy consumption (kWh/M2)
-        - Energy cost (€/m2)
-        - Energy tax cost (€/m2)
+        - Energy cost (euro/m2)
+        - Energy tax cost (euro/m2)
         - Heating intensity (%)
         - Renovation rate (%)
 
@@ -179,10 +179,10 @@ def parse_output(output, buildings, buildings_constructed, energy_prices, energy
 
     2. Transition flow (index = segments + ['Energy performance final', 'Heating energy final'])
         - Number of transitions
-        - Investment cost (€)
-        - Investment cost (€/m2)
-        - Subsidies used (€)
-        - Subsidies used (€/m2)
+        - Investment cost (euro)
+        - Investment cost (euro/m2)
+        - Subsidies used (euro)
+        - Subsidies used (euro/m2)
 
 
         - NB: energy saving and emission saving are not necessary
@@ -203,7 +203,7 @@ def parse_output(output, buildings, buildings_constructed, energy_prices, energy
         columns=['Transition number', 'Capex', 'Subsidies'])
     """
 
-    # 1. stock
+    # 1. Stock
     object_dict = {'Renovation': buildings, 'Construction': buildings_constructed}
     buildings_constructed.to_consumption_actual(energy_prices)
     output_stock = dict()
@@ -227,20 +227,20 @@ def parse_output(output, buildings, buildings_constructed, energy_prices, energy
             co2_content_data)
 
         if 'total_taxes' in output.keys():
-            output_stock['Taxes cost (€/m2)' + ' - {}'.format(name)] = HousingStock.mul_consumption(
+            output_stock['Taxes cost (euro/m2)' + ' - {}'.format(name)] = HousingStock.mul_consumption(
                 building.consumption_actual,
-                output['Energy taxes (€/kWh)' + ' - {}'.format(name)])
+                output['Energy taxes (euro/kWh)' + ' - {}'.format(name)])
         else:
-            output_stock['Taxes cost (€/m2)' + ' - {}'.format(name)] = building.consumption_actual * 0
-        output_stock['Taxes cost (€)' + ' - {}'.format(name)] = output_stock[
-                                                                    'Taxes cost (€/m2)' + ' - {}'.format(name)] * \
+            output_stock['Taxes cost (euro/m2)' + ' - {}'.format(name)] = building.consumption_actual * 0
+        output_stock['Taxes cost (euro)' + ' - {}'.format(name)] = output_stock[
+                                                                    'Taxes cost (euro/m2)' + ' - {}'.format(name)] * \
                                                                 output_stock['Stock (m2)' + ' - {}'.format(name)]
 
     for key in output_stock.keys():
         if isinstance(output_stock[key], pd.DataFrame):
             output_stock[key].dropna(axis=1, how='all', inplace=True)
 
-    # concatenate data
+    # aggregated new and existing data
     temp = ['Stock', 'Stock (m2)', 'Consumption conventional (kWh/m2)', 'Consumption conventional (kWh)',
             'Consumption actual (kWh/m2)', 'Consumption actual (kWh)', 'Budget share (%)', 'Heating intensity (%)',
             'Emission (gCO2/m2)', 'Emission (gCO2)']
@@ -251,7 +251,7 @@ def parse_output(output, buildings, buildings_constructed, energy_prices, energy
             (output_stock['{} - Renovation'.format(keys)], output_stock['{} - Construction'.format(keys)]), axis=0)
 
     # only for existing buildings
-    output_stock['NPV (€/m2) - Renovation'] = dict_pd2df(buildings.npv[('Energy performance',)])
+    output_stock['NPV (euro/m2) - Renovation'] = dict_pd2df(buildings.npv[('Energy performance',)])
     output_stock['Renovation rate (%) - Renovation'] = dict_pd2df(buildings.renovation_rate_dict[('Energy performance',)])
 
     # 2 Transitions
@@ -264,35 +264,35 @@ def parse_output(output, buildings, buildings_constructed, energy_prices, energy
 
     # final just represent energy performance transition and doesn't consider new heating energy
     energy_lcc_final = reindex_mi(dict_pd2df(buildings.energy_lcc_final[('Energy performance',)]['conventional']), flow_renovation.index)
-    output_flow_transition['Energy cost final (€/m2)'] = energy_lcc_final
+    output_flow_transition['Energy cost final (euro/m2)'] = energy_lcc_final
 
     energy_lcc = reindex_mi(dict_pd2df(buildings.energy_lcc[('Energy performance',)]['conventional']), flow_renovation.index)
-    output_flow_transition['Energy cost initial (€/m2)'] = energy_lcc
+    output_flow_transition['Energy cost initial (euro/m2)'] = energy_lcc
 
     energy_lcc_saving = energy_lcc - energy_lcc_final
-    output_flow_transition['Energy cost saving (€/m2)'] = energy_lcc_saving
+    output_flow_transition['Energy cost saving (euro/m2)'] = energy_lcc_saving
 
     # investment and subsides
     capex_ep = reindex_mi(dict_pd2df(buildings.capex[('Energy performance',)]), flow_renovation.index)
     capex_he = reindex_mi(dict_pd2df(buildings.capex[('Heating energy',)]), flow_renovation.index)
-    output_flow_transition['Capex wo/ intangible (€/m2)'] = capex_ep + capex_he
-    output_flow_transition['Capex wo/ intangible energy performance (€/m2)'] = capex_ep
-    output_flow_transition['Capex wo/ intangible (€)'] = output_flow_transition['Flow transition (m2)'] * \
-                                                         output_flow_transition['Capex wo/ intangible (€/m2)']
+    output_flow_transition['Capex wo/ intangible (euro/m2)'] = capex_ep + capex_he
+    output_flow_transition['Capex wo/ intangible energy performance (euro/m2)'] = capex_ep
+    output_flow_transition['Capex wo/ intangible (euro)'] = output_flow_transition['Flow transition (m2)'] * \
+                                                         output_flow_transition['Capex wo/ intangible (euro/m2)']
 
     capex_ep = reindex_mi(dict_pd2df(buildings.capex_intangible[('Energy performance',)]), flow_renovation.index)
-    output_flow_transition['Capex intangible (€/m2)'] = capex_ep
+    output_flow_transition['Capex intangible (euro/m2)'] = capex_ep
 
     temp = output['Cost intangible'][buildings.calibration_year].groupby('Energy performance').mean().loc[['G', 'F', 'E', 'D', 'C'], ['F', 'E', 'D', 'C', 'B', 'A']]
     temp.to_csv(os.path.join(folder_output, 'cost_intangible_ini.csv'))
 
     capex_ep = reindex_mi(dict_pd2df(buildings.capex_total[('Energy performance',)]), flow_renovation.index)
     capex_he = reindex_mi(dict_pd2df(buildings.capex_total[('Heating energy',)]), flow_renovation.index)
-    output_flow_transition['Capex energy performance (€/m2)'] = capex_ep
+    output_flow_transition['Capex energy performance (euro/m2)'] = capex_ep
 
-    output_flow_transition['Capex w/ intangible (€/m2)'] = capex_ep + capex_he
-    output_flow_transition['Capex w/ intangible (€)'] = output_flow_transition['Flow transition (m2)'] * \
-                                                        output_flow_transition['Capex w/ intangible (€/m2)']
+    output_flow_transition['Capex w/ intangible (euro/m2)'] = capex_ep + capex_he
+    output_flow_transition['Capex w/ intangible (euro)'] = output_flow_transition['Flow transition (m2)'] * \
+                                                        output_flow_transition['Capex w/ intangible (euro/m2)']
 
     if buildings.subsidies_total[('Energy performance',)] != {}:
         subsidies_ep = reindex_mi(dict_pd2df(buildings.subsidies_total[('Energy performance',)]), flow_renovation.index)
@@ -302,26 +302,38 @@ def parse_output(output, buildings, buildings_constructed, energy_prices, energy
         subsidies_he = reindex_mi(dict_pd2df(buildings.subsidies_total[('Heating energy',)]), flow_renovation.index)
     else:
         subsidies_he = 0 * capex_he
-    output_flow_transition['Subsidies (€/m2)'] = subsidies_ep + subsidies_he
-    output_flow_transition['Subsidies (€)'] = output_flow_transition['Flow transition (m2)'] * output_flow_transition['Subsidies (€/m2)']
+    output_flow_transition['Subsidies (euro/m2)'] = subsidies_ep + subsidies_he
+    output_flow_transition['Subsidies (euro)'] = output_flow_transition['Flow transition (m2)'] * output_flow_transition['Subsidies (euro/m2)']
 
     flow_renovation_label = dict_pd2df(buildings.flow_renovation_label_dict)
     # area = reindex_mi(buildings.attributes2area, flow_renovation_label.index)
     # flow_area_renovation_label = (flow_renovation_label.T * area).T
-    if buildings.subsidies_total[('Energy performance',)] != {}:
-        summary_subsidies, output_subsides_year, output_subsides = parse_subsidies(buildings, flow_renovation_label,
-                                                                                   buildings.attributes2area)
-        pickle.dump(output_subsides_year, open(os.path.join(folder_output, 'output_subsides_year.pkl'), 'wb'))
-        pickle.dump(output_subsides, open(os.path.join(folder_output, 'output_subsides.pkl'), 'wb'))
 
     df = (output_stock['Consumption actual (kWh)'].groupby('Heating energy').sum().T * coefficient).T
     result = dict()
     for key, item in energy_taxes_detailed.items():
         key = key.replace('_', ' ').capitalize()
         tax = (df * item).dropna(axis=1).sum()
-        result['{} (€)'.format(key)] = tax
+        result['{} (euro)'.format(key)] = tax
     summary_taxes = pd.DataFrame(result)
 
+    summary_policies = - summary_taxes
+
+    if buildings.subsidies_total[('Energy performance',)] != {}:
+        summary_subsidies, output_subsides_year, output_subsides = parse_subsidies(buildings, flow_renovation_label,
+                                                                                   buildings.attributes2area)
+
+        summary_policies = pd.concat((summary_policies, summary_subsidies), axis=1)
+        cols = [c for c in summary_policies.columns if 'euro' in c]
+        policies_stacked_plot(summary_policies.loc[buildings.calibration_year + 1:, cols] / 10 ** 9,
+                              save=os.path.join(folder_output, 'summary_policies.png'))
+
+        if False:
+            pickle.dump(output_subsides_year, open(os.path.join(folder_output, 'output_subsides_year.pkl'), 'wb'))
+            pickle.dump(output_subsides, open(os.path.join(folder_output, 'output_subsides.pkl'), 'wb'))
+
+
+    """
     # 3. Quick summary
     summary = dict()
     summary['Stock'] = output_stock['Stock'].sum(axis=0)
@@ -343,25 +355,24 @@ def parse_output(output, buildings, buildings_constructed, energy_prices, energy
     temp.index = [c + 1 for c in temp.index]
     summary['Aggregated renovation rate renovation (%)'] = summary['Flow transition renovation'] / temp
 
-    summary['Annual renovation expenditure (€)'] = output_flow_transition['Capex wo/ intangible (€)'].sum(axis=0)
-    summary['Annual subsidies (€)'] = output_flow_transition['Subsidies (€)'].sum(axis=0)
+    summary['Annual renovation expenditure (euro)'] = output_flow_transition['Capex wo/ intangible (euro)'].sum(axis=0)
+    summary['Annual subsidies (euro)'] = output_flow_transition['Subsidies (euro)'].sum(axis=0)
     summary['Energy poverty'] = output_stock['Stock'][output_stock['Budget share (%)'] > 0.1].sum(axis=0)
     summary = pd.DataFrame(summary)
     summary.dropna(axis=0, thresh=4, inplace=True)
+    """
 
-    summary_policies = - summary_taxes
-    if buildings.subsidies_total[('Energy performance',)] != {}:
-        summary_policies = pd.concat((summary_policies, summary_subsidies), axis=1)
-        summary = pd.concat((summary, summary_subsidies), axis=1)
-
-    summary = pd.concat((summary, summary_taxes), axis=1)
-    summary.to_csv(os.path.join(folder_output, 'summary.csv'))
-    summary_policies.to_csv(os.path.join(folder_output, 'summary_policies.csv'))
-    summary_policies.loc[buildings.calibration_year:, :]
-    policies_stacked_plot(summary_policies.loc[buildings.calibration_year + 1:, :] / 10 ** 9,
-                          save=os.path.join(folder_output, 'summary_policies.png'))
+    # summary = pd.concat((summary, summary_taxes), axis=1)
+    # summary.to_csv(os.path.join(folder_output, 'summary.csv'))
+    # summary_policies.to_csv(os.path.join(folder_output, 'summary_policies.csv'))
 
     detailed = dict()
+    detailed['Emission (MtCO2)'] = output_stock['Emission (gCO2)'].sum(axis=0) / 10**12
+
+    detailed['Consumption conventional (TWh)'] = (
+            output_stock['Consumption conventional (kWh)'].groupby(
+                'Heating energy').sum().T * coefficient).T.sum(axis=0) / 10 ** 9
+
     df = (output_stock['Consumption actual (kWh)'].groupby('Heating energy').sum().T * coefficient).T
     energy_expenditure = (df * energy_prices).dropna(axis=1).sum() / 10 ** 9
     taxes_expenditure = (df * energy_taxes).dropna(axis=1).sum() / 10 ** 9
@@ -399,14 +410,17 @@ def parse_output(output, buildings, buildings_constructed, energy_prices, energy
     for dm in temp.index:
         detailed['Renovation rate {} (%)'.format(dm)] = temp.loc[dm, :]
 
-    detailed['Annual renovation expenditure (Billions €)'] = output_flow_transition['Capex w/ intangible (€)'].sum(axis=0) / 10**9
-    detailed['Annual subsidies (Billions €)'] = output_flow_transition['Subsidies (€)'].sum(axis=0) / 10**9
-    detailed['Annual energy expenditure (Billions €)'] = energy_expenditure
-    detailed['Annual energy taxes expenditure (Billions €)'] = taxes_expenditure
+    detailed['Annual renovation expenditure (Billions euro)'] = output_flow_transition['Capex w/ intangible (euro)'].sum(axis=0) / 10**9
+    detailed['Annual energy expenditure (Billions euro)'] = energy_expenditure
+    detailed['Annual energy taxes expenditure (Billions euro)'] = taxes_expenditure
+    detailed['Annual subsidies (Billions euro)'] = output_flow_transition['Subsidies (euro)'].sum(axis=0) / 10**9
 
+    detailed['Energy poverty (Thousands)'] = output_stock['Stock'][output_stock['Budget share (%)'] > 0.1].sum(axis=0) / 10**3
     detailed['Share energy poverty (%)'] = output_stock['Stock'][output_stock['Budget share (%)'] > 0.1].sum(axis=0) / output_stock['Stock'].sum(axis=0)
 
     detailed = pd.DataFrame(detailed).dropna(how='all', axis=0).T
+
+    detailed = pd.concat((detailed, summary_policies.T), axis=0)
     # detailed.index = detailed.index.astype('int64')
 
     if lbd_output:
@@ -423,11 +437,12 @@ def parse_output(output, buildings, buildings_constructed, energy_prices, energy
         detailed = pd.concat((detailed, temp), axis=0)
 
     detailed.to_csv(os.path.join(folder_output, 'detailed.csv'))
-    pickle.dump(output_flow_transition, open(os.path.join(folder_output, 'output_transition.pkl'), 'wb'))
+    if output_detailed:
+        pickle.dump(output_flow_transition, open(os.path.join(folder_output, 'output_transition.pkl'), 'wb'))
     pickle.dump(output_stock, open(os.path.join(folder_output, 'output_stock.pkl'), 'wb'))
 
 
-def quick_graphs(folder_output):
+def quick_graphs(folder_output, output_detailed):
     """
     Returns main comparison graphs.
 
@@ -446,22 +461,25 @@ def quick_graphs(folder_output):
     folders = {scenario: os.path.join(folder_output, scenario) for scenario in scenarios}
     sns.set_palette(sns.color_palette('husl', len(scenarios)))
 
-    summaries = {scenario: pd.read_csv(os.path.join(folders[scenario], 'summary.csv'), index_col=[0]) for scenario in
-                 scenarios}
-    summaries = reverse_nested_dict(summaries)
-    summaries = {key: pd.DataFrame(item) for key, item in summaries.items()}
+    folder_output = os.path.join(folder_output, 'img')
+    os.mkdir(folder_output)
 
-    output_stock = {scenario: pickle.load(open(os.path.join(folders[scenario], 'output_stock.pkl'), 'rb')) for scenario
-                    in scenarios}
+    detailed = {scenario.replace('_', ' '): pd.read_csv(os.path.join(folders[scenario], 'detailed.csv'), index_col=[0]).T for scenario in
+                scenarios}
+    detailed = reverse_nested_dict(detailed)
+    detailed = {key: pd.DataFrame(item) for key, item in detailed.items()}
+
+    paths = {scenario: os.path.join(folders[scenario], 'output_stock.pkl') for scenario in scenarios}
+    output_stock = {scenario: pickle.load(open(paths[scenario], 'rb')) for scenario in paths}
     output_stock = reverse_nested_dict(output_stock)
 
-    simple_pd_plot(summaries['Consumption actual (kWh)'] / 10 ** 9, 'Years', 'Consumption actual (TWh)',
+    simple_pd_plot(detailed['Consumption actual (TWh)'], 'Years', 'Consumption actual (TWh)',
                    save=os.path.join(folder_output, 'consumption_actual.png'))
 
-    simple_pd_plot(summaries['Heating intensity renovation (%)'], 'Years', 'Heating intensity (%)', format_y='percent',
+    simple_pd_plot(detailed['Heating intensity (%)'], 'Years', 'Heating intensity (%)', format_y='percent',
                    save=os.path.join(folder_output, 'heating_intensity.png'))
 
-    simple_pd_plot(summaries['Flow transition renovation'] / 10 ** 3, 'Years', 'Flow renovation (Thousands)',
+    simple_pd_plot(detailed['Flow renovation (Thousands)'], 'Years', 'Flow renovation (Thousands)',
                    save=os.path.join(folder_output, 'flow_renovation.png'))
 
     scenario_grouped_subplots(grouped_scenarios(output_stock['Renovation'], 'Energy performance'),
@@ -484,7 +502,7 @@ def quick_graphs(folder_output):
                               format_y=lambda y, _: '{:,.0f}'.format(y / 10 ** 3), n_columns=3, rotation=90, nbins=4,
                               save=os.path.join(folder_output, 'renovation_decision_maker.png'))
 
-    simple_pd_plot(summaries['Energy poverty'] / 10 ** 6, 'Years', 'Energy poverty (Millions)',
+    simple_pd_plot(detailed['Share energy poverty (%)'], 'Years', 'Share energy poverty (%)',
                    save=os.path.join(folder_output, 'energy_poverty.png'))
 
     scenario_grouped_subplots(grouped_scenarios(output_stock['Stock - Renovation'], 'Energy performance'),
@@ -497,7 +515,6 @@ def quick_graphs(folder_output):
         weight[key] = item[item.index.get_level_values('Energy performance') != 'A']
         weight[key].columns = [c + 1 for c in weight[key].columns]
         weight[key] = weight[key].iloc[:, :-1]
-
 
     scenario_grouped_subplots(
         grouped_scenarios(output_stock['Renovation rate (%) - Renovation'], 'Energy performance', func='weighted_mean',
@@ -526,3 +543,7 @@ def quick_graphs(folder_output):
         suptitle='Renovation rate (%)',
         format_y=lambda y, _: '{:.1%}'.format(y), n_columns=3, rotation=90, nbins=4,
         save=os.path.join(folder_output, 'renovation_rate_decision_maker.png'))
+
+    if output_detailed is False:
+        for _, path in paths.items():
+            os.remove(path)

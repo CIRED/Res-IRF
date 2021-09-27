@@ -40,7 +40,7 @@ class EnergyTaxes(PublicPolicy):
         Year policy ends.
     calibration : bool, default: False
         Should policy be used for the calibration step?
-    unit : {'%', '€/kWh', '€/tCO2'}
+    unit : {'%', 'euro/kWh', 'euro/tCO2'}
         Unit of measure of the value attribute.
     value: float, pd.Series or pd.DataFrame
         Value of energy taxes.
@@ -58,14 +58,14 @@ class EnergyTaxes(PublicPolicy):
             Year policy ends.
         calibration : bool, default: False
             Should policy be used for the calibration step?
-        unit : {'%', '€/kWh', '€/tCO2'}
+        unit : {'%', 'euro/kWh', 'euro/tCO2'}
             Unit of measure of the value attribute.
         value: float, pd.Series or pd.DataFrame
             Value of energy taxes.
         """
         super().__init__(name, start, end, 'energy_taxes', calibration)
 
-        self.list_unit = ['%', '€/kWh', '€/tCO2']
+        self.list_unit = ['%', 'euro/kWh', 'euro/tCO2']
         self.unit = unit
         self.value = value
         self.calibration = calibration
@@ -76,23 +76,23 @@ class EnergyTaxes(PublicPolicy):
         Parameters
         ----------
         energy_prices : pd.Series or pd.DataFrame, optional
-            Energy prices in €/kWh. Heating energy as index, and years as columns.
+            Energy prices in euro/kWh. Heating energy as index, and years as columns.
         co2_content : pd.Series or pd.DataFrame, optional
             CO2 content in gCO2/kWh. Heating energy as index, and years as columns.
 
         Returns
         -------
         pd.Series
-            Energy tax cost in €/kWh.
+            Energy tax cost in euro/kWh.
         """
         if self.unit == '%':
             val = energy_prices * self.value
 
-        elif self.unit == '€/kWh':
+        elif self.unit == 'euro/kWh':
             val = self.value
 
-        elif self.unit == '€/tCO2':
-            # €/tCO2 * gCO2/kWh / 1000000 -> €/kWh
+        elif self.unit == 'euro/tCO2':
+            # euro/tCO2 * gCO2/kWh / 1000000 -> euro/kWh
             value = self.value
             if isinstance(value, int):
                 value = pd.Series(value, co2_content.columns)
@@ -117,7 +117,7 @@ class EnergyTaxes(PublicPolicy):
 class Subsidies(PublicPolicy):
     """Represents subsidies.
 
-    Subsidies values are in €/m2. Subsidy_max, cost_max or cost_min are transformed in €/m2.
+    Subsidies values are in euro/m2. Subsidy_max, cost_max or cost_min are transformed in euro/m2.
 
     Attributes
     ----------
@@ -129,7 +129,7 @@ class Subsidies(PublicPolicy):
         Year policy ends.
     calibration : bool, default: False
         Should policy be used for the calibration step?
-    unit : {'%', '€/kWh', '€/tCO2'}
+    unit : {'%', 'euro/kWh', 'euro/tCO2'}
         Unit of measure of the value attribute.
     value : float, pd.Series or pd.DataFrame
         Value of subsidies.
@@ -153,7 +153,7 @@ class Subsidies(PublicPolicy):
             self.transition = transition
 
         # self.targets = targets
-        self.list_unit = ['%', '€/kWh', '€/tCO2', '€']
+        self.list_unit = ['%', 'euro/kWh', 'euro/tCO2', 'euro']
         self.unit = unit
         self.value = value
         self.time_dependent = time_dependent
@@ -168,7 +168,7 @@ class Subsidies(PublicPolicy):
 
     def to_unit(self, value):
         """
-        Transform € to €/m2.
+        Transform euro to euro/m2.
 
         Parameters
         ----------
@@ -219,7 +219,7 @@ class Subsidies(PublicPolicy):
         cost: pd.Series, pd.DataFrame, optional
             Necessary if self.unit == '%'
         energy_saving:  pd.Series, pd.DataFrame, optional
-            Necessary if self.unit == '€/kWh'
+            Necessary if self.unit == 'euro/kWh'
 
         Returns
         -------
@@ -237,7 +237,7 @@ class Subsidies(PublicPolicy):
             if energy_saving is not None:
                 energy_saving = self.apply_targets(energy_saving)
 
-        if self.unit == '€':
+        if self.unit == 'euro':
             return value
 
         elif self.unit == '%':
@@ -272,7 +272,7 @@ class Subsidies(PublicPolicy):
 
             return subsidy
 
-        elif self.unit == '€/kWh':
+        elif self.unit == 'euro/kWh':
             if isinstance(value, pd.Series):
                 val = reindex_mi(value, energy_saving.index, axis=0)
             else:
@@ -286,7 +286,7 @@ class Subsidies(PublicPolicy):
             return subsidy
 
         else:
-            raise AttributeError('self.unit must be in {€, %, €/kWh}')
+            raise AttributeError('self.unit must be in {euro, %, euro/kWh}')
 
 
 class SubsidiesRecyclingTax(PublicPolicy):
@@ -302,7 +302,7 @@ class SubsidiesRecyclingTax(PublicPolicy):
             Year policy starts.
         end : int
             Year policy ends.
-        subsidy_unit : {'%', '€/kWh', '€/tCO2'}
+        subsidy_unit : {'%', 'euro/kWh', 'euro/tCO2'}
             Unit of measure of the value attribute.
         subsidy_value: float, pd.Series or pd.DataFrame
             Initial value of energy subsidies.
