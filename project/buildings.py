@@ -8,7 +8,10 @@ from utils import reindex_mi, val2share, logistic, get_levels_values, remove_row
 
 class HousingStock:
     """
-    Class represents housing stock. Housing is a building and household/owner archetype.
+    Multi-attributes, dynamic housing stocks.
+
+    HousingStock contains multiple agents. An agent is defined as the combination of a building, an owner and a tenant.
+    Specific agent behavior are declared as method.
 
     Attributes
     ----------
@@ -161,10 +164,33 @@ class HousingStock:
 
     @staticmethod
     def data2area(l2area, ds_seg):
+        """
+        Multiply unitary measured data to surface data.
+
+        Parameters
+        ----------
+        l2area: pd.Series
+            Attributes indexed data surface.
+        ds_seg: pd.Series or pd.DataFrame
+            Attributes indexed data.
+
+        Returns
+        -------
+        pd.Series or pd.DataFrame
+        """
         area_seg = reindex_mi(l2area, ds_seg.index, l2area.index.names)
         return ds_seg * area_seg
 
     def add_flow(self, flow):
+        """
+        Add flow to stock_seg property.
+
+        Parameters
+        ----------
+        flow: pd.Series
+            Attributes indexed flow to be added to stock_seg.
+        """
+
         flow = flow.reorder_levels(self.stock_seg.index.names)
         new_stock = self.stock_seg + flow
         new_stock.fillna(0, inplace=True)
@@ -178,12 +204,17 @@ class HousingStock:
 
         Parameters
         ----------
+        segments: pd.MultiIndex
+            Indexes to use.
         attributes2: float, pd.Series, pd.DataFrame, dict
+            Attributes indexed data.
         scenario: str, optional
+            Scenario needs to be specified if attributes2 is a dictionary.
 
         Returns
         -------
         pd.Series or pd.DataFrame
+            Attributes indexed data based on segments pd.MultiIndex.
         """
         if isinstance(attributes2, dict):
             if scenario is None:
@@ -203,8 +234,20 @@ class HousingStock:
             val = reindex_mi(val, segments)
         return val
 
-    def to_stock_area_seg(self, scenario=None, segments=None):
-        """Suppose that area_seg levels are included in self.levels.
+    def to_stock_area(self, scenario=None, segments=None):
+        """
+        Returns indexed area (surface) of current building stock.
+
+        Parameters
+        ----------
+        segments: pd.MultiIndex, optional
+        scenario: str, optional
+            Scenario needs to be specified if attributes2area is a dictionary.
+
+        Returns
+        -------
+        pd.Series or pd.DataFrame
+            Area indexed data based on segments pd.MultiIndex.
         """
         if self.attributes2area is None:
             raise AttributeError('Need to define a table from attributes2area')
@@ -214,6 +257,21 @@ class HousingStock:
         return area * self._stock_seg
 
     def to_income(self, scenario=None, segments=None):
+        """
+        Returns indexed income (surface).
+
+        Parameters
+        ----------
+        segments: pd.MultiIndex, optional
+            Indexed used to reindex data. Default building stock indexes.
+        scenario: str, optional
+            Scenario needs to be specified if attributes2income is a dictionary.
+
+        Returns
+        -------
+        pd.Series or pd.DataFrame
+            Annual income indexed data based on segments pd.MultiIndex.
+        """
         if self.attributes2income is None:
             raise AttributeError('Need to define a table from attributes2income')
         if segments is None:
@@ -436,14 +494,14 @@ class HousingStock:
 
     @staticmethod
     def to_summed(df, yr_ini, horizon):
-        """Summed df based on its horizon.
+        """
+        Sum each rows of df from yr_ini to its horizon.
 
         Parameters
         ----------
         df: pd.DataFrame
-            pd.MultiIndex as index, and years as columns
-        yr_ini
-            int
+            pd.MultiIndex as index, and years as columns.
+        yr_ini: int
         horizon: pd.Series
             pd.MultiIndex as index
 
@@ -458,7 +516,8 @@ class HousingStock:
             horizon_re = reindex_mi(horizon, df.index, horizon.index.names)
 
             def horizon2years(num, yr):
-                """Return list of years based on a number of years and an initial year.
+                """
+                Return list of years based on a number of years and an initial year.
 
                 Parameters
                 ----------
@@ -468,20 +527,14 @@ class HousingStock:
                 Returns
                 -------
                 list
-
-                Example:
-                >>> horizon2years(2018, 3)
-                [2018, 2019, 2020]
-                >>> horizon2years(2020, 10)
-                [2020, 2021, 2022, 2023, 2024, 2025, 2026, 2027, 2028, 2029]
-
                 """
                 return [yr + k for k in range(int(num))]
 
             yrs = horizon_re.apply(horizon2years, args=[yr_ini])
 
             def time_series2sum(ds, years, levels):
-                """Sum n values over axis=1 based on years to consider for each row.
+                """
+                Sum n values over axis=1 based on years to consider for each row.
 
                 Parameters
                 ----------
@@ -495,13 +548,6 @@ class HousingStock:
                 Returns
                 -------
                 float
-
-                Examples
-                --------
-                >>> data = pd.Series(np.ones((3, 5)), columns=[2018, 2019, 2020, 2021, 2022])
-                >>> years = pd.Series([[2018, 2019, 2020], [2018, 2019, 2020, 2021], [2018]])
-                >>> time_series2sum(data, years, levels)
-
                 """
                 idx_invest = [ds[lvl] for lvl in levels]
                 idxyears = years.loc[tuple(idx_invest)]
@@ -1467,7 +1513,7 @@ class HousingStockRenovated(HousingStock):
         self._stock_seg_residual = stock_seg * residual_rate
         self._stock_seg_mobile = stock_seg - self._stock_seg_residual
         self._stock_seg_mobile_dict = {year: self._stock_seg_mobile}
-        self._stock_area_seg = self.to_stock_area_seg()
+        self._stock_area_seg = self.to_stock_area()
 
         # initializing knowledge
         flow_area_renovated_seg = self.flow_area_renovated_seg_ini(rate_renovation_ini, learning_year)
@@ -1508,7 +1554,8 @@ class HousingStockRenovated(HousingStock):
 
     @stock_seg.setter
     def stock_seg(self, new_stock_seg):
-        """Master stock that implement modification for stock slave.
+        """
+        Master stock that implement modification for stock slave.
         """
         self._segments = new_stock_seg.index
 
@@ -1516,7 +1563,7 @@ class HousingStockRenovated(HousingStock):
         self._stock_seg_dict[self.year] = new_stock_seg
         self._stock_seg_mobile = new_stock_seg - self._stock_seg_residual
         self._stock_seg_mobile_dict[self.year] = self._stock_seg_mobile
-        self._stock_area_seg = self.to_stock_area_seg()
+        self._stock_area_seg = self.to_stock_area()
 
     @property
     def stock_mobile(self):
@@ -1547,7 +1594,8 @@ class HousingStockRenovated(HousingStock):
         return self._knowledge
 
     def flow_area_renovated_seg_ini(self, rate_renovation_ini, learning_year):
-        """Initialize flow area renovated.
+        """
+        Initialize flow area renovated.
 
         Flow area renovation is defined as:
          renovation rate (2.7%/yr) x number of learning years (10 yrs) x renovated area (m2).
@@ -1563,7 +1611,8 @@ class HousingStockRenovated(HousingStock):
 
     @staticmethod
     def renovation_rate(npv, rho, npv_min, rate_max, rate_min):
-        """Renovation rate for float values.
+        """
+        Renovation rate for float values.
 
         Parameters
         ----------
@@ -1584,7 +1633,8 @@ class HousingStockRenovated(HousingStock):
 
     @staticmethod
     def renovate_rate_func(npv, rho, npv_min, rate_max, rate_min):
-        """Calculate renovation rate for indexed pd.Series rho and indexed pd.Series npv.
+        """
+        Calculate renovation rate for indexed pd.Series rho and indexed pd.Series npv.
 
         Parameters
         ----------
@@ -1613,7 +1663,8 @@ class HousingStockRenovated(HousingStock):
     def to_renovation_rate(self, energy_prices, transition=None, consumption='conventional', cost_invest=None,
                            cost_intangible=None, subsidies=None, rho=None):
 
-        """Routine calculating renovation rate from segments for a particular yr.
+        """
+        Routine calculating renovation rate from segments for a particular yr.
 
         Cost (energy, investment) & rho parameter are also required.
 
@@ -1768,7 +1819,9 @@ class HousingStockRenovated(HousingStock):
                                      rotation=0.0):
         """De-aggregate stock_renovation_attributes by final heating energy.
 
-        stock_renovation columns segmented by final attributes and final heating energy.
+        1. Flow renovation returns number of renovation by final energy performance.
+        2. Heating energy technology market-share is then calculated based on flow renovation.
+        What will be the choice of building owner to change their building if the building performance is ...?
 
         Parameters
         ----------
@@ -1792,16 +1845,9 @@ class HousingStockRenovated(HousingStock):
                                                    consumption=consumption,
                                                    subsidies=subsidies)[0]
 
-       #  market_share_energy.index.rename('Energy performance', 'Energy performance final', inplace=True)
-
         names_final = list(market_share_energy.index.names)
         names_final[names_final.index('Energy performance')] = 'Energy performance final'
         market_share_energy.index.names = names_final
-
-        """
-        ms_temp = pd.concat([market_share_seg_he.T] * len(self.attributes_values['Energy performance']),
-                            keys=self.attributes_values['Energy performance'], names=['Energy performance final'])
-        """
 
         flow_renovation = self.to_flow_renovation_ep(energy_prices,
                                                      consumption=consumption,
@@ -1810,11 +1856,6 @@ class HousingStockRenovated(HousingStock):
                                                      subsidies=subsidies,
                                                      renovation_obligation=renovation_obligation,
                                                      mutation=mutation, rotation=rotation)
-
-        """
-        sr_temp = pd.concat([flow_renovation.T] * len(self.attributes_values['Heating energy']),
-                            keys=self.attributes_values['Heating energy'], names=['Heating energy final']).T
-        """
 
         flow_renovation_temp = flow_renovation.stack()
         market_share_energy_re = reindex_mi(market_share_energy, flow_renovation_temp.index)
@@ -2143,7 +2184,6 @@ class HousingStockRenovated(HousingStock):
             from scipy.optimize import curve_fit
 
             df = pd.concat((npv_mean, renovation_rate_ini), axis=1).dropna()
-            df.to_csv('test.csv')
             popt, _ = curve_fit(HousingStockRenovated.renovation_rate, df.iloc[:, 0], df.iloc[:, 1],
                                 p0=[rho_agent_mean.mean(), self._npv_min, self._rate_max, self._rate_min],
                                 bounds=((0, -1000, 0.1, 10**-5), (1, npv_mean.min(), 0.5, renovation_rate_ini.min())))
@@ -2318,7 +2358,8 @@ class HousingStockConstructed(HousingStock):
         return self._knowledge
 
     def to_share_housing_type(self):
-        """Returns share of Housing type ('Multi-family', 'Single-family') in the new constructed housings.
+        """
+        Returns share of Housing type ('Multi-family', 'Single-family') in the new constructed housings.
 
         Share of multi-family in the total stock to reflect urbanization effects.
         Demolition dynamic is made endogenously and therefore construction should reflect the evolution..
@@ -2346,7 +2387,8 @@ class HousingStockConstructed(HousingStock):
         return ht_share_tot_construction
 
     def to_flow_constructed_dm(self):
-        """Returns flow of constructed buildings segmented by decision-maker (dm) (Housing type, Occupancy status).
+        """
+        Returns flow of constructed buildings segmented by decision-maker (dm) (Housing type, Occupancy status).
 
         1. Increase in the share of multi-family housing in the total stock.
         2. The share of owner-occupied and rented dwellings is held constant.
@@ -2362,7 +2404,8 @@ class HousingStockConstructed(HousingStock):
 
     def to_flow_constructed_dm_he_ep(self, energy_price, cost_intangible=None, cost_invest=None,
                                      consumption='conventional', nu=8.0, subsidies=None):
-        """Returns flow of constructed buildings segmented.
+        """
+        Returns flow of constructed buildings segmented.
 
         1. Calculate construction flow segmented by decision-maker:
         2. Calculate the market-share of Heating energy and Energy performance type by decision-maker: market_share_dm;
@@ -2393,7 +2436,6 @@ class HousingStockConstructed(HousingStock):
                                                cost_intangible=cost_intangible,
                                                transition=['Energy performance', 'Heating energy'],
                                                consumption=consumption, nu=nu, subsidies=subsidies, segments=segments)[0]
-        market_share_dm.to_csv('test.csv')
 
         flow_constructed_dm = flow_constructed_dm.reorder_levels(market_share_dm.index.names)
         flow_constructed_seg = (flow_constructed_dm * market_share_dm.T).T
@@ -2409,7 +2451,8 @@ class HousingStockConstructed(HousingStock):
 
     def to_flow_constructed_seg(self, energy_price, cost_intangible=None, cost_invest=None,
                                 consumption=None, nu=8.0, subsidies=None):
-        """Add Income class and Income class owner levels to flow_constructed.
+        """
+        Add Income class and Income class owner levels to flow_constructed.
 
         io_share_seg: pd.DataFrame
             for each segment (rows) distribution of income class owner decile (columns)
@@ -2452,7 +2495,8 @@ class HousingStockConstructed(HousingStock):
 
     def update_flow_constructed_seg(self, energy_price, cost_intangible=None, cost_invest=None,
                                     consumption='conventional', nu=8.0, subsidies=None):
-        """Update HousingConstructed object flow_constructed_seg attribute.
+        """
+        Update HousingConstructed object flow_constructed_seg attribute.
 
         Parameters
         ----------
@@ -2564,7 +2608,8 @@ class HousingStockConstructed(HousingStock):
     @staticmethod
     def evolution_area_construction(area_construction_prev, area_construction_ini, area_max_construction,
                                     elasticity_area, available_income_ratio):
-        """Evolution of new buildings area based on total available income. Function represents growth.
+        """
+        Evolution of new buildings area based on total available income. Function represents growth.
 
         Parameters
         ----------
@@ -2592,7 +2637,8 @@ class HousingStockConstructed(HousingStock):
         return area_construction
 
     def update_area_construction(self, elasticity_area_new_ini, available_income_real_pop_ds, area_max_construction):
-        """Every year, average area of new buildings increase with available income.
+        """
+        Every year, average area of new buildings increase with available income.
 
         Trend is based on elasticity area / income.
         eps_area_new decrease over time and reduce elasticity while average area converge towards area_max.
@@ -2621,7 +2667,8 @@ class HousingStockConstructed(HousingStock):
         self._area_construction_dict[self.year] = self.attributes2area
 
     def to_flow_area_constructed_ini(self, stock_area_existing_seg):
-        """To initialize construction knowledge returns area of 2.5 A DPE and 2 B DPE.
+        """
+        To initialize construction knowledge returns area of 2.5 A DPE and 2 B DPE.
         """
         stock_area_new_existing_seg = pd.concat(
             (stock_area_existing_seg.xs('A', level='Energy performance'),

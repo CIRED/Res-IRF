@@ -157,7 +157,7 @@ def parse_subsidies(buildings, flow_renovation_label, area):
 
 
 def parse_output(output, buildings, buildings_constructed, energy_prices, energy_taxes, energy_taxes_detailed,
-                 co2_content_data, coefficient, folder_output, lbd_output=False, output_detailed=False):
+                 co2_emission, coefficient, folder_output, lbd_output=False, output_detailed=False):
     """
     Parse Res-IRF output to return understandable data.
 
@@ -220,11 +220,9 @@ def parse_output(output, buildings, buildings_constructed, energy_prices, energy
         output_stock['Budget share (%)' + ' - {}'.format(name)] = building.budget_share
         output_stock['Heating intensity (%)' + ' - {}'.format(name)] = building.heating_intensity
         output_stock['Emission (gCO2/m2)' + ' - {}'.format(name)] = HousingStock.mul_consumption(
-            output_stock['Consumption actual (kWh/m2)' + ' - {}'.format(name)],
-            co2_content_data)
+            output_stock['Consumption actual (kWh/m2)' + ' - {}'.format(name)], co2_emission)
         output_stock['Emission (gCO2)' + ' - {}'.format(name)] = HousingStock.mul_consumption(
-            output_stock['Consumption actual (kWh)' + ' - {}'.format(name)],
-            co2_content_data)
+            output_stock['Consumption actual (kWh)' + ' - {}'.format(name)], co2_emission)
 
         if 'total_taxes' in output.keys():
             output_stock['Taxes cost (euro/m2)' + ' - {}'.format(name)] = HousingStock.mul_consumption(

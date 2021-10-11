@@ -434,12 +434,6 @@ class RegulatedLoan(PublicPolicy):
         Returns
         -------
         float
-
-        Examples
-        ________
-        >>> RegulatedLoan.interest_cost(0.1, 1, 100)
-        10
-        >>> RegulatedLoan.interest_cost(0.1, 10, 100000)
         """
         period = np.arange(n_period) + 1
         return - npf.ipmt(interest_rate, period, n_period, principal).sum()
@@ -604,6 +598,12 @@ class ThermalRegulation(PublicPolicy):
         Returns
         -------
         """
-        for val in self.target.loc[year, :]:
-            attributes[self.transition].remove(val)
-        return attributes
+        try:
+            t = self.target.loc[year, :]
+            for val in t:
+                attributes[self.transition].remove(val)
+            return attributes
+        except KeyError:
+            return attributes
+
+

@@ -257,19 +257,28 @@ def parse_exogenous_input(folder, config):
 
     Parameters
     ----------
-    folder : str
-    config : dict
+    folder: str
+    config: dict
 
     Returns
     -------
-    energy_prices : pd.DataFrame
-    energy_taxes : pd.DataFrame
-    cost_invest : dict
+    pd.DataFrame
+        Energy prices.
+    pd.DataFrame
+        Energy taxes
+    dict
+        Investment cost.
         Keys are transition cost_envelope = cost_invest(tuple([Energy performance]).
-    cost_invest_construction : dict
-    co2_content : pd.DataFrame
-    policies : dict
-    summary_input: pd.DataFrame
+    dict
+        Construction cost.
+    pd.DataFrame
+        co2_tax
+    pd.DataFrame
+        co2_emission
+    dict
+        policies
+    pd.DataFrame
+        summary_input
     """
 
     calibration_year = config['stock_buildings']['year']
@@ -365,19 +374,33 @@ def parse_exogenous_input(folder, config):
     else:
         raise ValueError("energy_prices_evolution should be 'forecast' or 'constant'")
 
-    name_file = os.path.join(os.getcwd(), config['co2_content']['source'])
-    co2_content = pd.read_csv(name_file, index_col=[0], header=[0]).T
-    co2_content.index.set_names('Heating energy', inplace=True)
+    # CO2 content used for tax cost
+    name_file = os.path.join(os.getcwd(), config['co2_tax']['source'])
+    co2_tax = pd.read_csv(name_file, index_col=[0], header=[0]).T
+    co2_tax.index.set_names('Heating energy', inplace=True)
 
     # extension of co2_content time series
-    last_year_prices = co2_content.columns[-1]
+    last_year_prices = co2_tax.columns[-1]
     if last_year > last_year_prices:
         add_yrs = range(last_year_prices + 1, last_year + 1, 1)
-        temp = pd.concat([co2_content.loc[:, last_year_prices]] * len(add_yrs), axis=1)
+        temp = pd.concat([co2_tax.loc[:, last_year_prices]] * len(add_yrs), axis=1)
         temp.columns = add_yrs
-        co2_content = pd.concat((co2_content, temp), axis=1)
+        co2_tax = pd.concat((co2_tax, temp), axis=1)
+    co2_tax = co2_tax.loc[:, calibration_year:]
 
-    co2_content = co2_content.loc[:, calibration_year:]
+    # CO2 content used for emission
+    name_file = os.path.join(os.getcwd(), config['co2_emission']['source'])
+    co2_emission = pd.read_csv(name_file, index_col=[0], header=[0]).T
+    co2_emission.index.set_names('Heating energy', inplace=True)
+
+    # extension of co2_content time series
+    last_year_prices = co2_emission.columns[-1]
+    if last_year > last_year_prices:
+        add_yrs = range(last_year_prices + 1, last_year + 1, 1)
+        temp = pd.concat([co2_emission.loc[:, last_year_prices]] * len(add_yrs), axis=1)
+        temp.columns = add_yrs
+        co2_emission = pd.concat((co2_emission, temp), axis=1)
+    co2_emission = co2_emission.loc[:, calibration_year:]
 
     summary_input = dict()
 
@@ -391,15 +414,15 @@ def parse_exogenous_input(folder, config):
     summary_input['Oil fuel prices (€/kWh)'] = energy_prices.loc['Oil fuel', :]
     summary_input['Wood fuel prices (€/kWh)'] = energy_prices.loc['Wood fuel', :]
 
-    summary_input['Power emission (gCO2/kWh)'] = co2_content.loc['Power', :]
-    summary_input['Natural gas emission (gCO2/kWh)'] = co2_content.loc['Natural gas', :]
-    summary_input['Oil fuel emission (gCO2/kWh)'] = co2_content.loc['Oil fuel', :]
-    summary_input['Wood fuel (gCO2/kWh)'] = co2_content.loc['Wood fuel', :]
+    summary_input['Power emission (gCO2/kWh)'] = co2_emission.loc['Power', :]
+    summary_input['Natural gas emission (gCO2/kWh)'] = co2_emission.loc['Natural gas', :]
+    summary_input['Oil fuel emission (gCO2/kWh)'] = co2_emission.loc['Oil fuel', :]
+    summary_input['Wood fuel (gCO2/kWh)'] = co2_emission.loc['Wood fuel', :]
 
     summary_input = pd.DataFrame(summary_input)
     summary_input = summary_input.loc[calibration_year:, :]
 
-    return energy_prices, energy_taxes, cost_invest, cost_invest_construction, co2_content, policies, summary_input
+    return energy_prices, energy_taxes, cost_invest, cost_invest_construction, co2_tax, co2_emission, policies, summary_input
 
 
 def parse_parameters(folder, config, stock_sum):
