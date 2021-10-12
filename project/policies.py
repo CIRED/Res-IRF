@@ -227,7 +227,10 @@ class Subsidies(PublicPolicy):
         """
 
         if self.time_dependent:
-            value = self.value[year]
+            if year in self.value.columns or year in self.value.index:
+                value = self.value[year]
+            else:
+                value = 0
         else:
             value = self.value
 

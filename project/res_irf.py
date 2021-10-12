@@ -20,7 +20,7 @@ from parse_output import parse_output
 
 
 def res_irf(calibration_year, end_year, folder, config, parameters, policies_parameters, attributes, energy_prices_bp,
-            energy_taxes, cost_invest, cost_invest_construction, stock_ini, co2_tax, co2_emission,
+            energy_taxes, cost_invest, cost_invest_construction, cost_switch_fuel_end, stock_ini, co2_tax, co2_emission,
             rate_renovation_ini, ms_renovation_ini, ms_construction_ini, income_tenants_construction, logging,
             output_detailed):
     """
@@ -62,11 +62,12 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
         Investment cost for transition.
     cost_invest_construction: dict
         Construction cost.
+    cost_switch_fuel_end: pd.DataFrame
     stock_ini: pd.Series
         Initial stock.
-    co2_content_tax: pd.DataFrame
+    co2_tax: pd.DataFrame
         CO2 content used to calculate tax cost.
-    co2_content_emission: pd.DataFrame
+    co2_emission: pd.DataFrame
         CO2 content used to calculate emission saving.
     rate_renovation_ini: pd.Series
         Renovation rate to match during calibration year.
@@ -329,6 +330,10 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
             tax.tax_revenue[calibration_year] = (consumption * val).sum()
             # add buildings_constructed.energy_expenditure(val).sum()
 
+    cost_switch_fuel_ini = None
+    if cost_switch_fuel_end is not None:
+        cost_switch_fuel_ini = cost_invest['Heating energy'].copy()
+
     years = range(calibration_year, end_year, 1)
     logging.debug('Launching iterations')
 
@@ -346,6 +351,10 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
         if thermal_regulation_renovation is not None:
             buildings.attributes_values = thermal_regulation_renovation.apply_regulation(
                 deepcopy(buildings.total_attributes_values), year)
+
+        if cost_switch_fuel_end is not None:
+            cost_invest['Heating energy'] = cost_switch_fuel_ini + (year - calibration_year) * (
+                        cost_switch_fuel_end - cost_switch_fuel_ini) / (2012 - 1984)
 
         flow_demolition_sum = 0
         if parameters['Destruction rate'] > 0:

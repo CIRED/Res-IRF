@@ -219,7 +219,7 @@ def add_level(data, index, axis=0):
 
     Parameters
     -----------
-    data: pd.Series
+    data: pd.Series or pd.DataFrame
     index: pd.Index or list-like
     axis: {0, 1}, default 0
 

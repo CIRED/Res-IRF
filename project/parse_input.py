@@ -279,6 +279,8 @@ def parse_exogenous_input(folder, config):
         policies
     pd.DataFrame
         summary_input
+    pd.DataFrame
+        cost_switch_fuel_end
     """
 
     calibration_year = config['stock_buildings']['year']
@@ -287,10 +289,11 @@ def parse_exogenous_input(folder, config):
     name_file = os.path.join(os.getcwd(), config['policies']['source'])
     policies = parse_json(name_file)
 
-    carbon_tax = pd.read_csv(os.path.join(os.getcwd(), config['carbon_tax_value']['source']), index_col=[0])
-    carbon_tax = carbon_tax.T
-    carbon_tax.index.set_names('Heating energy', inplace=True)
-    policies['carbon_tax']['value'] = carbon_tax
+    if 'carbon_tax' in config.keys() and config['carbon_tax']['activated'] is True:
+        carbon_tax = pd.read_csv(os.path.join(os.getcwd(), config['carbon_tax_value']['source']), index_col=[0])
+        carbon_tax = carbon_tax.T
+        carbon_tax.index.set_names('Heating energy', inplace=True)
+        policies['carbon_tax']['value'] = carbon_tax
 
     cee_tax = pd.read_csv(os.path.join(os.getcwd(), config['cee_tax_value']['source']), index_col=[0])
     cee_tax.index.set_names('Heating energy', inplace=True)
@@ -321,6 +324,15 @@ def parse_exogenous_input(folder, config):
     cost_switch_fuel.columns.set_names('Heating energy final', inplace=True)
     # cost_switch_fuel = cost_switch_fuel * (1 + 0.1) / (1 + 0.055)
     cost_invest['Heating energy'] = cost_switch_fuel
+
+    # only used for backtesting
+    cost_switch_fuel_end = None
+    if 'cost_switch_fuel_end' in config.keys():
+        name_file = os.path.join(os.getcwd(), config['cost_switch_fuel_end']['source'])
+        cost_switch_fuel_end = pd.read_csv(name_file, index_col=[0], header=[0])
+        cost_switch_fuel_end.index.set_names('Heating energy', inplace=True)
+        cost_switch_fuel_end.columns.set_names('Heating energy final', inplace=True)
+        # cost_switch_fuel = cost_switch_fuel * (1 + 0.1) / (1 + 0.055)
 
     cost_invest_construction = dict()
     name_file = os.path.join(os.getcwd(), config['cost_construction']['source'])
@@ -375,18 +387,19 @@ def parse_exogenous_input(folder, config):
         raise ValueError("energy_prices_evolution should be 'forecast' or 'constant'")
 
     # CO2 content used for tax cost
-    name_file = os.path.join(os.getcwd(), config['co2_tax']['source'])
-    co2_tax = pd.read_csv(name_file, index_col=[0], header=[0]).T
-    co2_tax.index.set_names('Heating energy', inplace=True)
-
-    # extension of co2_content time series
-    last_year_prices = co2_tax.columns[-1]
-    if last_year > last_year_prices:
-        add_yrs = range(last_year_prices + 1, last_year + 1, 1)
-        temp = pd.concat([co2_tax.loc[:, last_year_prices]] * len(add_yrs), axis=1)
-        temp.columns = add_yrs
-        co2_tax = pd.concat((co2_tax, temp), axis=1)
-    co2_tax = co2_tax.loc[:, calibration_year:]
+    co2_tax = None
+    if 'co2_tax' in config.keys():
+        name_file = os.path.join(os.getcwd(), config['co2_tax']['source'])
+        co2_tax = pd.read_csv(name_file, index_col=[0], header=[0]).T
+        co2_tax.index.set_names('Heating energy', inplace=True)
+        # extension of co2_content time series
+        last_year_prices = co2_tax.columns[-1]
+        if last_year > last_year_prices:
+            add_yrs = range(last_year_prices + 1, last_year + 1, 1)
+            temp = pd.concat([co2_tax.loc[:, last_year_prices]] * len(add_yrs), axis=1)
+            temp.columns = add_yrs
+            co2_tax = pd.concat((co2_tax, temp), axis=1)
+        co2_tax = co2_tax.loc[:, calibration_year:]
 
     # CO2 content used for emission
     name_file = os.path.join(os.getcwd(), config['co2_emission']['source'])
@@ -422,7 +435,7 @@ def parse_exogenous_input(folder, config):
     summary_input = pd.DataFrame(summary_input)
     summary_input = summary_input.loc[calibration_year:, :]
 
-    return energy_prices, energy_taxes, cost_invest, cost_invest_construction, co2_tax, co2_emission, policies, summary_input
+    return energy_prices, energy_taxes, cost_invest, cost_invest_construction, co2_tax, co2_emission, policies, summary_input, cost_switch_fuel_end
 
 
 def parse_parameters(folder, config, stock_sum):
@@ -497,7 +510,7 @@ def parse_parameters(folder, config, stock_sum):
     if parameters['Share multi-family']['source_type'] == 'function':
         parameters['Share multi-family'] = to_share_multi_family_tot(parameters['Stock needed'], parameters['Share multi-family']['factor'])
     elif parameters['Share multi-family']['source_type'] == 'file':
-        parameters['Share multi-family'] = pd.read_csv(parameters['Share multi-family']['source'], index_col=[0], header=[0])
+        parameters['Share multi-family'] = pd.read_csv(parameters['Share multi-family']['source'], index_col=[0], header=None, squeeze=True)
     else:
         raise ValueError('Share multi-family source_type must be defined as a function or a file')
 
@@ -513,6 +526,16 @@ def parse_parameters(folder, config, stock_sum):
 
     # 6. Others
     parameters['Renovation rate max'] = parameters['Renovation rate max {}'.format(calibration_year)]
+
+    if parameters['Cost construction lim']['source_type'] == 'file':
+        if calibration_year == 1984:
+            parameters['Cost construction lim'] = pd.read_csv(parameters['Cost construction lim']['source'], index_col=[0], header=[0, 1])
+            parameters['Cost construction lim'].index.set_names('Housing type', inplace=True)
+            parameters['Cost construction lim'].columns.set_names(['Heating energy final', 'Energy performance final'], inplace=True)
+        elif calibration_year >= 2012:
+            parameters['Cost construction lim'] = pd.read_csv(parameters['Cost construction lim']['source'], index_col=[0], header=[0])
+            parameters['Cost construction lim'].index.set_names('Housing type', inplace=True)
+            parameters['Cost construction lim'].columns.set_names('Energy performance final', inplace=True)
 
     proba_performance = parameters['Probability disease performance']
     proba_income = parameters['Probability disease income {}'.format(calibration_year)]

@@ -1142,7 +1142,7 @@ class HousingStock:
                     consumption_conventional * reindex_mi(energy_price, consumption_conventional.index) * reindex_mi(
                 share_energy, consumption_conventional.index)).groupby('Energy performance').sum()
 
-        discount_factor = self.to_discount_factor().droplevel('Heating energy')
+        discount_factor = self.to_discount_factor(scenario_horizon=('Energy performance', )).droplevel('Heating energy')
         discount_factor = discount_factor[~discount_factor.index.duplicated(keep='first')]
         energy_lcc = discount_factor * reindex_mi(average_energy_cost, discount_factor.index)
         energy_lcc = energy_lcc.unstack('Energy performance')
@@ -1319,10 +1319,13 @@ class HousingStock:
         lbd = HousingStock.lbd(knowledge, learning_rate)
         if cost_lim is not None:
             lbd = lbd.reorder_levels(cost.columns.names)
-            cost_lim = cost_lim.unstack('Energy performance final')
+            # cost_lim = cost_lim.unstack('Energy performance final')
             level = 'Heating energy final'
-            indexes = lbd.index.get_level_values(level).unique()
-            temp = add_level(cost_lim.copy(), indexes, axis=1)
+            if level not in cost_lim.columns.names:
+                indexes = lbd.index.get_level_values(level).unique()
+                temp = add_level(cost_lim.copy(), indexes, axis=1)
+            else:
+                temp = cost_lim.copy()
             return lbd * cost + (1 - lbd) * temp
         else:
             idx_union = lbd.index.union(cost.T.index)
@@ -2014,7 +2017,7 @@ class HousingStockRenovated(HousingStock):
         # initialize attributes with worst_attributes
         flow_demolition_ini = reindex_mi(flow_demolition_wo_ep, prop_stock_worst_certificate.index,
                                          levels_wo_performance)
-        # initialize flow_demolition_remain with worst certificate based on how much have been demolition so far
+        # initialize flow_demolition_remain with worst certificate based on how much have been destroyed so far
         flow_demolition_remain = prop_stock_worst_certificate * flow_demolition_ini
 
         # we year with the worst attributes and we stop when nb_housing_demolition_theo == 0
@@ -2668,13 +2671,29 @@ class HousingStockConstructed(HousingStock):
 
     def to_flow_area_constructed_ini(self, stock_area_existing_seg):
         """
-        To initialize construction knowledge returns area of 2.5 A DPE and 2 B DPE.
+        Initialize construction knowledge returns area of 2.5 A DPE and 2 B DPE.
         """
-        stock_area_new_existing_seg = pd.concat(
-            (stock_area_existing_seg.xs('A', level='Energy performance'),
-             stock_area_existing_seg.xs('B', level='Energy performance')), axis=0)
-        flow_area_constructed_ep = pd.Series(
-            [2.5 * stock_area_new_existing_seg.sum(), 2 * stock_area_new_existing_seg.sum()], index=['BBC', 'BEPOS'])
+
+        if self.calibration_year >= 2012:
+            stock_area_new_existing_seg = pd.concat(
+                (stock_area_existing_seg.xs('A', level='Energy performance'),
+                 stock_area_existing_seg.xs('B', level='Energy performance')), axis=0)
+            flow_area_constructed_ep = pd.Series(
+                [2.5 * stock_area_new_existing_seg.sum(), 2 * stock_area_new_existing_seg.sum()], index=['BBC', 'BEPOS'])
+
+        else:
+
+            area_ep = stock_area_existing_seg.groupby('Energy performance').sum()
+
+            flow_area_constructed_ep = pd.Series(0, index=self.attributes_values['Energy performance'])
+            flow_area_constructed_ep['G'] = 2.5 * area_ep.loc[['G', 'F', 'E', 'D', 'C', 'B', 'A']].sum()
+            flow_area_constructed_ep['F'] = 2.5 * area_ep.loc[['F', 'E', 'D', 'C', 'B', 'A']].sum()
+            flow_area_constructed_ep['E'] = 2.5 * area_ep.loc[['E', 'D', 'C', 'B', 'A']].sum()
+            flow_area_constructed_ep['D'] = 2.5 * area_ep.loc[['D', 'C', 'B', 'A']].sum()
+            flow_area_constructed_ep['C'] = 2.5 * area_ep.loc[['D', 'C']].sum()
+            flow_area_constructed_ep['B'] = 1
+            flow_area_constructed_ep['A'] = 1
+
         flow_area_constructed_ep.index.names = ['Energy performance']
         flow_area_constructed_he_ep = add_level(flow_area_constructed_ep,
                                                 pd.Index(self.attributes_values['Heating energy'], name='Heating energy'))

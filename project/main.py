@@ -94,7 +94,7 @@ if __name__ == '__main__':
 
         stock_ini, attributes = parse_building_stock(config)
         parameters, summary_param = parse_parameters(folder['input'], config, stock_ini.sum())
-        energy_prices, energy_taxes, cost_invest, cost_invest_construction, co2_tax, co2_emission, policies_parameters, summary_input = parse_exogenous_input(
+        energy_prices, energy_taxes, cost_invest, cost_invest_construction, co2_tax, co2_emission, policies_parameters, summary_input, cost_switch_fuel_end = parse_exogenous_input(
             folder['input'], config)
         rate_renovation_ini, ms_renovation_ini, ms_construction_ini, income_tenants_construction = parse_observed_data(config)
 
@@ -114,6 +114,7 @@ if __name__ == '__main__':
                                    args=(calibration_year, end_year, folder_scenario, config, parameters, 
                                          policies_parameters, attributes,
                                          energy_prices, energy_taxes, cost_invest, cost_invest_construction,
+                                         cost_switch_fuel_end,
                                          stock_ini, co2_tax, co2_emission,
                                          rate_renovation_ini, ms_renovation_ini, ms_construction_ini,
                                          income_tenants_construction, logging, args.output))]

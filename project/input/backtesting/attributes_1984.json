@@ -1,0 +1,366 @@
+{
+  "attributes_dict": {
+    "Occupancy status": [
+      "Homeowners",
+      "Landlords",
+      "Social-housing"
+    ],
+    "Housing type": [
+      "Single-family",
+      "Multi-family"
+    ],
+    "Energy performance": [
+      "G",
+      "F",
+      "E",
+      "D",
+      "C",
+      "B",
+      "A"
+    ],
+    "Energy performance construction": [
+      "G",
+      "F",
+      "E",
+      "D",
+      "C",
+      "B",
+      "A"
+    ],
+    "Income class": [
+      "C1",
+      "C2",
+      "C3",
+      "C4",
+      "C5"
+    ],
+    "Heating energy": [
+      "Power",
+      "Natural gas",
+      "Oil fuel",
+      "Wood fuel"
+    ],
+    "type": "dict"
+  },
+  "attributes2horizon_envelope": {
+    "Reference": {
+      "type": "int", "val": 30
+    },
+    "Green value": {
+      "type": "int", "val": 30
+    },
+    "No green value": {
+      "val": {
+        "Homeowners": 7,
+        "Social-housing": 30,
+        "Landlords": 7
+      },
+      "index": [
+        "Occupancy status"
+      ],
+      "type": "pd.Series",
+      "unit": "yr"
+    },
+    "No green value and rent": {
+      "val": {
+        "Homeowners": 7,
+        "Social-housing": 30,
+        "Landlords": 1
+      },
+      "index": [
+        "Occupancy status"
+      ],
+      "type": "pd.Series",
+      "unit": "yr"
+    },
+    "type": "dict_to_parse"
+  },
+  "attributes2horizon_heater": {
+    "Reference": {
+      "type": "float", "val": 17
+    },
+    "Green value": {
+      "type": "float", "val": 17
+    },
+    "No green value": {
+      "val": {
+        "Homeowners": 7,
+        "Social-housing": 17,
+        "Landlords": 7
+      },
+      "index": [
+        "Occupancy status"
+      ],
+    "type": "pd.Series"
+    },
+    "No green value and rent": {
+      "val": {
+        "Homeowners": 7,
+        "Social-housing": 17,
+        "Landlords": 3
+      },
+      "index": [
+        "Occupancy status"
+      ],
+    "type": "pd.Series"
+    },
+    "type": "dict_to_parse"
+  },
+  "attributes2discount": {
+    "Reference": {
+      "val": {
+        "C1": {
+          "Single-family": 0.15,
+          "Multi-family": 0.37,
+          "Social-housing": 0.04
+        },
+        "C2": {
+          "Single-family": 0.1,
+          "Multi-family": 0.24,
+          "Social-housing": 0.04
+        },
+        "C3": {
+          "Single-family": 0.07,
+          "Multi-family": 0.15,
+          "Social-housing": 0.04
+        },
+        "C4": {
+          "Single-family": 0.05,
+          "Multi-family": 0.07,
+          "Social-housing": 0.04
+        },
+        "C5": {
+          "Single-family": 0.04,
+          "Multi-family": 0.05,
+          "Social-housing": 0.04
+        }
+      },
+      "index": [
+        "Income class owner",
+        "Housing type"
+      ],
+      "unit": "%/yr",
+      "type": "pd.Series"
+    },
+    "No budget constraint": {
+      "type": "int", "val": 0.07
+    },
+    "Public investment": {
+      "type": "int", "val": 0.04
+    },
+    "type": "dict_to_parse"
+  },
+  "attributes2heater": {
+    "val": {
+      "G": 0.85,
+      "F": 0.82,
+      "E": 0.77,
+      "D": 0.74,
+      "C": 0.72,
+      "B": 0.77,
+      "A": 1.12
+    },
+    "index": [
+      "Energy performance"
+    ],
+    "type": "pd.Series",
+    "unit": "%"
+  },
+  "attributes2heater_construction": {
+    "val": {
+      "G": 0.85,
+      "F": 0.82,
+      "E": 0.77,
+      "D": 0.74,
+      "C": 0.72,
+      "B": 0.6,
+      "A": 0.4
+    },
+    "index": [
+      "Energy performance"
+    ],
+    "type": "pd.Series",
+    "unit": "%"
+  },
+  "attributes2primary_consumption": {
+    "val": {
+      "G": 596,
+      "F": 392,
+      "E": 280,
+      "D": 191,
+      "C": 125,
+      "B": 76,
+      "A": 39
+    },
+    "index": [
+      "Energy performance"
+    ],
+    "type": "pd.Series",
+    "unit": "kWh/m2.yr"
+  },
+  "attributes2primary_consumption_construction": {
+    "val": {
+      "G": 596,
+      "F": 392,
+      "E": 280,
+      "D": 191,
+      "C": 125,
+      "B": 76,
+      "A": 39
+    },
+    "index": [
+      "Energy performance"
+    ],
+    "type": "pd.Series",
+    "unit": "kWh/m2.yr"
+  },
+  "attributes2area": {
+    "val": {
+      "Homeowners": {
+        "Single-family": 101.7,
+        "Multi-family": 76.0
+      },
+      "Landlords": {
+        "Single-family": 86.3,
+        "Multi-family": 56.9
+      },
+      "Social-housing": {
+        "Single-family": 82.7,
+        "Multi-family": 68.7
+      }
+    },
+    "index": [
+      "Occupancy status",
+      "Housing type"
+    ],
+    "type": "pd.Series",
+    "unit": "m2"
+  },
+  "attributes2area_construction": {
+    "val": {
+      "Homeowners": {
+        "Single-family": 115.4,
+        "Multi-family": 77.9
+      },
+      "Landlords": {
+        "Single-family": 89.7,
+        "Multi-family": 52.7
+      },
+      "Social-housing": {
+        "Single-family": 82.9,
+        "Multi-family": 71.2
+      }
+    },
+    "index": [
+      "Occupancy status",
+      "Housing type"
+    ],
+    "type": "pd.Series",
+    "unit": "m2/buildings"
+  },
+  "attributes2horizon_construction": 25,
+  "attributes2discount_construction": {
+    "val": {
+      "Single-family": {
+        "Homeowners": 0.07,
+        "Landlords": 0.07,
+        "Social-housing": 0.04
+      },
+      "Multi-family": {
+        "Homeowners": 0.1,
+        "Landlords": 0.1,
+        "Social-housing": 0.04
+      }
+    },
+    "index": [
+      "Housing type",
+      "Occupancy status"
+    ],
+    "type": "pd.Series",
+    "unit": "%/yr"
+  },
+  "attributes2income": {
+    "val": {
+      "C1": 11721,
+      "C2": 18967,
+      "C3": 26803,
+      "C4": 36407,
+      "C5": 53144
+    },
+    "index": [
+      "Income class"
+    ],
+    "type": "pd.Series",
+    "unit": "€"
+  },
+  "attributes2final_energy": {
+    "val": {
+      "Power": 2.58,
+      "Natural gas": 1,
+      "Oil fuel": 1,
+      "Wood fuel": 1
+    },
+    "index": [
+      "Heating energy"
+    ],
+    "type": "pd.Series",
+    "unit": "%"
+  },
+  "kwh_cumac_transition": {
+    "val": {
+      "G": {
+        "F": 2134.8964302578,
+        "E": 3355.2325621356,
+        "D": 4211.4510159644,
+        "C": 4803.401667992,
+        "B": 5166.3663451605,
+        "A": 5337.4716758206
+      },
+      "F": {
+        "F": 0,
+        "E": 1220.3361318778,
+        "D": 2076.5545857066,
+        "C": 2668.5052377342,
+        "B": 3031.4699149027,
+        "A": 3202.5752455628
+      },
+      "E": {
+        "F": 0,
+        "E": 0,
+        "D": 856.2184538288,
+        "C": 1448.1691058565,
+        "B": 1811.1337830249,
+        "A": 1982.2391136851
+      },
+      "D": {
+        "F": 0,
+        "E": 0,
+        "D": 0,
+        "C": 591.9506520276,
+        "B": 954.9153291961,
+        "A": 1126.0206598562
+      },
+      "C": {
+        "F": 0,
+        "E": 0,
+        "D": 0,
+        "C": 0,
+        "B": 362.9646771685,
+        "A": 534.0700078286
+      },
+      "B": {
+        "F": 0,
+        "E": 0,
+        "D": 0,
+        "C": 0,
+        "B": 0,
+        "A": 171.1053306601
+      }
+    },
+    "index": [
+      "Energy performance",
+      "Energy performance final"
+    ],
+    "type": "pd.DataFrame"
+  }
+}

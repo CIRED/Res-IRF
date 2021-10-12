@@ -1,21 +1,23 @@
 {
   "Destruction rate": 0.0035,
   "Residual destruction rate": 0.05,
+  "Stock total ini 1984": 20093079,
   "Stock total ini 2012": 27953000,
   "Stock total ini 2018": 29037000,
   "Stock needed": {
     "type": "dict",
     "source_type": "function",
     "Population housing min": 2,
-    "Factor population housing ini": -0.007,
-    "source": "input/hindcast/stock_needed.csv"
+    "Factor population housing ini": -0.0095,
+    "source": "input/backtesting/stock_needed.csv"
   },
   "Share multi-family": {
     "type": "dict",
-    "source_type": "function",
+    "source_type": "file",
     "factor": 0.87,
-    "source": null
+    "source": "project/input/backtesting/share_multi_family_1984.csv"
   },
+  "Available income ini 1984": 834700000000,
   "Available income ini 2012": 1338000000000,
   "Available income ini 2018": 1421000000000,
   "Available income rate": 0.012,
@@ -27,6 +29,7 @@
   "Learning information rate construction": 0.25,
   "Information rate max construction": 0.95,
   "NPV min": -1000,
+  "Renovation rate max 1984": 0.2,
   "Renovation rate max 2012": 0.2,
   "Renovation rate max 2018": 0.4,
   "Renovation rate min": 0.00001,
@@ -75,7 +78,12 @@
   "Cost construction lim": {
     "type": "dict",
     "source_type": "file",
-    "source": "project/input/cost_construction_lim.csv"
+    "source": "project/input/backtesting/cost_construction_lim_1984.csv"
+  },
+  "Cost switch fuel end": {
+    "type": "dict",
+    "source_type": "file",
+    "source": "project/input/backtesting/cost_switch_fuel_2012.csv"
   },
   "Rotation rate": {
     "val": {
@@ -99,12 +107,12 @@
     ],
     "type": "pd.Series"
   },
-  "Aggregated consumption coefficient 2018": {
+  "Aggregated consumption coefficient 1984": {
     "val": {
-      "Power": 0.65,
-      "Natural gas": 0.95,
-      "Oil fuel": 0.79,
-      "Wood fuel": 3.97
+      "Power": 0.79,
+      "Natural gas": 1.06,
+      "Oil fuel": 1.03,
+      "Wood fuel": 2.14
     },
     "index": [
       "Heating energy"
@@ -113,10 +121,22 @@
   },
   "Aggregated consumption coefficient 2012": {
     "val": {
-      "Power": 0.7822984,
-      "Natural gas": 1.0425802,
-      "Oil fuel": 1.0042604,
-      "Wood fuel": 1.9341951
+      "Power": 0.79,
+      "Natural gas": 1.06,
+      "Oil fuel": 1.03,
+      "Wood fuel": 2.14
+    },
+    "index": [
+      "Heating energy"
+    ],
+    "type": "pd.Series"
+  },
+  "Aggregated consumption coefficient 2018": {
+    "val": {
+      "Power": 0.65,
+      "Natural gas": 0.95,
+      "Oil fuel": 0.79,
+      "Wood fuel": 3.97
     },
     "index": [
       "Heating energy"
@@ -188,6 +208,19 @@
     ],
     "type": "pd.Series"
   },
+  "Probability disease income 1984": {
+    "val": {
+      "C1": 0.143,
+      "C2": 0.03,
+      "C3": 0.003,
+      "C4": 0.003,
+      "C5": 0.003
+    },
+    "index": [
+      "Income class"
+    ],
+    "type": "pd.Series"
+  },
   "Probability death after disease": 0.03,
   "Cost disease": 6000,
   "Cost disease rate": 0.01,
@@ -195,6 +228,3 @@
   "Cost life": 3400000,
   "Opportunity cost factor": 0.2
 }
-
-
-
