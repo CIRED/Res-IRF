@@ -20,10 +20,10 @@
       "activated": true,
       "source_type": "function",
       "source": "project/intermediate/cost_intangible_1984.pkl",
-      "option": 2
+      "option": 0
     },
     "cost_intangible_construction": {
-      "activated": true,
+      "activated": false,
       "source_type": "function",
       "source": "project/intermediate/cost_intangible_construction_1984.pkl"
     },
@@ -58,7 +58,7 @@
       "activated": true,
       "start": 2005,
       "end": 2013,
-      "calibration": false
+      "calibration": true
     },
     "cee_subsidy": {
       "activated": true,

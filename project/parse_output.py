@@ -208,7 +208,7 @@ def parse_output(output, buildings, buildings_constructed, energy_prices, energy
     buildings_constructed.to_consumption_actual(energy_prices)
     output_stock = dict()
     for name, building in object_dict.items():
-        output_stock['Stock' + ' - {}'.format(name)] = pd.DataFrame(building.stock_seg_dict)
+        output_stock['Stock' + ' - {}'.format(name)] = pd.DataFrame(building.stock_dict)
         output_stock['Stock (m2)' + ' - {}'.format(name)] = (
                     output_stock['Stock' + ' - {}'.format(name)].T * building.area).T
         output_stock['Consumption conventional (kWh/m2)' + ' - {}'.format(name)] = building.consumption_conventional

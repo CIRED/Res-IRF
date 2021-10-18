@@ -15,8 +15,8 @@ class HousingStock:
 
     Attributes
     ----------
-    stock_seg : pd.Series
-        MultiIndex pd.Series that contains the number of archetypes by attribute
+    stock : pd.Series
+        MultiIndex pd.Series that contains the number of archetypes by attributes
     attributes2area : pd.Series
         pd.Series that returns area (m2) of the building based on archetypes attribute
     attributes2horizon : pd.Series
@@ -29,7 +29,7 @@ class HousingStock:
         pd.Series that returns conventional consumption (kWh/m2.yr) of the building based on archetypes attribute
     """
 
-    def __init__(self, stock_seg, attributes_values,
+    def __init__(self, stock, attributes_values,
                  year=2018,
                  attributes2area=None,
                  attributes2horizon=None,
@@ -43,7 +43,7 @@ class HousingStock:
 
         Parameters
         ----------
-        stock_seg : pd.Series
+        stock : pd.Series
             MultiIndex levels describing buildings attributes. Values are number of buildings.
         attributes_values: dict
             possible values for levels
@@ -64,12 +64,12 @@ class HousingStock:
         self._calibration_year = year
         self._price_behavior = price_behavior
 
-        self._stock_seg = stock_seg
-        self._stock_seg_dict = {self.year: self._stock_seg}
-        self._segments = stock_seg.index
+        self._stock = stock
+        self._stock_dict = {self.year: self._stock}
+        self._segments = stock.index
 
-        self._levels = stock_seg.index.names
-        self._dimension = len(self._stock_seg.index.names)
+        self._levels = stock.index.names
+        self._dimension = len(self._stock.index.names)
 
         # explains what kind of levels needs to be used
         self.attributes_values = attributes_values
@@ -149,18 +149,18 @@ class HousingStock:
         return self._calibration_year
 
     @property
-    def stock_seg(self):
-        return self._stock_seg
+    def stock(self):
+        return self._stock
 
-    @stock_seg.setter
-    def stock_seg(self, new_stock):
-        self._stock_seg = new_stock
-        self._stock_seg_dict[self.year] = new_stock
+    @stock.setter
+    def stock(self, new_stock):
+        self._stock = new_stock
+        self._stock_dict[self.year] = new_stock
         self._segments = new_stock.index
 
     @property
-    def stock_seg_dict(self):
-        return self._stock_seg_dict
+    def stock_dict(self):
+        return self._stock_dict
 
     @staticmethod
     def data2area(l2area, ds_seg):
@@ -183,19 +183,21 @@ class HousingStock:
 
     def add_flow(self, flow):
         """
-        Add flow to stock_seg property.
+        Add flow to stock property.
 
         Parameters
         ----------
         flow: pd.Series
-            Attributes indexed flow to be added to stock_seg.
+            Attributes indexed flow to be added to stock.
         """
 
-        flow = flow.reorder_levels(self.stock_seg.index.names)
-        new_stock = self.stock_seg + flow
+        flow = flow.reorder_levels(self.stock.index.names)
+        flow = flow.reindex(self.stock.index).fillna(0)
+
+        new_stock = self.stock + flow
         new_stock.fillna(0, inplace=True)
         assert new_stock.min() >= 0, 'Buildings stock cannot be negative'
-        self.stock_seg = new_stock.copy()
+        self.stock = new_stock.copy()
 
     @staticmethod
     def _attributes2(segments, attributes2, scenario=None):
@@ -254,7 +256,7 @@ class HousingStock:
         if segments is None:
             segments = self._segments
         area = HousingStock._attributes2(segments, self.attributes2area, scenario=scenario)
-        return area * self._stock_seg
+        return area * self._stock
 
     def to_income(self, scenario=None, segments=None):
         """
@@ -489,7 +491,7 @@ class HousingStock:
         -------
         pd.Series
         """
-        consumption = self.consumption_actual.loc[:, self.year] * self.area * self.stock_seg
+        consumption = self.consumption_actual.loc[:, self.year] * self.area * self.stock
         return HousingStock.mul_consumption(consumption, energy_price).loc[:, self.year]
 
     @staticmethod
@@ -888,7 +890,7 @@ class HousingStock:
             lcc_final = self.to_energy_lcc_final(energy_prices, transition, consumption=consumption, segments=segments)
         else:
             lcc_final = energy_lcc
-            lcc_final = reindex_mi(lcc_final, self.stock_seg.index)
+            lcc_final = reindex_mi(lcc_final, self.stock.index)
 
         lcc_transition = lcc_final.copy()
         columns = lcc_transition.columns
@@ -1052,15 +1054,15 @@ class HousingStock:
         if transition is None:
             transition = ['Energy performance']
 
-        ms_final_seg, lcc_final_seg = self.to_market_share(energy_prices,
-                                                           transition=transition,
-                                                           consumption=consumption,
-                                                           cost_invest=cost_invest,
-                                                           cost_intangible=cost_intangible,
-                                                           subsidies=subsidies,
-                                                           nu=nu)
+        ms_final, lcc_final = self.to_market_share(energy_prices,
+                                                   transition=transition,
+                                                   consumption=consumption,
+                                                   cost_invest=cost_invest,
+                                                   cost_intangible=cost_intangible,
+                                                   subsidies=subsidies,
+                                                   nu=nu)
 
-        pv = (ms_final_seg * lcc_final_seg).dropna(axis=0, how='all').sum(axis=1)
+        pv = (ms_final * lcc_final).dropna(axis=0, how='all').sum(axis=1)
         self.pv[tuple(transition)][self.year] = pv
         return pv
 
@@ -1122,6 +1124,7 @@ class HousingStock:
                 Each agents group share intangible costs to match the observed market share.
                 This option allows some diversity in the calculated market share between member of each group.
             2: intangible cost is aggregated on heating energy level (what was done before)
+            3:
 
         Returns
         -------
@@ -1132,7 +1135,7 @@ class HousingStock:
         """
 
         # following code is written to copy/paste Scilab version
-        energy_consumption = self.to_area() * self.stock_seg * self.to_consumption_conventional()
+        energy_consumption = self.to_area() * self.stock * self.to_consumption_conventional()
         energy_consumption = energy_consumption.groupby(['Occupancy status', 'Housing type', 'Heating energy', 'Energy performance']).sum()
         share_energy = energy_consumption.groupby('Heating energy').sum() / energy_consumption.sum()
         energy_price = energy_prices.loc[:, self.calibration_year]
@@ -1164,7 +1167,8 @@ class HousingStock:
         market_share_objective = market_share_objective.reindex(market_share_temp.columns, axis=1)
 
         def approximate_ms_objective(ms_obj, ms):
-            """Treatment of market share objective to facilitate resolution.
+            """
+            Treatment of market share objective to facilitate resolution.
             """
             if isinstance(ms, pd.DataFrame):
                 ms = ms.loc[ms_obj.name, :]
@@ -1197,7 +1201,7 @@ class HousingStock:
                 return result
 
             x0 = lcc_np * ini
-            root, info_dict, ier, message = fsolve(func, x0, args=(lcc_np, ms_obj, factor), full_output=True)
+            root, info_dict, ier, message = fsolve(func, x0, args=(lcc_np, ms_obj, factor), full_output=True, xtol=1e-10)
 
             if ier == 1:
                 return ier, root
@@ -1211,9 +1215,12 @@ class HousingStock:
 
         idx_list, lambda_list, intangible_list = [], [], []
         num_certificate = list(lcc_final.index.names).index('Energy performance')
+
+        """
         for idx in lcc_useful.index:
             num_ini = self.attributes_values['Energy performance'].index(idx[num_certificate])
             certificate_final = self.attributes_values['Energy performance'][num_ini + 1:]
+            print(certificate_final)
             # intangible cost would be for index = idx, and certificate_final.
             for lambda_current in range(int(lambda_min * 100), int(lambda_max * 100), int(step * 100)):
                 lambda_current = lambda_current / 100
@@ -1224,6 +1231,43 @@ class HousingStock:
                     lambda_list += [lambda_current]
                     idx_list += [idx]
                     intangible_list += [pd.Series(root ** 2, index=certificate_final)]
+                    # func(root, lcc_row_np, ms_obj_np, lambda_current)
+                    break
+        """
+
+        temp = lcc_final.droplevel('Energy performance')
+        temp = temp.index[~temp.index.duplicated()]
+
+        ep_list = [ep for ep in self.attributes_values['Energy performance'] if ep not in ['A', 'B']]
+
+        for index in temp:
+            for lambda_current in range(int(lambda_min * 100), int(lambda_max * 100), int(step * 100)):
+                lambda_current = lambda_current / 100
+
+                validation = True
+                idx_sublist, lambda_sublist, intangible_sublist = [], [], []
+                for ep in ep_list:
+                    idx = (index[0], index[1], index[2], ep, index[3])
+                    num_ini = self.attributes_values['Energy performance'].index(idx[num_certificate])
+                    certificate_final = self.attributes_values['Energy performance'][num_ini + 1:]
+                    # intangible cost would be for index = idx, and certificate_final.
+
+                    lcc_row_np = lcc_final.loc[idx, certificate_final].to_numpy()
+                    ms_obj_np = ms_obj_approx.loc[idx, certificate_final].to_numpy()
+                    ier, root = solve_intangible_cost(lambda_current, lcc_row_np, ms_obj_np)
+
+                    if ier == 1:
+                        lambda_sublist += [lambda_current]
+                        idx_sublist += [idx]
+                        intangible_sublist += [pd.Series(root ** 2, index=certificate_final)]
+                    else:
+                        validation = False
+                        break
+
+                if validation is True:
+                    lambda_list += lambda_sublist
+                    idx_list += idx_sublist
+                    intangible_list += intangible_sublist
                     # func(root, lcc_row_np, ms_obj_np, lambda_current)
                     break
 
@@ -1244,11 +1288,11 @@ class HousingStock:
             if option == 1:
                 levels = list(market_share_ini.index.names)
             elif option == 2:
-                levels = [i for i in self.stock_seg.index.names if i != 'Heating energy']
+                levels = [i for i in self.stock.index.names if i != 'Heating energy']
             else:
                 raise ValueError('option can only be 0, 1 or 2')
 
-            weight = val2share(self.stock_seg, levels, option='column')
+            weight = val2share(self.stock, levels, option='column')
             ic_temp = intangible_cost.unstack(weight.columns.names)
             weight_re = reindex_mi(weight, ic_temp.columns, axis=1)
             ic_temp = ic_temp.reorder_levels(weight_re.index.names)
@@ -1287,8 +1331,8 @@ class HousingStock:
         -------
         pd.Series
         """
-        levels = [lvl for lvl in self.stock_seg.index.names if lvl not in ['Income class owner', 'Energy performance']]
-        temp = val2share(self.stock_seg, levels, option='column')
+        levels = [lvl for lvl in self.stock.index.names if lvl not in ['Income class owner', 'Energy performance']]
+        temp = val2share(self.stock, levels, option='column')
         io_share_seg = temp.groupby('Income class owner', axis=1).sum()
         return io_share_seg
 
@@ -1298,7 +1342,8 @@ class HousingStock:
 
     @staticmethod
     def learning_by_doing(knowledge, cost, learning_rate, cost_lim=None):
-        """Decrease capital cost after considering learning-by-doing effect.
+        """
+        Decrease capital cost after considering learning-by-doing effect.
 
         Investment costs decrease exponentially with the cumulative sum of operations so as to capture
         a “learning-by-doing” process.
@@ -1478,7 +1523,7 @@ class HousingStockRenovated(HousingStock):
     Stock_master should be property as the setter methods need to change all dependencies stock: stock_slave.
     As they need to be initialize there is a private attribute in the init.
     Example:
-         A modification of stock_seg will change stock_mobile_seg. stock_mobile_seg cannot change directly.
+         A modification of stock will change stock_mobile_seg. stock_mobile_seg cannot change directly.
 
     Some stocks doesn't have stock_master and stock_slave: they are public.
     Example:
@@ -1491,17 +1536,17 @@ class HousingStockRenovated(HousingStock):
         _stock_knowledge_dict = _stock_knowledge_dict.append({year: stock_knowledge})
     These stocks can be a slave stock. In that case all updates are in the stock master setter methods.
     Example:
-        _stock_seg_mobile & _stock_seg_mobile_dict
+        _stock_mobile & _stock_mobile_dict
     """
 
-    def __init__(self, stock_seg, attributes_values, year=2018,
+    def __init__(self, stock, attributes_values, year=2018,
                  residual_rate=0.0, destruction_rate=0.0,
                  rate_renovation_ini=None, learning_year=None,
                  npv_min=None, rate_max=None, rate_min=None,
                  attributes2area=None, attributes2horizon=None, attributes2discount=None, attributes2income=None,
                  attributes2consumption=None, kwh_cumac_transition=None):
 
-        super().__init__(stock_seg, attributes_values, year,
+        super().__init__(stock, attributes_values, year,
                          attributes2area=attributes2area,
                          attributes2horizon=attributes2horizon,
                          attributes2discount=attributes2discount,
@@ -1512,11 +1557,11 @@ class HousingStockRenovated(HousingStock):
         self.residual_rate = residual_rate
         self._destruction_rate = destruction_rate
 
-        # slave stock of stock_seg property
-        self._stock_seg_residual = stock_seg * residual_rate
-        self._stock_seg_mobile = stock_seg - self._stock_seg_residual
-        self._stock_seg_mobile_dict = {year: self._stock_seg_mobile}
-        self._stock_area_seg = self.to_stock_area()
+        # slave stock of stock property
+        self._stock_residual = stock * residual_rate
+        self._stock_mobile = stock - self._stock_residual
+        self._stock_mobile_dict = {year: self._stock_mobile}
+        self._stock_area = self.to_stock_area()
 
         # initializing knowledge
         flow_area_renovated_seg = self.flow_area_renovated_seg_ini(rate_renovation_ini, learning_year)
@@ -1527,7 +1572,7 @@ class HousingStockRenovated(HousingStock):
         self._knowledge_dict = {year: self._knowledge}
 
         # share of decision-maker in the total stock
-        self._dm_share_tot = stock_seg.groupby(['Occupancy status', 'Housing type']).sum() / stock_seg.sum()
+        self._dm_share_tot = stock.groupby(['Occupancy status', 'Housing type']).sum() / stock.sum()
 
         # calibration
         self.rate_renovation_ini = rate_renovation_ini
@@ -1552,25 +1597,26 @@ class HousingStockRenovated(HousingStock):
         self.renovation_rate_dict = deepcopy(temp)
 
     @property
-    def stock_seg(self):
-        return self._stock_seg
+    def stock(self):
+        return self._stock
 
-    @stock_seg.setter
-    def stock_seg(self, new_stock_seg):
+    @stock.setter
+    def stock(self, new_stock):
         """
         Master stock that implement modification for stock slave.
         """
-        self._segments = new_stock_seg.index
+        self._segments = new_stock.index
 
-        self._stock_seg = new_stock_seg
-        self._stock_seg_dict[self.year] = new_stock_seg
-        self._stock_seg_mobile = new_stock_seg - self._stock_seg_residual
-        self._stock_seg_mobile_dict[self.year] = self._stock_seg_mobile
-        self._stock_area_seg = self.to_stock_area()
+        self._stock = new_stock
+        self._stock_dict[self.year] = new_stock
+        self._stock_mobile = new_stock - self._stock_residual
+        self._stock_mobile[self._stock_mobile < 0] = 0
+        self._stock_mobile_dict[self.year] = self._stock_mobile
+        self._stock_area = self.to_stock_area()
 
     @property
     def stock_mobile(self):
-        return self._stock_seg_mobile
+        return self._stock_mobile
 
     @property
     def flow_knowledge_ep(self):
@@ -1603,14 +1649,14 @@ class HousingStockRenovated(HousingStock):
         Flow area renovation is defined as:
          renovation rate (2.7%/yr) x number of learning years (10 yrs) x renovated area (m2).
         """
-        renovation_rate = reindex_mi(rate_renovation_ini, self._stock_area_seg.index,
+        renovation_rate = reindex_mi(rate_renovation_ini, self._stock_area.index,
                                      rate_renovation_ini.index.names)
 
-        return renovation_rate * self._stock_area_seg * learning_year
+        return renovation_rate * self._stock_area * learning_year
 
     @property
-    def stock_area_seg(self):
-        return self._stock_area_seg
+    def stock_area(self):
+        return self._stock_area
 
     @staticmethod
     def renovation_rate(npv, rho, npv_min, rate_max, rate_min):
@@ -1730,7 +1776,7 @@ class HousingStockRenovated(HousingStock):
                                                       cost_intangible=cost_intangible,
                                                       subsidies=subsidies)
 
-        stock = self.stock_mobile
+        stock = self.stock_mobile.copy()
         flow_renovation_obligation = 0
         if renovation_obligation is not None:
             flow_renovation_obligation = self.to_flow_obligation(renovation_obligation,
@@ -1939,7 +1985,7 @@ class HousingStockRenovated(HousingStock):
             self.flow_knowledge_ep = flow_knowledge_renovation
 
     def to_flow_demolition_dm(self):
-        flow_demolition = self._stock_seg.sum() * self._destruction_rate
+        flow_demolition = self._stock.sum() * self._destruction_rate
         flow_demolition_dm = self._dm_share_tot * flow_demolition
         # flow_area_demolition_seg_dm = flow_demolition_seg_dm * self.attributes2area
         return flow_demolition_dm
@@ -1959,8 +2005,9 @@ class HousingStockRenovated(HousingStock):
 
         flow_demolition_dm = self.to_flow_demolition_dm()
 
-        stock_mobile = self._stock_seg_mobile_dict[self.year - 1]
-        stock_mobile_ini = self._stock_seg_mobile_dict[self._calibration_year]
+        # stock_mobile = self._stock_mobile_dict[self.year - 1]
+        stock_mobile = self.stock_mobile.copy()
+        stock_mobile_ini = self._stock_mobile_dict[self._calibration_year].copy()
         segments_mobile = stock_mobile.index
         segments_mobile = segments_mobile.droplevel('Energy performance')
         segments_mobile = segments_mobile.drop_duplicates()
@@ -2050,7 +2097,7 @@ class HousingStockRenovated(HousingStock):
                     # stop while loop --> all buildings has not been destroyed (impossible case anyway)
                     flow_demolition_remain[idx_w_ep] = 0
 
-        assert (stock_mobile - flow_demolition).min() >= 0, 'Demolition more than mobile stock'
+        assert (stock_mobile - flow_demolition).min() >= 0, 'More demolition than mobile stock'
 
         self.flow_demolition_dict[self.year] = flow_demolition
         return flow_demolition
@@ -2153,7 +2200,7 @@ class HousingStockRenovated(HousingStock):
 
         # weight to calculate weighted average of variable
         levels = renovation_rate_ini.index.names
-        weight = val2share(self.stock_seg, levels, option='column')
+        weight = val2share(self.stock, levels, option='column')
 
         npv = self.to_npv(energy_prices,
                           transition=['Energy performance'],
@@ -2228,12 +2275,12 @@ class HousingStockRenovated(HousingStock):
 
     def to_flow_obligation(self, renovation_obligation, mutation=0.0, rotation=0.0):
         if isinstance(mutation, pd.Series):
-            mutation = reindex_mi(mutation, self.stock_seg.index, mutation.index.names)
+            mutation = reindex_mi(mutation, self.stock.index, mutation.index.names)
         if isinstance(rotation, pd.Series):
-            rotation = reindex_mi(rotation, self.stock_seg.index, rotation.index.names)
+            rotation = reindex_mi(rotation, self.stock.index, rotation.index.names)
 
-        mutation_stock = self.stock_seg * mutation
-        rotation_stock = self.stock_seg * rotation
+        mutation_stock = self.stock * mutation
+        rotation_stock = self.stock * rotation
 
         target_stock = mutation_stock + rotation_stock
         target = renovation_obligation.targets.loc[:, self.year]
@@ -2248,7 +2295,7 @@ class HousingStockConstructed(HousingStock):
                  share_multi_family=None,
                  os_share_ht=None,
                  tenants_income=None,
-                 stock_area_existing_seg=None,
+                 stock_area_existing=None,
                  attributes2area=None,
                  attributes2horizon=None,
                  attributes2discount=None,
@@ -2288,8 +2335,8 @@ class HousingStockConstructed(HousingStock):
         self._knowledge = None
 
         self._flow_area_constructed_he_ep = None
-        if stock_area_existing_seg is not None:
-            self._flow_area_constructed_he_ep = self.to_flow_area_constructed_ini(stock_area_existing_seg)
+        if stock_area_existing is not None:
+            self._flow_area_constructed_he_ep = self.to_flow_area_constructed_ini(stock_area_existing)
             # to initialize knowledge
             self.flow_area_constructed_he_ep = self._flow_area_constructed_he_ep
         self._area_construction_dict = {self.year: self.attributes2area}
@@ -2669,21 +2716,21 @@ class HousingStockConstructed(HousingStock):
         self.attributes2area = area_construction
         self._area_construction_dict[self.year] = self.attributes2area
 
-    def to_flow_area_constructed_ini(self, stock_area_existing_seg):
+    def to_flow_area_constructed_ini(self, stock_area_existing):
         """
-        Initialize construction knowledge returns area of 2.5 A DPE and 2 B DPE.
+        Initialize construction knowledge.
         """
 
         if self.calibration_year >= 2012:
             stock_area_new_existing_seg = pd.concat(
-                (stock_area_existing_seg.xs('A', level='Energy performance'),
-                 stock_area_existing_seg.xs('B', level='Energy performance')), axis=0)
+                (stock_area_existing.xs('A', level='Energy performance'),
+                 stock_area_existing.xs('B', level='Energy performance')), axis=0)
             flow_area_constructed_ep = pd.Series(
                 [2.5 * stock_area_new_existing_seg.sum(), 2 * stock_area_new_existing_seg.sum()], index=['BBC', 'BEPOS'])
 
         else:
 
-            area_ep = stock_area_existing_seg.groupby('Energy performance').sum()
+            area_ep = stock_area_existing.groupby('Energy performance').sum()
 
             flow_area_constructed_ep = pd.Series(0, index=self.attributes_values['Energy performance'])
             flow_area_constructed_ep['G'] = 2.5 * area_ep.loc[['G', 'F', 'E', 'D', 'C', 'B', 'A']].sum()

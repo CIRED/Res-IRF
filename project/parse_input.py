@@ -417,15 +417,17 @@ def parse_exogenous_input(folder, config):
 
     summary_input = dict()
 
-    summary_input['Power prices bt (€/kWh)'] = energy_prices_bt.loc['Power', :]
-    summary_input['Natural gas prices bt (€/kWh)'] = energy_prices_bt.loc['Natural gas', :]
-    summary_input['Oil fuel prices bt (€/kWh)'] = energy_prices_bt.loc['Oil fuel', :]
-    summary_input['Wood fuel prices bt (€/kWh)'] = energy_prices_bt.loc['Wood fuel', :]
+    """
+    summary_input['Power prices bt (euro/kWh)'] = energy_prices_bt.loc['Power', :]
+    summary_input['Natural gas prices bt (euro/kWh)'] = energy_prices_bt.loc['Natural gas', :]
+    summary_input['Oil fuel prices bt (euro/kWh)'] = energy_prices_bt.loc['Oil fuel', :]
+    summary_input['Wood fuel prices bt (euro/kWh)'] = energy_prices_bt.loc['Wood fuel', :]
+    """
 
-    summary_input['Power prices (€/kWh)'] = energy_prices.loc['Power', :]
-    summary_input['Natural gas prices (€/kWh)'] = energy_prices.loc['Natural gas', :]
-    summary_input['Oil fuel prices (€/kWh)'] = energy_prices.loc['Oil fuel', :]
-    summary_input['Wood fuel prices (€/kWh)'] = energy_prices.loc['Wood fuel', :]
+    summary_input['Power prices (euro/kWh)'] = energy_prices.loc['Power', :]
+    summary_input['Natural gas prices (euro/kWh)'] = energy_prices.loc['Natural gas', :]
+    summary_input['Oil fuel prices (euro/kWh)'] = energy_prices.loc['Oil fuel', :]
+    summary_input['Wood fuel prices (euro/kWh)'] = energy_prices.loc['Wood fuel', :]
 
     summary_input['Power emission (gCO2/kWh)'] = co2_emission.loc['Power', :]
     summary_input['Natural gas emission (gCO2/kWh)'] = co2_emission.loc['Natural gas', :]
@@ -550,7 +552,7 @@ def parse_parameters(folder, config, stock_sum):
 
     summary_param = dict()
     summary_param['Total population (Millions)'] = parameters['Population'] / 10**6
-    summary_param['Income (Billions €)'] = parameters['Available income real'] * sizing_factor / 10**9
+    summary_param['Income (Billions euro)'] = parameters['Available income real'] * sizing_factor / 10**9
     summary_param['Buildings stock (Millions)'] = parameters['Stock needed'] / 10**6
     summary_param['Person by housing'] = parameters['Population housing']
     summary_param = pd.DataFrame(summary_param)

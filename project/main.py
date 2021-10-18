@@ -105,7 +105,7 @@ if __name__ == '__main__':
         os.mkdir(folder_scenario['output'])
 
         income = attributes['attributes2income'].T
-        income.columns = ['Income {} (€)'.format(c) for c in income.columns]
+        income.columns = ['Income {} (euro)'.format(c) for c in income.columns]
         summary_param = pd.concat((summary_param, income), axis=1)
         pd.concat((summary_input, summary_param), axis=1).T.loc[:, calibration_year:].to_csv(
             os.path.join(folder_scenario['output'], 'summary_input.csv'))
