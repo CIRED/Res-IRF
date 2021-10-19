@@ -305,7 +305,7 @@ def parse_exogenous_input(folder, config):
     policies['cee_taxes']['value'] = cee_tax * (1 + 0.2)
 
     cee_subsidy = pd.read_csv(os.path.join(os.getcwd(), config['cee_subsidy_value']['source']), index_col=[0])
-    cee_subsidy.index.set_names('Income class', inplace=True)
+    cee_subsidy.index.set_names('Income class owner', inplace=True)
     cee_subsidy.columns = cee_subsidy.columns.astype('int')
     policies['cee_subsidy']['value'] = cee_subsidy
 

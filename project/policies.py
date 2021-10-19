@@ -178,7 +178,6 @@ class Subsidies(PublicPolicy):
         pd.Series, pd.DataFrame
         """
         if value is None:
-
             return None
 
         elif isinstance(value, float) or isinstance(value, int):

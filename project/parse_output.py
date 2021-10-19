@@ -385,7 +385,7 @@ def parse_output(output, buildings, buildings_constructed, energy_prices, energy
         detailed['Heating intensity {} (%)'.format(income)] = df.loc[income, :]
 
     detailed['Stock (Thousands)'] = output_stock['Stock'].sum(axis=0) / 10**3
-    for label in buildings.attributes_values['Energy performance'] + buildings_constructed.attributes_values['Energy performance']:
+    for label in buildings.total_attributes_values['Energy performance'] + buildings_constructed.total_attributes_values['Energy performance']:
         detailed['Stock {} (Thousands)'.format(label)] = output_stock['Stock'].groupby('Energy performance').sum().loc[
                                                          label, :] / 1000
     detailed['Flow renovation (Thousands)'] = output_flow_transition['Flow transition'].sum(axis=0) / 10**3

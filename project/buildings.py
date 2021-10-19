@@ -987,6 +987,11 @@ class HousingStock:
             print('lcc transition is negative')
 
         self.lcc_final[tuple(transition)][self.year] = lcc_transition
+        """
+        idx = pd.IndexSlice
+        .loc[idx['Landlords', 'Multi-family', :, 'G', 'Power', 'C1']]
+        """
+
         return lcc_transition
 
     @staticmethod
@@ -2255,6 +2260,7 @@ class HousingStockRenovated(HousingStock):
             rho_temp = rho.unstack(weight.columns.names)
             rho_weighted = (weight * rho_temp).fillna(0).sum(axis=1)
             rho = reindex_mi(rho_weighted, npv.index)
+            rho.replace(to_replace=0, value=0.005, inplace=True)
 
         else:
             ValueError('option should be in [0, 1, 2, 3]')
