@@ -87,7 +87,7 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
 
     # copyfile(os.path.join(folder['input'], scenario_file), os.path.join(folder['output'], scenario_file))
     pd.Series(config).to_csv(os.path.join(folder['output'], 'scenario.csv'))
-    copyfile(os.path.join(folder['input'], 'parameters.json'), os.path.join(folder['output'], 'parameters.json'))
+    copyfile(config['parameters']['source'], os.path.join(folder['output'], 'parameters.json'))
 
     output = dict()
     logging.debug('Loading in output_dict all input needed for post-script analysis')

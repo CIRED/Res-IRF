@@ -309,14 +309,15 @@ class HousingStock:
         Discount factor can be used when agents doesn't anticipate prices evolution.
         Discount factor does not depend on the year it is calculated.
         """
-        if self.discount_factor is not None:
+        """if self.discount_factor is not None:
             return self.discount_factor
         else:
-            horizon = self.to_horizon(scenario=scenario_horizon, segments=segments)
-            discount_rate = self.to_discount_rate(scenario=scenario_discount, segments=segments)
-            discount_factor = (1 - (1 + discount_rate) ** -horizon) / discount_rate
-            self.discount_factor = discount_factor
-            return discount_factor
+        """
+        horizon = self.to_horizon(scenario=scenario_horizon, segments=segments)
+        discount_rate = self.to_discount_rate(scenario=scenario_discount, segments=segments)
+        discount_factor = (1 - (1 + discount_rate) ** -horizon) / discount_rate
+        self.discount_factor = discount_factor
+        return discount_factor
 
     @staticmethod
     def rate2time_series(rate, yrs):
@@ -583,7 +584,6 @@ class HousingStock:
         """
         if transition is None:
             transition = ['Energy performance']
-
         try:
             return self.energy_lcc[tuple(transition)][consumption][self.year]
         except (KeyError, TypeError):
@@ -609,16 +609,18 @@ class HousingStock:
                 energy_lcc = HousingStock.to_summed(energy_cost_discounted_seg, self.year, self.to_horizon(scenario=tuple(transition)))
 
             self.energy_lcc[tuple(transition)][consumption][self.year] = energy_lcc
+
             return energy_lcc
 
     def to_transition(self, ds, transition=None):
-        """Returns pd.DataFrame from pd.Series by adding final state as column.
+        """
+        Returns pd.DataFrame from pd.Series by adding final state as column.
 
         Create a MultiIndex columns when it occurs simultaneous transitions.
 
         Parameters
         ----------
-        ds: pd.Series
+        ds: pd.Series, pd.DataFrame
         transition: list, default ['Energy performance']
 
         Returns
@@ -992,6 +994,7 @@ class HousingStock:
         .loc[idx['Landlords', 'Multi-family', :, 'G', 'Power', 'C1']]
         """
 
+
         return lcc_transition
 
     @staticmethod
@@ -1002,7 +1005,7 @@ class HousingStock:
         Parameters
         ----------
         lcc_df : pd.DataFrame or pd.Series
-        nu: int, optional
+        nu: float, optional
 
         Returns
         -------
@@ -1052,6 +1055,51 @@ class HousingStock:
         # ms.columns.names = ['{} final'.format(transition)]
         self.market_share[tuple(transition)][self.year] = market_share
         return market_share, lcc_final
+
+    def to_market_share_energy(self, energy_prices, consumption='conventional', cost_invest=None,
+                               cost_intangible=None, subsidies=None, nu=8.0, segments=None):
+        """
+        Only used for nested technology transition.
+
+        Parameters
+        ----------
+        energy_prices
+        consumption
+        cost_invest
+        cost_intangible
+        subsidies
+        nu
+        segments
+
+        Returns
+        -------
+        """
+        lcc_final = self.to_lcc_final(energy_prices, cost_invest=cost_invest, cost_intangible=cost_intangible,
+                                      transition=['Heating energy'], consumption=consumption, subsidies=subsidies,
+                                      segments=segments)
+
+        lcc = lcc_final.copy()
+        temp = list(lcc_final.index.names)
+        temp[temp.index('Energy performance')] = 'Energy performance final'
+        lcc.index.names = temp
+        lcc = lcc.unstack('Energy performance final')
+        lcc = add_level(lcc, pd.Index(self.attributes_values['Energy performance'], name='Energy performance'), axis=0)
+        lcc = lcc.reorder_levels(lcc_final.index.names)
+
+        possible_transition = cost_invest['Energy performance'].copy()
+        possible_transition[possible_transition > 0] = 1
+        possible_transition = reindex_mi(possible_transition, lcc.index)
+        possible_transition = reindex_mi(possible_transition, lcc.columns, axis=1)
+
+        lcc = lcc * possible_transition
+
+        lcc = remove_rows(lcc, 'Energy performance', 'A')
+        # lcc = remove_rows(lcc, 'Energy performance', 'B')
+
+        lcc = lcc.stack('Energy performance final')
+        market_share = HousingStock.lcc2market_share(lcc, nu=nu)
+
+        return market_share
 
     def to_pv(self, energy_prices, transition=None, consumption='conventional', cost_invest=None, cost_intangible=None,
               subsidies=None, nu=8.0):
@@ -1774,12 +1822,12 @@ class HousingStockRenovated(HousingStock):
 
         transition = ['Energy performance']
 
-        renovation_rate_seg = self.to_renovation_rate(energy_prices,
-                                                      transition=transition,
-                                                      consumption=consumption,
-                                                      cost_invest=cost_invest,
-                                                      cost_intangible=cost_intangible,
-                                                      subsidies=subsidies)
+        renovation_rate = self.to_renovation_rate(energy_prices,
+                                                  transition=transition,
+                                                  consumption=consumption,
+                                                  cost_invest=cost_invest,
+                                                  cost_intangible=cost_intangible,
+                                                  subsidies=subsidies)
 
         stock = self.stock_mobile.copy()
         flow_renovation_obligation = 0
@@ -1788,28 +1836,28 @@ class HousingStockRenovated(HousingStock):
                                                                  mutation=mutation, rotation=rotation)
             stock = stock - flow_renovation_obligation
 
-        flow_renovation_seg = renovation_rate_seg * stock
-        flow_renovation_seg += flow_renovation_obligation
+        flow_renovation = renovation_rate * stock
+        flow_renovation += flow_renovation_obligation
 
         # indicators
-        renovation_rate_aggr = flow_renovation_seg.sum() / stock.sum()
-        renovation_rate_dm = flow_renovation_seg.groupby(['Occupancy status', 'Housing type']).sum() / stock[stock.index.get_level_values('Energy performance') != 'A'].groupby(['Occupancy status', 'Housing type']).sum()
+        renovation_rate_aggr = flow_renovation.sum() / stock.sum()
+        renovation_rate_dm = flow_renovation.groupby(['Occupancy status', 'Housing type']).sum() / stock[stock.index.get_level_values('Energy performance') != 'A'].groupby(['Occupancy status', 'Housing type']).sum()
         self.renovation_rate_dm[self.year] = renovation_rate_dm
 
         if self.year in self.market_share[tuple(transition)]:
-            market_share_seg_ep = self.market_share[tuple(transition)][self.year]
+            market_share_ep = self.market_share[tuple(transition)][self.year]
         else:
-            market_share_seg_ep = self.to_market_share(energy_prices,
-                                                       transition=transition,
-                                                       consumption=consumption,
-                                                       cost_invest=cost_invest,
-                                                       cost_intangible=cost_intangible,
-                                                       subsidies=subsidies)[0]
+            market_share_ep = self.to_market_share(energy_prices,
+                                                   transition=transition,
+                                                   consumption=consumption,
+                                                   cost_invest=cost_invest,
+                                                   cost_intangible=cost_intangible,
+                                                   subsidies=subsidies)[0]
 
-        flow_renovation_seg_ep = (flow_renovation_seg * market_share_seg_ep.T).T
-        self.flow_renovation_label_dict[self.year] = flow_renovation_seg_ep
+        flow_renovation_ep = (flow_renovation * market_share_ep.T).T
+        self.flow_renovation_label_dict[self.year] = flow_renovation_ep
 
-        return flow_renovation_seg_ep
+        return flow_renovation_ep
 
     def to_flow_renovation_ep(self, energy_prices, consumption='conventional', cost_invest=None, cost_intangible=None,
                               subsidies=None, renovation_obligation=None, mutation=0.0, rotation=0.0, error=1):
@@ -1893,15 +1941,28 @@ class HousingStockRenovated(HousingStock):
         pd.DataFrame
         """
 
+
+        """
         market_share_energy = self.to_market_share(energy_prices,
                                                    transition=['Heating energy'],
                                                    cost_invest=cost_invest,
                                                    consumption=consumption,
                                                    subsidies=subsidies)[0]
-
+        
         names_final = list(market_share_energy.index.names)
         names_final[names_final.index('Energy performance')] = 'Energy performance final'
         market_share_energy.index.names = names_final
+        
+        flow_renovation_temp = flow_renovation.stack()
+        market_share_energy_re = reindex_mi(market_share_energy, flow_renovation_temp.index)
+        flow_renovation_label_energy = (flow_renovation_temp * market_share_energy_re.T).T
+        flow_renovation_label_energy = flow_renovation_label_energy.unstack('Energy performance final')
+        """
+
+        market_share_energy = self.to_market_share_energy(energy_prices,
+                                                          cost_invest=cost_invest,
+                                                          consumption=consumption,
+                                                          subsidies=subsidies)
 
         flow_renovation = self.to_flow_renovation_ep(energy_prices,
                                                      consumption=consumption,
@@ -1912,11 +1973,15 @@ class HousingStockRenovated(HousingStock):
                                                      mutation=mutation, rotation=rotation)
 
         flow_renovation_temp = flow_renovation.stack()
-        market_share_energy_re = reindex_mi(market_share_energy, flow_renovation_temp.index)
-        flow_renovation_label_energy = (flow_renovation_temp * market_share_energy_re.T).T
+        market_share_energy_temp = reindex_mi(market_share_energy, flow_renovation_temp.index)
+
+        flow_renovation_label_energy = (market_share_energy_temp.T * flow_renovation_temp).T
         flow_renovation_label_energy = flow_renovation_label_energy.unstack('Energy performance final')
 
         self.flow_renovation_label_energy_dict[self.year] = flow_renovation_label_energy
+
+        np.testing.assert_almost_equal(flow_renovation.sum().sum(), flow_renovation_label_energy.sum().sum(),
+                                       err_msg='Market share should not erased renovation')
 
         return flow_renovation_label_energy
 

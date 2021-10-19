@@ -2,12 +2,47 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5a27c1bc-6d7f-41bf-89e9-22387bb7bdb3" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/project/input/phebus/CO2_emission_2012.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/input/phebus/CO2_tax_2012.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/input/phebus/attributes_2012.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/input/phebus/building_stock_phebus2012.pkl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/input/phebus/cost_construction_2012.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/input/phebus/cost_construction_lim_2012.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/input/phebus/cost_renovation_2012.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/input/phebus/cost_switch_fuel_2012.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/input/phebus/energy_prices_2012.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/input/phebus/ms_construction_ini_2012.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/input/phebus/ms_renovation_ini_2012.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/input/phebus/parameters_2012.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/input/phebus/projection_population_2012.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/input/phebus/renovation_rate_ini_2012.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/input/phebus/renovation_rate_ini_2012_formula_mistake.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/input/phebus/tenants_income_construction_2012.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/buildings.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/buildings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/backtesting/config_files/scenario_1984.json" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/backtesting/config_files/scenario_1984.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/parse_input.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/parse_input.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/parse_output.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/parse_output.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/policies.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/policies.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/input/CO2_content_2018.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/input/CO2_emission_2012.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/input/CO2_tax_2012.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/input/attributes_2012.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/input/attributes_2018.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/input/building_stock_phebus2012.pkl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/input/cost_construction.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/input/cost_construction_lim.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/input/cost_renovation.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/input/cost_switch_fuel.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/input/energy_prices_2012.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/input/energy_prices_2018.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/input/energy_taxes.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/input/ms_construction_ini.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/input/ms_renovation_ini.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/input/parameters.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/input/projection_population_2012.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/input/projection_population_2018.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/input/renovation_rate_ini_2012.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/input/renovation_rate_ini_2018.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/input/stock_buildings_sdes2018.pkl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/input/tenants_income_construction.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/res_irf.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/res_irf.py" afterDir="false" />
     </list>
     <list id="c1475e6c-5c86-4ada-b891-0f5a944b2008" name="Revert &quot;Delete project/input/test directory&quot;" comment="Revert &quot;Delete project/input/test directory&quot;&#10;&#10;This reverts commit b2bb53ac" />
     <option name="SHOW_DIALOG" value="false" />
@@ -76,11 +111,11 @@
       <recent name="$PROJECT_DIR$/project/input/scenarios" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/project/input/phebus" />
       <recent name="$PROJECT_DIR$/project/input/config_files" />
       <recent name="$PROJECT_DIR$/project/nb_examples" />
       <recent name="$PROJECT_DIR$/project/input" />
       <recent name="$PROJECT_DIR$/documentation/source" />
-      <recent name="$PROJECT_DIR$/documentation/source/img" />
     </key>
   </component>
   <component name="RunManager" selected="Python.main_input">
@@ -464,14 +499,7 @@
       <workItem from="1634219556712" duration="6379000" />
       <workItem from="1634282452364" duration="7597000" />
       <workItem from="1634541142414" duration="16723000" />
-      <workItem from="1634629481182" duration="4601000" />
-    </task>
-    <task id="LOCAL-00021" summary="using multiprocessing for multiple scenarios">
-      <created>1622817444278</created>
-      <option name="number" value="00021" />
-      <option name="presentableId" value="LOCAL-00021" />
-      <option name="project" value="LOCAL" />
-      <updated>1622817444278</updated>
+      <workItem from="1634629481182" duration="20729000" />
     </task>
     <task id="LOCAL-00022" summary="cleaning and organizing">
       <created>1624541618966</created>
@@ -809,7 +837,14 @@
       <option name="project" value="LOCAL" />
       <updated>1634551586869</updated>
     </task>
-    <option name="localTasksCounter" value="70" />
+    <task id="LOCAL-00070" summary="correcting cee income class owner issue">
+      <created>1634634208661</created>
+      <option name="number" value="00070" />
+      <option name="presentableId" value="LOCAL-00070" />
+      <option name="project" value="LOCAL" />
+      <updated>1634634208662</updated>
+    </task>
+    <option name="localTasksCounter" value="71" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -851,7 +886,8 @@
     <MESSAGE value="all public policies" />
     <MESSAGE value="using multiprocessing for multiple scenarios" />
     <MESSAGE value="cleaning and organizing" />
-    <option name="LAST_COMMIT_MESSAGE" value="cleaning and organizing" />
+    <MESSAGE value="correcting cee income class owner issue" />
+    <option name="LAST_COMMIT_MESSAGE" value="correcting cee income class owner issue" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -882,7 +918,7 @@
     <SUITE FILE_PATH="coverage/Res_IRF$buildings_class.coverage" NAME="buildings_class Coverage Results" MODIFIED="1620739724250" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$run_indicators.coverage" NAME="run_indicators Coverage Results" MODIFIED="1631694400145" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$input_payback.coverage" NAME="input_payback Coverage Results" MODIFIED="1616175154626" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/Res_IRF$main_input.coverage" NAME="main_input Coverage Results" MODIFIED="1634633633754" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Res_IRF$main_input.coverage" NAME="main_input Coverage Results" MODIFIED="1634661116768" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$class_test.coverage" NAME="class_test Coverage Results" MODIFIED="1619699024161" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/project" />
     <SUITE FILE_PATH="coverage/Res_IRF$main_budget_constraints.coverage" NAME="main_budget_constraints Coverage Results" MODIFIED="1630599250228" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$Doctests_in_parse_input.coverage" NAME="Doctests in parse_input Coverage Results" MODIFIED="1625212538541" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/project" />

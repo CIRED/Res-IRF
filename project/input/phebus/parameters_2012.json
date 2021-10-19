@@ -8,7 +8,7 @@
     "source_type": "function",
     "Population housing min": 2,
     "Factor population housing ini": -0.007,
-    "source": "input/hindcast/stock_needed.csv"
+    "source": null
   },
   "Share multi-family": {
     "type": "dict",
@@ -75,7 +75,7 @@
   "Cost construction lim": {
     "type": "dict",
     "source_type": "file",
-    "source": "project/input/cost_construction_lim.csv"
+    "source": "project/input/phebus/cost_construction_lim_2012.csv"
   },
   "Rotation rate": {
     "val": {
