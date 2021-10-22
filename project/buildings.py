@@ -994,7 +994,6 @@ class HousingStock:
         .loc[idx['Landlords', 'Multi-family', :, 'G', 'Power', 'C1']]
         """
 
-
         return lcc_transition
 
     @staticmethod
@@ -1430,7 +1429,7 @@ class HousingStock:
             return lbd.reindex(idx_union) * cost.T.reindex(idx_union).T
 
     @staticmethod
-    def information_rate(knowledge, learning_rate, info_max):
+    def information_rate(knowledge, learning_rate, info_max, mode=0):
         """Returns information rate.
 
         More info_rate is high, more intangible_cost are low.
@@ -1445,20 +1444,37 @@ class HousingStock:
         knowledge: pd.Series
             knowledge indexes match cost columns to reach final state after transition
         info_max: float
-        learning_rate:
+        learning_rate: float
 
         Returns
         -------
         pd.Series
         """
 
-        def equations(p, sh=info_max, alpha=learning_rate):
-            a, r = p
-            return (1 + a * np.exp(-r)) ** -1 - sh, (1 + a * np.exp(-2 * r)) ** -1 - sh - (1 - alpha) * sh + 1
+        if mode == 0:
+            def equations(sh=info_max, alpha=learning_rate):
+                A = np.array([[1, 1], [1, 2]])
+                b = np.array([np.log(1/sh-1), np.log(1/(sh*(1-alpha))-1)])
+                param = np.linalg.solve(A, -b)
+                a = np.exp(- param[0])
+                r = param[1]
+                return a, r
 
-        a, r = fsolve(equations, (1, -1))
+            a, r = equations(sh=info_max, alpha=learning_rate)
+            return logistic(knowledge, a=a, r=r) + 1 - info_max
 
-        return logistic(knowledge, a=a, r=r) + 1 - info_max
+        elif mode == 1:
+            def equations(p, sh=info_max, alpha=learning_rate):
+                a, r = p
+                return (1 + a * np.exp(-r)) ** -1 - sh, (1 + a * np.exp(-2 * r)) ** -1 - sh - (1 - alpha) * sh + 1
+
+            a, r = fsolve(equations, (1, -1))
+            return logistic(knowledge, a=a, r=r) + 1 - info_max
+
+        elif mode == 2:
+            a = 0.09375
+            r = - 0.9808293
+            return logistic(knowledge, a=a, r=r) + 1 - info_max
 
     @staticmethod
     def acceleration_information(knowledge, cost_intangible, info_max, learning_rate):
@@ -1481,7 +1497,7 @@ class HousingStock:
         pd.DataFrame
             cost_intangible
         """
-        info_rate = HousingStock.information_rate(knowledge, learning_rate, info_max)
+        info_rate = HousingStock.information_rate(knowledge, learning_rate, info_max, mode=0)
 
         temp = cost_intangible.T.copy()
         if isinstance(temp.index, pd.MultiIndex):

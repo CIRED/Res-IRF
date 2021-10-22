@@ -153,7 +153,7 @@ def to_share_multi_family_tot(stock_needed, param):
         -------
         float
         """
-        trend_housing = (stock - stock_ini) / stock * 100
+        trend_housing = (stock - stock_ini) / stock_ini * 100
         share = 0.1032 * np.log(10.22 * trend_housing / 10 + 79.43) * p
         return share
 
@@ -293,7 +293,7 @@ def parse_exogenous_input(folder, config):
         carbon_tax = pd.read_csv(os.path.join(os.getcwd(), config['carbon_tax_value']['source']), index_col=[0])
         carbon_tax = carbon_tax.T
         carbon_tax.index.set_names('Heating energy', inplace=True)
-        policies['carbon_tax']['value'] = carbon_tax
+        policies['carbon_tax']['value'] = carbon_tax * (1 + 0.2)
 
     cee_tax = pd.read_csv(os.path.join(os.getcwd(), config['cee_tax_value']['source']), index_col=[0])
     cee_tax.index.set_names('Heating energy', inplace=True)
@@ -301,7 +301,7 @@ def parse_exogenous_input(folder, config):
     # adding vta to cee_tax
     # to delete after test
     cee_tax.loc[:, 2013:] = cee_tax.loc[:, 2013:] * (1 + 0.2)
-    cee_tax.loc[:, 2016:] = 0
+    # cee_tax.loc[:, 2016:] = 0
     policies['cee_taxes']['value'] = cee_tax * (1 + 0.2)
 
     cee_subsidy = pd.read_csv(os.path.join(os.getcwd(), config['cee_subsidy_value']['source']), index_col=[0])

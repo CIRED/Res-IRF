@@ -2,47 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5a27c1bc-6d7f-41bf-89e9-22387bb7bdb3" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/project/input/phebus/CO2_emission_2012.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/input/phebus/CO2_tax_2012.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/input/phebus/attributes_2012.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/input/phebus/building_stock_phebus2012.pkl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/input/phebus/cost_construction_2012.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/input/phebus/cost_construction_lim_2012.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/input/phebus/cost_renovation_2012.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/input/phebus/cost_switch_fuel_2012.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/input/phebus/energy_prices_2012.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/input/phebus/ms_construction_ini_2012.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/input/phebus/ms_renovation_ini_2012.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/input/phebus/parameters_2012.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/input/phebus/projection_population_2012.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/input/phebus/renovation_rate_ini_2012.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/input/phebus/renovation_rate_ini_2012_formula_mistake.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/input/phebus/tenants_income_construction_2012.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/buildings.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/buildings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/CO2_content_2018.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/CO2_emission_2012.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/CO2_tax_2012.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/attributes_2012.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/attributes_2018.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/building_stock_phebus2012.pkl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/cost_construction.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/cost_construction_lim.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/cost_renovation.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/cost_switch_fuel.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/energy_prices_2012.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/energy_prices_2018.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/energy_taxes.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/ms_construction_ini.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/ms_renovation_ini.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/parameters.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/projection_population_2012.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/projection_population_2018.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/renovation_rate_ini_2012.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/renovation_rate_ini_2018.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/stock_buildings_sdes2018.pkl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/tenants_income_construction.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/res_irf.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/res_irf.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/input/cee_subsidy.csv" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/cee_subsidy.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/input/cee_tax.csv" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/cee_tax.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/input/config_files/scenario_cite.json" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/phebus/config_files/scenario_cite.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/input/config_policies.csv" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/config_policies.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/input/phebus/cost_construction_2012.csv" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/phebus/cost_construction_2012.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/parse_input.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/parse_input.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/policy_indicators.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/policy_indicators.py" afterDir="false" />
     </list>
     <list id="c1475e6c-5c86-4ada-b891-0f5a944b2008" name="Revert &quot;Delete project/input/test directory&quot;" comment="Revert &quot;Delete project/input/test directory&quot;&#10;&#10;This reverts commit b2bb53ac" />
     <option name="SHOW_DIALOG" value="false" />
@@ -94,7 +63,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/project/input/config_files" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/project/input/phebus/config_files" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="python.debugger.dataview.coloredbydefault" value="false" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
@@ -104,44 +73,22 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/project/input/phebus/config_files" />
       <recent name="$PROJECT_DIR$/project/input/config_files" />
       <recent name="$PROJECT_DIR$/docs" />
       <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/project/input" />
-      <recent name="$PROJECT_DIR$/project/input/scenarios" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/project/nb_tutorials" />
       <recent name="$PROJECT_DIR$/project/input/phebus" />
       <recent name="$PROJECT_DIR$/project/input/config_files" />
       <recent name="$PROJECT_DIR$/project/nb_examples" />
       <recent name="$PROJECT_DIR$/project/input" />
-      <recent name="$PROJECT_DIR$/documentation/source" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.main_input">
-    <configuration name="buildings" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="Res-IRF" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/project" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/project/buildings.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="main" type="PythonConfigurationType" factoryName="Python">
+  <component name="RunManager" selected="Python.main_cite">
+    <configuration name="indicators_cite" type="PythonConfigurationType" factoryName="Python" folderName="Indicators">
       <module name="Res-IRF" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -154,8 +101,8 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/project/main.py" />
-      <option name="PARAMETERS" value="-n scenario.json" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/project/policy_indicators.py" />
+      <option name="PARAMETERS" value="-c input/config_policies.csv" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -163,7 +110,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="main_backtest" type="PythonConfigurationType" factoryName="Python">
+    <configuration name="main_backtest" type="PythonConfigurationType" factoryName="Python" folderName="Res-IRF">
       <module name="Res-IRF" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -185,7 +132,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="main_cite" type="PythonConfigurationType" factoryName="Python">
+    <configuration name="main_cite" type="PythonConfigurationType" factoryName="Python" folderName="Res-IRF">
       <module name="Res-IRF" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -199,7 +146,7 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/project/main.py" />
-      <option name="PARAMETERS" value="-n config_files/scenario_cite.json" />
+      <option name="PARAMETERS" value="-n phebus/config_files/scenario_cite.json" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -207,7 +154,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="main_input" type="PythonConfigurationType" factoryName="Python">
+    <configuration name="main_eptz" type="PythonConfigurationType" factoryName="Python" folderName="Res-IRF">
       <module name="Res-IRF" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -221,7 +168,7 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/project/main.py" />
-      <option name="PARAMETERS" value="-n config_files/scenario_phebus2012.json" />
+      <option name="PARAMETERS" value="-n phebus/config_files/scenario_eptz.json" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -229,7 +176,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="main_test" type="PythonConfigurationType" factoryName="Python">
+    <configuration name="main_phebus2012" type="PythonConfigurationType" factoryName="Python" folderName="Res-IRF">
       <module name="Res-IRF" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -243,7 +190,7 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/project/main.py" />
-      <option name="PARAMETERS" value="-n config_files/scenario_test.json" />
+      <option name="PARAMETERS" value="-n phebus/config_files/scenario_phebus2012.json" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -251,21 +198,43 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="parse_input" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="main_reducedtax" type="PythonConfigurationType" factoryName="Python" folderName="Res-IRF">
       <module name="Res-IRF" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="" />
+      <option name="SDK_HOME" value="$USER_HOME$/.conda/envs/Res-IRF/bin/python" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
+      <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/project/parse_input.py" />
-      <option name="PARAMETERS" value="" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/project/main.py" />
+      <option name="PARAMETERS" value="-n phebus/config_files/scenario_reducedtax.json" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="main_test" type="PythonConfigurationType" factoryName="Python" folderName="Res-IRF">
+      <module name="Res-IRF" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="$USER_HOME$/.conda/envs/Res-IRF/bin/python" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/project/main.py" />
+      <option name="PARAMETERS" value="-n phebus/config_files/scenario_test.json" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -329,23 +298,21 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python.main_input" />
-      <item itemvalue="Python.main_backtest" />
+      <item itemvalue="Python.indicators_cite" />
       <item itemvalue="Python.main_cite" />
-      <item itemvalue="Python.main" />
+      <item itemvalue="Python.main_eptz" />
+      <item itemvalue="Python.main_reducedtax" />
+      <item itemvalue="Python.main_phebus2012" />
       <item itemvalue="Python.main_test" />
-      <item itemvalue="Python.parse_input" />
-      <item itemvalue="Python.buildings" />
+      <item itemvalue="Python.main_backtest" />
       <item itemvalue="Python docs.Sphinx Task in Sphinx Task in Sphinx Task in Sphinx Task in Sphinx Task in " />
       <item itemvalue="Python tests.Doctests in parse_input" />
       <item itemvalue="Python tests.Doctest EnergyTaxes.price_to_taxes" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.parse_input" />
         <item itemvalue="Python tests.Doctest EnergyTaxes.price_to_taxes" />
         <item itemvalue="Python tests.Doctests in parse_input" />
-        <item itemvalue="Python.buildings" />
       </list>
     </recent_temporary>
   </component>
@@ -499,14 +466,9 @@
       <workItem from="1634219556712" duration="6379000" />
       <workItem from="1634282452364" duration="7597000" />
       <workItem from="1634541142414" duration="16723000" />
-      <workItem from="1634629481182" duration="20729000" />
-    </task>
-    <task id="LOCAL-00022" summary="cleaning and organizing">
-      <created>1624541618966</created>
-      <option name="number" value="00022" />
-      <option name="presentableId" value="LOCAL-00022" />
-      <option name="project" value="LOCAL" />
-      <updated>1624541618966</updated>
+      <workItem from="1634629481182" duration="23249000" />
+      <workItem from="1634715705736" duration="19773000" />
+      <workItem from="1634796508873" duration="6009000" />
     </task>
     <task id="LOCAL-00023" summary="cleaning and organizing">
       <created>1624787463480</created>
@@ -844,7 +806,14 @@
       <option name="project" value="LOCAL" />
       <updated>1634634208662</updated>
     </task>
-    <option name="localTasksCounter" value="71" />
+    <task id="LOCAL-00071" summary="correcting cee income class owner issue">
+      <created>1634661494246</created>
+      <option name="number" value="00071" />
+      <option name="presentableId" value="LOCAL-00071" />
+      <option name="project" value="LOCAL" />
+      <updated>1634661494246</updated>
+    </task>
+    <option name="localTasksCounter" value="72" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -891,6 +860,13 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/project/buildings.py</url>
+          <line>2520</line>
+          <option name="timeStamp" value="28" />
+        </line-breakpoint>
+      </breakpoints>
       <default-breakpoints>
         <breakpoint type="python-exception">
           <properties notifyOnTerminate="true" exception="BaseException">
@@ -902,6 +878,7 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/Res_IRF$Doctests_in_parse_output.coverage" NAME="Doctests in parse_output Coverage Results" MODIFIED="1622725057132" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/project" />
+    <SUITE FILE_PATH="coverage/Res_IRF$main_reducedtax.coverage" NAME="main_reducedtax Coverage Results" MODIFIED="1634720739652" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$main_renovation_rate.coverage" NAME="main renovation rate Coverage Results" MODIFIED="1631088561143" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$parc.coverage" NAME="parc Coverage Results" MODIFIED="1618577530414" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$graphic.coverage" NAME="graphic Coverage Results" MODIFIED="1620836570610" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
@@ -913,17 +890,20 @@
     <SUITE FILE_PATH="coverage/Res_IRF$test.coverage" NAME="test Coverage Results" MODIFIED="1618423504844" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$func_co2_cost.coverage" NAME="func_co2_cost Coverage Results" MODIFIED="1616424071313" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$Doctest_EnergyTaxes_price_to_taxes.coverage" NAME="Doctest EnergyTaxes.price_to_taxes Coverage Results" MODIFIED="1626337342857" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/project" />
-    <SUITE FILE_PATH="coverage/Res_IRF$main_test.coverage" NAME="main_test Coverage Results" MODIFIED="1632746950521" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Res_IRF$indicators_cite.coverage" NAME="indicators_cite Coverage Results" MODIFIED="1634720183356" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Res_IRF$main_test.coverage" NAME="main_test Coverage Results" MODIFIED="1634803105314" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$parse_input.coverage" NAME="parse_input Coverage Results" MODIFIED="1632747053810" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$buildings_class.coverage" NAME="buildings_class Coverage Results" MODIFIED="1620739724250" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Res_IRF$main_phebus2012.coverage" NAME="main_phebus2012 Coverage Results" MODIFIED="1634805411093" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$run_indicators.coverage" NAME="run_indicators Coverage Results" MODIFIED="1631694400145" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$input_payback.coverage" NAME="input_payback Coverage Results" MODIFIED="1616175154626" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/Res_IRF$main_input.coverage" NAME="main_input Coverage Results" MODIFIED="1634661116768" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Res_IRF$main_input.coverage" NAME="main_phebus2012 Coverage Results" MODIFIED="1634661620912" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$class_test.coverage" NAME="class_test Coverage Results" MODIFIED="1619699024161" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/project" />
     <SUITE FILE_PATH="coverage/Res_IRF$main_budget_constraints.coverage" NAME="main_budget_constraints Coverage Results" MODIFIED="1630599250228" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$Doctests_in_parse_input.coverage" NAME="Doctests in parse_input Coverage Results" MODIFIED="1625212538541" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/project" />
     <SUITE FILE_PATH="coverage/Res_IRF$main_phebus.coverage" NAME="main_phebus Coverage Results" MODIFIED="1630416566799" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/Res_IRF$main_cite.coverage" NAME="main_cite Coverage Results" MODIFIED="1632748779552" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Res_IRF$main_eptz.coverage" NAME="main_eptz Coverage Results" MODIFIED="1634718892596" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Res_IRF$main_cite.coverage" NAME="main_cite Coverage Results" MODIFIED="1634819090259" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$main_nocalib.coverage" NAME="main Coverage Results" MODIFIED="1631892108659" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$Sphinx_Task_in_Sphinx_Task_in_.coverage" NAME="Sphinx Task in Sphinx Task in Sphinx Task in  Coverage Results" MODIFIED="1625136809623" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/Res_IRF$main_rho.coverage" NAME="main_rho Coverage Results" MODIFIED="1631627005511" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
