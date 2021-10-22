@@ -36,15 +36,27 @@ __email__ = "vivier@centre-cired.fr"
 __status__ = "Production"
 
 
-if __name__ == '__main__':
+def model_launcher(path=None):
+    """
+    Set up folders and run Res-IRF based on config_files.
 
+    Function enables multiprocessing run.
+
+    Parameters
+    ----------
+    path: path to config_files, default None
+    If None, path must be a python argument.
+
+    Returns
+    -------
+    """
     folder = dict()
     folder['input'] = os.path.join(os.getcwd(), 'project', 'input')
     folder['output'] = os.path.join(os.getcwd(), 'project', 'output')
     if not os.path.isdir(folder['output']):
         os.mkdir(folder['output'])
 
-    folder['intermediate'] = os.path.join(os.getcwd(), 'project', 'intermediate')
+    folder['intermediate'] = os.path.join(os.getcwd(), 'project', 'input/phebus/intermediate')
     if not os.path.isdir(folder['intermediate']):
         os.mkdir(folder['intermediate'])
 
@@ -73,9 +85,10 @@ if __name__ == '__main__':
     console_handler.setLevel('DEBUG')
     root_logger.addHandler(console_handler)
 
-    name_file = os.path.join(folder['input'], 'scenarios.json')
-    if args.name:
-        name_file = os.path.join(folder['input'], args.name)
+    if path is None:
+        path = args.name
+    name_file = os.path.join(folder['input'], path)
+
     with open(name_file) as file:
         config_dict = json.load(file)
 
@@ -136,3 +149,7 @@ if __name__ == '__main__':
 
     end = time.time()
     logging.debug('Time for the module: {:,.0f} seconds.'.format(end - start))
+
+
+if __name__ == '__main__':
+    model_launcher()

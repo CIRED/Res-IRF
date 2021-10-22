@@ -32,13 +32,13 @@
     "cost_intangible": {
       "activated": true,
       "source_type": "file",
-      "source": "project/intermediate/cost_intangible_phebus2012.pkl",
+      "source": "project/input/phebus/intermediate/cost_intangible_phebus2012.pkl",
       "option": 0
     },
     "cost_intangible_construction": {
       "activated": false,
       "source_type": "function",
-      "source": "project/intermediate/cost_intangible_construction_phebus2012.pkl"
+      "source": "project/input/phebus/intermediate/cost_intangible_construction_phebus2012.pkl"
     },
     "lbd_renovation": true,
     "info_renovation": true,
@@ -151,7 +151,7 @@
     },
     "rho": {
       "source_type": "file",
-      "source": "project/intermediate/rho_phebus2012.pkl",
+      "source": "project/input/phebus/intermediate/rho_phebus2012.pkl",
       "option": 3
     },
     "renovation_rate_ini": {
@@ -210,13 +210,13 @@
     "cost_intangible": {
       "activated": true,
       "source_type": "file",
-      "source": "project/intermediate/cost_intangible_phebus2012.pkl",
+      "source": "project/input/phebus/intermediate/cost_intangible_phebus2012.pkl",
       "option": 0
     },
     "cost_intangible_construction": {
       "activated": false,
       "source_type": "function",
-      "source": "project/intermediate/cost_intangible_construction_phebus2012.pkl"
+      "source": "project/input/phebus/intermediate/cost_intangible_construction_phebus2012.pkl"
     },
     "lbd_renovation": true,
     "info_renovation": true,
@@ -329,7 +329,7 @@
     },
     "rho": {
       "source_type": "file",
-      "source": "project/intermediate/rho_phebus2012.pkl",
+      "source": "project/input/phebus/intermediate/rho_phebus2012.pkl",
       "option": 3
     },
     "renovation_rate_ini": {
@@ -388,13 +388,13 @@
     "cost_intangible": {
       "activated": true,
       "source_type": "file",
-      "source": "project/intermediate/cost_intangible_phebus2012.pkl",
+      "source": "project/input/phebus/intermediate/cost_intangible_phebus2012.pkl",
       "option": 0
     },
     "cost_intangible_construction": {
       "activated": false,
       "source_type": "function",
-      "source": "project/intermediate/cost_intangible_construction_phebus2012.pkl"
+      "source": "project/input/phebus/intermediate/cost_intangible_construction_phebus2012.pkl"
     },
     "lbd_renovation": true,
     "info_renovation": true,
@@ -507,7 +507,7 @@
     },
     "rho": {
       "source_type": "file",
-      "source": "project/intermediate/rho_phebus2012.pkl",
+      "source": "project/input/phebus/intermediate/rho_phebus2012.pkl",
       "option": 3
     },
     "renovation_rate_ini": {
@@ -566,13 +566,13 @@
     "cost_intangible": {
       "activated": true,
       "source_type": "file",
-      "source": "project/intermediate/cost_intangible_phebus2012.pkl",
+      "source": "project/input/phebus/intermediate/cost_intangible_phebus2012.pkl",
       "option": 0
     },
     "cost_intangible_construction": {
       "activated": false,
       "source_type": "function",
-      "source": "project/intermediate/cost_intangible_construction_phebus2012.pkl"
+      "source": "project/input/phebus/intermediate/cost_intangible_construction_phebus2012.pkl"
     },
     "lbd_renovation": true,
     "info_renovation": true,
@@ -685,7 +685,7 @@
     },
     "rho": {
       "source_type": "file",
-      "source": "project/intermediate/rho_phebus2012.pkl",
+      "source": "project/input/phebus/intermediate/rho_phebus2012.pkl",
       "option": 3
     },
     "renovation_rate_ini": {
@@ -744,13 +744,13 @@
     "cost_intangible": {
       "activated": true,
       "source_type": "file",
-      "source": "project/intermediate/cost_intangible_phebus2012.pkl",
+      "source": "project/input/phebus/intermediate/cost_intangible_phebus2012.pkl",
       "option": 0
     },
     "cost_intangible_construction": {
       "activated": false,
       "source_type": "function",
-      "source": "project/intermediate/cost_intangible_construction_phebus2012.pkl"
+      "source": "project/input/phebus/intermediate/cost_intangible_construction_phebus2012.pkl"
     },
     "lbd_renovation": true,
     "info_renovation": true,
@@ -863,7 +863,7 @@
     },
     "rho": {
       "source_type": "file",
-      "source": "project/intermediate/rho_phebus2012.pkl",
+      "source": "project/input/phebus/intermediate/rho_phebus2012.pkl",
       "option": 3
     },
     "renovation_rate_ini": {
@@ -922,13 +922,13 @@
     "cost_intangible": {
       "activated": true,
       "source_type": "file",
-      "source": "project/intermediate/cost_intangible_phebus2012.pkl",
+      "source": "project/input/phebus/intermediate/cost_intangible_phebus2012.pkl",
       "option": 0
     },
     "cost_intangible_construction": {
       "activated": false,
       "source_type": "function",
-      "source": "project/intermediate/cost_intangible_construction_phebus2012.pkl"
+      "source": "project/input/phebus/intermediate/cost_intangible_construction_phebus2012.pkl"
     },
     "lbd_renovation": true,
     "info_renovation": true,
@@ -1041,7 +1041,7 @@
     },
     "rho": {
       "source_type": "file",
-      "source": "project/intermediate/rho_phebus2012.pkl",
+      "source": "project/input/phebus/intermediate/rho_phebus2012.pkl",
       "option": 3
     },
     "renovation_rate_ini": {
@@ -1100,13 +1100,13 @@
     "cost_intangible": {
       "activated": true,
       "source_type": "file",
-      "source": "project/intermediate/cost_intangible_phebus2012.pkl",
+      "source": "project/input/phebus/intermediate/cost_intangible_phebus2012.pkl",
       "option": 0
     },
     "cost_intangible_construction": {
       "activated": false,
       "source_type": "function",
-      "source": "project/intermediate/cost_intangible_construction_phebus2012.pkl"
+      "source": "project/input/phebus/intermediate/cost_intangible_construction_phebus2012.pkl"
     },
     "lbd_renovation": true,
     "info_renovation": true,
@@ -1219,7 +1219,7 @@
     },
     "rho": {
       "source_type": "file",
-      "source": "project/intermediate/rho_phebus2012.pkl",
+      "source": "project/input/phebus/intermediate/rho_phebus2012.pkl",
       "option": 3
     },
     "renovation_rate_ini": {
@@ -1278,13 +1278,13 @@
     "cost_intangible": {
       "activated": true,
       "source_type": "file",
-      "source": "project/intermediate/cost_intangible_phebus2012.pkl",
+      "source": "project/input/phebus/intermediate/cost_intangible_phebus2012.pkl",
       "option": 0
     },
     "cost_intangible_construction": {
       "activated": false,
       "source_type": "function",
-      "source": "project/intermediate/cost_intangible_construction_phebus2012.pkl"
+      "source": "project/input/phebus/intermediate/cost_intangible_construction_phebus2012.pkl"
     },
     "lbd_renovation": true,
     "info_renovation": true,
@@ -1397,7 +1397,7 @@
     },
     "rho": {
       "source_type": "file",
-      "source": "project/intermediate/rho_phebus2012.pkl",
+      "source": "project/input/phebus/intermediate/rho_phebus2012.pkl",
       "option": 3
     },
     "renovation_rate_ini": {
@@ -1456,13 +1456,13 @@
     "cost_intangible": {
       "activated": true,
       "source_type": "file",
-      "source": "project/intermediate/cost_intangible_phebus2012.pkl",
+      "source": "project/input/phebus/intermediate/cost_intangible_phebus2012.pkl",
       "option": 0
     },
     "cost_intangible_construction": {
       "activated": false,
       "source_type": "function",
-      "source": "project/intermediate/cost_intangible_construction_phebus2012.pkl"
+      "source": "project/input/phebus/intermediate/cost_intangible_construction_phebus2012.pkl"
     },
     "lbd_renovation": true,
     "info_renovation": true,
@@ -1575,7 +1575,7 @@
     },
     "rho": {
       "source_type": "file",
-      "source": "project/intermediate/rho_phebus2012.pkl",
+      "source": "project/input/phebus/intermediate/rho_phebus2012.pkl",
       "option": 3
     },
     "renovation_rate_ini": {
@@ -1634,13 +1634,13 @@
     "cost_intangible": {
       "activated": true,
       "source_type": "file",
-      "source": "project/intermediate/cost_intangible_phebus2012.pkl",
+      "source": "project/input/phebus/intermediate/cost_intangible_phebus2012.pkl",
       "option": 0
     },
     "cost_intangible_construction": {
       "activated": false,
       "source_type": "function",
-      "source": "project/intermediate/cost_intangible_construction_phebus2012.pkl"
+      "source": "project/input/phebus/intermediate/cost_intangible_construction_phebus2012.pkl"
     },
     "lbd_renovation": true,
     "info_renovation": true,
@@ -1753,7 +1753,7 @@
     },
     "rho": {
       "source_type": "file",
-      "source": "project/intermediate/rho_phebus2012.pkl",
+      "source": "project/input/phebus/intermediate/rho_phebus2012.pkl",
       "option": 3
     },
     "renovation_rate_ini": {

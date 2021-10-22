@@ -118,6 +118,7 @@ def simple_pd_plot(df, xlabel, ylabel, colors=None, format_x=None, format_y=None
 
     if save is not None:
         fig.savefig(save)
+        plt.close(fig)
     else:
         plt.show()
 
@@ -129,13 +130,9 @@ def economic_subplots(df, suptitle, format_axtitle=lambda x: x, format_val=lambd
     ----------
     df: pd.DataFrame
         columns must be years
-
     suptitle: str
-
     format_axtitle: function, optional
-
     format_val: function, optional
-
     n_columns: int, default 3
     """
     n_axes = int(len(df.index))
@@ -178,7 +175,8 @@ def economic_subplots(df, suptitle, format_axtitle=lambda x: x, format_val=lambd
 
     
 def scenario_grouped_subplots(df_dict, suptitle='', n_columns=3, format_y=lambda y, _: y, rotation=0, nbins=None, save=None):
-    """Plot a line for each index in a subplot.
+    """
+    Plot a line for each index in a subplot.
 
     Parameters
     ----------
@@ -222,7 +220,10 @@ def scenario_grouped_subplots(df_dict, suptitle='', n_columns=3, format_y=lambda
             ax.yaxis.set_major_formatter(plt.FuncFormatter(format_y))
 
             # ax.get_yaxis().set_visible(False)
-            ax.set_title(key, fontweight='bold', fontsize=10, pad=-1.6)
+            if isinstance(key, tuple):
+                ax.set_title('{}-{}'.format(key[0], key[1]), fontweight='bold', fontsize=10, pad=-1.6)
+            else:
+                ax.set_title(key, fontweight='bold', fontsize=10, pad=-1.6)
             if k == 0:
                 handles, labels = ax.get_legend_handles_labels()
                 labels = [l.replace('_', ' ') for l in labels]
@@ -235,6 +236,7 @@ def scenario_grouped_subplots(df_dict, suptitle='', n_columns=3, format_y=lambda
 
     if save is not None:
         fig.savefig(save)
+        plt.close(fig)
     else:
         plt.show()
 
