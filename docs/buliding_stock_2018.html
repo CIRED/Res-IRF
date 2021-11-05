@@ -1,0 +1,347 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Specification of Version 4.0 &mdash; Res-IRF 0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Res-IRF
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="README.html">Res-IRF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LICENSE.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="input_2012.html">Input Res-IRF version 3.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="technical_documentation.html">Technical documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="help_installation.html">Additional information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="future_development.html">Future developments</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Res-IRF</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Specification of Version 4.0</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/buliding_stock_2018.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="specification-of-version-4-0">
+<h1>Specification of Version 4.0</h1>
+<div class="section" id="data-used-in-version-4-0">
+<h2>Data used in version 4.0</h2>
+<p>As explained in the previous section, the core of Res-IRF is a stock matrix that describes the structure of the
+residential stock at an original year. Until recently, the model was based on the image of the residential stock derived
+from the 2012 Phébus survey data. This is what will be called the 2012 version of Res-IRF.</p>
+<p>For greater accuracy of the model projections, a new stock matrix corresponding to the image of the residential stock in
+2018 was imported. This matrix was built up using data provided by the SDES as part of the research agreement between
+the CGDD and the CIRED in which this work is included.</p>
+<p>Another dataset was also provided concerning the correspondence between the incomes of landlords and those of
+tenants in the private rental stock.</p>
+<p>These two data sets are described in the following sections. They have been constituted by the SDES from data coming
+from the Fidéli 2018 database, from the DPE 2017 and 2018 database of the ADEME and from the Enerter model of the
+company Energies Demain for the dwellings built before 1948 (2).</p>
+</div>
+<div class="section" id="building-stock">
+<h2>Building stock</h2>
+<p>The first dataset incorporated into Res-IRF is the new stock matrix (MAT1) representing the residential stock in 2018. It describes the number of units in the residential stock by various segments.</p>
+<p>This matrix segments the 28.6 million dwellings in the residential stock (primary residences only) into five categories:</p>
+<ul class="simple">
+<li><p>Energy performance level: DPE label ranging from G to A;</p></li>
+<li><p>Type of housing: individual or collective;</p></li>
+<li><p>Type of owner: owner-occupier, owner-lessor, social housing, free rental housing;</p></li>
+<li><p>Income level of the owner: income deciles of the tenant;</p></li>
+<li><p>Heating energy: natural gas, electricity, “other energy”.</p></li>
+</ul>
+<p>These data had to be reprocessed before they could be imported into Res-IRF. The following changes were made:</p>
+<ul class="simple">
+<li><p>Deletion of housing rented free of charge: this category, present in the data provided, is not relevant in Res-IRF and represents a limited number of people;</p></li>
+<li><p>Conversion of owner deciles to owner quintiles: As Res-IRF is currently adapted to handle only income quintiles and not deciles, the numbers of deciles belonging to the same quintile have been grouped together;</p></li>
+<li><p>Treatment of heating energy data: the only energy categories available in the data received were natural gas, electricity and the “other energies” category. However, Res-IRF includes four types of energy: electricity, gas, but also homes heated with oil and wood. It was therefore necessary to determine the share of fuel oil and wood in the “other energy” category. For this purpose, other data on the structure of the stock in 2018 from CEREN were used (37). For each type of dwelling (single-family or multi-family), these data make it possible to obtain the percentage of dwellings heated with wood and fuel oil among those heated neither with electricity nor with gas. The assumptions used are presented in the following table.</p></li>
+</ul>
+<p><strong>Proportion of dwellings heated with wood and oil among dwellings not heated with gas or electricity, by type of dwelling</strong></p>
+<table class="colwidths-auto docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p><strong>Wood fuel</strong></p></th>
+<th class="head"><p><strong>Oil fuel</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Multi-family</strong></p></td>
+<td><p>27%</p></td>
+<td><p>30,8%</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Single-family</strong></p></td>
+<td><p>25,9%</p></td>
+<td><p>6,2%</p></td>
+</tr>
+</tbody>
+</table>
+<p><em>Note for the reader: among collective dwellings that are heated neither by gas nor by electricity, 27% are heated by wood and 30.8% are heated by oil.</em></p>
+<ul class="simple">
+<li><p>Shift from tenant income to owner income: the income levels expressed in the stock matrix provided by the SDES were initially those of tenants. However, for Res-IRF to function properly, it is necessary to start by importing into the model the numbers of private rental housing stock according to the incomes of owners, as explained in section 2.2.4. It was therefore necessary to match the incomes of tenants with the incomes of owners in the private rental housing stock by means of a pass-through matrix.</p></li>
+</ul>
+<div class="section" id="scope">
+<h3>Scope</h3>
+<p>This new structure is compared to the old version of Res-IRF, calibrated from the 2012 Phebus data. We look at both the
+original 2012 fleet matrix and the projection that this 2012 calibrated version gives for the year 2018. For the
+analysis of the results that follows, it is important to keep in mind that we are not comparing staff of identical size.</p>
+<p>Indeed, the stock matrix used in 2012 had to be truncated even more than the one used in 2018 to be usable in Res-IRF:
+it indicated a residential stock of 23.9 million dwellings in 2012 and the projection for 2018 reaches 25.5 million
+dwellings. In comparison, the new data show a stock of 26.7 million dwellings in 2018.</p>
+<p><strong>Comparison Phebus-2012 building stocks and SDES-2018</strong>
+![phebus_sdes_percent][phebus_sdes_percent]
+![phebus_sdes_millions][phebus_sdes_millions]</p>
+<p>Note:</p>
+<ul class="simple">
+<li><p>SDES building stock got a decile segmentation for income class. We aggregate them in figures in order to make the
+comparison possible.</p></li>
+<li><p>All images come from comparison.iynb a Jupyter notebook available in the project.</p></li>
+</ul>
+</div>
+<div class="section" id="energy-performance">
+<h3>Energy performance</h3>
+<p>The number of dwellings in each EPC band is directly given by Phébus-DPE and SDES database. Figure compares the
+distribution of EPC labels in versions 3.0 and 4.0 of the model. The stock in the latter is more energy efficient in
+year 2018 than was that of the former in year 2012, with less dwellings in lower EPC bands (G-E) and more in upper
+bands (D-A).</p>
+<p>![phebus_sdes_energy_performance_percent][phebus_sdes_energy_performance_percent]</p>
+</div>
+<div class="section" id="heating-energy">
+<h3>Heating Energy</h3>
+<p>The model covers energy use for heating from electricity, natural gas, fuel oil and fuel wood. This cope covers 16% of
+final energy consumption in France.<a class="footnote-reference brackets" href="#f04b" id="id1">1</a> We consider only the main heating fuel used in each dwelling.</p>
+<p>![phebus_sdes_energy_percent][phebus_sdes_energy_percent]</p>
+</div>
+<div class="section" id="household-income">
+<h3>Household income</h3>
+</div>
+<div class="section" id="renovation-rate">
+<h3>Renovation rate</h3>
+<p>In Res-IRF 3.0, the renovation rates used to calibrate Res-IRF were differentiated by decision maker and by ECD label.</p>
+<p>Due to the lack of robustness of the data on renovation rates by EPC and the problematic results they generated with the
+new image of the stock (SDES 2018), the renovation rates are now only differentiated by decision-makers. The latter have
+been recalculated from data already used in the old parameterization of the renovation rates but also with other
+additional data sources.</p>
+<p>The 2012 version of Res-IRF (calibrated on Phébus) replicated the renovation rates observed in the French housing stock
+according to the DPE and the decision maker of a dwelling. This meant using a matrix of 6 * 6 = 36 renovation rates,
+which the calibration of parameters of the model (rho parameters of the renovation rate function) should make it
+possible to replicate in the original year.</p>
+<hr class="footnotes docutils" />
+<dl class="footnote brackets">
+<dt class="label" id="f04b"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
+<dd><p>Residential buildings in France contribute 26% of total energy consumption, 67% of which is devoted to heating,
+91% of which is covered by electricity, natural gas, heating oil and wood energy (ADEME, 2015).</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Lucas Vivier.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

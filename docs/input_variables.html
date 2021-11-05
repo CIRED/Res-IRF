@@ -4,8 +4,7 @@
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
-  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Input &mdash; Res-IRF 0.0 documentation</title>
@@ -42,9 +41,7 @@
 
     
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Influence of input variables" href="variant_input_variables.html" />
-    <link rel="prev" title="Technical documentation" href="technical_documentation.html" /> 
+    <link rel="search" title="Search" href="search.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -90,40 +87,15 @@
             
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="README.html">Res-IRF</a></li>
-<li class="toctree-l1"><a class="reference internal" href="appendix.html">Additional information</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules.html">Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LICENSE.html">License</a></li>
-<li class="toctree-l1"><a class="reference internal" href="CHANGELOG.html">Changelog</a></li>
-<li class="toctree-l1"><a class="reference internal" href="future_development.html">Future developments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="input_2012.html">Input Res-IRF version 3.0</a></li>
 <li class="toctree-l1"><a class="reference internal" href="technical_documentation.html">Technical documentation</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Input</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#building-stock">Building stock</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#numeric-value-for-stock-attributes">Numeric value for stock attributes</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#exogenous-input-trajectories-ei">Exogenous input trajectories (EI)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#model-parameters-mp">Model parameters (MP)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#buildings-dynamic">Buildings dynamic</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#construction-dynamic">Construction dynamic</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#demographic-parameters">Demographic parameters</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#market-share-and-renovation-parameters">Market share and renovation parameters</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#learning-by-doing-parameters">Learning by doing parameters</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#cost">Cost</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#behavioral-parameters">Behavioral parameters</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#calibration-targets">Calibration Targets</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="variant_input_variables.html">Influence of input variables</a></li>
-<li class="toctree-l1"><a class="reference internal" href="variant_input_capitalization.html">Influence of the determinants of capitalization</a></li>
-<li class="toctree-l1"><a class="reference internal" href="variant_input_credit.html">Influence of credit constraints</a></li>
-<li class="toctree-l1"><a class="reference internal" href="policies_assessment.html">Double difference or marginal difference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="help_installation.html">Additional information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="future_development.html">Future developments</a></li>
 </ul>
 
             
@@ -215,26 +187,11 @@
     text-align: unset;
 }
 </style>
-<section class="tex2jax_ignore mathjax_ignore" id="input">
-<h1>Input<a class="headerlink" href="#input" title="Permalink to this headline">¶</a></h1>
-<p>This description implies the use of a variety of different input.
-Most of these inputs are uncertain. It is then necessary to run a sensitivity analysis.</p>
-<p>We use the term input to name any factor that is given a numerical value
-in the model. Model inputs fall into three categories:</p>
-<ul class="simple">
-<li><p>Exogenous input trajectories (EI) representing future states of the world:
-energy prices, population growth and GDP growth.</p></li>
-<li><p>Calibration targets (CT), which are empirical values the model aims to
-replicate for the reference year. They include hard-to-measure aggregates
-such as the reference retrofitting rate and the reference energy
-label transitions.</p></li>
-<li><p>All other model parameters (MP), which reflect current knowledge on
-behavioral factors (discount rates, information spillover rates, etc.) and
-technological factors (investment costs, learning rates, etc.)</p></li>
-</ul>
+<div class="tex2jax_ignore mathjax_ignore section" id="input">
+<h1>Input</h1>
 <p>Buildings stock.</p>
-<section id="building-stock">
-<h2>Building stock<a class="headerlink" href="#building-stock" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="building-stock">
+<h2>Building stock</h2>
 <ul class="simple">
 <li><p><strong>initial stock by attributes</strong>:</p>
 <ul>
@@ -256,8 +213,8 @@ order to do so.</p></li>
 <blockquote>
 <div><p>Data from SDES-2018, Phebus-2012</p>
 </div></blockquote>
-<section id="numeric-value-for-stock-attributes">
-<h3>Numeric value for stock attributes<a class="headerlink" href="#numeric-value-for-stock-attributes" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="numeric-value-for-stock-attributes">
+<h3>Numeric value for stock attributes</h3>
 <ul class="simple">
 <li><p>income</p></li>
 <li><p>area</p></li>
@@ -268,10 +225,10 @@ order to do so.</p></li>
 <li><p>rate heating energy in total final energy consumption</p></li>
 <li><p>rate heating energy in total construction final energy consumption</p></li>
 </ul>
-</section>
-</section>
-<section id="exogenous-input-trajectories-ei">
-<h2>Exogenous input trajectories (EI)<a class="headerlink" href="#exogenous-input-trajectories-ei" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+<div class="section" id="exogenous-input-trajectories-ei">
+<h2>Exogenous input trajectories (EI)</h2>
 <ul class="simple">
 <li><p><em>Population growth</em> : based on a projection from INSEE (2006) equivalent to an average annual growth rate of 0.3%/year
 over the period 2012-2050.</p></li>
@@ -289,22 +246,22 @@ the period. These lead to an average annual growth rate of the price index of 1.
 <li><p>Available income rate</p></li>
 <li><p>Household income rate</p></li>
 </ul>
-</section>
-<section id="model-parameters-mp">
-<h2>Model parameters (MP)<a class="headerlink" href="#model-parameters-mp" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="model-parameters-mp">
+<h2>Model parameters (MP)</h2>
 <ul class="simple">
 <li><p><strong>End year (2040)</strong> (python input)</p></li>
 </ul>
-<section id="buildings-dynamic">
-<h3>Buildings dynamic<a class="headerlink" href="#buildings-dynamic" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="buildings-dynamic">
+<h3>Buildings dynamic</h3>
 <ul class="simple">
 <li><p>Destruction rate (0.35%/yr)</p></li>
 <li><p>Residual destruction rate (5%/yr)</p></li>
 <li><p>Rotation rate</p></li>
 <li><p>Mutation rate</p></li>
 </ul>
-<section id="construction-dynamic">
-<h4>Construction dynamic<a class="headerlink" href="#construction-dynamic" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="construction-dynamic">
+<h4>Construction dynamic</h4>
 <p>Growth of multi-family building share in total stock:</p>
 <ul class="simple">
 <li><p>Factor share multi-family</p></li>
@@ -314,10 +271,10 @@ the period. These lead to an average annual growth rate of the price index of 1.
 <li><p>Elasticity area construction</p></li>
 <li><p>Area max construction</p></li>
 </ul>
-</section>
-</section>
-<section id="demographic-parameters">
-<h3>Demographic parameters<a class="headerlink" href="#demographic-parameters" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+<div class="section" id="demographic-parameters">
+<h3>Demographic parameters</h3>
 <ul class="simple">
 <li><p>Factor population housing ini</p>
 <ul>
@@ -330,9 +287,9 @@ the period. These lead to an average annual growth rate of the price index of 1.
 </ul>
 </li>
 </ul>
-</section>
-<section id="market-share-and-renovation-parameters">
-<h3>Market share and renovation parameters<a class="headerlink" href="#market-share-and-renovation-parameters" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="market-share-and-renovation-parameters">
+<h3>Market share and renovation parameters</h3>
 <p>Market share:</p>
 <ul class="simple">
 <li><p>Nu intangible cost</p></li>
@@ -346,9 +303,9 @@ the period. These lead to an average annual growth rate of the price index of 1.
 <li><p>Renovation rate max</p></li>
 <li><p>Renovation rate min</p></li>
 </ul>
-</section>
-<section id="learning-by-doing-parameters">
-<h3>Learning by doing parameters<a class="headerlink" href="#learning-by-doing-parameters" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="learning-by-doing-parameters">
+<h3>Learning by doing parameters</h3>
 <ul class="simple">
 <li><p>Learning by doing renovation (10%)</p>
 <ul>
@@ -378,9 +335,9 @@ the period. These lead to an average annual growth rate of the price index of 1.
 <blockquote>
 <div><p>Learning by doing and information acceleration can be activated or de-activated.</p>
 </div></blockquote>
-</section>
-<section id="cost">
-<h3>Cost<a class="headerlink" href="#cost" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="cost">
+<h3>Cost</h3>
 <ul class="simple">
 <li><p>construction cost</p></li>
 <li><p>renovation cost</p></li>
@@ -397,19 +354,19 @@ the period. These lead to an average annual growth rate of the price index of 1.
 </ul>
 </li>
 </ul>
-</section>
-<section id="behavioral-parameters">
-<h3>Behavioral parameters<a class="headerlink" href="#behavioral-parameters" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="behavioral-parameters">
+<h3>Behavioral parameters</h3>
 <ul class="simple">
 <li><p>investment discount rate</p></li>
 <li><p>construction investment discount rate</p></li>
 <li><p><strong>envelope investment horizon</strong></p></li>
 <li><p><strong>heater investment horizon</strong></p></li>
 </ul>
-</section>
-</section>
-<section id="calibration-targets">
-<h2>Calibration Targets<a class="headerlink" href="#calibration-targets" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+<div class="section" id="calibration-targets">
+<h2>Calibration Targets</h2>
 <ul class="simple">
 <li><p>market share renovation initial</p>
 <ul>
@@ -419,18 +376,14 @@ the period. These lead to an average annual growth rate of the price index of 1.
 <li><p>renovation rate initial</p></li>
 <li><p>market share construction</p></li>
 </ul>
-</section>
-</section>
+</div>
+</div>
 
 
            </div>
            
           </div>
           <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="variant_input_variables.html" class="btn btn-neutral float-right" title="Influence of input variables" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="technical_documentation.html" class="btn btn-neutral float-left" title="Technical documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-    </div>
 
   <hr/>
 

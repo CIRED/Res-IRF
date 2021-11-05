@@ -1,20 +1,6 @@
 # Input
 
-This description implies the use of a variety of different input.
-Most of these inputs are uncertain. It is then necessary to run a sensitivity analysis.
 
-We use the term input to name any factor that is given a numerical value
-in the model. Model inputs fall into three categories:
-
-- Exogenous input trajectories (EI) representing future states of the world:
-energy prices, population growth and GDP growth.
-- Calibration targets (CT), which are empirical values the model aims to
-replicate for the reference year. They include hard-to-measure aggregates
-such as the reference retrofitting rate and the reference energy
-label transitions.
-- All other model parameters (MP), which reflect current knowledge on
-behavioral factors (discount rates, information spillover rates, etc.) and
-technological factors (investment costs, learning rates, etc.)
 
 Buildings stock.
 

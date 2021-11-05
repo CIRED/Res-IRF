@@ -1,0 +1,755 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Input Res-IRF version 3.0 &mdash; Res-IRF 0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Technical documentation" href="technical_documentation.html" />
+    <link rel="prev" title="License" href="LICENSE.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Res-IRF
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="README.html">Res-IRF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LICENSE.html">License</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Input Res-IRF version 3.0</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#building-stock-used-in-version-3-0">Building stock used in version 3.0</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#scope">Scope</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#energy-performance">Energy performance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#building-characteristics-and-occupancy-status">Building characteristics and occupancy status</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#heating-fuel">Heating fuel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#household-income">Household income</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#occupants">Occupants</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#owners">Owners</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#input">Input</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="technical_documentation.html">Technical documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="help_installation.html">Additional information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="future_development.html">Future developments</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Res-IRF</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Input Res-IRF version 3.0</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/input_2012.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="tex2jax_ignore mathjax_ignore section" id="input-res-irf-version-3-0">
+<h1>Input Res-IRF version 3.0</h1>
+<div class="section" id="building-stock-used-in-version-3-0">
+<h2>Building stock used in version 3.0</h2>
+<p>The model is calibrated on base year 2012. What we refer to as existing dwellings corresponds to the stock of dwellings
+available in 2012, minus annual demolitions. What we refer to as new dwellings is the cumulative sum of dwellings
+constructed after 2012.</p>
+<p>Previous versions of Res-IRF were parameterized on data published in 2008 by the <span id="id1">[<a class="reference internal" href="#id21" title="ANAH. Modélisation des performances thermiques du parc de logements. 2008. URL: https://www.anah.fr/fileadmin/anah/Mediatheque/Publications/Les_etudes/rapport_performances_energetiques.pdf (visited on 2021-10-28).">ANAH, 2008</a>]</span>.
+A major step forward for the time, this database aggregated data of varying quality from different sources. A
+number of extrapolations made up for missing (e.g., the number of dwellings built before 1975) or imprecise (e.g.,
+occupancy status of decision-makers) data.</p>
+<p>The version 3.0 of the model is now mainly based on data from the Phébus survey (Performance de l’Habitat, Équipements,
+Besoins et USages de l’énergie). Published in 2014, the Phébus data represented a substantial improvement in knowledge
+of the housing stock and its occupants. Specifically, a more systematic data collection procedure allowed for new
+information (in particular on household income) and improved accuracy of previously available information. These
+advances now permit assessment of the distributional aspects of residential energy consumption.</p>
+<p>The Phébus survey has two components:</p>
+<ul class="simple">
+<li><p>The so-called “Clode” sample details the characteristics of dwellings, their occupants and their energy expenditure.
+Specific weights are assigned to each household type to ensure that the sample is representative of the French
+population.</p></li>
+<li><p>The so-called “EPC” sample complements, for a subsample of 44% of households in the Clode sample, socio-economic data
+with certain physical data, including the energy consumption predicted by the EPC label. In Res-IRF, specific weights
+are assigned to this sub-sample, based on Denjean (2014).</p></li>
+</ul>
+<p>To parameterize the model, we matched the two components in a single database. Without further specification, the
+matched database is the one we refer to when we mention Phébus in the text.</p>
+<p>In addition to the Phébus data, we calibrate correction parameters so that the model outputs at the initial year are
+consistent with the data produced by the Centre d’études et de recherches économiques sur l’énergie (CEREN). The CEREN
+data differ from the Phébus ones in their scope and the methodology used to produce them. They however serve as a
+reference for most projections of energy consumption in France.</p>
+<p><strong>Overview of the database</strong></p>
+<table class="docutils align-default" id="databases-overview">
+<caption><span class="caption-number">Table 1 </span><span class="caption-text">Overview of the database</span></caption>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head stub"></th>
+<th class="head"><p>Phébus-Clode</p></th>
+<th class="head"><p>Phébus-DPE</p></th>
+<th class="head"><p>CEREN</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><th class="stub"><p>Data source</p></th>
+<td><p>In-home survey including over 500 questions and energy bills.</p></td>
+<td><p>EPC audit realized among voluntary households that participated in the Clode survey</p></td>
+<td><p>Census data supplemented by household and retrofit contractor surveys.</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>Sample size</p></th>
+<td><p>5,405 dwellings</p></td>
+<td><p>2,389 dwellings (from the 5,405 of the Clode sample)</p></td>
+<td><p>3,000 (2,000 in existing dwellings and 800 in new ones)</p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p>Stakeholders</p></th>
+<td><p>Management : SoeS, Veritas pour DPE, Ipsos pour Clode. Funding : EDF, Total, Leclerc, ANAH, ADEME.</p></td>
+<td></td>
+<td><p>CEREN</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Overview of the content of the databases</strong></p>
+<table class="docutils align-default" id="databases-overview-content">
+<caption><span class="caption-number">Table 2 </span><span class="caption-text">Overview of the database content</span></caption>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head stub"></th>
+<th class="head"><p>Phébus-Clode</p></th>
+<th class="head"><p>Phébus-DPE</p></th>
+<th class="head"><p>CEREN</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><th class="stub"><p>Surface of the dwelling</p></th>
+<td><p>Available</p></td>
+<td><p>Available</p></td>
+<td><p>Not available</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>Year of construction</p></th>
+<td><p>Available</p></td>
+<td><p>Available</p></td>
+<td><p>Not available</p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p>Occupancy status</p></th>
+<td><p>Owner-occupiers, landlords and social housing</p></td>
+<td><p>Owner-occupiers and landlords</p></td>
+<td><p>Owner-occupiers and landlords</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>Type of dwelling</p></th>
+<td><p>Single- and multi-family</p></td>
+<td><p>Single- and multi-family</p></td>
+<td><p>Single- and multi-family</p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p>Scope</p></th>
+<td><p>Main residences in metropolitan France, detailed by climatic zones</p></td>
+<td><p>Main residences in metropolitan France, detailed by departements</p></td>
+<td><p>Main residences in metropolitan France</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>Income</p></th>
+<td><p>Available for occupants</p></td>
+<td><p>Not available</p></td>
+<td><p>Not available</p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p>Energy consumption</p></th>
+<td><p>Actual, adjusted from energy bills</p></td>
+<td><p>Conventional, as predicted by the EPC label</p></td>
+<td><p>Actual, from measurement and estimation</p></td>
+</tr>
+</tbody>
+</table>
+<p>The model contains 1,080 types of dwellings divided into:</p>
+<ul class="simple">
+<li><p>Nine energy performance levels – EPC labels A to G for existing dwellings, Low Energy Building (LE) and Net Zero
+Energy Building (NZ) levels for new dwellings;</p></li>
+<li><p>Four main heating fuels – electricity, natural gas, fuel oil and fuel wood</p></li>
+<li><p>Six types of investors – owner-occupiers, landlords or social housing managers, each in single- and multi-family
+dwellings;</p></li>
+<li><p>Five categories of household income, the boundaries of which are aligned with those of INSEE quintiles.</p></li>
+</ul>
+<div class="section" id="scope">
+<h3>Scope</h3>
+<p>Res-IRF 3.0 covers 23.9 million principal residences in metropolitan France among the 27.1 million covered by the
+Phébus-Clode survey for the year 2012. This scope differs from that of other databases (see <a class="reference internal" href="#databases-overview"><span class="std std-ref">Table</span></a>).
+It was delineated by excluding from the Phébus sample: those dwellings heated with fuels with low market shares, such as
+liquefied petroleum gas (LPG) and district heating; some dwellings for which it was not possible to identify a principal
+energy carrier; some dwellings for which the Phébus data were missing.</p>
+<div class="figure align-default" id="buildingstock-2012-absolute">
+<img alt="_images/buildingstock_2012_absolute.png" src="_images/buildingstock_2012_absolute.png" />
+<p class="caption"><span class="caption-number">Fig. 1 </span><span class="caption-text">Building stock 2012</span></p>
+</div>
+<div class="figure align-default" id="buildingstock-2012-percent">
+<img alt="_images/buildingstock_2012_percent.png" src="_images/buildingstock_2012_percent.png" />
+<p class="caption"><span class="caption-number">Fig. 2 </span><span class="caption-text">Building stock 2012</span></p>
+</div>
+</div>
+<div class="section" id="energy-performance">
+<h3>Energy performance</h3>
+<p>The number of dwellings in each EPC band is directly given by Phébus-DPE.</p>
+<div class="figure align-default" id="buildingstock-ep-2012-percent">
+<img alt="_images/buildingstock_ep_2012_percent.png" src="_images/buildingstock_ep_2012_percent.png" />
+<p class="caption"><span class="caption-number">Fig. 3 </span><span class="caption-text">Building stock 2012 by Energy Performance</span></p>
+</div>
+</div>
+<div class="section" id="building-characteristics-and-occupancy-status">
+<h3>Building characteristics and occupancy status</h3>
+<p><a class="reference internal" href="#decision-maker-distribution"><span class="std std-numref">Table 3</span></a> specifies the joint distribution of building characteristics (singe- and
+multi-family dwellings) and types of investors (owner-occupied, landlord, social housing manager).</p>
+<table class="docutils align-default" id="decision-maker-distribution">
+<caption><span class="caption-number">Table 3 </span><span class="caption-text">Joint distribution of building and investor characteristics in Res-IRF 3.0</span></caption>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head stub"></th>
+<th class="head"><p>Single-family</p></th>
+<th class="head"><p>Multi-family</p></th>
+<th class="head"><p>Total</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><th class="stub"><p>Owner-occupier</p></th>
+<td><p>49.00%</p></td>
+<td><p>11.90%</p></td>
+<td><p>60.90%</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>Landlord</p></th>
+<td><p>8.80%</p></td>
+<td><p>15.60%</p></td>
+<td><p>24.40%</p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p>Social housing manager</p></th>
+<td><p>3.20%</p></td>
+<td><p>11.50%</p></td>
+<td><p>14.70%</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>Total</p></th>
+<td><p>61.00%</p></td>
+<td><p>39.00%</p></td>
+<td><p>100.00%</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="heating-fuel">
+<h3>Heating fuel</h3>
+<p>The model covers energy use for heating from electricity, natural gas, fuel oil and fuel wood. This scope covers 16% of
+final energy consumption in France. We consider only the main heating fuel used in each dwelling. To identify it from
+the Phébus-Clode database, we proceed as follows:</p>
+<ol class="simple">
+<li><p>We retain the main heating fuel when declared as such by the respondents.</p></li>
+<li><p>When several main fuels are declared, we assign to the dwelling a heating fuel according to the following order of
+priority: district heating &gt; collective boiler &gt; individual boiler &gt; all-electric &gt; heat pump &gt; other.</p></li>
+<li><p>When no main fuel is reported, we retain the main fuel declared as auxiliary, determined with the following order
+of priority: <em>electric heater &gt; all-electric &gt; mixed base &gt; fixed non-electric &gt; chimney</em>.</p></li>
+</ol>
+<div class="figure align-default" id="energy-consumption-phebus">
+<img alt="_images/energy_consumption_phebus.png" src="_images/energy_consumption_phebus.png" />
+<p class="caption"><span class="caption-number">Fig. 4 </span><span class="caption-text">Energy consumption in Phébus</span></p>
+</div>
+<p><code class="xref std std-numref docutils literal notranslate"><span class="pre">buildingstock_he_2012_percent</span></code> compares the total consumption of each fuel in the Phébus database and in the
+model. It shows that retaining only one fuel for each dwelling leads us to consider much less electricity and wood
+consumption than reported in Phébus. This is due for the most part to our exclusion of auxiliary heating, which
+predominantly uses electricity and wood, and to a lesser extent to our exclusion of the specific electricity consumption
+that is reported in Phébus.</p>
+</div>
+<div class="section" id="household-income">
+<h3>Household income</h3>
+<p>A major advance of version 3.0, the introduction of income categories was intended to capture heterogeneity in:</p>
+<ul class="simple">
+<li><p>the propensity of owners to invest in energy retrofits and</p></li>
+<li><p>(ii) the intensity of use of heating infrastructure by occupants.
+The level of detail of the Phébus database made this development possible. Yet since the income data it contains only
+relates to occupants, additional data were needed to set income parameters for landlords.</p></li>
+</ul>
+<div class="section" id="occupants">
+<h4>Occupants</h4>
+<p>The disposable income of occupants – owner-occupiers and tenants – is segmented into five categories delineated by the
+same income boundaries as those defining income quintiles in France, according to the national statistical office for
+2012. The use of these quintiles instead of those intrinsic in the Phébus sample ensures consistency between homeowners’
+and tenants’ income (see next section), without introducing too strong biases, as shown in <a class="reference internal" href="#income-categories"><span class="std std-numref">Table 4</span></a>.
+2013. Each dwelling is then allocated the average income for its category. <a class="reference internal" href="#income-energy-performance"><span class="std std-numref">Fig. 5</span></a>
+2014. illustrates the distribution of occupant income in the different EPC bands. A clear correlation appears between
+2015. household income and the energy efficiency of their dwelling.<a class="footnote-reference brackets" href="#dwelling" id="id2">1</a></p>
+<div class="figure align-default" id="income-energy-performance">
+<img alt="_images/income_energy_performance.png" src="_images/income_energy_performance.png" />
+<p class="caption"><span class="caption-number">Fig. 5 </span><span class="caption-text">Distribution of income categories within EPC bands (Source: Phébus)</span></p>
+</div>
+<table class="docutils align-default" id="income-categories">
+<caption><span class="caption-number">Table 4 </span><span class="caption-text">Income categories used in Res-IRF 3.0</span></caption>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head stub"><p>Category</p></th>
+<th class="head"><p>Boundaries of Insee quintiles (€)</p></th>
+<th class="head"><p>Share of total households in Res-IRF</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><th class="stub"><p>C1</p></th>
+<td><p>0 – 16,830</p></td>
+<td><p>17%</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>C2</p></th>
+<td><p>16,831 – 24,470</p></td>
+<td><p>19%</p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p>C3</p></th>
+<td><p>24,471 – 34,210</p></td>
+<td><p>23%</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>C4</p></th>
+<td><p>34,211 – 48,680</p></td>
+<td><p>22%</p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p>C5</p></th>
+<td><p>&gt; 48,681</p></td>
+<td><p>19%</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="owners">
+<h4>Owners</h4>
+<p>Homeowners’ income overlaps with occupants’. Yet Phébus does not contain any information on the income of landlords,
+which we had to reconstitute by other means. We matched the Phébus-DPE data with INSEE data pre-processed by the Agence
+nationale pour l’information sur le logement <span id="id3">[<a class="reference internal" href="#id23" title="missing institution in anilBailleursLocatairesDans2012">ANIL, 2012</a>]</span>. The resulting landlords’ income
+distribution is described in Figure 7 and compared to that of tenants. Here again, significant disparities appear, with
+households whose annual income falls below €34,210 representing 80% of tenants but only 20% of owner-occupiers.</p>
+<div class="figure align-default" id="income-owners-occ-status">
+<img alt="_images/income_owners_occ_status.png" src="_images/income_owners_occ_status.png" />
+<p class="caption"><span class="caption-number">Fig. 6 </span><span class="caption-text">Distribution of income categories for landlords and tenants in privately rented housing</span></p>
+</div>
+<p>To build this figure, some adjustments are needed to translate into income categories the {cite:
+ps}<code class="docutils literal notranslate"><span class="pre">anilBailleursLocatairesDans2012</span></code> data that are expressed in terms of living standard<a class="footnote-reference brackets" href="#standard" id="id4">2</a>.</p>
+</div>
+</div>
+</div>
+<div class="section" id="input">
+<h2>Input</h2>
+<p>We use the term input to name any factor that is given a numerical value
+in the model. Model inputs fall into three categories <span id="id5">[<a class="reference internal" href="#id8" title="Frédéric Branger, Louis-Gaëtan Giraudet, Céline Guivarch, and Philippe Quirion. Global sensitivity analysis of an energy–economy model of the residential building sector. Environmental Modelling &amp; Software, 70:45–54, August 2015. URL: https://www.sciencedirect.com/science/article/pii/S1364815215001097 (visited on 2021-02-22), doi:10.1016/j.envsoft.2015.03.021.">Branger, Giraudet, Guivarch, and Quirion, 2015</a>]</span>:</p>
+<ul class="simple">
+<li><p>Exogenous input trajectories (EI) representing future states of the world:
+energy prices, population growth and GDP growth.</p></li>
+<li><p>Calibration targets (CT), which are empirical values the model aims to
+replicate for the reference year. They include hard-to-measure aggregates
+such as the reference retrofitting rate and the reference energy
+label transitions.</p></li>
+<li><p>All other model parameters (MP), which reflect current knowledge on
+behavioral factors (discount rates, information spillover rates, etc.) and
+technological factors (investment costs, learning rates, etc.)</p></li>
+</ul>
+<table class="docutils align-default" id="input-calibration-target">
+<caption><span class="caption-number">Table 5 </span><span class="caption-text">Complete list of inputs</span></caption>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head stub"><p>Category</p></th>
+<th class="head"><p>Input Name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><th class="stub"><p>Exogenous inputs</p></th>
+<td><p>Energy Price</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"></th>
+<td><p>Tax Price</p></td>
+</tr>
+<tr class="row-even"><th class="stub"></th>
+<td><p>Population Growth</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"></th>
+<td><p>GDP Growth</p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p>Calibration targets</p></th>
+<td><p>Retrofitting Rate</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"></th>
+<td><p>Energy Label Transition Shares</p></td>
+</tr>
+<tr class="row-even"><th class="stub"></th>
+<td><p>Energy Label Construction Shares</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"></th>
+<td><p>Fuel Construction Shares</p></td>
+</tr>
+<tr class="row-even"><th class="stub"></th>
+<td><p>Occupancy status Construction Shares</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"></th>
+<td><p>Electricity Use</p></td>
+</tr>
+<tr class="row-even"><th class="stub"></th>
+<td><p>Natural gas Use</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"></th>
+<td><p>Oil fuel Use</p></td>
+</tr>
+<tr class="row-even"><th class="stub"></th>
+<td><p>Wood fuel Use</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>Innovation dynamics factors</p></th>
+<td><p>Initial Capital Stock</p></td>
+</tr>
+<tr class="row-even"><th class="stub"></th>
+<td><p>Learning Rate</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"></th>
+<td><p>Information Rate</p></td>
+</tr>
+<tr class="row-even"><th class="stub"></th>
+<td><p>Share of variable intangible costs</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"></th>
+<td><p>Share of variable intangible costs Construction</p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p>Dwelling Stock Variation Factors</p></th>
+<td><p>Floor area Elasticity</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"></th>
+<td><p>Household Density Growth</p></td>
+</tr>
+<tr class="row-even"><th class="stub"></th>
+<td><p>Minimum Household Density</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"></th>
+<td><p>Maximum Floor area</p></td>
+</tr>
+<tr class="row-even"><th class="stub"></th>
+<td><p>Initial Floor area</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"></th>
+<td><p>Destruction Rate</p></td>
+</tr>
+<tr class="row-even"><th class="stub"></th>
+<td><p>Proportion of Non-refurbishable Dwellings</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>Investment cost factors</p></th>
+<td><p>Construction Costs</p></td>
+</tr>
+<tr class="row-even"><th class="stub"></th>
+<td><p>Fuel Switch Costs</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>Theoretical Use of Energy Labels</p></th>
+<td><p>Label Existing</p></td>
+</tr>
+<tr class="row-even"><th class="stub"></th>
+<td><p>Label New</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>Existing Dwelling Stock Factors</p></th>
+<td><p>Floor area</p></td>
+</tr>
+<tr class="row-even"><th class="stub"><p>Other factors</p></th>
+<td><p>Discount Rates</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"></th>
+<td><p>Envelope Lifetime</p></td>
+</tr>
+<tr class="row-even"><th class="stub"></th>
+<td><p>Heating System Lifetime</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"></th>
+<td><p>New Dwellings Lifetime</p></td>
+</tr>
+<tr class="row-even"><th class="stub"></th>
+<td><p>Intangible Costs Lifetime</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"></th>
+<td><p>Energy Service Elasticity</p></td>
+</tr>
+<tr class="row-even"><th class="stub"></th>
+<td><p>Heterogeneity Parameter</p></td>
+</tr>
+</tbody>
+</table>
+<p id="id6"><dl class="citation">
+<dt class="label" id="id21"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
+<dd><p>ANAH. Modélisation des performances thermiques du parc de logements. 2008. URL: <a class="reference external" href="https://www.anah.fr/fileadmin/anah/Mediatheque/Publications/Les_etudes/rapport_performances_energetiques.pdf">https://www.anah.fr/fileadmin/anah/Mediatheque/Publications/Les_etudes/rapport_performances_energetiques.pdf</a> (visited on 2021-10-28).</p>
+</dd>
+<dt class="label" id="id23"><span class="brackets"><a class="fn-backref" href="#id3">2</a></span></dt>
+<dd><p><strong>missing institution in anilBailleursLocatairesDans2012</strong></p>
+</dd>
+<dt class="label" id="id8"><span class="brackets"><a class="fn-backref" href="#id5">3</a></span></dt>
+<dd><p>Frédéric Branger, Louis-Gaëtan Giraudet, Céline Guivarch, and Philippe Quirion. Global sensitivity analysis of an energy–economy model of the residential building sector. <em>Environmental Modelling &amp; Software</em>, 70:45–54, August 2015. URL: <a class="reference external" href="https://www.sciencedirect.com/science/article/pii/S1364815215001097">https://www.sciencedirect.com/science/article/pii/S1364815215001097</a> (visited on 2021-02-22), <a class="reference external" href="https://doi.org/10.1016/j.envsoft.2015.03.021">doi:10.1016/j.envsoft.2015.03.021</a>.</p>
+</dd>
+<dt class="label" id="id18"><span class="brackets">4</span></dt>
+<dd><p>Adam B. Jaffe and Robert N. Stavins. The energy-efficiency gap What does it mean? <em>Energy Policy</em>, 22(10):804–810, October 1994. URL: <a class="reference external" href="https://www.sciencedirect.com/science/article/pii/0301421594901384">https://www.sciencedirect.com/science/article/pii/0301421594901384</a> (visited on 2021-10-28), <a class="reference external" href="https://doi.org/10.1016/0301-4215(94)90138-4">doi:10.1016/0301-4215(94)90138-4</a>.</p>
+</dd>
+<dt class="label" id="id19"><span class="brackets">5</span></dt>
+<dd><p>Kenneth Gillingham, Richard G. Newell, and Karen Palmer. Energy Efficiency Economics and Policy. <em>Annual Review of Resource Economics</em>, 1(1):597–620, 2009. _eprint: https://doi.org/10.1146/annurev.resource.102308.124234. URL: <a class="reference external" href="https://doi.org/10.1146/annurev.resource.102308.124234">https://doi.org/10.1146/annurev.resource.102308.124234</a> (visited on 2021-10-28), <a class="reference external" href="https://doi.org/10.1146/annurev.resource.102308.124234">doi:10.1146/annurev.resource.102308.124234</a>.</p>
+</dd>
+<dt class="label" id="id20"><span class="brackets">6</span></dt>
+<dd><p>Hunt Allcott and Michael Greenstone. Is There an Energy Efficiency Gap? <em>Journal of Economic Perspectives</em>, 26(1):3–28, February 2012. URL: <a class="reference external" href="https://www.aeaweb.org/articles?id=10.1257/jep.26.1.3">https://www.aeaweb.org/articles?id=10.1257/jep.26.1.3</a> (visited on 2021-10-28), <a class="reference external" href="https://doi.org/10.1257/jep.26.1.3">doi:10.1257/jep.26.1.3</a>.</p>
+</dd>
+<dt class="label" id="id37"><span class="brackets">7</span></dt>
+<dd><p>Cayla and Osso. Does energy efficiency reduce inequalities? Impact of policies in residential sector on household budget. <em>ECEEE Summer Study</em>, 2013. URL: <a class="reference external" href="https://www.eceee.org/library/conference_proceedings/eceee_Summer_Studies/2013/5a-cutting-the-energy-use-of-buildings-projects-and-technologies/does-energy-efficiency-reduce-inequalities-impact-of-policies-in-residential-sector-on-household-budget/">https://www.eceee.org/library/conference_proceedings/eceee_Summer_Studies/2013/5a-cutting-the-energy-use-of-buildings-projects-and-technologies/does-energy-efficiency-reduce-inequalities-impact-of-policies-in-residential-sector-on-household-budget/</a> (visited on 2021-10-28).</p>
+</dd>
+<dt class="label" id="id26"><span class="brackets">8</span></dt>
+<dd><p>INSEE. Projections de population pour la France métropolitaine à l’horizon 2050 : la population continue de croître et le vieillissement se poursuit. Insee Première n°1089. 2006.</p>
+</dd>
+<dt class="label" id="id40"><span class="brackets">9</span></dt>
+<dd><p>Allaire, Gaudière, Majchrzak, and Masi. Problématique qualitative et quantitative de la sortie du parc national de bâtiments. 2008.</p>
+</dd>
+<dt class="label" id="id28"><span class="brackets">10</span></dt>
+<dd><p>INSEE. 374 000 logements supplémentaires chaque année entre 2010 et 2015 – La vacance résidentielle s’accentue. Insee Première n° 1700. 2018. URL: <a class="reference external" href="https://www.insee.fr/fr/statistiques/3572689">https://www.insee.fr/fr/statistiques/3572689</a>.</p>
+</dd>
+<dt class="label" id="id39"><span class="brackets">11</span></dt>
+<dd><p>Soren T. Anderson, Ryan Kellogg, and James M. Sallee. What Do Consumers Believe About Future Gasoline Prices? Working Paper 16974, National Bureau of Economic Research, April 2011. Series: Working Paper Series. URL: <a class="reference external" href="https://www.nber.org/papers/w16974">https://www.nber.org/papers/w16974</a> (visited on 2021-10-28), <a class="reference external" href="https://doi.org/10.3386/w16974">doi:10.3386/w16974</a>.</p>
+</dd>
+<dt class="label" id="id25"><span class="brackets">12</span></dt>
+<dd><p>PUCA. L'habitat existant dans la lutte contre l'effet de serre – évaluer et faire progresser les performances énergétiques et environnementales des OPAH – Bilan de l'évaluation technique. 2015. URL: <a class="reference external" href="http://www.urbanisme-puca.gouv.fr/IMG/pdf/bilan_final_opah.pdf">http://www.urbanisme-puca.gouv.fr/IMG/pdf/bilan_final_opah.pdf</a> (visited on 2021-10-28).</p>
+</dd>
+<dt class="label" id="id35"><span class="brackets">13</span></dt>
+<dd><p>DG Trésor. Barrières à l’investissement dans l’efficacité énergétique : quels outils pour quelles économies ? 2017. URL: <a class="reference external" href="https://www.tresor.economie.gouv.fr/Ressources/File/434150">https://www.tresor.economie.gouv.fr/Ressources/File/434150</a>.</p>
+</dd>
+<dt class="label" id="id7"><span class="brackets">14</span></dt>
+<dd><p>Louis-Gaëtan Giraudet, Céline Guivarch, and Philippe Quirion. Exploring the potential for energy conservation in French households through hybrid modeling. <em>Energy Economics</em>, 34(2):426–445, March 2012. URL: <a class="reference external" href="https://www.sciencedirect.com/science/article/pii/S014098831100140X">https://www.sciencedirect.com/science/article/pii/S014098831100140X</a> (visited on 2021-02-22), <a class="reference external" href="https://doi.org/10.1016/j.eneco.2011.07.010">doi:10.1016/j.eneco.2011.07.010</a>.</p>
+</dd>
+<dt class="label" id="id13"><span class="brackets">15</span></dt>
+<dd><p><strong>missing note in giraudetMoralHazardEnergy2018</strong></p>
+</dd>
+<dt class="label" id="id16"><span class="brackets">16</span></dt>
+<dd><p>Olivier Sassi, Renaud Crassous, Jean-Charles Hourcade, Vincent Gitz, Henri Waisman, and Celine Guivarch. IMACLIM-R: a modelling framework to simulate sustainable development pathways. <em>International Journal of Global Environmental Issues</em>, 10(1-2):5–24, January 2010. Publisher: Inderscience Publishers. URL: <a class="reference external" href="https://www.inderscienceonline.com/doi/abs/10.1504/IJGENVI.2010.030566">https://www.inderscienceonline.com/doi/abs/10.1504/IJGENVI.2010.030566</a> (visited on 2021-10-28), <a class="reference external" href="https://doi.org/10.1504/IJGENVI.2010.030566">doi:10.1504/IJGENVI.2010.030566</a>.</p>
+</dd>
+<dt class="label" id="id38"><span class="brackets">17</span></dt>
+<dd><p>Erdal Aydin, Nils Kok, and Dirk Brounen. Energy efficiency and household behavior: the rebound effect in the residential sector. <em>The RAND Journal of Economics</em>, 48(3):749–782, 2017. _eprint: https://onlinelibrary.wiley.com/doi/pdf/10.1111/1756-2171.12190. URL: <a class="reference external" href="https://onlinelibrary.wiley.com/doi/abs/10.1111/1756-2171.12190">https://onlinelibrary.wiley.com/doi/abs/10.1111/1756-2171.12190</a> (visited on 2021-10-28), <a class="reference external" href="https://doi.org/10.1111/1756-2171.12190">doi:10.1111/1756-2171.12190</a>.</p>
+</dd>
+</dl>
+</p>
+<hr class="footnotes docutils" />
+<dl class="footnote brackets">
+<dt class="label" id="dwelling"><span class="brackets"><a class="fn-backref" href="#id2">1</a></span></dt>
+<dd><p>The low number of dwellings labelled A and B in Phébus makes income distribution statistics less accurate in these bands.</p>
+</dd>
+<dt class="label" id="standard"><span class="brackets"><a class="fn-backref" href="#id4">2</a></span></dt>
+<dd><p>This metric divides household income by consumption units – 1 for the first adult, 0.5 for any other person older
+than 14 and 0.3 for any person under that age. It is generally thought to better represent the financing capacity of a
+household than does income.</p>
+</dd>
+</dl>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="technical_documentation.html" class="btn btn-neutral float-right" title="Technical documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="LICENSE.html" class="btn btn-neutral float-left" title="License" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Lucas Vivier.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

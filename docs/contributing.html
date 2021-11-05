@@ -4,8 +4,7 @@
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
-  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Contributing &mdash; Res-IRF 0.0 documentation</title>
@@ -43,7 +42,8 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Double difference or marginal difference" href="policies_assessment.html" /> 
+    <link rel="next" title="Future developments" href="future_development.html" />
+    <link rel="prev" title="Additional information" href="help_installation.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -91,17 +91,11 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="README.html">Res-IRF</a></li>
-<li class="toctree-l1"><a class="reference internal" href="appendix.html">Additional information</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules.html">Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LICENSE.html">License</a></li>
-<li class="toctree-l1"><a class="reference internal" href="CHANGELOG.html">Changelog</a></li>
-<li class="toctree-l1"><a class="reference internal" href="future_development.html">Future developments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="input_2012.html">Input Res-IRF version 3.0</a></li>
 <li class="toctree-l1"><a class="reference internal" href="technical_documentation.html">Technical documentation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="input_variables.html">Input</a></li>
-<li class="toctree-l1"><a class="reference internal" href="variant_input_variables.html">Influence of input variables</a></li>
-<li class="toctree-l1"><a class="reference internal" href="variant_input_capitalization.html">Influence of the determinants of capitalization</a></li>
-<li class="toctree-l1"><a class="reference internal" href="variant_input_credit.html">Influence of credit constraints</a></li>
-<li class="toctree-l1"><a class="reference internal" href="policies_assessment.html">Double difference or marginal difference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="help_installation.html">Additional information</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Contributing</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#updating-documentation">Updating Documentation</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#overview">Overview</a></li>
@@ -112,6 +106,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="future_development.html">Future developments</a></li>
 </ul>
 
             
@@ -203,12 +198,12 @@
     text-align: unset;
 }
 </style>
-<section class="tex2jax_ignore mathjax_ignore" id="contributing">
-<h1>Contributing<a class="headerlink" href="#contributing" title="Permalink to this headline">¶</a></h1>
-<section id="updating-documentation">
-<h2>Updating Documentation<a class="headerlink" href="#updating-documentation" title="Permalink to this headline">¶</a></h2>
-<section id="overview">
-<h3>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h3>
+<div class="tex2jax_ignore mathjax_ignore section" id="contributing">
+<h1>Contributing</h1>
+<div class="section" id="updating-documentation">
+<h2>Updating Documentation</h2>
+<div class="section" id="overview">
+<h3>Overview</h3>
 <p>Documentation is available: https://lucas-vivier.github.io/Res-IRF/</p>
 <ol class="simple">
 <li><p>Documentation is run with Sphinx.<br />
@@ -226,26 +221,27 @@ GitHub pages recognize .html files and create a static website.</p></li>
 </li>
 <li><p>docs : used by GitHub pages to create a static website.</p></li>
 </ul>
-</section>
-<section id="quickstart">
-<h3>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this headline">¶</a></h3>
-</section>
-<section id="update-content-modification-of-md-file-or-docstring-in-py-file">
-<h3>Update content (modification of .md file or docstring in .py file)<a class="headerlink" href="#update-content-modification-of-md-file-or-docstring-in-py-file" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="quickstart">
+<h3>Quickstart</h3>
+</div>
+<div class="section" id="update-content-modification-of-md-file-or-docstring-in-py-file">
+<h3>Update content (modification of .md file or docstring in .py file)</h3>
 <ul class="simple">
-<li><p>Run sphinx make file</p></li>
+<li><p>Clean build folder: <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">clean</span></code></p></li>
+<li><p>Run sphinx make file: <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">html</span></code></p></li>
 <li><p>Copy and paste <em>documentation/build</em> folder in <em>docs</em> folder</p></li>
 <li><p>Visit the documentation website to confirm update has been considered correctly.</p></li>
 </ul>
-</section>
-<section id="add-content-adding-md-file">
-<h3>Add content (adding .md file)<a class="headerlink" href="#add-content-adding-md-file" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="add-content-adding-md-file">
+<h3>Add content (adding .md file)</h3>
 <ul class="simple">
 <li><p>Need to add file name in <em>documentation/source/index.rst</em> file</p></li>
 </ul>
-</section>
-</section>
-</section>
+</div>
+</div>
+</div>
 
 
            </div>
@@ -253,7 +249,8 @@ GitHub pages recognize .html files and create a static website.</p></li>
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="policies_assessment.html" class="btn btn-neutral float-left" title="Double difference or marginal difference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="future_development.html" class="btn btn-neutral float-right" title="Future developments" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="help_installation.html" class="btn btn-neutral float-left" title="Additional information" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>
