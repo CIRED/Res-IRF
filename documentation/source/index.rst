@@ -11,18 +11,14 @@ Welcome to Res-IRF's documentation!
    :maxdepth: 2
 
    README
-   appendix
-   modules
    LICENSE
-   CHANGELOG
-   future_development
+   input_2012
    technical_documentation
-   input_variables
-   variant_input_variables
-   variant_input_capitalization
-   variant_input_credit
-   policies_assessment
+   modules
+   help_installation
    contributing
+   future_development
+
 
 
 Indices and tables

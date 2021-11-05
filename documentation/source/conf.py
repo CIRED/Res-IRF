@@ -30,7 +30,21 @@ release = '0.0'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.napoleon', 'myst_parser', 'nbsphinx', 'sphinx.ext.githubpages']
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.napoleon', 'myst_parser', 'nbsphinx', 'sphinx.ext.githubpages',
+              'sphinxcontrib.bibtex']
+
+myst_enable_extensions = [
+    "amsmath",
+    "colon_fence",
+    "deflist",
+    "dollarmath",
+    "html_admonition",
+    "html_image",
+    "replacements",
+    "smartquotes",
+    "substitution",
+    "tasklist"
+]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -39,7 +53,12 @@ templates_path = ['_templates']
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = []
+suppress_warnings = ['myst.mathjax']
+numfig = True
+html_permalinks = False
 
+bibtex_bibfiles = ['articles.bib']
+bibtex_reference_style = 'author_year'
 
 # -- Options for HTML output -------------------------------------------------
 

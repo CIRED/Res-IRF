@@ -8,6 +8,12 @@
 
 # Influence of input variables
 
+The model is fed with input variables parameterized as follows:
+* Population growth [^7ac6]: based on a projection from INSEE (2006) equivalent to an average annual growth rate of 0.3%/year over the period 2012-2050.
+* Growth in household income: extrapolates the average trend of 1.2%/year given by INSEE (see paragraph 2.3.1) uniformly across all income categories.
+* Energy prices: based on a scenario from ADEME using assumptions from the Directorate General for Energy and Climate (DGEC) and the European Commission (see Figure 15). The scenario used is equivalent to an average annual growth rate of fuel prices after tax of 1.42% for natural gas, 2.22% for fuel oil, 1.10% for electricity and 1.20% for fuel wood over the period. These lead to an average annual growth rate of the price index of 1.47%/year.
+
+
 The influence of technological progress, energy prices and aggregate household income is assessed by comparing the
 reference scenario to alternatives in which they are frozen one after the other.[^1]
 [^1]: Changing the order in which the variables are frozen has little impact, which suggests that non-linearities are
@@ -62,12 +68,12 @@ to be heated.
 
 To sum up:
 
-- The reduction in energy consumption is to a large extent autonomous, that is, important even when all key drivers are
+* The reduction in energy consumption is to a large extent autonomous, that is, important even when all key drivers are
   frozen;
-- The rise in energy prices stimulates renovation and reduces intensity of heating; the former effect tends to take over
+* The rise in energy prices stimulates renovation and reduces intensity of heating; the former effect tends to take over
   the latter in the long term;
-- Technological progress has a pure effect of improving energy efficiency;
-- Income growth increases energy consumption by increasing both the area to be heated and the intensity of heating.
+* Technological progress has a pure effect of improving energy efficiency;
+* Income growth increases energy consumption by increasing both the area to be heated and the intensity of heating.
 
 Figure 20 displays the evolution of the share of dwellings in fuel poverty, as measured by the income-to-price ratio
 that counts the households spending more than 10% of their income on heating. It shows that, when all key drivers are

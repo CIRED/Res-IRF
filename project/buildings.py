@@ -338,6 +338,9 @@ class HousingStock:
         pd.DataFrame
         """
 
+        if rate == 0:
+            return df
+
         yrs = df.columns
         if isinstance(rate, float):
             discount = pd.Series(HousingStock.rate2time_series(rate, yrs), index=yrs)
@@ -347,6 +350,7 @@ class HousingStock:
             discounted_df.columns = yrs
             discounted_df.index.names = rate.index.names
             discount = reindex_mi(discounted_df, df.index, discounted_df.index.names)
+
         else:
             raise
 
@@ -422,7 +426,7 @@ class HousingStock:
         else:
             return consumption_actual
 
-    def to_consumption(self, consumption, segments=None):
+    def to_consumption(self, consumption, segments=None, energy_prices=None):
         """Returns consumption conventional or actual based on consumption parameter.
 
         Parameters
@@ -430,6 +434,7 @@ class HousingStock:
         consumption: str, {'conventional', 'actual'}
         segments: pd.Index, optional
             If segments is not filled, use self.segments.
+        energy_prices: pd.DataFrame, optional
 
         Returns
         -------
@@ -438,8 +443,7 @@ class HousingStock:
         if consumption == 'conventional':
             return self.to_consumption_conventional(segments=segments)
         elif consumption == 'actual':
-            # TODO: if consumption_actual is not filled will not worked
-            return self.consumption_actual(segments=segments)
+            return self.to_consumption_actual(energy_prices, detailed_output=False, segments=segments)
         else:
             raise AttributeError("Consumption must be in ['conventional', 'actual']")
 
@@ -603,8 +607,8 @@ class HousingStock:
                 discount_factor = self.to_discount_factor(scenario_horizon=tuple(transition), segments=segments)
                 energy_lcc = energy_cash_flows * discount_factor
                 energy_lcc.sort_index(inplace=True)
+
             else:
-                # TODO energy_cash_flows if consumption='conventional' from ds to df
                 energy_cost_discounted_seg = HousingStock.to_discounted(energy_cash_flows, self.attributes2discount)
                 energy_lcc = HousingStock.to_summed(energy_cost_discounted_seg, self.year, self.to_horizon(scenario=tuple(transition)))
 
@@ -640,7 +644,8 @@ class HousingStock:
 
     @staticmethod
     def initial2final(ds, idx_full, transition):
-        """Catch final state segment values as the initial state of another segment.
+        """
+        Catch final state segment values as the initial state of another segment.
 
         When a segment final state match another segment initial state,
         it's therefore fasten to directly catch the value.
@@ -748,8 +753,7 @@ class HousingStock:
 
         Returns
         -------
-        dict
-            {transition: {consumption: pd.Series}}
+        pd.DataFrame
         """
 
         energy_saving = self.to_energy_saving(transition=transition, consumption=consumption)
@@ -767,7 +771,7 @@ class HousingStock:
         self.energy_saving_lc[tuple(transition)][consumption][self.year] = energy_saving_lc
         return energy_saving_lc
 
-    def to_emission_saving(self, co2_content, transition=None, consumption='conventional'):
+    def to_emission_saving(self, co2_content, transition=None, consumption='conventional', energy_prices=None):
         """
         Calculate emission saving between initial and final state.
 
@@ -776,6 +780,7 @@ class HousingStock:
         co2_content: pd.DataFrame
         transition: {(Energy performance, ), (Heating energy, ), (Energy performance, Heating energy)
         consumption: {'conventional', 'actual'}
+        energy_prices: pd.DataFrame
 
         Returns
         -------
@@ -789,11 +794,15 @@ class HousingStock:
         try:
             return self.emission_saving[tuple(transition)][consumption]
         except (KeyError, TypeError):
-            consumption_initial = self.to_consumption(consumption)
+            consumption_initial = self.to_consumption(consumption, energy_prices=energy_prices)
             consumption_final = self.to_consumption_final(consumption=consumption, transition=transition)
-            consumption_final = consumption_final.stack(consumption_final.columns.names)
-            consumption_initial_re = reindex_mi(consumption_initial, consumption_final.index,
-                                                consumption_initial.index.names)
+            if isinstance(consumption_initial, pd.DataFrame):
+                t = ['{} final'.format(t) for t in transition]
+                consumption_final = consumption_final.stack(t)
+
+            else:
+                consumption_final = consumption_final.stack(consumption_final.columns.names)
+            consumption_initial_re = reindex_mi(consumption_initial, consumption_final.index)
 
             emission_initial = HousingStock.mul_consumption(consumption_initial_re, co2_content)
             emission_final = HousingStock.mul_consumption(consumption_final, co2_content, option='final')
@@ -801,7 +810,9 @@ class HousingStock:
             self.emission_saving[tuple(transition)][consumption] = emission_saving
             return emission_saving
 
-    def to_emission_saving_lc(self, co2_content, transition=None, consumption='conventional', discount=0.04):
+    def to_emission_saving_lc(self, co2_content, transition=None, consumption='conventional', horizon=30, discount=0.04,
+                              energy_prices=None):
+
         """
         Calculate life-cycle emission saving between initial and final state for the entire project duration.
 
@@ -810,24 +821,24 @@ class HousingStock:
         co2_content: pd.DataFrame
         transition: {(Energy performance, ), (Heating energy, ), (Energy performance, Heating energy)
         consumption: {'conventional', 'actual'}
+        horizon: int, default 30
         discount: float, default 0.04
+        energy_prices: pd.DataFrame
 
         Returns
         -------
         dict
             {transition: {consumption: pd.Series}}
         """
-        emission_saving = self.to_emission_saving(co2_content, transition=transition, consumption=consumption)
+        emission_saving = self.to_emission_saving(co2_content, transition=transition, consumption=consumption,
+                                                  energy_prices=energy_prices)
         # emission_saving = HousingStockConstructed.data2area(self.attributes2area, emission_saving)
 
         if consumption == 'conventional':
             emission_saving = pd.concat([emission_saving] * 30, axis=1)
             emission_saving.columns = range(self.year, self.year + 30, 1)
         emission_saving_disc = HousingStock.to_discounted(emission_saving, discount)
-        if 'Energy performance' in transition:
-            horizon = 30
-        else:
-            horizon = 16
+
         emission_saving_lc = HousingStock.to_summed(emission_saving_disc, self.year, horizon)
         self.emission_saving_lc[tuple(transition)][consumption][self.year] = emission_saving_lc
         return emission_saving_lc

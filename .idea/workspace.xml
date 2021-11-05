@@ -2,13 +2,43 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5a27c1bc-6d7f-41bf-89e9-22387bb7bdb3" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/project/input/phebus/intermediate/cost_intangible_phebus2012.pkl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/input/phebus/intermediate/rho_phebus2012.pkl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/launch_multiple.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/documentation/source/articles.bib" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/documentation/source/buliding_stock_2018.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/documentation/source/input_2012.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/abattement_curve.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/abattement_curve_comparison.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/input/abattement_curve/attributes_abattement_curve.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/input/abattement_curve/building_stock_phebus2012.pkl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/input/abattement_curve/building_stock_phebus2018.pkl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/input/abattement_curve/building_stock_sdes2018.pkl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/input/abattement_curve/carbon_value.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/input/abattement_curve/co2_content.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/input/abattement_curve/config_phebus.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/input/abattement_curve/config_phebus_social.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/input/abattement_curve/config_sdes.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/input/abattement_curve/config_sdes_social.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/input/abattement_curve/config_test.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/input/abattement_curve/cost_renovation_2012.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/input/abattement_curve/cost_switch_fuel_2012.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/input/abattement_curve/energy_prices_at.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/input/abattement_curve/energy_prices_at_gas.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/input/abattement_curve/energy_prices_at_power.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/input/abattement_curve/energy_prices_bt.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/input/abattement_curve/energy_prices_bt_gas.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/input/abattement_curve/energy_prices_bt_power.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/input/abattement_curve/energy_taxes.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/input/abattement_curve/health_cost.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/project/ui_abattement_curve.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/phebus/config_files/scenario_cite.json" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/phebus/config_files/scenario_cite.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/documentation/source/appendix.md" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/help_installation.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/documentation/source/conf.py" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/conf.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/documentation/source/contributing.md" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/contributing.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/documentation/source/index.rst" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/index.rst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/documentation/source/input_variables.md" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/input_variables.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/documentation/source/technical_documentation.md" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/technical_documentation.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/documentation/source/variant_input_variables.md" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/variant_input_variables.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/buildings.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/buildings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/parse_output.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/parse_output.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/ui_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/ui_utils.py" afterDir="false" />
     </list>
     <list id="c1475e6c-5c86-4ada-b891-0f5a944b2008" name="Revert &quot;Delete project/input/test directory&quot;" comment="Revert &quot;Delete project/input/test directory&quot;&#10;&#10;This reverts commit b2bb53ac" />
@@ -26,8 +56,8 @@
       <list>
         <option value="Setup Script" />
         <option value="package.json" />
-        <option value="Jupyter Notebook" />
         <option value="Python Script" />
+        <option value="Jupyter Notebook" />
       </list>
     </option>
   </component>
@@ -61,31 +91,53 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/project/input/phebus/config_files" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/project/input/abattement_curve" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="python.debugger.dataview.coloredbydefault" value="false" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
   <component name="PyCoverageOptionsProvider">
     <option name="myUseBundledCoveragePy" value="true" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/project/input/abattement_curve" />
+      <recent name="$PROJECT_DIR$/project/input" />
+      <recent name="$PROJECT_DIR$/documentation/source" />
       <recent name="$PROJECT_DIR$/project/input/phebus/config_files" />
       <recent name="$PROJECT_DIR$/project/input/config_files" />
-      <recent name="$PROJECT_DIR$/docs" />
-      <recent name="$PROJECT_DIR$" />
-      <recent name="$PROJECT_DIR$/project/input" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/project/input/abattement_curve" />
+      <recent name="$PROJECT_DIR$/documentation/source" />
       <recent name="$PROJECT_DIR$/project/input/phebus" />
       <recent name="$PROJECT_DIR$/project/nb_tutorials" />
       <recent name="$PROJECT_DIR$/project/input/config_files" />
-      <recent name="$PROJECT_DIR$/project/nb_examples" />
-      <recent name="$PROJECT_DIR$/project/input" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.main_multiple">
+  <component name="RunManager" selected="Python.abattement_curve">
+    <configuration name="abattement_curve" type="PythonConfigurationType" factoryName="Python" folderName="Res-IRF">
+      <module name="Res-IRF" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="$USER_HOME$/.conda/envs/Res-IRF/bin/python" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/project/abattement_curve.py" />
+      <option name="PARAMETERS" value="-n project/input/abattement_curve/config_phebus.json" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="indicators_cite" type="PythonConfigurationType" factoryName="Python" folderName="Indicators">
       <module name="Res-IRF" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -320,6 +372,7 @@
     <list>
       <item itemvalue="Python.indicators_cite" />
       <item itemvalue="Python.main_cite" />
+      <item itemvalue="Python.abattement_curve" />
       <item itemvalue="Python.main_multiple" />
       <item itemvalue="Python.main_eptz" />
       <item itemvalue="Python.main_reducedtax" />
@@ -490,14 +543,18 @@
       <workItem from="1634629481182" duration="23249000" />
       <workItem from="1634715705736" duration="19773000" />
       <workItem from="1634796508873" duration="6009000" />
-      <workItem from="1634889498171" duration="7323000" />
-    </task>
-    <task id="LOCAL-00024" summary="cleaning and organizing">
-      <created>1624787490248</created>
-      <option name="number" value="00024" />
-      <option name="presentableId" value="LOCAL-00024" />
-      <option name="project" value="LOCAL" />
-      <updated>1624787490249</updated>
+      <workItem from="1634889498171" duration="11157000" />
+      <workItem from="1635347874979" duration="6105000" />
+      <workItem from="1635404488351" duration="5880000" />
+      <workItem from="1635421986643" duration="9553000" />
+      <workItem from="1635525155347" duration="6756000" />
+      <workItem from="1635585890170" duration="5008000" />
+      <workItem from="1635840116747" duration="22876000" />
+      <workItem from="1635931360314" duration="11380000" />
+      <workItem from="1636022777214" duration="12663000" />
+      <workItem from="1636047336041" duration="2377000" />
+      <workItem from="1636110551938" duration="725000" />
+      <workItem from="1636122857252" duration="30000" />
     </task>
     <task id="LOCAL-00025" summary="cleaning and organizing">
       <created>1624804365194</created>
@@ -835,7 +892,14 @@
       <option name="project" value="LOCAL" />
       <updated>1634889518743</updated>
     </task>
-    <option name="localTasksCounter" value="73" />
+    <task id="LOCAL-00073" summary="correcting cee income class owner issue">
+      <created>1634898387671</created>
+      <option name="number" value="00073" />
+      <option name="presentableId" value="LOCAL-00073" />
+      <option name="project" value="LOCAL" />
+      <updated>1634898387671</updated>
+    </task>
+    <option name="localTasksCounter" value="74" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -909,7 +973,7 @@
     <SUITE FILE_PATH="coverage/Res_IRF$main_test.coverage" NAME="main_test Coverage Results" MODIFIED="1634892385016" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$parse_input.coverage" NAME="parse_input Coverage Results" MODIFIED="1632747053810" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$buildings_class.coverage" NAME="buildings_class Coverage Results" MODIFIED="1620739724250" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/Res_IRF$main_phebus2012.coverage" NAME="main_phebus2012 Coverage Results" MODIFIED="1634892010879" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Res_IRF$main_phebus2012.coverage" NAME="main_phebus2012 Coverage Results" MODIFIED="1634915830895" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$run_indicators.coverage" NAME="run_indicators Coverage Results" MODIFIED="1631694400145" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$input_payback.coverage" NAME="input_payback Coverage Results" MODIFIED="1616175154626" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$main_input.coverage" NAME="main_phebus2012 Coverage Results" MODIFIED="1634661620912" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
@@ -917,8 +981,9 @@
     <SUITE FILE_PATH="coverage/Res_IRF$main_budget_constraints.coverage" NAME="main_budget_constraints Coverage Results" MODIFIED="1630599250228" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$Doctests_in_parse_input.coverage" NAME="Doctests in parse_input Coverage Results" MODIFIED="1625212538541" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/project" />
     <SUITE FILE_PATH="coverage/Res_IRF$main_phebus.coverage" NAME="main_phebus Coverage Results" MODIFIED="1630416566799" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/Res_IRF$main_eptz.coverage" NAME="main_eptz Coverage Results" MODIFIED="1634718892596" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/Res_IRF$main_cite.coverage" NAME="main_cite Coverage Results" MODIFIED="1634890040094" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Res_IRF$main_eptz.coverage" NAME="main_eptz Coverage Results" MODIFIED="1634913282878" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Res_IRF$main_cite.coverage" NAME="main_cite Coverage Results" MODIFIED="1634917089101" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Res_IRF$abattement_curve.coverage" NAME="abattement_curve Coverage Results" MODIFIED="1636049325396" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$main_nocalib.coverage" NAME="main Coverage Results" MODIFIED="1631892108659" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$Sphinx_Task_in_Sphinx_Task_in_.coverage" NAME="Sphinx Task in Sphinx Task in Sphinx Task in  Coverage Results" MODIFIED="1625136809623" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/Res_IRF$main_rho.coverage" NAME="main_rho Coverage Results" MODIFIED="1631627005511" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
