@@ -1,0 +1,36 @@
+﻿Category,Input Name,Value 3.0,Source
+Existing Dwelling Stock Factors ,Initial building stock,,"Phebus, 2012"
+,Initial floor area (m2/dwelling),,"Phebus, 2012"
+,Conventional consumption (kWh/m2/yr),,"Phebus, 2012"
+Exogenous inputs,Energy Price (€/kWh),,"ADEME, DGEC, EU"
+,Tax Price (€/kWh),0,
+,Population Growth (%/yr),0.30%,"INSEE, 2006"
+,Growth in household income (%/yr),1.20%,INSEE
+Calibration targets,Retrofitting Rate (%),,"PUCA, 2015"
+,Energy Label Transition Shares (%),,"PUCA, 2015"
+,Construction Shares (%),,"OPEN, 2016 ; USH, 2017"
+,Reference Energy Use (TWh),,"CEREN, 2012"
+Innovation dynamics factors,Initial Capital Stock,,
+,Learning Rate (%),10%,Expert opinion
+,Information Rate (%),25%,Expert opinion
+,Share of variable intangible costs (%),95%,Expert opinion
+,Share of variable intangible costs Construction (%),80%,Expert opinion
+Dwelling Stock Variation Factors ,Household Density Growth,-0.007,Expert opinion
+,Minimum Household Density (households/dwelling),2,Expert opinion
+,Floor area Elasticity ,,Expert opinion
+,Maximum Floor area construction (m2/dwelling),,Expert opinion
+,Initial Floor area construction (m2/dwelling),,Expert opinion
+,Destruction Rate (%/yr),0.35%,Expert opinion
+,Proportion of Non-refurbishable Dwellings (%/initial stock),5%,Expert opinion
+,Mutation rate,%,Expert opinion
+,Rotation rate,%,Expert opinion
+Investment cost factors,Retrofitting Costs (€/m2),,Expert opinion
+,Fuel Switch Costs (€/m2),,Expert opinion
+,Construction Costs (€/m2),,Expert opinion
+Other factors,Discount Rates (%/yr),,Expert opinion
+,Discount Rate construction (%/yr),,Expert opinion
+,Envelope Lifetime (yrs),,Expert opinion
+,Heating System Lifetime (yrs),,Expert opinion
+,New Dwellings Lifetime (yrs),25,Expert opinion
+,Heterogeneity Parameter,8,Expert opinion
+,,,

@@ -1,9 +1,9 @@
 
-[consumption_actual_input]: ../img/consumption_actual_input.png "elementary_structure_model"
-[flow_renovation_input]: ../img/flow_renovation_input.png "phebus_sdes_millions"
-[stock_performance_input]: ../img/stock_performance_input.png "phebus_sdes_percent"
-[heating_intensity_input]: ../img/heating_intensity_input.png "phebus_sdes_energy_performance_percent"
-[energy_poverty_input]: ../img/energy_poverty_input.png "phebus_sdes_energy_percent"
+[consumption_actual_input]: ../source/img/consumption_actual_input.png "elementary_structure_model"
+[flow_renovation_input]: ../source/img/flow_renovation_input.png "phebus_sdes_millions"
+[stock_performance_input]: ../source/img/stock_performance_input.png "phebus_sdes_percent"
+[heating_intensity_input]: ../source/img/heating_intensity_input.png "phebus_sdes_energy_performance_percent"
+[energy_poverty_input]: ../source/img/energy_poverty_input.png "phebus_sdes_energy_percent"
 
 
 # Influence of input variables

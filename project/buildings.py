@@ -2754,7 +2754,7 @@ class HousingStockConstructed(HousingStock):
         return intangible_cost
 
     @staticmethod
-    def evolution_area_construction(area_construction_prev, area_construction_ini, area_max_construction,
+    def evolution_area_construction(area_construction_prev, area_construction_ini, area_construction_max,
                                     elasticity_area, available_income_ratio):
         """
         Evolution of new buildings area based on total available income. Function represents growth.
@@ -2763,15 +2763,15 @@ class HousingStockConstructed(HousingStock):
         ----------
         area_construction_prev: pd.Series
         area_construction_ini: pd.Series
-        area_max_construction: pd.Series
-        elasticity_area: float
+        area_construction_max: pd.Series
+        elasticity_area: pd.Series
         available_income_ratio: float
 
         Returns
         -------
         pd.Series
         """
-        area_max_construction = area_max_construction.reorder_levels(area_construction_ini.index.names)
+        area_max_construction = area_construction_max.reorder_levels(area_construction_ini.index.names)
 
         eps_area_new = (area_max_construction - area_construction_prev) / (
                 area_max_construction - area_construction_ini)
@@ -2794,9 +2794,9 @@ class HousingStockConstructed(HousingStock):
 
         Parameters
         ----------
-        elasticity_area_new_ini
+        elasticity_area_new_ini: pd.Series
         available_income_real_pop_ds: pd.Series
-        area_max_construction
+        area_max_construction: pd.Series
         """
 
         area_construction_ini = self._area_construction_dict[self._calibration_year]

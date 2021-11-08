@@ -12,7 +12,7 @@ integrated models of energy demand typically lack .
 [^model]: The acronym Res-IRF stands for the Residential module of IMACLIM-R France. Also developed at CIRED, IMACLIM-R
 France is a general equilibrium model of the French economy {cite:ps}`sassiIMACLIMRModellingFramework2010`. The two
 models are linked in {cite:ps}`giraudetExploringPotentialEnergy2012` and 
-{cite:ps}`mathyRethinkingRoleScenarios2015Mathy`. The linkage in these papers is ‘soft’ in that it only concerns energy
+{cite:ps}`mathyRethinkingRoleScenarios2015`. The linkage in these papers is ‘soft’ in that it only concerns energy
 markets:
 Res-IRF sends energy demand to IMACLIM-R France which in turn sends back updated energy prices.
 
@@ -52,6 +52,10 @@ The development of Res-IRF has produced six peer-reviewed articles to this day, 
 ```
 *Note : The symbol * points to the reference that contains the most comprehensive description of the associated version
 of the model. The most comprehensive description of version 3.0 is to be found in the present document.*
+
+The documentation reflects the latest version of the model. The model is intended to be input agnostic and the
+documentation tries to reflect this paradigm. However, for the sake of clarity, the explanations are sometimes
+associated with numerical examples from version 3.0. This version has been the most used in recent publications.
 
 ## Energy use
 
@@ -231,8 +235,8 @@ by CGDD (2015) [^constructions]
 
 ```{eval-rst}
 .. csv-table:: Construction costs (€/m2)
-   :name: construction_costs
-   :file: table/construction_costs.csv
+   :name: cost_construction
+   :file: table/cost_construction_2012.csv
    :header-rows: 2
    :stub-columns: 1
 ```
@@ -292,26 +296,26 @@ The same is true for the matrix of market shares used to calibrate intangible co
 
 ```{eval-rst}
 .. csv-table:: Market shares of energy efficiency upgrades in 2012. Source: PUCA (2015)
-   :name: market_share_2012
+   :name: market_share
    :file: table/ms_renovation_ini_2012.csv
    :header-rows: 1
    :stub-columns: 1
 ```
 
 Intangible costs are calibrated so that the life-cycle cost model, fed with the investment costs reported in
-{numref}`renovation_cost`, matches the market shares reported in {numref}`market_share_2012`. The resulting intangible
-costs for Res-IRF 3.0 are reported in {numref}`intangible_cost_2012`.
+{numref}`renovation_cost`, matches the market shares reported in {numref}`market_share`. The resulting intangible
+costs for Res-IRF 3.0 are reported in {numref}`intangible_cost`.
 
 ```{eval-rst}
 .. csv-table:: Averaged intangible costs in 2012 (€/m²)
-   :name: intangible_cost_2012
+   :name: intangible_cost
    :file: table/intangible_cost_2012.csv
    :header-rows: 1
    :stub-columns: 1
 ```
 
-The costs reported in {numref}`renovation_cost`, weighted by the market shares reported in {numref}`market_share_2012`
-and {numref}`renovation_rate_ep_2012`, result in an average renovation cost of 112 €/m², very close to the 110 €/m² value
+The costs reported in {numref}`renovation_cost`, weighted by the market shares reported in {numref}`market_share`
+and {numref}`renovation_share_ep`, result in an average renovation cost of 112 €/m², very close to the 110 €/m² value
 given by OPEN (9 978 € of average expenditure compared to 91 m²). Compared to the cumulative energy savings they
 generate (assuming an average lifetime of 26 years), they correspond to an average “negawatt-hour cost” of 83 €/MWh,
 with extreme values of 25 and 446. These values are in line with those recently produced by {cite:ps}`dgtresorBarrieresInvestissementDans2017`.
@@ -332,22 +336,22 @@ with $τ_{min}=0,001%$, $NPV_{min}=-1 000€$ and $τ_{max}=20%$. The logistic f
 preference and habits, assuming they are normally distributed[^distributed]. Parameter ρ is calibrated, for each type of
 decision-maker and each initial label (i.e., 6x6=36 values), so that the NPVs calculated with the subsidies in effect in
 2012 {cite:ps}`giraudetExploringPotentialEnergy2012` reproduce the renovation rates described in
-{numref}`renovation_rate_ep_2012` and {numref}`renovation_rate_dm_2012` and their aggregation represents 3% (686,757
+{numref}`renovation_share_ep` and {numref}`renovation_rate_dm` and their aggregation represents 3% (686,757
 units) of the housing stock of the initial year.
 
 [^distributed]: For a micro-founded justification of the logistic form, see Giraudet et al. (2018, Online Appendix, Figure A3).
 
 ```{eval-rst}
 .. csv-table:: Renovation share by energy performance label. Source: PUCA (2015)
-   :name: renovation_share_ep_2012
-   :file: table/renovation_rate_ep_2012.csv
+   :name: renovation_share_ep
+   :file: table/renovation_share_ep_2012.csv
    :header-rows: 1
    :stub-columns: 1
 ```
 
 ```{eval-rst}
 .. csv-table:: Renovation rate by type of dwelling. Source : OPEN (2016) and USH (2017)
-   :name: renovation_rate_dm_2012
+   :name: renovation_rate_dm
    :file: table/renovation_rate_dm_2012.csv
    :header-rows: 1
    :stub-columns: 1
@@ -358,15 +362,15 @@ units) of the housing stock of the initial year.
 ##### Discount rate
 
 In private housing, discount rates are differentiated by housing type in order to capture the heterogeneous constraints
-faced by investors {numref}`discount_rate`. Specifically, the discount rates decrease with the owner’s income to reflect
+faced by investors {numref}`discount_rate_existing`. Specifically, the discount rates decrease with the owner’s income to reflect
 tighter credit constraints faced by lower-income households. Discount rates are also higher in multi-family housing than
 in single-family homes to capture the difficulties associated with decision-making within homeowner associations. In
 social housing, on the other hand, the discount rate is set at 4%, the value commonly used in public decision-making.
 
 ```{eval-rst}
 .. csv-table:: Discount rates. Source: Expert opinion
-   :name: discount_rate
-   :file: table/discount_rate.csv
+   :name: discount_rate_existing
+   :file: table/discount_rate_existing_2012.csv
    :header-rows: 1
    :stub-columns: 1
 ```
@@ -393,7 +397,7 @@ capitalization of energy savings {numref}`investment_horizon`:
 ```{eval-rst}
 .. csv-table:: Investment horizon for improvements on the envelope (on heating systems)
    :name: investment_horizon
-   :file: table/investment_horizon.csv
+   :file: table/investment_horizon_2012.csv
    :header-rows: 1
    :stub-columns: 1
 ```

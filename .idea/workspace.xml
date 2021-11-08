@@ -2,19 +2,24 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5a27c1bc-6d7f-41bf-89e9-22387bb7bdb3" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/documentation/source/table/cost_renovation_2012.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/documentation/source/table/cost_switch_fuel_2012.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/documentation/source/table/area_construction_2012.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/documentation/source/table/cost_construction_2012.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/documentation/source/table/cost_construction_lim_2012.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/documentation/source/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/_old/CHANGELOG.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/documentation/source/buliding_stock_2018.md" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/_old/buliding_stock_2018.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/documentation/source/_old/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/_old/CHANGELOG.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/documentation/source/_old/buliding_stock_2018.md" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/_old/buliding_stock_2018.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/documentation/source/_old/input_variables.md" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/_old/input_variables.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/documentation/source/_old/policies_assessment.md" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/_old/policies_assessment.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/documentation/source/_old/variant_input_capitalization.md" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/_old/variant_input_capitalization.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/documentation/source/_old/variant_input_credit.md" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/_old/variant_input_credit.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/documentation/source/_old/variant_input_variables.md" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/_old/variant_input_variables.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/documentation/source/input_2012.md" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/input_2012.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/documentation/source/input_variables.md" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/_old/input_variables.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/documentation/source/policies_assessment.md" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/_old/policies_assessment.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/documentation/source/technical_documentation.md" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/technical_documentation.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/documentation/source/variant_input_capitalization.md" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/_old/variant_input_capitalization.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/documentation/source/variant_input_credit.md" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/_old/variant_input_credit.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/documentation/source/variant_input_variables.md" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/_old/variant_input_variables.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/buildings.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/buildings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/input/phebus/ms_construction_ini_2012.csv" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/phebus/ms_construction_ini_2012.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/input/phebus/ms_renovation_ini_2012.csv" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/phebus/ms_renovation_ini_2012.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/input/phebus/parameters_2012.json" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/phebus/parameters_2012.json" afterDir="false" />
     </list>
     <list id="c1475e6c-5c86-4ada-b891-0f5a944b2008" name="Revert &quot;Delete project/input/test directory&quot;" comment="Revert &quot;Delete project/input/test directory&quot;&#10;&#10;This reverts commit b2bb53ac" />
     <option name="SHOW_DIALOG" value="false" />
@@ -83,11 +88,11 @@
       <recent name="$PROJECT_DIR$/documentation/source" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/documentation" />
       <recent name="$PROJECT_DIR$/documentation/source/_old" />
       <recent name="$PROJECT_DIR$/project/input/abattement_curve" />
       <recent name="$PROJECT_DIR$/documentation/source" />
       <recent name="$PROJECT_DIR$/project/input/phebus" />
-      <recent name="$PROJECT_DIR$/project/nb_tutorials" />
     </key>
   </component>
   <component name="RunManager" selected="Python.abattement_curve">
@@ -531,14 +536,7 @@
       <workItem from="1636110551938" duration="725000" />
       <workItem from="1636122857252" duration="30000" />
       <workItem from="1636130322929" duration="314000" />
-      <workItem from="1636359012789" duration="5377000" />
-    </task>
-    <task id="LOCAL-00027" summary="cleaning and organizing">
-      <created>1625240018506</created>
-      <option name="number" value="00027" />
-      <option name="presentableId" value="LOCAL-00027" />
-      <option name="project" value="LOCAL" />
-      <updated>1625240018506</updated>
+      <workItem from="1636359012789" duration="9620000" />
     </task>
     <task id="LOCAL-00028" summary="cleaning and organizing">
       <created>1625430072322</created>
@@ -876,7 +874,14 @@
       <option name="project" value="LOCAL" />
       <updated>1636130491135</updated>
     </task>
-    <option name="localTasksCounter" value="76" />
+    <task id="LOCAL-00076" summary="updating documentation">
+      <created>1636366159261</created>
+      <option name="number" value="00076" />
+      <option name="presentableId" value="LOCAL-00076" />
+      <option name="project" value="LOCAL" />
+      <updated>1636366159263</updated>
+    </task>
+    <option name="localTasksCounter" value="77" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -920,7 +925,8 @@
     <MESSAGE value="cleaning and organizing" />
     <MESSAGE value="correcting cee income class owner issue" />
     <MESSAGE value="adding abattement curve and some change regarding the documentation" />
-    <option name="LAST_COMMIT_MESSAGE" value="adding abattement curve and some change regarding the documentation" />
+    <MESSAGE value="updating documentation" />
+    <option name="LAST_COMMIT_MESSAGE" value="updating documentation" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

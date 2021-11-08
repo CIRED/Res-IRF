@@ -936,15 +936,15 @@ Intangible costs are calibrated so that the observed market shares are reproduce
 
 <dl class="py method">
 <dt class="sig sig-object py" id="buildings.HousingStockConstructed.evolution_area_construction">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">evolution_area_construction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">area_construction_prev</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">area_construction_ini</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">area_max_construction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elasticity_area</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">available_income_ratio</span></span></em><span class="sig-paren">)</span></dt>
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">evolution_area_construction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">area_construction_prev</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">area_construction_ini</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">area_construction_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elasticity_area</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">available_income_ratio</span></span></em><span class="sig-paren">)</span></dt>
 <dd><p>Evolution of new buildings area based on total available income. Function represents growth.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>area_construction_prev</strong> (<em>pd.Series</em>) – </p></li>
 <li><p><strong>area_construction_ini</strong> (<em>pd.Series</em>) – </p></li>
-<li><p><strong>area_max_construction</strong> (<em>pd.Series</em>) – </p></li>
-<li><p><strong>elasticity_area</strong> (<em>float</em>) – </p></li>
+<li><p><strong>area_construction_max</strong> (<em>pd.Series</em>) – </p></li>
+<li><p><strong>elasticity_area</strong> (<em>pd.Series</em>) – </p></li>
 <li><p><strong>available_income_ratio</strong> (<em>float</em>) – </p></li>
 </ul>
 </dd>
@@ -1072,9 +1072,9 @@ exogenous_dict[‘population_total_ds’]</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>elasticity_area_new_ini</strong> – </p></li>
+<li><p><strong>elasticity_area_new_ini</strong> (<em>pd.Series</em>) – </p></li>
 <li><p><strong>available_income_real_pop_ds</strong> (<em>pd.Series</em>) – </p></li>
-<li><p><strong>area_max_construction</strong> – </p></li>
+<li><p><strong>area_max_construction</strong> (<em>pd.Series</em>) – </p></li>
 </ul>
 </dd>
 </dl>

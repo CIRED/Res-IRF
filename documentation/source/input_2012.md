@@ -211,10 +211,14 @@ in the model. Model inputs fall into three categories {cite:ps}`brangerGlobalSen
   DGEC) and the European Commission. The scenario used is equivalent to an average annual growth rate of
   fuel prices after tax of 1.42% for natural gas, 2.22% for fuel oil, 1.10% for electricity and 1.20% for fuel wood over
   the period. These lead to an average annual growth rate of the price index of 1.47%/year.
-- Population growth : based on a projection from {cite:ps}`inseeProjectionsPopulationPour2006` equivalent to an average
+- Population growth[^growth]: based on a projection from {cite:ps}`inseeProjectionsPopulationPour2006` equivalent to an average
   annual growth rate of 0.3%/year over the period 2012-2050.
 - Growth in household income: extrapolates the average trend of 1.2%/year given by INSEE uniformly
   across all income categories.
+
+[^growth]: The population is adjusted by a factor of 23.9/27.1 to take into account the difference in scope between
+Res-IRF and Phébus. The resulting average household size is 2.2 persons per dwelling in 2013, a value consistent with
+{cite:ps}`inseeMenagesToujoursNombreux2017`; it decreases with income to reach 2.05 in 2050.
 
 ### Calibration target
 
@@ -243,6 +247,9 @@ shares reported here {numref}`market_share_2012`
    :stub-columns: 1
 ```
 
+In the absence of any substantial improvement in the quality of the data available, the matrix remains unchanged from
+version 2.0 of the model.
+
 #### Extensive margin
 
 Parameter ρ (of renovation function) is calibrated, for each type of decision-maker and each initial label (i.e., 6x6=36
@@ -270,12 +277,47 @@ their aggregation represents 3% (686,757 units) of the housing stock of the init
 
 To ensure consistency with the CEREN data, which is the reference commonly used in modelling exercises, Res-IRF is
 calibrated to reproduce the final energy consumption given by CEREN for each fuel in the initial year. The resulting
-conversion coefficients applied to the Phebus Building Stock are listed in {numref}`calibration_energy`.
+conversion coefficients applied to the Phebus Building Stock are listed in {numref}`calibration_energy_2012`.
 
 ```{eval-rst}
 .. csv-table:: Calibration of total final actual energy consumption
-   :name: calibration_energy
+   :name: calibration_energy_2012
    :file: table/ceren_energy_consumption_2012.csv
+   :header-rows: 1
+   :stub-columns: 1
+```
+
+### Dwelling Stock Variation Factors
+
+```{eval-rst}
+.. csv-table:: Initial Floor area construction (m2/dwelling)
+   :name: area_construction_2012
+   :file: table/area_construction_2012.csv
+   :header-rows: 1
+   :stub-columns: 1
+```
+
+```{eval-rst}
+.. csv-table:: Floor area construction elasticity
+   :name: area_construction_elasticity_2012
+   :file: table/area_construction_elasticity_2012.csv
+   :header-rows: 1
+   :stub-columns: 1
+```
+
+```{eval-rst}
+.. csv-table:: Maximum Floor area construction (m2/dwelling)
+   :name: area_construction_max_2012
+   :file: table/area_construction_max_2012.csv
+   :header-rows: 1
+   :stub-columns: 1
+```
+
+
+```{eval-rst}
+.. csv-table:: Rotation and Mutation rate (%/year)
+   :name: rotation_mutation_rate_2012
+   :file: table/rotation_mutation_rate_2012.csv
    :header-rows: 1
    :stub-columns: 1
 ```
@@ -284,11 +326,16 @@ conversion coefficients applied to the Phebus Building Stock are listed in {numr
 
 ```{eval-rst}
 .. csv-table:: Renovation costs used in Res-IRF 3.0 (€/m2). Source: Expert opinion
-   :name: renovation_cost
+   :name: cost_renovation_2012
    :file: table/cost_renovation_2012.csv
    :header-rows: 1
    :stub-columns: 1
 ```
+
+The matrix equally applies to single- and multi-family dwellings, in both private and social housing. In the absence of
+any substantial improvement in the quality of the data available, the matrix remains unchanged from version 2.0 of the
+model. 
+
 
 ```{eval-rst}
 .. csv-table:: Switching-fuel costs used in Res-IRF 3.0 (€/m2). Source: Expert opinion
@@ -298,14 +345,64 @@ conversion coefficients applied to the Phebus Building Stock are listed in {numr
    :stub-columns: 1
 ```
 
+```{eval-rst}
+.. csv-table:: Construction costs (€/m2)
+   :name: cost_construction_2012
+   :file: table/cost_construction_2012.csv
+   :header-rows: 2
+   :stub-columns: 1
+```
+
+### Existing Dwelling Stock Factors 
+
+```{eval-rst}
+.. csv-table:: Initial Floor area (m2/dwelling)
+   :name: area_existing_2012
+   :file: table/area_existing_2012.csv
+   :header-rows: 1
+   :stub-columns: 1
+```
+
+```{eval-rst}
+.. csv-table:: Income (€/year)
+   :name: income_2012
+   :file: table/income_2012.csv
+   :header-rows: 1
+```
+
+### Other factors
+
+```{eval-rst}
+.. csv-table:: Discount rates (%/year). Source: Expert opinion
+   :name: discount_rate_existing_2012
+   :file: table/discount_rate_existing_2012.csv
+   :header-rows: 1
+   :stub-columns: 1
+```
+
+```{eval-rst}
+.. csv-table:: Investment horizon (years). Source: Expert opinion
+   :name: investment_horizon_2012
+   :file: table/investment_horizon_2012.csv
+   :header-rows: 1
+   :stub-columns: 1
+```
+
+Considering that the quality of new constructions results from decisions made by building and real estate professionals
+rather than by future owners, we subject these decisions in the model to private investment criteria, reflected by a
+discount rate of 7% and a time horizon of 35 years.
+
+```{eval-rst}
+.. csv-table:: Discount rates construction (%/year). Source: Expert opinion
+   :name: discount_rate_construction_2012
+   :file: table/discount_rate_construction_2012.csv
+   :header-rows: 1
+   :stub-columns: 1
+```
 
 ## Appendix
 ```{figure} img/input_2012/buildingstock_2012_percent.png
 :name: buildingstock_2012_percent
 
 Building stock 2012 (%)
-```
-
-```{bibliography}
-:style: unsrt
 ```
