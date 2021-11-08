@@ -1,5 +1,5 @@
-﻿Scenario,Social-housing,Homeowners,Landlords
+﻿Scenario,Homeowners,Landlords,Social-housing
 Full capitalization,30 (16) years,30 (16) years,30 (16) years
-Reference,30 (16) years,30 (16) years,3 years
-No capitalization at resale,30 (16) years,7 years,7 years
-No capitalization in rents nor sales,30 (16) years,7 years,3 years
+Reference,30 (16) years,3 years,30 (16) years
+No capitalization at resale,7 years,7 years,30 (16) years
+No capitalization in rents nor sales,7 years,3 years,30 (16) years

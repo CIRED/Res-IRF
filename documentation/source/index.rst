@@ -14,6 +14,7 @@ Welcome to Res-IRF's documentation!
    LICENSE
    input_2012
    technical_documentation
+   simulation_2012
    modules
    help_installation
    contributing

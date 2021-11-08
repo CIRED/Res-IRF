@@ -338,7 +338,7 @@ class HousingStock:
         pd.DataFrame
         """
 
-        if rate == 0:
+        if isinstance(rate, int) and rate == 0:
             return df
 
         yrs = df.columns

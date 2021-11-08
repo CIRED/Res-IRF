@@ -539,6 +539,7 @@ def parse_parameters(folder, config, stock_sum):
             parameters['Cost construction lim'].index.set_names('Housing type', inplace=True)
             parameters['Cost construction lim'].columns.set_names('Energy performance final', inplace=True)
 
+    """
     proba_performance = parameters['Probability disease performance']
     proba_income = parameters['Probability disease income {}'.format(calibration_year)]
 
@@ -547,7 +548,7 @@ def parse_parameters(folder, config, stock_sum):
     parameters['Probability disease'] = proba_performance * proba_income
     parameters['Cost disease'] = apply_linear_rate(parameters['Cost disease'], parameters['Cost disease rate'],
                                                    index_input_year)
-
+    """
     # 6. Summary
 
     summary_param = dict()

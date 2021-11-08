@@ -57,6 +57,29 @@ The documentation reflects the latest version of the model. The model is intende
 documentation tries to reflect this paradigm. However, for the sake of clarity, the explanations are sometimes
 associated with numerical examples from version 3.0. This version has been the most used in recent publications.
 
+#### Scilab to Python
+
+The model was previously written in Scilab. In order to facilitate the diffusion of the model, we decided to translate
+the model into Python, one of the most popular languages. The syntax of the lines of code has a certain clarity, which
+makes it easier to read and understand, even if you are not a Python expert.
+
+After evaluating the outputs of Res-IRF 3.0 in the Scilab and Python versions, we validate the switch to the Python
+version of Res-IRF. The following figures {numref}`res_irf_python_comparison_comsumption` and
+{numref}`res_irf_python_comparison_renovation` show the observed differences. These differences can be explained by
+approximations but are small enough to validate the Python version.
+
+```{figure} img/res_irf_python_comparison_comsumption.png
+:name: res_irf_python_comparison_comsumption
+
+Python/Scilab consumption output comparison.
+```
+
+```{figure} img/res_irf_python_comparison_renovation.png
+:name: res_irf_python_comparison_renovation
+
+Python/Scilab renovation output comparison.
+```
+
 ## Energy use
 
 The model uses two metrics for energy use: the conventional consumption predicted by the EPC label of the dwelling; and
@@ -127,11 +150,11 @@ $$\text{Heating Intensity} =-0,191*log(\text{Income share})+0,1105$$
 
 with:
 
-$$\text{Heating Intensity} = (\text{Actual energy use})/(\text{Conventional energy use})$$
+$$\text{Heating Intensity} = \text{Actual energy use}/\text{Conventional energy use}$$
 
 and:
 
-$$\text{Income share} = (\text{Energy price} * \text{Surface}* \text{Conventional energy use})/\text{Income}$$
+$$\text{Income share} = (text{Energy price} * \text{Surface}* \text{Conventional energy use}/\text{Income}$$
 
 #### Total energy use
 
@@ -206,7 +229,7 @@ depends on the discount rate r and the investment horizon l according to the fol
 
 $$γ(r,l)=∑_{t=0} (1+r)^{-t} = (1-(1+r)^{-l)})/r$$
 
-The two parameters are set in Res-IRF so as to capture various barriers to home renovation:
+The two parameters are set in Res-IRF to capture various barriers to home renovation:
 - The discount rate captures both the tighter credit constraints facing lower-income households and the barriers to
   decision-making within homeowner associations.
 - The investment horizon reflects the intensity with which real estate and rental markets capitalize the “green value”
@@ -319,8 +342,7 @@ and {numref}`renovation_share_ep`, result in an average renovation cost of 112 �
 given by OPEN (9 978 € of average expenditure compared to 91 m²). Compared to the cumulative energy savings they
 generate (assuming an average lifetime of 26 years), they correspond to an average “negawatt-hour cost” of 83 €/MWh,
 with extreme values of 25 and 446. These values are in line with those recently produced by {cite:ps}`dgtresorBarrieresInvestissementDans2017`.
-
-
+ 
 #### Extensive margins
 
 An upgrade an initial label i is determined by its net present value (NPV), calculated as the sum of the life-cycle cost
