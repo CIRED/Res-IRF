@@ -1,7 +1,6 @@
 # Input
 
 
-
 Buildings stock.
 
 ## Building stock

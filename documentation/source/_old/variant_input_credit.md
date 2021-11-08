@@ -1,9 +1,9 @@
 
-[consumption_actual_credit]: img/consumption_actual_credit.png "elementary_structure_model"
-[flow_renovation_credit]: img/flow_renovation_credit.png "phebus_sdes_millions"
-[stock_performance_credit]: img/stock_performance_credit.png "phebus_sdes_percent"
-[heating_intensity_credit]: img/heating_intensity_credit.png "phebus_sdes_energy_performance_percent"
-[energy_poverty_credit]: img/energy_poverty_credit.png "phebus_sdes_energy_percent"
+[consumption_actual_credit]: ../img/consumption_actual_credit.png "elementary_structure_model"
+[flow_renovation_credit]: ../img/flow_renovation_credit.png "phebus_sdes_millions"
+[stock_performance_credit]: ../img/stock_performance_credit.png "phebus_sdes_percent"
+[heating_intensity_credit]: ../img/heating_intensity_credit.png "phebus_sdes_energy_performance_percent"
+[energy_poverty_credit]: ../img/energy_poverty_credit.png "phebus_sdes_energy_percent"
 
 
 # Influence of credit constraints

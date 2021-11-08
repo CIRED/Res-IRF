@@ -58,26 +58,20 @@ The model contains 1,080 types of dwellings divided into:
 - Nine energy performance levels – EPC labels A to G for existing dwellings, Low Energy Building (LE) and Net Zero
   Energy Building (NZ) levels for new dwellings;
 - Four main heating fuels – electricity, natural gas, fuel oil and fuel wood
-- Six types of investors – owner-occupiers, landlords or social housing managers, each in single- and multi-family
-  dwellings;
+- Three types of occupancy status – homeowners, landlords or social housing managers, 
+- Two types of housing type: single- and multi-family dwellings;
 - Five categories of household income, the boundaries of which are aligned with those of INSEE quintiles.
 
 ### Scope
 
 Res-IRF 3.0 covers 23.9 million principal residences in metropolitan France among the 27.1 million covered by the
-Phébus-Clode survey for the year 2012. This scope differs from that of other databases (see {ref}`Table <databases_overview>`).
+Phébus-Clode survey for the year 2012. This scope differs from that of other databases {numref}`databases_overview`.
 It was delineated by excluding from the Phébus sample: those dwellings heated with fuels with low market shares, such as
 liquefied petroleum gas (LPG) and district heating; some dwellings for which it was not possible to identify a principal
 energy carrier; some dwellings for which the Phébus data were missing.
 
 ```{figure} img/input_2012/buildingstock_2012_absolute.png
 :name: buildingstock_2012_absolute
-
-Building stock 2012
-```
-
-```{figure} img/input_2012/buildingstock_2012_percent.png
-:name: buildingstock_2012_percent
 
 Building stock 2012
 ```
@@ -123,7 +117,7 @@ the Phébus-Clode database, we proceed as follows:
 Energy consumption in Phébus
 ```
 
-{numref}`buildingstock_he_2012_percent` compares the total consumption of each fuel in the Phébus database and in the
+{numref}`energy_consumption_phebus` compares the total consumption of each fuel in the Phébus database and in the
 model. It shows that retaining only one fuel for each dwelling leads us to consider much less electricity and wood
 consumption than reported in Phébus. This is due for the most part to our exclusion of auxiliary heating, which
 predominantly uses electricity and wood, and to a lesser extent to our exclusion of the specific electricity consumption
@@ -132,8 +126,8 @@ that is reported in Phébus.
 ### Household income
 
 A major advance of version 3.0, the introduction of income categories was intended to capture heterogeneity in:
-- the propensity of owners to invest in energy retrofits and 
-- (ii) the intensity of use of heating infrastructure by occupants.
+- the propensity of owners to invest in energy retrofits,
+- the intensity of use of heating infrastructure by occupants.
 The level of detail of the Phébus database made this development possible. Yet since the income data it contains only
 relates to occupants, additional data were needed to set income parameters for landlords.
 
@@ -142,10 +136,10 @@ relates to occupants, additional data were needed to set income parameters for l
 The disposable income of occupants – owner-occupiers and tenants – is segmented into five categories delineated by the
 same income boundaries as those defining income quintiles in France, according to the national statistical office for
 2012. The use of these quintiles instead of those intrinsic in the Phébus sample ensures consistency between homeowners’
-and tenants’ income (see next section), without introducing too strong biases, as shown in {numref}`income_categories`. 
-2013. Each dwelling is then allocated the average income for its category. {numref}`income_energy_performance` 
-2014. illustrates the distribution of occupant income in the different EPC bands. A clear correlation appears between 
-2015. household income and the energy efficiency of their dwelling.[^dwelling]
+and tenants’ income (see next section), without introducing too strong biases, as shown in {numref}`income_categories`.
+Each dwelling is then allocated the average income for its category. {numref}`income_energy_performance`
+illustrates the distribution of occupant income in the different EPC bands. A clear correlation appears between
+household income and the energy efficiency of their dwelling.[^dwelling]
 
 [^dwelling]: The low number of dwellings labelled A and B in Phébus makes income distribution statistics less accurate in these bands.
 
@@ -153,7 +147,7 @@ and tenants’ income (see next section), without introducing too strong biases,
 ```{figure} img/input_2012/income_energy_performance.png
 :name: income_energy_performance
 
-Distribution of income categories within EPC bands (Source: Phébus)
+Distribution of income categories within EPC bands. Source: Phébus
 ```
 
 ```{eval-rst}
@@ -167,27 +161,27 @@ Distribution of income categories within EPC bands (Source: Phébus)
 
 #### Owners
 
-Homeowners’ income overlaps with occupants’. Yet Phébus does not contain any information on the income of landlords,
+Homeowners income overlaps with occupants. Yet Phébus does not contain any information on the income of landlords,
 which we had to reconstitute by other means. We matched the Phébus-DPE data with INSEE data pre-processed by the Agence
-nationale pour l’information sur le logement {cite:ps}`anilBailleursLocatairesDans2012`. The resulting landlords’ income
-distribution is described in Figure 7 and compared to that of tenants. Here again, significant disparities appear, with
-households whose annual income falls below €34,210 representing 80% of tenants but only 20% of owner-occupiers.
-
+nationale pour l’information sur le logement {cite:ps}`anilBailleursLocatairesDans2012`. The resulting landlords income
+distribution is described in {numref}`income_owners_occ_status` and compared to that of tenants. Here again, significant
+disparities appear, with households whose annual income falls below €34,210 representing 80% of tenants but only 20% of
+owner-occupiers.
 
 ```{figure} img/input_2012/income_owners_occ_status.png
 :name: income_owners_occ_status
 
-Distribution of income categories for landlords and tenants in privately rented housing
+Distribution of tenants income categories by occupancy-status.
 ```
 
-To build this figure, some adjustments are needed to translate into income categories the {cite:
-ps}`anilBailleursLocatairesDans2012` data that are expressed in terms of living standard[^standard].
+To build this figure, some adjustments are needed to translate into income categories the {cite:ps}`anilBailleursLocatairesDans2012` 
+data that are expressed in terms of living standard[^standard].
 
 [^standard]: This metric divides household income by consumption units – 1 for the first adult, 0.5 for any other person older
 than 14 and 0.3 for any person under that age. It is generally thought to better represent the financing capacity of a
 household than does income.
 
-## Input
+## Complete list of inputs
 
 We use the term input to name any factor that is given a numerical value 
 in the model. Model inputs fall into three categories {cite:ps}`brangerGlobalSensitivityAnalysis2015`:
@@ -204,12 +198,113 @@ in the model. Model inputs fall into three categories {cite:ps}`brangerGlobalSen
 
 ```{eval-rst}
 .. csv-table:: Complete list of inputs
-   :name: input_calibration_target
-   :file: table/input_calibration_target.csv
+   :name: input_list_2012
+   :file: table/input_list_2012.csv
    :header-rows: 1
    :stub-columns: 1
 ```
 
+
+### Exogenous input
+
+- Energy prices: based on a scenario from ADEME using assumptions from the Directorate General for Energy and Climate (
+  DGEC) and the European Commission. The scenario used is equivalent to an average annual growth rate of
+  fuel prices after tax of 1.42% for natural gas, 2.22% for fuel oil, 1.10% for electricity and 1.20% for fuel wood over
+  the period. These lead to an average annual growth rate of the price index of 1.47%/year.
+- Population growth : based on a projection from {cite:ps}`inseeProjectionsPopulationPour2006` equivalent to an average
+  annual growth rate of 0.3%/year over the period 2012-2050.
+- Growth in household income: extrapolates the average trend of 1.2%/year given by INSEE uniformly
+  across all income categories.
+
+### Calibration target
+
+#### Construction 
+
+Market shares used to calibrate intangible costs for construction.
+
+```{eval-rst}
+.. csv-table:: Market shares of construction in 2012.
+   :name: market_share_construction_2012
+   :file: table/ms_construction_ini_2012.csv
+   :header-rows: 2
+   :stub-columns: 2
+```
+
+#### Intensive margin
+
+Intangible costs are calibrated so that the life-cycle cost model, fed with the investment costs, matches the market
+shares reported here {numref}`market_share_2012`
+
+```{eval-rst}
+.. csv-table:: Market shares of energy efficiency upgrades in 2012. Source: PUCA (2015)
+   :name: market_share_2012
+   :file: table/ms_renovation_ini_2012.csv
+   :header-rows: 1
+   :stub-columns: 1
+```
+
+#### Extensive margin
+
+Parameter ρ (of renovation function) is calibrated, for each type of decision-maker and each initial label (i.e., 6x6=36
+values), so that the NPVs calculated with the subsidies in effect in 2012 {cite:ps}`giraudetExploringPotentialEnergy2012` 
+reproduce the renovation rates described in {numref}`renovation_share_ep_2012`and {numref}`renovation_rate_dm_2012` and 
+their aggregation represents 3% (686,757 units) of the housing stock of the initial year.
+
+```{eval-rst}
+.. csv-table:: Renovation share by energy performance label. Source: PUCA (2015)
+   :name: renovation_share_ep_2012
+   :file: table/renovation_share_ep_2012.csv
+   :header-rows: 1
+   :stub-columns: 1
+```
+
+```{eval-rst}
+.. csv-table:: Renovation rate by type of dwelling. Source : OPEN (2016) and USH (2017)
+   :name: renovation_rate_dm_2012
+   :file: table/renovation_rate_dm_2012.csv
+   :header-rows: 1
+   :stub-columns: 1
+```
+
+#### Aggregated energy consumption
+
+To ensure consistency with the CEREN data, which is the reference commonly used in modelling exercises, Res-IRF is
+calibrated to reproduce the final energy consumption given by CEREN for each fuel in the initial year. The resulting
+conversion coefficients applied to the Phebus Building Stock are listed in {numref}`calibration_energy`.
+
+```{eval-rst}
+.. csv-table:: Calibration of total final actual energy consumption
+   :name: calibration_energy
+   :file: table/ceren_energy_consumption_2012.csv
+   :header-rows: 1
+   :stub-columns: 1
+```
+
+### Investment cost factors
+
+```{eval-rst}
+.. csv-table:: Renovation costs used in Res-IRF 3.0 (€/m2). Source: Expert opinion
+   :name: renovation_cost
+   :file: table/cost_renovation_2012.csv
+   :header-rows: 1
+   :stub-columns: 1
+```
+
+```{eval-rst}
+.. csv-table:: Switching-fuel costs used in Res-IRF 3.0 (€/m2). Source: Expert opinion
+   :name: switching_fuel_cost
+   :file: table/cost_switch_fuel_2012.csv
+   :header-rows: 1
+   :stub-columns: 1
+```
+
+
+## Appendix
+```{figure} img/input_2012/buildingstock_2012_percent.png
+:name: buildingstock_2012_percent
+
+Building stock 2012 (%)
+```
 
 ```{bibliography}
 :style: unsrt

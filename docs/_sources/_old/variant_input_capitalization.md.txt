@@ -1,9 +1,9 @@
 
-[consumption_actual_capitalization]: img/consumption_actual_capitalization.png "elementary_structure_model"
-[flow_renovation_capitalization]: img/flow_renovation_capitalization.png "phebus_sdes_millions"
-[stock_performance_capitalization]: img/stock_performance_capitalization.png "phebus_sdes_percent"
-[heating_intensity_capitalization]: img/heating_intensity_capitalization.png "phebus_sdes_energy_performance_percent"
-[energy_poverty_capitalization]: img/energy_poverty_capitalization.png "phebus_sdes_energy_percent"
+[consumption_actual_capitalization]: ../img/consumption_actual_capitalization.png "elementary_structure_model"
+[flow_renovation_capitalization]: ../img/flow_renovation_capitalization.png "phebus_sdes_millions"
+[stock_performance_capitalization]: ../img/stock_performance_capitalization.png "phebus_sdes_percent"
+[heating_intensity_capitalization]: ../img/heating_intensity_capitalization.png "phebus_sdes_energy_performance_percent"
+[energy_poverty_capitalization]: ../img/energy_poverty_capitalization.png "phebus_sdes_energy_percent"
 
 
 # Influence of the determinants of capitalization

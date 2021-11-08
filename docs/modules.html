@@ -548,13 +548,14 @@ The rate of cost reduction is set at 15% in new construction and 10% in renovati
 
 <dl class="py method">
 <dt class="sig sig-object py" id="buildings.HousingStock.to_consumption">
-<span class="sig-name descname"><span class="pre">to_consumption</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">consumption</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">segments</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span></dt>
+<span class="sig-name descname"><span class="pre">to_consumption</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">consumption</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">segments</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">energy_prices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span></dt>
 <dd><p>Returns consumption conventional or actual based on consumption parameter.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>consumption</strong> (<em>str</em><em>, </em><em>{'conventional'</em><em>, </em><em>'actual'}</em>) – </p></li>
 <li><p><strong>segments</strong> (<em>pd.Index</em><em>, </em><em>optional</em>) – If segments is not filled, use self.segments.</p></li>
+<li><p><strong>energy_prices</strong> (<em>pd.DataFrame</em><em>, </em><em>optional</em>) – </p></li>
 </ul>
 </dd>
 </dl>
@@ -616,7 +617,7 @@ Discount factor does not depend on the year it is calculated.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="buildings.HousingStock.to_emission_saving">
-<span class="sig-name descname"><span class="pre">to_emission_saving</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">co2_content</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transition</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'conventional'</span></span></em><span class="sig-paren">)</span></dt>
+<span class="sig-name descname"><span class="pre">to_emission_saving</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">co2_content</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transition</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'conventional'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">energy_prices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span></dt>
 <dd><p>Calculate emission saving between initial and final state.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -624,6 +625,7 @@ Discount factor does not depend on the year it is calculated.</p>
 <li><p><strong>co2_content</strong> (<em>pd.DataFrame</em>) – </p></li>
 <li><p><strong>transition</strong> (<em>{</em><em>(</em><em>Energy performance</em><em>, </em><em>)</em><em>, </em><em>(</em><em>Heating energy</em><em>, </em><em>)</em><em>, </em><em>(</em><em>Energy performance</em><em>, </em><em>Heating energy</em><em>)</em>) – </p></li>
 <li><p><strong>consumption</strong> (<em>{'conventional'</em><em>, </em><em>'actual'}</em>) – </p></li>
+<li><p><strong>energy_prices</strong> (<em>pd.DataFrame</em>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -637,7 +639,7 @@ Discount factor does not depend on the year it is calculated.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="buildings.HousingStock.to_emission_saving_lc">
-<span class="sig-name descname"><span class="pre">to_emission_saving_lc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">co2_content</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transition</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'conventional'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">discount</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.04</span></span></em><span class="sig-paren">)</span></dt>
+<span class="sig-name descname"><span class="pre">to_emission_saving_lc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">co2_content</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transition</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'conventional'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">horizon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">discount</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.04</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">energy_prices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span></dt>
 <dd><p>Calculate life-cycle emission saving between initial and final state for the entire project duration.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -645,7 +647,9 @@ Discount factor does not depend on the year it is calculated.</p>
 <li><p><strong>co2_content</strong> (<em>pd.DataFrame</em>) – </p></li>
 <li><p><strong>transition</strong> (<em>{</em><em>(</em><em>Energy performance</em><em>, </em><em>)</em><em>, </em><em>(</em><em>Heating energy</em><em>, </em><em>)</em><em>, </em><em>(</em><em>Energy performance</em><em>, </em><em>Heating energy</em><em>)</em>) – </p></li>
 <li><p><strong>consumption</strong> (<em>{'conventional'</em><em>, </em><em>'actual'}</em>) – </p></li>
+<li><p><strong>horizon</strong> (<em>int</em><em>, </em><em>default 30</em>) – </p></li>
 <li><p><strong>discount</strong> (<em>float</em><em>, </em><em>default 0.04</em>) – </p></li>
+<li><p><strong>energy_prices</strong> (<em>pd.DataFrame</em>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -703,10 +707,10 @@ and transition).</p>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>{transition: {consumption: pd.Series}}</p>
+<dd class="field-even"><p></p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>dict</p>
+<dd class="field-odd"><p>pd.DataFrame</p>
 </dd>
 </dl>
 </dd></dl>

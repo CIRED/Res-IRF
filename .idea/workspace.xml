@@ -2,44 +2,19 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5a27c1bc-6d7f-41bf-89e9-22387bb7bdb3" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/documentation/source/articles.bib" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/documentation/source/buliding_stock_2018.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/documentation/source/input_2012.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/abattement_curve.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/abattement_curve_comparison.ipynb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/input/abattement_curve/attributes_abattement_curve.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/input/abattement_curve/building_stock_phebus2012.pkl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/input/abattement_curve/building_stock_phebus2018.pkl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/input/abattement_curve/building_stock_sdes2018.pkl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/input/abattement_curve/carbon_value.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/input/abattement_curve/co2_content.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/input/abattement_curve/config_phebus.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/input/abattement_curve/config_phebus_social.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/input/abattement_curve/config_sdes.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/input/abattement_curve/config_sdes_social.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/input/abattement_curve/config_test.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/input/abattement_curve/cost_renovation_2012.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/input/abattement_curve/cost_switch_fuel_2012.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/input/abattement_curve/energy_prices_at.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/input/abattement_curve/energy_prices_at_gas.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/input/abattement_curve/energy_prices_at_power.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/input/abattement_curve/energy_prices_bt.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/input/abattement_curve/energy_prices_bt_gas.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/input/abattement_curve/energy_prices_bt_power.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/input/abattement_curve/energy_taxes.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/input/abattement_curve/health_cost.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/ui_abattement_curve.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/documentation/source/table/cost_renovation_2012.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/documentation/source/table/cost_switch_fuel_2012.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/documentation/source/appendix.md" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/help_installation.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/documentation/source/conf.py" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/conf.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/documentation/source/contributing.md" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/contributing.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/documentation/source/index.rst" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/index.rst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/documentation/source/input_variables.md" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/input_variables.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/documentation/source/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/_old/CHANGELOG.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/documentation/source/buliding_stock_2018.md" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/_old/buliding_stock_2018.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/documentation/source/input_2012.md" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/input_2012.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/documentation/source/input_variables.md" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/_old/input_variables.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/documentation/source/policies_assessment.md" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/_old/policies_assessment.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/documentation/source/technical_documentation.md" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/technical_documentation.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/documentation/source/variant_input_variables.md" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/variant_input_variables.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/buildings.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/buildings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/parse_output.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/parse_output.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/ui_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/ui_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/documentation/source/variant_input_capitalization.md" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/_old/variant_input_capitalization.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/documentation/source/variant_input_credit.md" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/_old/variant_input_credit.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/documentation/source/variant_input_variables.md" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/_old/variant_input_variables.md" afterDir="false" />
     </list>
     <list id="c1475e6c-5c86-4ada-b891-0f5a944b2008" name="Revert &quot;Delete project/input/test directory&quot;" comment="Revert &quot;Delete project/input/test directory&quot;&#10;&#10;This reverts commit b2bb53ac" />
     <option name="SHOW_DIALOG" value="false" />
@@ -91,7 +66,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/project/input/abattement_curve" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/documentation/source/table" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="python.debugger.dataview.coloredbydefault" value="false" />
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
@@ -101,18 +76,18 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/documentation/source/table" />
+      <recent name="$PROJECT_DIR$/docs" />
       <recent name="$PROJECT_DIR$/project/input/abattement_curve" />
       <recent name="$PROJECT_DIR$/project/input" />
       <recent name="$PROJECT_DIR$/documentation/source" />
-      <recent name="$PROJECT_DIR$/project/input/phebus/config_files" />
-      <recent name="$PROJECT_DIR$/project/input/config_files" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/documentation/source/_old" />
       <recent name="$PROJECT_DIR$/project/input/abattement_curve" />
       <recent name="$PROJECT_DIR$/documentation/source" />
       <recent name="$PROJECT_DIR$/project/input/phebus" />
       <recent name="$PROJECT_DIR$/project/nb_tutorials" />
-      <recent name="$PROJECT_DIR$/project/input/config_files" />
     </key>
   </component>
   <component name="RunManager" selected="Python.abattement_curve">
@@ -555,20 +530,8 @@
       <workItem from="1636047336041" duration="2377000" />
       <workItem from="1636110551938" duration="725000" />
       <workItem from="1636122857252" duration="30000" />
-    </task>
-    <task id="LOCAL-00025" summary="cleaning and organizing">
-      <created>1624804365194</created>
-      <option name="number" value="00025" />
-      <option name="presentableId" value="LOCAL-00025" />
-      <option name="project" value="LOCAL" />
-      <updated>1624804365194</updated>
-    </task>
-    <task id="LOCAL-00026" summary="cleaning and organizing">
-      <created>1625215432323</created>
-      <option name="number" value="00026" />
-      <option name="presentableId" value="LOCAL-00026" />
-      <option name="project" value="LOCAL" />
-      <updated>1625215432323</updated>
+      <workItem from="1636130322929" duration="314000" />
+      <workItem from="1636359012789" duration="5377000" />
     </task>
     <task id="LOCAL-00027" summary="cleaning and organizing">
       <created>1625240018506</created>
@@ -899,7 +862,21 @@
       <option name="project" value="LOCAL" />
       <updated>1634898387671</updated>
     </task>
-    <option name="localTasksCounter" value="74" />
+    <task id="LOCAL-00074" summary="adding abattement curve and some change regarding the documentation">
+      <created>1636130361230</created>
+      <option name="number" value="00074" />
+      <option name="presentableId" value="LOCAL-00074" />
+      <option name="project" value="LOCAL" />
+      <updated>1636130361231</updated>
+    </task>
+    <task id="LOCAL-00075" summary="adding abattement curve and some change regarding the documentation">
+      <created>1636130491135</created>
+      <option name="number" value="00075" />
+      <option name="presentableId" value="LOCAL-00075" />
+      <option name="project" value="LOCAL" />
+      <updated>1636130491135</updated>
+    </task>
+    <option name="localTasksCounter" value="76" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -942,7 +919,8 @@
     <MESSAGE value="using multiprocessing for multiple scenarios" />
     <MESSAGE value="cleaning and organizing" />
     <MESSAGE value="correcting cee income class owner issue" />
-    <option name="LAST_COMMIT_MESSAGE" value="correcting cee income class owner issue" />
+    <MESSAGE value="adding abattement curve and some change regarding the documentation" />
+    <option name="LAST_COMMIT_MESSAGE" value="adding abattement curve and some change regarding the documentation" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
