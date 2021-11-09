@@ -14,8 +14,7 @@ from ui_abattement_curve import *
 
 
 def prepare_input(config):
-    """
-    Returns input used to create the abattement curve.
+    """Returns input used to create the abattement curve.
 
     Parameters
     ----------
@@ -86,8 +85,7 @@ def prepare_input(config):
 
 
 def select_final_state(df, energy_performance, dict_replace=None):
-    """
-    Returns series with same heating energy than initial state
+    """Returns series with same heating energy than initial state
 
     Parameters
     ----------
@@ -115,9 +113,9 @@ def select_final_state(df, energy_performance, dict_replace=None):
 
 
 def to_result(carbon_cost, emission_final_end, emission_trend_end, potential_emission_saving, emission_ini, stock,
-              path, yr, name='', dict_replace=None, energy_performance='A', horizon=30, carbon_value=None):
-    """
-    Formatting results.
+              path, yr, name='', dict_replace=None, energy_performance='A', horizon=30, private_carbon_cost=None,
+              health_carbon_cost=None, lost_carbon_cost=None):
+    """Formatting results.
 
     Parameters
     ----------
@@ -141,7 +139,9 @@ def to_result(carbon_cost, emission_final_end, emission_trend_end, potential_emi
         Energy transition scenario.
     energy_performance: {'A', 'B', 'C', 'D', 'E', 'F', 'G'}
     horizon: int
-    carbon_value
+    private_carbon_cost : pd.DataFrame, optional
+    health_carbon_cost : pd.DataFrame, optional
+    lost_carbon_cost : pd.DataFrame, optional
 
     Returns
     -------
@@ -160,6 +160,19 @@ def to_result(carbon_cost, emission_final_end, emission_trend_end, potential_emi
 
     output = dict()
     output['Carbon cost (euro/tCO2)'] = select_final_state(carbon_cost, energy_performance, dict_replace=dict_replace)
+
+    if private_carbon_cost is not None:
+        output['Private carbon cost (euro/tCO2)'] = select_final_state(private_carbon_cost, energy_performance,
+                                                                       dict_replace=dict_replace)
+
+    if health_carbon_cost is not None:
+        output['Health carbon cost (euro/tCO2)'] = select_final_state(health_carbon_cost, energy_performance,
+                                                                      dict_replace=dict_replace)
+
+    if lost_carbon_cost is not None:
+        output['Opportunity carbon cost (euro/tCO2)'] = select_final_state(lost_carbon_cost, energy_performance,
+                                                                           dict_replace=dict_replace)
+
     output['Potential emission saving (tCO2)'] = select_final_state(potential_emission_saving, energy_performance, dict_replace=dict_replace)
     output['Potential emission saving (tCO2/yr)'] = output['Potential emission saving (tCO2)'] / horizon
     output['Emission difference (tCO2/yr)'] = emission_diff
@@ -324,6 +337,9 @@ def to_carbon_cost(config, path, calibration_year):
 
     # €/gCO2 -> €/tCO2
     carbon_cost = (social_cost / emission_cost_saving_lc) * 10**6
+    private_carbon_cost = (lcc_saving / emission_cost_saving_lc) * 10**6
+    health_carbon_cost = (health_cost_diff_lc / emission_cost_saving_lc) * 10**6
+    lost_carbon_cost = (lost_revenue_lc / emission_cost_saving_lc) * 10**6
 
     # gCO2/m2 -> tCO2
     emission_final = buildings.to_final(emission, transition=transition)
@@ -352,7 +368,9 @@ def to_carbon_cost(config, path, calibration_year):
 
         to_result(carbon_cost, emission_final_end, emission_trend_end, potential_emission_saving, emission_ini,
                   buildings.stock, path, calibration_year, name=name, dict_replace=energy_transition[name],
-                  energy_performance=performance_transition, horizon=horizon, carbon_value=carbon_value)
+                  energy_performance=performance_transition, horizon=horizon,
+                  private_carbon_cost=private_carbon_cost, health_carbon_cost=health_carbon_cost,
+                  lost_carbon_cost=lost_carbon_cost)
 
 
 if __name__ == '__main__':

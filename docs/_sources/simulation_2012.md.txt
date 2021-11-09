@@ -1,5 +1,5 @@
 
-# Influence of input variables
+# Simulation and sensitivity analysis
 
 ## Influence of exogenous variables
 

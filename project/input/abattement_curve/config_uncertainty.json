@@ -1,0 +1,350 @@
+{
+  "PhebusReference": {
+    "calibration_year": 2018,
+    "carbon_cost_formula": "carbon_budget",
+    "social_carbon_value": null,
+    "stock_buildings": {
+      "source": "project/input/abattement_curve/building_stock_phebus2018.pkl",
+      "type": "pd.Series"
+    },
+    "attributes": {
+      "type": "file",
+      "source": "project/input/abattement_curve/attributes_abattement_curve.json"
+    },
+    "energy_prices_bt": {
+      "type": "file",
+      "source": "project/input/abattement_curve/energy_prices_bt.csv"
+    },
+    "energy_prices_at": {
+      "type": "file",
+      "source": "project/input/abattement_curve/energy_prices_at.csv"
+    },
+    "energy_taxes": {
+      "type": "file",
+      "source": "project/input/abattement_curve/energy_taxes.csv"
+    },
+    "co2_emission": {
+      "type": "file",
+      "source": "project/input/abattement_curve/co2_content.csv"
+    },
+    "carbon_value": {
+      "type": "file",
+      "source": "project/input/abattement_curve/carbon_value.csv"
+    },
+    "health_cost": {
+      "type": "file",
+      "source": "project/input/abattement_curve/health_cost_quintile.csv"
+    },
+    "cost_renovation": {
+      "type": "file",
+      "source": "project/input/abattement_curve/cost_renovation_2012.csv",
+      "index_names": [
+        "Energy performance"
+      ],
+      "columns_names": [
+        "Energy performance final"
+      ]
+    },
+    "cost_switch_fuel": {
+      "type": "file",
+      "source": "project/input/abattement_curve/cost_switch_fuel_2012.csv"
+    },
+    "Household income rate": 0.012,
+    "horizon": 30,
+    "cofp_factor": 0.2,
+    "investment_tax_rate": 0.055,
+    "discount_rate": 0.045,
+    "consumption_type": "actual",
+    "investment_cost_factor": 0
+  },
+  "SDESReference": {
+    "calibration_year": 2018,
+    "carbon_cost_formula": "carbon_budget",
+    "social_carbon_value": null,
+    "stock_buildings": {
+      "source": "project/input/abattement_curve/building_stock_sdes2018.pkl",
+      "type": "pd.Series"
+    },
+    "attributes": {
+      "type": "file",
+      "source": "project/input/abattement_curve/attributes_abattement_curve.json"
+    },
+    "energy_prices_bt": {
+      "type": "file",
+      "source": "project/input/abattement_curve/energy_prices_bt.csv"
+    },
+    "energy_prices_at": {
+      "type": "file",
+      "source": "project/input/abattement_curve/energy_prices_at.csv"
+    },
+    "energy_taxes": {
+      "type": "file",
+      "source": "project/input/abattement_curve/energy_taxes.csv"
+    },
+    "co2_emission": {
+      "type": "file",
+      "source": "project/input/abattement_curve/co2_content.csv"
+    },
+    "carbon_value": {
+      "type": "file",
+      "source": "project/input/abattement_curve/carbon_value.csv"
+    },
+    "health_cost": {
+      "type": "file",
+      "source": "project/input/abattement_curve/health_cost_decile.csv"
+    },
+    "cost_renovation": {
+      "type": "file",
+      "source": "project/input/abattement_curve/cost_renovation_2012.csv",
+      "index_names": [
+        "Energy performance"
+      ],
+      "columns_names": [
+        "Energy performance final"
+      ]
+    },
+    "cost_switch_fuel": {
+      "type": "file",
+      "source": "project/input/abattement_curve/cost_switch_fuel_2012.csv"
+    },
+    "Household income rate": 0.012,
+    "horizon": 30,
+    "cofp_factor": 0.2,
+    "investment_tax_rate": 0.055,
+    "discount_rate": 0.045,
+    "consumption_type": "actual",
+    "investment_cost_factor": 0
+  },
+  "SDESCost10Horizon20Gas+": {
+    "calibration_year": 2018,
+    "carbon_cost_formula": "carbon_budget",
+    "social_carbon_value": null,
+    "stock_buildings": {
+      "source": "project/input/abattement_curve/building_stock_sdes2018.pkl",
+      "type": "pd.Series"
+    },
+    "attributes": {
+      "type": "file",
+      "source": "project/input/abattement_curve/attributes_abattement_curve.json"
+    },
+    "energy_prices_bt": {
+      "type": "file",
+      "source": "project/input/abattement_curve/energy_prices_bt_gas.csv"
+    },
+    "energy_prices_at": {
+      "type": "file",
+      "source": "project/input/abattement_curve/energy_prices_at_gas.csv"
+    },
+    "energy_taxes": {
+      "type": "file",
+      "source": "project/input/abattement_curve/energy_taxes.csv"
+    },
+    "co2_emission": {
+      "type": "file",
+      "source": "project/input/abattement_curve/co2_content.csv"
+    },
+    "carbon_value": {
+      "type": "file",
+      "source": "project/input/abattement_curve/carbon_value.csv"
+    },
+    "health_cost": {
+      "type": "file",
+      "source": "project/input/abattement_curve/health_cost_decile.csv"
+    },
+    "cost_renovation": {
+      "type": "file",
+      "source": "project/input/abattement_curve/cost_renovation_2012.csv",
+      "index_names": [
+        "Energy performance"
+      ],
+      "columns_names": [
+        "Energy performance final"
+      ]
+    },
+    "cost_switch_fuel": {
+      "type": "file",
+      "source": "project/input/abattement_curve/cost_switch_fuel_2012.csv"
+    },
+    "Household income rate": 0.012,
+    "horizon": 20,
+    "cofp_factor": 0.2,
+    "investment_tax_rate": 0.055,
+    "discount_rate": 0.045,
+    "consumption_type": "actual",
+    "investment_cost_factor": 0.1
+  },
+  "PhebusHorizon20Power+": {
+    "calibration_year": 2018,
+    "carbon_cost_formula": "carbon_budget",
+    "social_carbon_value": null,
+    "stock_buildings": {
+      "source": "project/input/abattement_curve/building_stock_phebus2018.pkl",
+      "type": "pd.Series"
+    },
+    "attributes": {
+      "type": "file",
+      "source": "project/input/abattement_curve/attributes_abattement_curve.json"
+    },
+    "energy_prices_bt": {
+      "type": "file",
+      "source": "project/input/abattement_curve/energy_prices_bt_power.csv"
+    },
+    "energy_prices_at": {
+      "type": "file",
+      "source": "project/input/abattement_curve/energy_prices_at_power.csv"
+    },
+    "energy_taxes": {
+      "type": "file",
+      "source": "project/input/abattement_curve/energy_taxes.csv"
+    },
+    "co2_emission": {
+      "type": "file",
+      "source": "project/input/abattement_curve/co2_content.csv"
+    },
+    "carbon_value": {
+      "type": "file",
+      "source": "project/input/abattement_curve/carbon_value.csv"
+    },
+    "health_cost": {
+      "type": "file",
+      "source": "project/input/abattement_curve/health_cost_quintile.csv"
+    },
+    "cost_renovation": {
+      "type": "file",
+      "source": "project/input/abattement_curve/cost_renovation_2012.csv",
+      "index_names": [
+        "Energy performance"
+      ],
+      "columns_names": [
+        "Energy performance final"
+      ]
+    },
+    "cost_switch_fuel": {
+      "type": "file",
+      "source": "project/input/abattement_curve/cost_switch_fuel_2012.csv"
+    },
+    "Household income rate": 0.012,
+    "horizon": 20,
+    "cofp_factor": 0.2,
+    "investment_tax_rate": 0.055,
+    "discount_rate": 0.045,
+    "consumption_type": "actual",
+    "investment_cost_factor": 0
+  },
+  "PhebusHorizon30Power+": {
+    "calibration_year": 2018,
+    "carbon_cost_formula": "carbon_budget",
+    "social_carbon_value": null,
+    "stock_buildings": {
+      "source": "project/input/abattement_curve/building_stock_phebus2018.pkl",
+      "type": "pd.Series"
+    },
+    "attributes": {
+      "type": "file",
+      "source": "project/input/abattement_curve/attributes_abattement_curve.json"
+    },
+    "energy_prices_bt": {
+      "type": "file",
+      "source": "project/input/abattement_curve/energy_prices_bt_power.csv"
+    },
+    "energy_prices_at": {
+      "type": "file",
+      "source": "project/input/abattement_curve/energy_prices_at_power.csv"
+    },
+    "energy_taxes": {
+      "type": "file",
+      "source": "project/input/abattement_curve/energy_taxes.csv"
+    },
+    "co2_emission": {
+      "type": "file",
+      "source": "project/input/abattement_curve/co2_content.csv"
+    },
+    "carbon_value": {
+      "type": "file",
+      "source": "project/input/abattement_curve/carbon_value.csv"
+    },
+    "health_cost": {
+      "type": "file",
+      "source": "project/input/abattement_curve/health_cost_quintile.csv"
+    },
+    "cost_renovation": {
+      "type": "file",
+      "source": "project/input/abattement_curve/cost_renovation_2012.csv",
+      "index_names": [
+        "Energy performance"
+      ],
+      "columns_names": [
+        "Energy performance final"
+      ]
+    },
+    "cost_switch_fuel": {
+      "type": "file",
+      "source": "project/input/abattement_curve/cost_switch_fuel_2012.csv"
+    },
+    "Household income rate": 0.012,
+    "horizon": 30,
+    "cofp_factor": 0.2,
+    "investment_tax_rate": 0.055,
+    "discount_rate": 0.045,
+    "consumption_type": "actual",
+    "investment_cost_factor": 0
+  },
+  "SDESCost10Horizon30Gas+": {
+    "calibration_year": 2018,
+    "carbon_cost_formula": "carbon_budget",
+    "social_carbon_value": null,
+    "stock_buildings": {
+      "source": "project/input/abattement_curve/building_stock_sdes2018.pkl",
+      "type": "pd.Series"
+    },
+    "attributes": {
+      "type": "file",
+      "source": "project/input/abattement_curve/attributes_abattement_curve.json"
+    },
+    "energy_prices_bt": {
+      "type": "file",
+      "source": "project/input/abattement_curve/energy_prices_bt_gas.csv"
+    },
+    "energy_prices_at": {
+      "type": "file",
+      "source": "project/input/abattement_curve/energy_prices_at_gas.csv"
+    },
+    "energy_taxes": {
+      "type": "file",
+      "source": "project/input/abattement_curve/energy_taxes.csv"
+    },
+    "co2_emission": {
+      "type": "file",
+      "source": "project/input/abattement_curve/co2_content.csv"
+    },
+    "carbon_value": {
+      "type": "file",
+      "source": "project/input/abattement_curve/carbon_value.csv"
+    },
+    "health_cost": {
+      "type": "file",
+      "source": "project/input/abattement_curve/health_cost_decile.csv"
+    },
+    "cost_renovation": {
+      "type": "file",
+      "source": "project/input/abattement_curve/cost_renovation_2012.csv",
+      "index_names": [
+        "Energy performance"
+      ],
+      "columns_names": [
+        "Energy performance final"
+      ]
+    },
+    "cost_switch_fuel": {
+      "type": "file",
+      "source": "project/input/abattement_curve/cost_switch_fuel_2012.csv"
+    },
+    "Household income rate": 0.012,
+    "horizon": 30,
+    "cofp_factor": 0.2,
+    "investment_tax_rate": 0.055,
+    "discount_rate": 0.045,
+    "consumption_type": "actual",
+    "investment_cost_factor": 0.1
+  }
+}

@@ -1,0 +1,8 @@
+﻿Type of mistake,Comments,Status,Date
+Bug,Calibration of the market shares for construction was not considered in the code.,,
+Report,Renovation rates shown in the report do not match the data used in the code,,
+Bug,Renovation rates formula to calculate renovation rate objective was false.,,
+Report,The discount rate displayed in the report does not correspond to the data used in Scilab (C4 collective housing = 5% and not 7% in the report).,,
+Report,The calibration coefficients of the aggregated energy consumption (to match the CEREN data) displayed in the report do not correspond to the data used in Scilab.,,
+Bug,ZIL doesnt' target C building during the calibration year.,,
+Bug,"WHO tax have double count of the tax: once at initialization, again at the renovation stage",,

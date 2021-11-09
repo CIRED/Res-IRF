@@ -38,7 +38,7 @@ reference for most projections of energy consumption in France.
 ```{eval-rst}
 .. csv-table:: Overview of the database
    :name: databases_overview
-   :file: table/databases_overview.csv
+   :file: table/input_2012/databases_overview_2012.csv
    :header-rows: 1
    :stub-columns: 1
 
@@ -48,7 +48,7 @@ reference for most projections of energy consumption in France.
 ```{eval-rst}
 .. csv-table:: Overview of the database content
    :name: databases_overview_content
-   :file: table/databases_overview_content.csv
+   :file: table/input_2012/databases_overview_content_2012.csv
    :header-rows: 1
    :stub-columns: 1
 
@@ -94,7 +94,7 @@ multi-family dwellings) and types of investors (owner-occupied, landlord, social
 ```{eval-rst}
 .. csv-table:: Joint distribution of building and investor characteristics in Res-IRF 3.0
    :name: decision_maker_distribution
-   :file: table/decision_maker_distribution.csv
+   :file: table/input_2012/decision_maker_distribution_phebus.csv
    :header-rows: 1
    :stub-columns: 1
 
@@ -152,7 +152,7 @@ Distribution of income categories within EPC bands. Source: Phébus
 
 ```{eval-rst}
 .. csv-table:: Income categories used in Res-IRF 3.0
-   :file: table/income_categories.csv
+   :file: table/input_2012/income_categories_phebus.csv
    :name: income_categories
    :header-rows: 1
    :stub-columns: 1
@@ -199,7 +199,7 @@ in the model. Model inputs fall into three categories {cite:ps}`brangerGlobalSen
 ```{eval-rst}
 .. csv-table:: Complete list of inputs
    :name: input_list_2012
-   :file: table/input_list_2012.csv
+   :file: table/input_2012/input_list_2012.csv
    :header-rows: 1
    :stub-columns: 1
 ```
@@ -229,7 +229,7 @@ Market shares used to calibrate intangible costs for construction.
 ```{eval-rst}
 .. csv-table:: Market shares of construction in 2012.
    :name: market_share_construction_2012
-   :file: table/ms_construction_ini_2012.csv
+   :file: table/input_2012/ms_construction_ini_2012.csv
    :header-rows: 2
    :stub-columns: 2
 ```
@@ -242,7 +242,7 @@ shares reported here {numref}`market_share_2012`
 ```{eval-rst}
 .. csv-table:: Market shares of energy efficiency upgrades in 2012. Source: PUCA (2015)
    :name: market_share_2012
-   :file: table/ms_renovation_ini_2012.csv
+   :file: table/input_2012/ms_renovation_ini_2012.csv
    :header-rows: 1
    :stub-columns: 1
 ```
@@ -260,7 +260,7 @@ their aggregation represents 3% (686,757 units) of the housing stock of the init
 ```{eval-rst}
 .. csv-table:: Renovation share by energy performance label. Source: PUCA (2015)
    :name: renovation_share_ep_2012
-   :file: table/renovation_share_ep_2012.csv
+   :file: table/input_2012/renovation_share_ep_2012.csv
    :header-rows: 1
    :stub-columns: 1
 ```
@@ -268,7 +268,7 @@ their aggregation represents 3% (686,757 units) of the housing stock of the init
 ```{eval-rst}
 .. csv-table:: Renovation rate by type of dwelling. Source : OPEN (2016) and USH (2017)
    :name: renovation_rate_dm_2012
-   :file: table/renovation_rate_dm_2012.csv
+   :file: table/input_2012/renovation_rate_dm_2012.csv
    :header-rows: 1
    :stub-columns: 1
 ```
@@ -282,7 +282,7 @@ conversion coefficients applied to the Phebus Building Stock are listed in {numr
 ```{eval-rst}
 .. csv-table:: Calibration of total final actual energy consumption
    :name: calibration_energy_2012
-   :file: table/ceren_energy_consumption_2012.csv
+   :file: table/input_2012/ceren_energy_consumption_2012.csv
    :header-rows: 1
    :stub-columns: 1
 ```
@@ -292,7 +292,7 @@ conversion coefficients applied to the Phebus Building Stock are listed in {numr
 ```{eval-rst}
 .. csv-table:: Initial Floor area construction (m2/dwelling)
    :name: area_construction_2012
-   :file: table/area_construction_2012.csv
+   :file: table/input_2012/area_construction_2012.csv
    :header-rows: 1
    :stub-columns: 1
 ```
@@ -300,7 +300,7 @@ conversion coefficients applied to the Phebus Building Stock are listed in {numr
 ```{eval-rst}
 .. csv-table:: Floor area construction elasticity
    :name: area_construction_elasticity_2012
-   :file: table/area_construction_elasticity_2012.csv
+   :file: table/input_2012/area_construction_elasticity_2012.csv
    :header-rows: 1
    :stub-columns: 1
 ```
@@ -308,7 +308,7 @@ conversion coefficients applied to the Phebus Building Stock are listed in {numr
 ```{eval-rst}
 .. csv-table:: Maximum Floor area construction (m2/dwelling)
    :name: area_construction_max_2012
-   :file: table/area_construction_max_2012.csv
+   :file: table/input_2012/area_construction_max_2012.csv
    :header-rows: 1
    :stub-columns: 1
 ```
@@ -317,7 +317,7 @@ conversion coefficients applied to the Phebus Building Stock are listed in {numr
 ```{eval-rst}
 .. csv-table:: Rotation and Mutation rate (%/year)
    :name: rotation_mutation_rate_2012
-   :file: table/rotation_mutation_rate_2012.csv
+   :file: table/input_2012/rotation_mutation_rate_2012.csv
    :header-rows: 1
    :stub-columns: 1
 ```
@@ -327,7 +327,7 @@ conversion coefficients applied to the Phebus Building Stock are listed in {numr
 ```{eval-rst}
 .. csv-table:: Renovation costs used in Res-IRF 3.0 (€/m2). Source: Expert opinion
    :name: cost_renovation_2012
-   :file: table/cost_renovation_2012.csv
+   :file: table/input_2012/cost_renovation_2012.csv
    :header-rows: 1
    :stub-columns: 1
 ```
@@ -340,7 +340,7 @@ model.
 ```{eval-rst}
 .. csv-table:: Switching-fuel costs used in Res-IRF 3.0 (€/m2). Source: Expert opinion
    :name: switching_fuel_cost
-   :file: table/cost_switch_fuel_2012.csv
+   :file: table/input_2012/cost_switch_fuel_2012.csv
    :header-rows: 1
    :stub-columns: 1
 ```
@@ -348,7 +348,7 @@ model.
 ```{eval-rst}
 .. csv-table:: Construction costs (€/m2)
    :name: cost_construction_2012
-   :file: table/cost_construction_2012.csv
+   :file: table/input_2012/cost_construction_2012.csv
    :header-rows: 2
    :stub-columns: 1
 ```
@@ -358,7 +358,7 @@ model.
 ```{eval-rst}
 .. csv-table:: Initial Floor area (m2/dwelling)
    :name: area_existing_2012
-   :file: table/area_existing_2012.csv
+   :file: table/input_2012/area_existing_2012.csv
    :header-rows: 1
    :stub-columns: 1
 ```
@@ -366,7 +366,7 @@ model.
 ```{eval-rst}
 .. csv-table:: Income (€/year)
    :name: income_2012
-   :file: table/income_2012.csv
+   :file: table/input_2012/income_2012.csv
    :header-rows: 1
 ```
 
@@ -375,7 +375,7 @@ model.
 ```{eval-rst}
 .. csv-table:: Discount rates (%/year). Source: Expert opinion
    :name: discount_rate_existing_2012
-   :file: table/discount_rate_existing_2012.csv
+   :file: table/input_2012/discount_rate_existing_2012.csv
    :header-rows: 1
    :stub-columns: 1
 ```
@@ -383,7 +383,7 @@ model.
 ```{eval-rst}
 .. csv-table:: Investment horizon (years). Source: Expert opinion
    :name: investment_horizon_2012
-   :file: table/investment_horizon_2012.csv
+   :file: table/input_2012/investment_horizon_2012.csv
    :header-rows: 1
    :stub-columns: 1
 ```
@@ -395,7 +395,7 @@ discount rate of 7% and a time horizon of 35 years.
 ```{eval-rst}
 .. csv-table:: Discount rates construction (%/year). Source: Expert opinion
    :name: discount_rate_construction_2012
-   :file: table/discount_rate_construction_2012.csv
+   :file: table/input_2012/discount_rate_construction_2012.csv
    :header-rows: 1
    :stub-columns: 1
 ```

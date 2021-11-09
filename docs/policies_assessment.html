@@ -1,0 +1,408 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Policies assessment &mdash; Res-IRF 0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Module" href="modules.html" />
+    <link rel="prev" title="Setting up public policies" href="policies_parameters.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Res-IRF
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="README.html">Res-IRF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LICENSE.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="input_2012.html">Input Res-IRF version 3.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="technical_documentation.html">Technical documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="simulation_2012.html">Simulation and sensitivity analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="policies_parameters.html">Setting up public policies</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Policies assessment</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#general-principles">General principles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#evaluation-indicators">Evaluation Indicators</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#effectiveness">Effectiveness</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#efficiency">Efficiency</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#cost-effectiveness-ce">Cost-Effectiveness (CE)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#leverage-effect-le">Leverage Effect (LE)</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#fuel-poverty">Fuel poverty</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Modification from Res-IRF 3.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="help_installation.html">Installation help</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="future_development.html">Future developments</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Res-IRF</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Policies assessment</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/policies_assessment.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="tex2jax_ignore mathjax_ignore section" id="policies-assessment">
+<h1>Policies assessment</h1>
+<div class="section" id="general-principles">
+<h2>General principles</h2>
+<p>The simulations are based on the following principles:</p>
+<ol class="simple">
+<li><p>All instruments apply from 2012 (except the carbon tax which applies from 2014) and are maintained until 2050; they
+are therefore taken into account in the calibration of the model;</p></li>
+<li><p>The different instruments are fully cumulative with each other;</p></li>
+<li><p>The instruments work at full capacity; in particular, a household that carries out a renovation</p></li>
+<li><p>The instruments work at full capacity; in particular, a household that carries out a renovation receives all the aid
+for which it is eligible;</p></li>
+<li><p>The instruments apply equally to private and social housing<a class="footnote-reference brackets" href="#housing" id="id1">1</a>;</p></li>
+<li><p>Incentives are perfectly passed on to households, without being captured by energy efficiency vendors in the form of
+an increase in the base price; this mechanism is based on an assumption of perfect competition in the energy
+renovation sector (Nauleau et al., 2015). These assumptions are relatively optimistic. As detailed in the paragraphs
+below, however, policy-specific parameterization elements moderate this optimism. More generally, the study aims at
+least as much to qualitatively illustrate the mechanisms by which the different instruments operate as to provide a
+precise quantitative assessment of their impact. Finally, it is important to remember that integrated energy-economy
+modeling aims to understand mechanisms and quantify orders of magnitude rather than to provide precise results - as
+summarized by the formula modeling for insights, not numbers advocated by the Energy Modeling Forum (Huntington et
+al., 1982). In particular, the inaccuracies of the modeling, i.e. the discrepancies that may exist between
+simulations and observations, can be instructive in the sense that they highlight gaps in the knowledge of the
+processes, thus making it possible to orientate the research priorities.</p></li>
+</ol>
+</div>
+<div class="section" id="evaluation-indicators">
+<h2>Evaluation Indicators</h2>
+<p>Version 3.0 of Res-IRF allows for a multi-criteria evaluation of policies. The effectiveness of an intervention -
+instrument or mix of instruments - is assessed as its ability to achieve the objectives assigned to it - in this case,
+the five objectives defined bellow. To this indicator, which was the core of the evaluation conducted in 2011 for the
+CGDD, is now added the efficiency of an intervention, assessed as its capacity to achieve a certain objective at the
+lowest cost. This notion only applies to incentive instruments and therefore not to thermal regulations. Two efficiency
+indicators are calculated: the <strong>cost effectiveness</strong> and the <strong>leverage effect</strong>. Finally, the differentiation of
+households by income category allows us to evaluate the distributional effects.</p>
+<div class="section" id="effectiveness">
+<h3>Effectiveness</h3>
+<p>Evaluating the additional effect of an intervention requires the formulation of a counterfactual scenario, without the
+intervention under consideration. One of the advantages of the Res-IRF modeling architecture is the simplicity with
+which an intervention can be added or removed, facilitating the construction of a counterfactual scenario. An important
+difficulty, however, is that the multiplicity of instruments represented opens the door to a multiplicity of
+counterfactual scenarios. Specifically, within a bundle of n instruments (at a given parameterization), each instrument
+can be evaluated alone, or in interaction with 1 to n - 1 instruments; with n = 6, it is thus possible to simulate 64
+scenarios. In the exercise presented here, four scenarios receive particular attention:</p>
+<ul class="simple">
+<li><p>Trend scenario with all policies (AP): includes all instruments in their default variant. This is the scenario on
+which the model is calibrated at the starting year (2012).</p></li>
+<li><p>Counterfactual scenario without any policies (ZP for “zero policies”): all instruments are removed <a class="footnote-reference brackets" href="#removed" id="id2">2</a>, without
+recalibrating the model. The initial energy consumptions are therefore not the initial energy consumptions are
+therefore not reproduced exactly.</p></li>
+<li><p>Trend scenario + (AP+): includes all instruments in their “+” variant <a class="footnote-reference brackets" href="#variant" id="id3">3</a>.</p></li>
+<li><p>AP scenario without landlord-tenant dilemma (DPL): the behavior of landlords is modelled on that of owner-occupiers (“
+full green value” scenario, <a class="reference internal" href="input_2012.html#investment-horizon-2012"><span class="std std-numref">Table 21</span></a>). This variant aims to quantify the energy savings that
+would be generated by the different instruments if they were perfectly targeted at the rental stock <a class="footnote-reference brackets" href="#stock" id="id4">4</a>.</p></li>
+</ul>
+<p>Among the 64 possible instrument combinations, the additional effect of each policy can be evaluated in 32 different
+ways, depending on the counterfactual situation considered. Two counterfactual situations, obtained by two different
+methods, are of particular interest because they make it possible to limit the impact of each instrument:</p>
+<ul class="simple">
+<li><p>AP-1 method: the AP scenario is compared to an alternative scenario without the instrument considered. The difference
+between the two scenarios gives the impact of the instrument in interaction with all other instruments.</p></li>
+<li><p>ZP+1” method: the ZP scenario is compared to an alternative scenario with the instrument considered. The difference
+between the two scenarios gives the pure impact of the instrument.</p></li>
+</ul>
+<p>For each instrument, the comparison of the impacts obtained by the two methods makes it possible to evaluate the
+importance of its interactions with all the other instruments. Nevertheless, for a better readability of the results, in
+the rest of the documentation the estimates in AP-1 are preferred, which correspond to the counterfactual situation that
+is closest to reality, in the sense that it is based on a minimum of assumptions.</p>
+</div>
+<div class="section" id="efficiency">
+<h3>Efficiency</h3>
+<p>The efficiency of the incentive instruments is evaluated here through the indicators of cost-effectiveness and leverage.
+To estimate the marginal effect of the instrument at a year 𝑡, scenarios with and without the instrument are compared
+at year 𝑡. Since this method is computationally intensive, we limit ourselves to the cut-off points 2015, 2025 and
+2035.</p>
+<div class="section" id="cost-effectiveness-ce">
+<h4>Cost-Effectiveness (CE)</h4>
+<p>The cost-effectiveness indicator relates the costs of the incentive to its effectiveness measured in terms of energy
+savings. The cost considered corresponds to the tax expenditure in the case of subsidies and the tax revenue in the case
+of the tax (i.e., negative cost). The indicator is calculated here in conventional and real energy. The “conventional
+energy” metric makes it possible to avoid the heterogeneous behavioral effects between households, which vary greatly
+from one year to the next with short-term fluctuations in energy prices. Compared to the “real energy” metric, it leads
+to an overestimation of the effectiveness of subsidies by ignoring the rebound effect they generate, and to an
+underestimation of the effectiveness of energy taxes, which on the contrary induce a sobriety effect. The two metrics
+should produce similar results for WHO, a hybrid instrument. To calculate the cost-effectiveness indicator <span class="math notranslate nohighlight">\(CE\)</span>, the
+energy savings <span class="math notranslate nohighlight">\(\Delta E_{t}\)</span> between the scenarios with the incentive present or absent at year <span class="math notranslate nohighlight">\(t\)</span> (but in both cases
+present until year <span class="math notranslate nohighlight">\(t-1\)</span>) are compared, applying a discount factor DF:</p>
+<div class="math notranslate nohighlight">
+\[CE_{t} = \frac{\text{Incitation}_{t}}{\Delta E_{t} DF}\]</div>
+<p>Using a discount rate of 4% and a lifetime of 26 years, which corresponds to the average of the operations carried out
+in the framework of the WHO on the residential building perimeter, the factor <span class="math notranslate nohighlight">\(DT\)</span> is taken to be equal to 16.6.</p>
+</div>
+<div class="section" id="leverage-effect-le">
+<h4>Leverage Effect (LE)</h4>
+<p>The leverage effect LE relates the effectiveness of the instrument, measured in terms of capital expenditure, to the
+cost of the incentive. A leverage effect equal to 1 implies that one euro of public money (grant expenditure or tax
+revenue) induces an additional investment of one euro. The leverage effect synthesizes several effects, and its value
+will depend on the relative share of “additional” and “non-additional” participants:</p>
+<ul class="simple">
+<li><p>The incentive benefits “additional” participants, who would not have invested without it. For these individuals, the
+leverage effect is much greater than 1, since the subsidy is literally the trigger for investment. For example, a 10%
+grant results in a leverage effect equal to 10 - a €100 investment is triggered by a €10 grant.</p></li>
+<li><p>The incentive also benefits (and, in our modeling, fully benefits) “non-additional” (“infra-marginal” in economic
+terms) participants, who would have invested without the incentive. While this effect is usually referred to as a “
+dead weight loss”, it is not a pure loss in our model as participants adjust their investment choices towards more
+costly options in response to the incentive. Because non-additional participants have heterogeneous preferences, the
+leverage effect may be greater than one for some and close to zero for others.</p></li>
+</ul>
+<p>The formula used applies to all participants and relates the cost of the incentive to the surplus of investment
+<span class="math notranslate nohighlight">\(\Delta Inv_{t}\)</span> induced by the policy, measured as the difference between two scenarios with the incentive absent or
+present at year <span class="math notranslate nohighlight">\(t\)</span>, but in both cases present until year <span class="math notranslate nohighlight">\(t - 1\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[EL_{t} = \frac{\Delta Inv_{t}}{\text{Incitation}_{t}}\]</div>
+</div>
+</div>
+<div class="section" id="fuel-poverty">
+<h3>Fuel poverty</h3>
+<p>Fuel poverty is measured according to the energy effort rate (EER) indicator that has been a reference in Europe in
+recent years (Hills, 2012, p.30), counting the number of households that spend more than 10% of their income on energy
+expenses for heating, measured in relation to conventional energy consumption, given in France by the 3CL method of the
+DPE. This indicator covers 2.7 million households in 2012. For comparison, the Observatoire de la précarité
+énergétique (ONPE, 2016) counts 2.8 million households according to a similar indicator but applied to actual energy
+consumption and restricted to the first three deciles of the income distribution. In the present exercise, we favor the
+conventional consumption indicator, on the grounds that the actual consumption indicator would not account for certain
+restrictions in heating behavior that nevertheless constitute a form of fuel poverty. In complement, one can also
+examine how the intensity of heating system use, which reflects indoor comfort, varies with income category. This
+indicator can be interpreted as an indirect measure of the ONPE’s subjective cold indicator (FR).</p>
+<hr class="footnotes docutils" />
+<dl class="footnote brackets">
+<dt class="label" id="housing"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
+<dd><p>This hypothesis is particularly optimistic, since in practice the social housing stock is only concerned by
+the CEE and the VATr. However, it has little influence, as shown by the results presented below through the low
+sensitivity of the renovation of social housing to the level of aid.</p>
+</dd>
+<dt class="label" id="removed"><span class="brackets"><a class="fn-backref" href="#id2">2</a></span></dt>
+<dd><p>Except for the reduced VAT rate, which is replaced by the standard 10% VAT rate.</p>
+</dd>
+<dt class="label" id="variant"><span class="brackets"><a class="fn-backref" href="#id3">3</a></span></dt>
+<dd><p>This scenario leads, at the beginning of the period, to a few situations where households occupying housing
+classified as G or F receive a total subsidy of more than 100%.</p>
+</dd>
+<dt class="label" id="stock"><span class="brackets"><a class="fn-backref" href="#id4">4</a></span></dt>
+<dd><p>This implies an increased promotion of the various aids to landlords and a specific accompaniment of the work.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="modules.html" class="btn btn-neutral float-right" title="Module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="policies_parameters.html" class="btn btn-neutral float-left" title="Setting up public policies" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Lucas Vivier.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

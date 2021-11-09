@@ -37,8 +37,7 @@ __status__ = "Production"
 
 
 def model_launcher(path=None):
-    """
-    Set up folders and run Res-IRF based on config_files.
+    """Set up folders and run Res-IRF based on config_files.
 
     Function enables multiprocessing run.
 

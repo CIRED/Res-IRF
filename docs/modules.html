@@ -42,8 +42,8 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Additional information" href="help_installation.html" />
-    <link rel="prev" title="Influence of input variables" href="simulation_2012.html" /> 
+    <link rel="next" title="Modification from Res-IRF 3.0" href="changelog.html" />
+    <link rel="prev" title="Policies assessment" href="policies_assessment.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -94,9 +94,12 @@
 <li class="toctree-l1"><a class="reference internal" href="LICENSE.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="input_2012.html">Input Res-IRF version 3.0</a></li>
 <li class="toctree-l1"><a class="reference internal" href="technical_documentation.html">Technical documentation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="simulation_2012.html">Influence of input variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="simulation_2012.html">Simulation and sensitivity analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="policies_parameters.html">Setting up public policies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="policies_assessment.html">Policies assessment</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="help_installation.html">Additional information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Modification from Res-IRF 3.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="help_installation.html">Installation help</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="future_development.html">Future developments</a></li>
 </ul>
@@ -195,104 +198,13 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="buildings.HousingStock">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">buildings.</span></span><span class="sig-name descname"><span class="pre">HousingStock</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stock</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attributes_values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2018</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attributes2area</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attributes2horizon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attributes2discount</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attributes2income</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attributes2consumption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">price_behavior</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'myopic'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwh_cumac_transition</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span></dt>
-<dd><p>Multi-attributes, dynamic housing stocks.</p>
+<dd><p>Multi-attributes, dynamic housing stock.</p>
 <p>HousingStock contains multiple agents. An agent is defined as the combination of a building, an owner and a tenant.
 Specific agent behavior are declared as method.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="buildings.HousingStock.stock">
-<span class="sig-name descname"><span class="pre">stock</span></span></dt>
-<dd><p>MultiIndex pd.Series that contains the number of archetypes by attributes</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>pd.Series</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="buildings.HousingStock.attributes2area">
-<span class="sig-name descname"><span class="pre">attributes2area</span></span></dt>
-<dd><p>pd.Series that returns area (m2) of the building based on archetypes attribute</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>pd.Series</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="buildings.HousingStock.attributes2horizon">
-<span class="sig-name descname"><span class="pre">attributes2horizon</span></span></dt>
-<dd><p>pd.Series that returns investment horizon (yrs) of the building owner based on archetypes attribute</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>pd.Series</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="buildings.HousingStock.attributes2discount">
-<span class="sig-name descname"><span class="pre">attributes2discount</span></span></dt>
-<dd><p>pd.Series that returns discount rate (%/yr) of the building owner based on archetypes attribute</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>pd.Series</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="buildings.HousingStock.attributes2income">
-<span class="sig-name descname"><span class="pre">attributes2income</span></span></dt>
-<dd><p>pd.Series that returns income (euro/yr) of the building owner based on archetypes attribute</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>pd.Series</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="buildings.HousingStock.attributes2consumption">
-<span class="sig-name descname"><span class="pre">attributes2consumption</span></span></dt>
-<dd><p>pd.Series that returns conventional consumption (kWh/m2.yr) of the building based on archetypes attribute</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>pd.Series</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="buildings.HousingStock.acceleration_information">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">acceleration_information</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">knowledge</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_intangible</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">learning_rate</span></span></em><span class="sig-paren">)</span></dt>
-<dd><p>Decrease intangible cost to capture peer effects and knowledge diffusion.</p>
-<p>Intangible renovation costs decrease according to a logistic curve with the same cumulative production so as
-to capture peer effects and knowledge diffusion.
-The rate of decrease (learning_rate) is set at 25% for a doubling of cumulative production.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>knowledge</strong> (<em>pd.Series</em>) – knowledge indexes match cost columns to reach final state after transition</p></li>
-<li><p><strong>cost_intangible</strong> (<em>pd.DataFrame</em>) – </p></li>
-<li><p><strong>info_max</strong> (<em>float</em>) – </p></li>
-<li><p><strong>learning_rate</strong> (<em>float</em>) – </p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>cost_intangible</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>pd.DataFrame</p>
-</dd>
-</dl>
-</dd></dl>
-
 <dl class="py method">
 <dt class="sig sig-object py" id="buildings.HousingStock.add_flow">
 <span class="sig-name descname"><span class="pre">add_flow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flow</span></span></em><span class="sig-paren">)</span></dt>
-<dd><p>Add flow to stock property.</p>
+<dd><p>Add flow to stock attribute object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>flow</strong> (<em>pd.Series</em>) – Attributes indexed flow to be added to stock.</p>
@@ -304,7 +216,7 @@ The rate of decrease (learning_rate) is set at 25% for a doubling of cumulative 
 <dt class="sig sig-object py" id="buildings.HousingStock.add_tenant_income">
 <em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">add_tenant_income</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">building_stock</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tenant_income</span></span></em><span class="sig-paren">)</span></dt>
 <dd><p>Add Income class level to stock using information of tenant income.</p>
-<p>Homeowners and Social-housing tenant and owner income class are the same.</p>
+<p>Homeowners and social-housing tenant and owner income class are the same.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -324,20 +236,31 @@ The rate of decrease (learning_rate) is set at 25% for a doubling of cumulative 
 <dl class="py method">
 <dt class="sig sig-object py" id="buildings.HousingStock.calibration_market_share">
 <span class="sig-name descname"><span class="pre">calibration_market_share</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy_prices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">market_share_ini</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_invest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'conventional'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subsidies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span></dt>
-<dd><p>Returns intangible costs by calibrating market_share.</p>
-<p>Intangible costs are calibrated so that the observed market shares are reproduced in the initial year.
-Intangible costs are calibrated so that the life-cycle cost model, fed with the investment costs,
-matches the observed market shares.</p>
-<p>For each segment:
-LCC final is calculated (depends on Occupancy status, Housing type, Income class owner,
-Energy performance initial, Heating energy initial, transition), then Market Share.
-transition here is Energy performance
-NB: MS doesn’t depend on Income class (tenant), so to fasten the function it can be first removed.
-Solver finds Intangible cost for each segment to match the observed market share.
-–&gt; Intangible cost(Occupancy status, Housing type, Income class owner, Energy performance initial,
-Heating energy initial, Energy performance final)
-NB: Observed market share only depends on Energy performance initial and Energy performance final.
-Each segment with the same performance transition need to match the same observed market shares.</p>
+<dd><p>Calculate intangible costs by calibrating market_share.</p>
+<p>Solving the equations system:
+Intangible costs are calibrated so that the life-cycle cost model, fed with the investment costs, matches the
+observed market shares in the initial year. However, infinite sets of intangible costs can be found to reproduce
+the relative market shares. In other words the equation system is under-determined and must be solved with an
+additional condition. Accordingly, intangible costs are calibrated by incorporating one equation controlling for
+λ, the ratio of average intangible costs over average life cycle costs. Parameter λ is set as the minimum value
+for which the system can be solved from 0.15 to 0.6 (exogenous limits). The equation system is independent per
+agent and should solve for a given lambda per agent. Another constraint imposes that the agents sharing the same
+initial performance state find the same lambda.</p>
+<p>From aggregated observed market share to agent-based:
+Intangible costs could be calculated for every agent as LCC depends on every attributes. However, the
+observed market share represents the average values over Energy performance initial and final dimensions.
+Function defined various way to solve this representation issue:
+- Each agent got its own intangible costs to match the observed market share. Regardless of the technical and
+behavioral characteristics of the agents, their market share will be identical as long as they start and end at
+the same level of energy performance. (option 0)
+- Intangible cost is aggregated to reflect the average initial market share. Each agents group share the same
+intangible costs to match the observed market share. It shows diversity among agents initial market share to
+reflect different technical and behavioral characteristics. Concretely the aggregation of the data is done by a
+weighted average of the distribution of the households. (option 1)
+- Intangible cost are aggregated over the Heating energy dimension thanks a representative agent of all heating
+energy. This solution has been implemented to match previous version of Res-IRF. (option 2)
+- Not implemented: another way would be to calibrate the intangible cost by calculating life-cycle cost for
+a representative agent.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -353,8 +276,7 @@ Each segment with the same performance transition need to match the same observe
 This option allows some diversity in the calculated market share between member of each group.</p>
 </dd>
 </dl>
-<p>2: intangible cost is aggregated on heating energy level (what was done before)
-3:</p>
+<p>2: intangible cost is aggregated on heating energy level (what was done before)</p>
 </p></li>
 </ul>
 </dd>
@@ -371,12 +293,12 @@ This option allows some diversity in the calculated market share between member 
 <dl class="py method">
 <dt class="sig sig-object py" id="buildings.HousingStock.data2area">
 <em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">data2area</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">l2area</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ds_seg</span></span></em><span class="sig-paren">)</span></dt>
-<dd><p>Multiply unitary measured data to surface data.</p>
+<dd><p>Multiply unitary measured data by surface data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>l2area</strong> (<em>pd.Series</em>) – Attributes indexed data surface.</p></li>
-<li><p><strong>ds_seg</strong> (<em>pd.Series</em><em> or </em><em>pd.DataFrame</em>) – Attributes indexed data.</p></li>
+<li><p><strong>ds_seg</strong> (<em>pd.Series</em><em> or </em><em>pd.DataFrame</em>) – Attributes indexed data to be multiplied by data area.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -391,13 +313,14 @@ This option allows some diversity in the calculated market share between member 
 <dl class="py method">
 <dt class="sig sig-object py" id="buildings.HousingStock.energy_expenditure">
 <span class="sig-name descname"><span class="pre">energy_expenditure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy_price</span></span></em><span class="sig-paren">)</span></dt>
-<dd><p>Calculate energy expenditure for current year.</p>
+<dd><p>Calculate total energy expenditure (€) by agent for current year.</p>
+<p>€ = €/kWh x kWh/m2 x m2/building x buildings</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>energy_price</strong> (<em>pd.Series</em><em> or </em><em>pd.DataFrame</em>) – </p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
+<dd class="field-even"><p>Total energy expenditure by agent.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>pd.Series</p>
@@ -406,9 +329,37 @@ This option allows some diversity in the calculated market share between member 
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="buildings.HousingStock.information_acceleration">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">information_acceleration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">knowledge</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_intangible</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">share</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">learning_rate</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Decrease intangible cost to capture peer effects and knowledge diffusion.</p>
+<p>Intangible renovation costs decrease according to a logistic curve with the same cumulative production so as
+to capture peer effects and knowledge diffusion.
+The rate of decrease (learning_rate) is set at 25% of non-fixed share for a doubling of cumulative production.</p>
+<p>Res-IRF splits intangible costs into a fixed share <cite>share</cite> mimicking hidden costs, and a variable share
+1−`share` mimicking adoption externalities. Note that the value of <cite>share</cite> is fraught with uncertainty, due to
+the upstream problem of empirically separating the different types of barriers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>knowledge</strong> (<em>pd.Series</em>) – Knowledge indexes should match cost columns.</p></li>
+<li><p><strong>cost_intangible</strong> (<em>pd.DataFrame</em>) – </p></li>
+<li><p><strong>share</strong> (<em>float</em>) – Share of fixed intangible costs.</p></li>
+<li><p><strong>learning_rate</strong> (<em>float</em>) – Rate of decrease of non-fixed share for a doubling of cumulative production.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>cost_intangible</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="buildings.HousingStock.information_rate">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">information_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">knowledge</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">learning_rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span></dt>
-<dd><p>Returns information rate.</p>
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">information_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">knowledge</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">learning_rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">share</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Returns information rate that capture peer effects and knowledge diffusion.</p>
 <p>More info_rate is high, more intangible_cost are low.
 Intangible renovation costs decrease according to a logistic curve with the same cumulative
 production so as to capture peer effects and knowledge diffusion.
@@ -418,9 +369,9 @@ production.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>knowledge</strong> (<em>pd.Series</em>) – knowledge indexes match cost columns to reach final state after transition</p></li>
-<li><p><strong>info_max</strong> (<em>float</em>) – </p></li>
-<li><p><strong>learning_rate</strong> (<em>float</em>) – </p></li>
+<li><p><strong>knowledge</strong> (<em>pd.Series</em>) – Knowledge indexes match cost columns to reach final state after transition.</p></li>
+<li><p><strong>share</strong> (<em>float</em>) – Share of non-fixed costs.</p></li>
+<li><p><strong>learning_rate</strong> (<em>float</em>) – Rate of decrease of non-fixed share for a doubling of cumulative production.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -461,7 +412,7 @@ Initialized by launching self.to_consumption_actual(energy_price)
 <dl class="py method">
 <dt class="sig sig-object py" id="buildings.HousingStock.initial2final">
 <em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">initial2final</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_full</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transition</span></span></em><span class="sig-paren">)</span></dt>
-<dd><p>Catch final state segment values as the initial state of another segment.</p>
+<dd><p>Catch final state agent values as the initial state of another agent.</p>
 <p>When a segment final state match another segment initial state,
 it’s therefore fasten to directly catch the value.</p>
 <dl class="field-list simple">
@@ -548,9 +499,29 @@ The rate of cost reduction is set at 15% in new construction and 10% in renovati
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="buildings.HousingStock.to_area">
+<span class="sig-name descname"><span class="pre">to_area</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scenario</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">segments</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Returns area by agent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>segments</strong> (<em>pd.MultiIndex</em><em>, </em><em>optional</em>) – Indexed used to reindex data. Default building stock indexes.</p></li>
+<li><p><strong>scenario</strong> (<em>str</em><em>, </em><em>optional</em>) – Scenario needs to be specified if attributes2income is a dictionary.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Area by agent.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.Series</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="buildings.HousingStock.to_consumption">
 <span class="sig-name descname"><span class="pre">to_consumption</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">consumption</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">segments</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">energy_prices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span></dt>
-<dd><p>Returns consumption conventional or actual based on consumption parameter.</p>
+<dd><p>Returns conventional or actual energy consumption.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -559,13 +530,19 @@ The rate of cost reduction is set at 15% in new construction and 10% in renovati
 <li><p><strong>energy_prices</strong> (<em>pd.DataFrame</em><em>, </em><em>optional</em>) – </p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Conventional or actual energy consumption.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.Series or pd.DataFrame</p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="buildings.HousingStock.to_consumption_actual">
 <span class="sig-name descname"><span class="pre">to_consumption_actual</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy_prices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detailed_output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">segments</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span></dt>
-<dd><p>Return energy consumption for every segment and all years.</p>
+<dd><p>Returns actual energy consumption by agent and years.</p>
 <p>A growing number of academic studies point to a gap between the conventional energy consumption predicted
 by energy performance certificates and actual energy consumption.
 The most common explanation is a more intense heating of the heating infrastructure after an energy efficiency
@@ -576,11 +553,11 @@ improvement – a phenomenon commonly referred to as the “rebound effect.”</
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>energy_prices</strong> (<em>pd.DataFrame</em>) – </p></li>
 <li><p><strong>detailed_output</strong> (<em>boolean</em><em>, </em><em>default False</em>) – </p></li>
-<li><p><strong>segments</strong> (<em>pd.Index</em><em>, </em><em>optional</em>) – If segments is not filled, use self.segments.</p></li>
+<li><p><strong>segments</strong> (<em>pd.Index</em><em>, </em><em>optional</em>) – Indexed used to reindex data. Default building stock indexes.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>consumption_actual (rows: segments, columns: years)</p>
+<dd class="field-even"><p>Actual energy consumption by agent and years.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>pd.DataFrame</p>
@@ -589,26 +566,94 @@ improvement – a phenomenon commonly referred to as the “rebound effect.”</
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="buildings.HousingStock.to_consumption_conventional">
+<span class="sig-name descname"><span class="pre">to_consumption_conventional</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scenario</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">segments</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Returns conventional energy consumption by agent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>segments</strong> (<em>pd.MultiIndex</em><em>, </em><em>optional</em>) – Indexed used to reindex data. Default building stock indexes.</p></li>
+<li><p><strong>scenario</strong> (<em>str</em><em>, </em><em>optional</em>) – Scenario needs to be specified if attributes2income is a dictionary.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Conventional energy consumption by agent.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.Series</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="buildings.HousingStock.to_consumption_final">
+<span class="sig-name descname"><span class="pre">to_consumption_final</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">consumption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'conventional'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transition</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Returns conventional or actual energy consumption by agent for all possible final state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>consumption</strong> (<em>str</em><em>, </em><em>{'conventional'</em><em>, </em><em>'actual'}</em>) – </p></li>
+<li><p><strong>transition</strong> (<em>list</em><em>, </em><em>default</em><em> [</em><em>'Energy performance'</em><em>, </em><em>'Heating energy'</em><em>]</em>) – Transition defined possible final states.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Conventional or actual energy consumption by agent and</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.Series or pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="buildings.HousingStock.to_discount_factor">
 <span class="sig-name descname"><span class="pre">to_discount_factor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scenario_horizon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scenario_discount</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">segments</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span></dt>
-<dd><p>Calculate discount factor for all segments.</p>
+<dd><p>Calculate discount factor by agent.</p>
 <p>Discount factor can be used when agents doesn’t anticipate prices evolution.
 Discount factor does not depend on the year it is calculated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Discount factor by agent</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>pd.Series</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="buildings.HousingStock.to_discount_rate">
+<span class="sig-name descname"><span class="pre">to_discount_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scenario</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">segments</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Returns discount rate by agent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>segments</strong> (<em>pd.MultiIndex</em><em>, </em><em>optional</em>) – Indexed used to reindex data. Default building stock indexes.</p></li>
+<li><p><strong>scenario</strong> (<em>str</em><em>, </em><em>optional</em>) – Scenario needs to be specified if attributes2income is a dictionary.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Discount rate by agent.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.Series</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="buildings.HousingStock.to_discounted">
 <em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">to_discounted</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rate</span></span></em><span class="sig-paren">)</span></dt>
-<dd><p>Returns discounted DataFrame from DataFrame.</p>
+<dd><p>Returns discounted DataFrame from DataFrame and discount rate.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df</strong> (<em>pd.DataFrame</em>) – </p></li>
-<li><p><strong>rate</strong> (<em>float</em><em> or </em><em>pd.Series</em>) – </p></li>
+<li><p><strong>df</strong> (<em>pd.DataFrame</em>) – Time series data by agent. Agents are in row and years in columns.</p></li>
+<li><p><strong>rate</strong> (<em>float</em><em> or </em><em>pd.Series</em>) – Discount rate constant or by agent.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
+<dd class="field-even"><p>Discounted data. Agents are in row and years in columns.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>pd.DataFrame</p>
@@ -619,7 +664,7 @@ Discount factor does not depend on the year it is calculated.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="buildings.HousingStock.to_emission_saving">
 <span class="sig-name descname"><span class="pre">to_emission_saving</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">co2_content</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transition</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'conventional'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">energy_prices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span></dt>
-<dd><p>Calculate emission saving between initial and final state.</p>
+<dd><p>Calculate emission saving by agent between initial and all possible final state.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -630,10 +675,10 @@ Discount factor does not depend on the year it is calculated.</p>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>{transition: {consumption: pd.Series or pd.DataFrame}}</p>
+<dd class="field-even"><p>Conventional or actual energy saving by agent.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>dict</p>
+<dd class="field-odd"><p>pd.Series or pd.DataFrame</p>
 </dd>
 </dl>
 </dd></dl>
@@ -654,10 +699,10 @@ Discount factor does not depend on the year it is calculated.</p>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>{transition: {consumption: pd.Series}}</p>
+<dd class="field-even"><p>Conventional or actual emission saving by agent.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>dict</p>
+<dd class="field-odd"><p>pd.Series or pd.DataFrame</p>
 </dd>
 </dl>
 </dd></dl>
@@ -665,23 +710,20 @@ Discount factor does not depend on the year it is calculated.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="buildings.HousingStock.to_energy_lcc">
 <span class="sig-name descname"><span class="pre">to_energy_lcc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy_prices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transition</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'conventional'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">segments</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span></dt>
-<dd><p>Return segmented energy-life-cycle-cost discounted from segments, and energy prices year=yr.</p>
-<p>Energy LCC is calculated on an segment-specific horizon, and using a segment-specific discount rate.
-Because, time horizon depends of type of renovation (attributes, or heating energy), lcc needs to know which transition.
-NB: transition defined the investment horizon.
-Energy LCC depends on (Occupancy status, Housing type, Income class owner, Energy performance, Heating energy,
-and transition).</p>
+<dd><p>Return energy-life-cycle-cost discounted by agents, and energy prices.</p>
+<p>Energy LCC is calculated on an agent-specific horizon, and discount rate.
+Time horizon depends on transition (transition defined the investment horizon).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>energy_prices</strong> (<em>pd.DataFrame</em>) – </p></li>
 <li><p><strong>transition</strong> (<em>list</em><em>, </em><em>default</em><em> [</em><em>'Energy performance'</em><em>]</em>) – </p></li>
 <li><p><strong>consumption</strong> (<em>str</em><em>, </em><em>{'conventional'</em><em>, </em><em>'actual}</em><em>, </em><em>default 'conventional'</em>) – </p></li>
-<li><p><strong>segments</strong> (<em>pd.Index</em><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>segments</strong> (<em>pd.MultiIndex</em><em>, </em><em>optional</em>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
+<dd class="field-even"><p>Energy-life-cycle-cost discounted by agents.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>pd.Series</p>
@@ -696,13 +738,33 @@ and transition).</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="buildings.HousingStock.to_energy_saving_lc">
-<span class="sig-name descname"><span class="pre">to_energy_saving_lc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transition</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'conventional'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">discount</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.04</span></span></em><span class="sig-paren">)</span></dt>
-<dd><p>Calculate life-cycle energy saving between initial and final state for the entire project duration.</p>
+<dt class="sig sig-object py" id="buildings.HousingStock.to_energy_saving">
+<span class="sig-name descname"><span class="pre">to_energy_saving</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transition</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'conventional'</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Calculate energy saving by agent between initial and all possible final state.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>transition</strong> (<em>{</em><em>(</em><em>Energy performance</em><em>, </em><em>)</em><em>, </em><em>(</em><em>Heating energy</em><em>, </em><em>)</em><em>, </em><em>(</em><em>Energy performance</em><em>, </em><em>Heating energy</em><em>)</em>) – </p></li>
+<li><p><strong>transition</strong> (<em>list</em><em>, </em><em>default</em><em> [</em><em>'Energy performance'</em><em>, </em><em>'Heating energy'</em><em>]</em>) – Transition defined possible final states.</p></li>
+<li><p><strong>consumption</strong> (<em>str</em><em>, </em><em>{'conventional'</em><em>, </em><em>'actual'}</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Conventional or actual energy saving by agent.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.Series or pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="buildings.HousingStock.to_energy_saving_lc">
+<span class="sig-name descname"><span class="pre">to_energy_saving_lc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transition</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'conventional'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">discount</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.04</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Calculate life-cycle energy saving between initial and all possible final state for the entire project duration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>transition</strong> (<em>{</em><em>(</em><em>Energy performance</em><em>, </em><em>)</em><em>, </em><em>(</em><em>Heating energy</em><em>, </em><em>)</em><em>, </em><em>(</em><em>Energy performance</em><em>, </em><em>Heating energy</em><em>)</em>) – Transition defined possible final states.</p></li>
 <li><p><strong>consumption</strong> (<em>{'conventional'</em><em>, </em><em>'actual'}</em>) – </p></li>
 <li><p><strong>discount</strong> (<em>float</em><em>, </em><em>default 0.04</em>) – </p></li>
 </ul>
@@ -719,7 +781,8 @@ and transition).</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="buildings.HousingStock.to_final">
 <span class="sig-name descname"><span class="pre">to_final</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transition</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">segments</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span></dt>
-<dd><p>Returns pd.DataFrame</p>
+<dd><p>Returns final state value index by columns and by initial state agent.</p>
+<p>For transition attributes, initial state doesn’t influence results.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -738,9 +801,9 @@ and transition).</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="buildings.HousingStock.to_income">
-<span class="sig-name descname"><span class="pre">to_income</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scenario</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">segments</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span></dt>
-<dd><p>Returns indexed income (surface).</p>
+<dt class="sig sig-object py" id="buildings.HousingStock.to_horizon">
+<span class="sig-name descname"><span class="pre">to_horizon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scenario</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">segments</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Returns investment horizon by agent.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -749,10 +812,30 @@ and transition).</p>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Annual income indexed data based on segments pd.MultiIndex.</p>
+<dd class="field-even"><p>Investment horizon by agent.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>pd.Series or pd.DataFrame</p>
+<dd class="field-odd"><p>pd.Series</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="buildings.HousingStock.to_income">
+<span class="sig-name descname"><span class="pre">to_income</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scenario</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">segments</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Returns annual income by agent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>segments</strong> (<em>pd.MultiIndex</em><em>, </em><em>optional</em>) – Indexed used to reindex data. Default building stock indexes.</p></li>
+<li><p><strong>scenario</strong> (<em>str</em><em>, </em><em>optional</em>) – Scenario needs to be specified if attributes2income is a dictionary.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Annual income by agent.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.Series</p>
 </dd>
 </dl>
 </dd></dl>
@@ -760,7 +843,7 @@ and transition).</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="buildings.HousingStock.to_io_share_seg">
 <span class="sig-name descname"><span class="pre">to_io_share_seg</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
-<dd><p>Calculate share of attributes by income class owner.</p>
+<dd><p>Calculate attributes share by income class owner.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p></p>
@@ -847,7 +930,7 @@ Intangible costs are calibrated so that the observed market shares are reproduce
 <dl class="py method">
 <dt class="sig sig-object py" id="buildings.HousingStock.to_stock_area">
 <span class="sig-name descname"><span class="pre">to_stock_area</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scenario</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">segments</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span></dt>
-<dd><p>Returns indexed area (surface) of current building stock.</p>
+<dd><p>Returns area (surface) of current building stock by agent.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -856,10 +939,10 @@ Intangible costs are calibrated so that the observed market shares are reproduce
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Area indexed data based on segments pd.MultiIndex.</p>
+<dd class="field-even"><p>Area by agent.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>pd.Series or pd.DataFrame</p>
+<dd class="field-odd"><p>pd.Series</p>
 </dd>
 </dl>
 </dd></dl>
@@ -871,7 +954,7 @@ Intangible costs are calibrated so that the observed market shares are reproduce
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df</strong> (<em>pd.DataFrame</em>) – pd.MultiIndex as index, and years as columns.</p></li>
+<li><p><strong>df</strong> (<em>pd.DataFrame</em>) – Agents are in row and years in columns.</p></li>
 <li><p><strong>yr_ini</strong> (<em>int</em>) – </p></li>
 <li><p><strong>horizon</strong> (<em>pd.Series</em>) – pd.MultiIndex as index</p></li>
 </ul>
@@ -888,7 +971,7 @@ Intangible costs are calibrated so that the observed market shares are reproduce
 <dl class="py method">
 <dt class="sig sig-object py" id="buildings.HousingStock.to_transition">
 <span class="sig-name descname"><span class="pre">to_transition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transition</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span></dt>
-<dd><p>Returns pd.DataFrame from pd.Series by adding final state as column.</p>
+<dd><p>Returns pd.DataFrame from pd.Series by adding final state as column with same value.</p>
 <p>Create a MultiIndex columns when it occurs simultaneous transitions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2140,8 +2223,8 @@ If option = ‘column’, return pd DataFrame with levels in index. Sum of each 
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="help_installation.html" class="btn btn-neutral float-right" title="Additional information" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="simulation_2012.html" class="btn btn-neutral float-left" title="Influence of input variables" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="changelog.html" class="btn btn-neutral float-right" title="Modification from Res-IRF 3.0" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="policies_assessment.html" class="btn btn-neutral float-left" title="Policies assessment" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>

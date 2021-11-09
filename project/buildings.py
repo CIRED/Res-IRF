@@ -7,26 +7,10 @@ from utils import reindex_mi, val2share, logistic, get_levels_values, remove_row
 
 
 class HousingStock:
-    """
-    Multi-attributes, dynamic housing stocks.
+    """Multi-attributes, dynamic housing stock.
 
     HousingStock contains multiple agents. An agent is defined as the combination of a building, an owner and a tenant.
     Specific agent behavior are declared as method.
-
-    Attributes
-    ----------
-    stock : pd.Series
-        MultiIndex pd.Series that contains the number of archetypes by attributes
-    attributes2area : pd.Series
-        pd.Series that returns area (m2) of the building based on archetypes attribute
-    attributes2horizon : pd.Series
-        pd.Series that returns investment horizon (yrs) of the building owner based on archetypes attribute
-    attributes2discount : pd.Series
-        pd.Series that returns discount rate (%/yr) of the building owner based on archetypes attribute
-    attributes2income : pd.Series
-        pd.Series that returns income (euro/yr) of the building owner based on archetypes attribute
-    attributes2consumption : pd.Series
-        pd.Series that returns conventional consumption (kWh/m2.yr) of the building based on archetypes attribute
     """
 
     def __init__(self, stock, attributes_values,
@@ -38,26 +22,25 @@ class HousingStock:
                  attributes2consumption=None,
                  price_behavior='myopic',
                  kwh_cumac_transition=None):
-        """
-        Initialize Housing Stock object.
+        """Initialize HousingStock object.
 
         Parameters
         ----------
         stock : pd.Series
             MultiIndex levels describing buildings attributes. Values are number of buildings.
-        attributes_values: dict
-            possible values for levels
+        attributes_values : dict
+            Possible values for building attributes.
         year: int
-        attributes2area: float, pd.Series, pd.DataFrame, dict, optional
-            area by segments
-        attributes2horizon: float, pd.Series, pd.DataFrame, dict, optional
-            investment horizon by segments
-        attributes2discount: float, pd.Series, pd.DataFrame, dict, optional
-            interest rate by segments
-        attributes2income: float, pd.Series, pd.DataFrame, dict, optional
-            income by segments
-        attributes2consumption: float, pd.Series, pd.DataFrame, dict, optional
-            consumption by segments
+        attributes2area : float, pd.Series, pd.DataFrame, dict, optional
+            Area by agent attributes.
+        attributes2horizon : float, pd.Series, pd.DataFrame, dict, optional
+            Investment horizon by agent attributes.
+        attributes2discount : float, pd.Series, pd.DataFrame, dict, optional
+            Interest rate by agent attributes.
+        attributes2income : float, pd.Series, pd.DataFrame, dict, optional
+            Income by agent attributes.
+        attributes2consumption : float, pd.Series, pd.DataFrame, dict, optional
+            Consumption by agent attributes.
         """
 
         self._year = year
@@ -164,15 +147,14 @@ class HousingStock:
 
     @staticmethod
     def data2area(l2area, ds_seg):
-        """
-        Multiply unitary measured data to surface data.
+        """Multiply unitary measured data by surface data.
 
         Parameters
         ----------
-        l2area: pd.Series
+        l2area : pd.Series
             Attributes indexed data surface.
-        ds_seg: pd.Series or pd.DataFrame
-            Attributes indexed data.
+        ds_seg : pd.Series or pd.DataFrame
+            Attributes indexed data to be multiplied by data area.
 
         Returns
         -------
@@ -182,12 +164,11 @@ class HousingStock:
         return ds_seg * area_seg
 
     def add_flow(self, flow):
-        """
-        Add flow to stock property.
+        """Add flow to stock attribute object.
 
         Parameters
         ----------
-        flow: pd.Series
+        flow : pd.Series
             Attributes indexed flow to be added to stock.
         """
 
@@ -201,16 +182,15 @@ class HousingStock:
 
     @staticmethod
     def _attributes2(segments, attributes2, scenario=None):
-        """
-        Returns segmented value based on self._segments and by using attributes2 table.
+        """Returns segmented value based on self._segments and by using attributes2 table.
 
         Parameters
         ----------
-        segments: pd.MultiIndex
+        segments : pd.MultiIndex
             Indexes to use.
-        attributes2: float, pd.Series, pd.DataFrame, dict
+        attributes2 : float, pd.Series, pd.DataFrame, dict
             Attributes indexed data.
-        scenario: str, optional
+        scenario : str, optional
             Scenario needs to be specified if attributes2 is a dictionary.
 
         Returns
@@ -237,19 +217,18 @@ class HousingStock:
         return val
 
     def to_stock_area(self, scenario=None, segments=None):
-        """
-        Returns indexed area (surface) of current building stock.
+        """Returns area (surface) of current building stock by agent.
 
         Parameters
         ----------
-        segments: pd.MultiIndex, optional
-        scenario: str, optional
+        segments : pd.MultiIndex, optional
+        scenario : str, optional
             Scenario needs to be specified if attributes2area is a dictionary.
 
         Returns
         -------
-        pd.Series or pd.DataFrame
-            Area indexed data based on segments pd.MultiIndex.
+        pd.Series
+            Area by agent.
         """
         if self.attributes2area is None:
             raise AttributeError('Need to define a table from attributes2area')
@@ -259,21 +238,21 @@ class HousingStock:
         return area * self._stock
 
     def to_income(self, scenario=None, segments=None):
-        """
-        Returns indexed income (surface).
+        """Returns annual income by agent.
 
         Parameters
         ----------
-        segments: pd.MultiIndex, optional
+        segments : pd.MultiIndex, optional
             Indexed used to reindex data. Default building stock indexes.
-        scenario: str, optional
+        scenario : str, optional
             Scenario needs to be specified if attributes2income is a dictionary.
 
         Returns
         -------
-        pd.Series or pd.DataFrame
-            Annual income indexed data based on segments pd.MultiIndex.
+        pd.Series
+            Annual income by agent.
         """
+
         if self.attributes2income is None:
             raise AttributeError('Need to define a table from attributes2income')
         if segments is None:
@@ -281,6 +260,21 @@ class HousingStock:
         return HousingStock._attributes2(segments, self.attributes2income, scenario=scenario)
 
     def to_area(self, scenario=None, segments=None):
+        """Returns area by agent.
+
+        Parameters
+        ----------
+        segments : pd.MultiIndex, optional
+            Indexed used to reindex data. Default building stock indexes.
+        scenario : str, optional
+            Scenario needs to be specified if attributes2income is a dictionary.
+
+        Returns
+        -------
+        pd.Series
+            Area by agent.
+        """
+
         if self.attributes2area is None:
             raise AttributeError('Need to define a table from attributes2area')
         if segments is None:
@@ -288,6 +282,21 @@ class HousingStock:
         return HousingStock._attributes2(segments, self.attributes2area, scenario=scenario)
 
     def to_horizon(self, scenario=None, segments=None):
+        """Returns investment horizon by agent.
+
+        Parameters
+        ----------
+        segments : pd.MultiIndex, optional
+            Indexed used to reindex data. Default building stock indexes.
+        scenario : str, optional
+            Scenario needs to be specified if attributes2income is a dictionary.
+
+        Returns
+        -------
+        pd.Series
+            Investment horizon by agent.
+        """
+
         if self.attributes2horizon is None:
             raise AttributeError('Need to define a table from attributes2horizon')
         if segments is None:
@@ -296,6 +305,20 @@ class HousingStock:
         return horizon
 
     def to_discount_rate(self, scenario=None, segments=None):
+        """Returns discount rate by agent.
+
+        Parameters
+        ----------
+        segments : pd.MultiIndex, optional
+            Indexed used to reindex data. Default building stock indexes.
+        scenario : str, optional
+            Scenario needs to be specified if attributes2income is a dictionary.
+
+        Returns
+        -------
+        pd.Series
+            Discount rate by agent.
+        """
         if self.attributes2discount is None:
             raise AttributeError('Need to define a table from attributes2horizon')
         if segments is None:
@@ -304,14 +327,15 @@ class HousingStock:
         return discount_rate
 
     def to_discount_factor(self, scenario_horizon=None, scenario_discount=None, segments=None):
-        """Calculate discount factor for all segments.
+        """Calculate discount factor by agent.
 
         Discount factor can be used when agents doesn't anticipate prices evolution.
         Discount factor does not depend on the year it is calculated.
-        """
-        """if self.discount_factor is not None:
-            return self.discount_factor
-        else:
+
+        Returns
+        -------
+        pd.Series
+            Discount factor by agent
         """
         horizon = self.to_horizon(scenario=scenario_horizon, segments=segments)
         discount_rate = self.to_discount_rate(scenario=scenario_discount, segments=segments)
@@ -325,17 +349,19 @@ class HousingStock:
 
     @staticmethod
     def to_discounted(df, rate):
-        """
-        Returns discounted DataFrame from DataFrame.
+        """Returns discounted DataFrame from DataFrame and discount rate.
 
         Parameters
         __________
         df: pd.DataFrame
+            Time series data by agent. Agents are in row and years in columns.
         rate: float or pd.Series
+            Discount rate constant or by agent.
 
         Returns
         -------
         pd.DataFrame
+            Discounted data. Agents are in row and years in columns.
         """
 
         if isinstance(rate, int) and rate == 0:
@@ -357,7 +383,20 @@ class HousingStock:
         return discount * df
 
     def to_consumption_conventional(self, scenario=None, segments=None):
+        """Returns conventional energy consumption by agent.
 
+        Parameters
+        ----------
+        segments : pd.MultiIndex, optional
+            Indexed used to reindex data. Default building stock indexes.
+        scenario : str, optional
+            Scenario needs to be specified if attributes2income is a dictionary.
+
+        Returns
+        -------
+        pd.Series
+            Conventional energy consumption by agent.
+        """
         if segments is None:
             segments = self._segments
 
@@ -372,7 +411,7 @@ class HousingStock:
             return HousingStock._attributes2(segments, self.attributes2consumption, scenario=scenario)
 
     def to_consumption_actual(self, energy_prices, detailed_output=False, segments=None):
-        """Return energy consumption for every segment and all years.
+        """Returns actual energy consumption by agent and years.
 
         A growing number of academic studies point to a gap between the conventional energy consumption predicted
         by energy performance certificates and actual energy consumption.
@@ -386,12 +425,12 @@ class HousingStock:
         energy_prices: pd.DataFrame
         detailed_output: boolean, default False
         segments: pd.Index, optional
-            If segments is not filled, use self.segments.
+            Indexed used to reindex data. Default building stock indexes.
 
         Returns
         _______
         pd.DataFrame
-            consumption_actual (rows: segments, columns: years)
+            Actual energy consumption by agent and years.
         """
 
         if self.consumption_actual is not None and not detailed_output:
@@ -427,7 +466,7 @@ class HousingStock:
             return consumption_actual
 
     def to_consumption(self, consumption, segments=None, energy_prices=None):
-        """Returns consumption conventional or actual based on consumption parameter.
+        """Returns conventional or actual energy consumption.
 
         Parameters
         ----------
@@ -438,7 +477,8 @@ class HousingStock:
 
         Returns
         -------
-
+        pd.Series or pd.DataFrame
+            Conventional or actual energy consumption.
         """
         if consumption == 'conventional':
             return self.to_consumption_conventional(segments=segments)
@@ -485,8 +525,9 @@ class HousingStock:
                 return consumption * temp
 
     def energy_expenditure(self, energy_price):
-        """
-        Calculate energy expenditure for current year.
+        """Calculate total energy expenditure (€) by agent for current year.
+
+        € = €/kWh x kWh/m2 x m2/building x buildings
 
         Parameters
         ----------
@@ -495,21 +536,21 @@ class HousingStock:
         Returns
         -------
         pd.Series
+            Total energy expenditure by agent.
         """
         consumption = self.consumption_actual.loc[:, self.year] * self.area * self.stock
         return HousingStock.mul_consumption(consumption, energy_price).loc[:, self.year]
 
     @staticmethod
     def to_summed(df, yr_ini, horizon):
-        """
-        Sum each rows of df from yr_ini to its horizon.
+        """Sum each rows of df from yr_ini to its horizon.
 
         Parameters
         ----------
-        df: pd.DataFrame
-            pd.MultiIndex as index, and years as columns.
-        yr_ini: int
-        horizon: pd.Series
+        df : pd.DataFrame
+            Agents are in row and years in columns.
+        yr_ini : int
+        horizon : pd.Series
             pd.MultiIndex as index
 
         Returns
@@ -523,13 +564,12 @@ class HousingStock:
             horizon_re = reindex_mi(horizon, df.index, horizon.index.names)
 
             def horizon2years(num, yr):
-                """
-                Return list of years based on a number of years and an initial year.
+                """Return list of years based on a number of years and an initial year.
 
                 Parameters
                 ----------
-                num: int
-                yr: int
+                num : int
+                yr : int
 
                 Returns
                 -------
@@ -545,11 +585,11 @@ class HousingStock:
 
                 Parameters
                 ----------
-                ds: pd.Series
+                ds : pd.Series
                     Segments as index, years as column
-                years: pd.Series
+                years : pd.Series
                     List of years to use for each segment
-                levels: str
+                levels : str
                     Levels used to catch idxyears
 
                 Returns
@@ -567,24 +607,22 @@ class HousingStock:
         return df_summed
 
     def to_energy_lcc(self, energy_prices, transition=None, consumption='conventional', segments=None):
-        """Return segmented energy-life-cycle-cost discounted from segments, and energy prices year=yr.
+        """Return energy-life-cycle-cost discounted by agents, and energy prices.
 
-        Energy LCC is calculated on an segment-specific horizon, and using a segment-specific discount rate.
-        Because, time horizon depends of type of renovation (attributes, or heating energy), lcc needs to know which transition.
-        NB: transition defined the investment horizon.
-        Energy LCC depends on (Occupancy status, Housing type, Income class owner, Energy performance, Heating energy,
-        and transition).
+        Energy LCC is calculated on an agent-specific horizon, and discount rate.
+        Time horizon depends on transition (transition defined the investment horizon).
 
         Parameters
         ----------
         energy_prices: pd.DataFrame
         transition: list, default ['Energy performance']
         consumption: str, {'conventional', 'actual}, default 'conventional'
-        segments: pd.Index, optional
+        segments: pd.MultiIndex, optional
 
         Returns
         -------
         pd.Series
+            Energy-life-cycle-cost discounted by agents.
         """
         if transition is None:
             transition = ['Energy performance']
@@ -617,8 +655,7 @@ class HousingStock:
             return energy_lcc
 
     def to_transition(self, ds, transition=None):
-        """
-        Returns pd.DataFrame from pd.Series by adding final state as column.
+        """Returns pd.DataFrame from pd.Series by adding final state as column with same value.
 
         Create a MultiIndex columns when it occurs simultaneous transitions.
 
@@ -644,19 +681,18 @@ class HousingStock:
 
     @staticmethod
     def initial2final(ds, idx_full, transition):
-        """
-        Catch final state segment values as the initial state of another segment.
+        """Catch final state agent values as the initial state of another agent.
 
         When a segment final state match another segment initial state,
         it's therefore fasten to directly catch the value.
 
         Parameters
         ----------
-        ds: pd.Series
+        ds : pd.Series
             Data to pick values
-        idx_full: pd.MultiIndex
+        idx_full : pd.MultiIndex
             Corresponds to final state data index
-        transition: list
+        transition : list
 
         Returns
         -------
@@ -683,13 +719,15 @@ class HousingStock:
         return ds_final_re
 
     def to_final(self, ds, transition=None, segments=None):
-        """Returns pd.DataFrame
+        """Returns final state value index by columns and by initial state agent.
+
+        For transition attributes, initial state doesn't influence results.
 
         Parameters
         ----------
-        ds: pd.Series
-        transition: list, default ['Energy performance', 'Heating energy']
-        segments: pd.Index, optional
+        ds : pd.Series
+        transition : list, default ['Energy performance', 'Heating energy']
+        segments : pd.Index, optional
             Use self.segments if input is not filled.
 
         Returns
@@ -711,7 +749,19 @@ class HousingStock:
         return ds_final
 
     def to_consumption_final(self, consumption='conventional', transition=None):
+        """Returns conventional or actual energy consumption by agent for all possible final state.
 
+        Parameters
+        ----------
+        consumption : str, {'conventional', 'actual'}
+        transition : list, default ['Energy performance', 'Heating energy']
+            Transition defined possible final states.
+
+        Returns
+        -------
+        pd.Series or pd.DataFrame
+            Conventional or actual energy consumption by agent and
+        """
         if transition is None:
             transition = ['Energy performance', 'Heating energy']
 
@@ -724,7 +774,19 @@ class HousingStock:
             return consumption_final
 
     def to_energy_saving(self, transition=None, consumption='conventional'):
+        """Calculate energy saving by agent between initial and all possible final state.
 
+        Parameters
+        ----------
+        transition : list, default ['Energy performance', 'Heating energy']
+            Transition defined possible final states.
+        consumption : str, {'conventional', 'actual'}
+
+        Returns
+        -------
+        pd.Series or pd.DataFrame
+            Conventional or actual energy saving by agent.
+        """
         if transition is None:
             transition = ['Energy performance']
 
@@ -742,12 +804,12 @@ class HousingStock:
             return energy_saving
 
     def to_energy_saving_lc(self, transition=None, consumption='conventional', discount=0.04):
-        """
-        Calculate life-cycle energy saving between initial and final state for the entire project duration.
+        """Calculate life-cycle energy saving between initial and all possible final state for the entire project duration.
 
         Parameters
         ----------
         transition: {(Energy performance, ), (Heating energy, ), (Energy performance, Heating energy)
+            Transition defined possible final states.
         consumption: {'conventional', 'actual'}
         discount: float, default 0.04
 
@@ -772,8 +834,7 @@ class HousingStock:
         return energy_saving_lc
 
     def to_emission_saving(self, co2_content, transition=None, consumption='conventional', energy_prices=None):
-        """
-        Calculate emission saving between initial and final state.
+        """Calculate emission saving by agent between initial and all possible final state.
 
         Parameters
         ----------
@@ -784,8 +845,8 @@ class HousingStock:
 
         Returns
         -------
-        dict
-            {transition: {consumption: pd.Series or pd.DataFrame}}
+        pd.Series or pd.DataFrame
+            Conventional or actual energy saving by agent.
         """
 
         if transition is None:
@@ -812,7 +873,6 @@ class HousingStock:
 
     def to_emission_saving_lc(self, co2_content, transition=None, consumption='conventional', horizon=30, discount=0.04,
                               energy_prices=None):
-
         """
         Calculate life-cycle emission saving between initial and final state for the entire project duration.
 
@@ -827,8 +887,8 @@ class HousingStock:
 
         Returns
         -------
-        dict
-            {transition: {consumption: pd.Series}}
+        pd.Series or pd.DataFrame
+            Conventional or actual emission saving by agent.
         """
         emission_saving = self.to_emission_saving(co2_content, transition=transition, consumption=consumption,
                                                   energy_prices=energy_prices)
@@ -843,6 +903,7 @@ class HousingStock:
         self.emission_saving_lc[tuple(transition)][consumption][self.year] = emission_saving_lc
         return emission_saving_lc
 
+    # TODO continue checking documentation
     def to_energy_lcc_final(self, energy_prices, transition=None, consumption='conventional', segments=None):
         """Calculate energy life-cycle cost based on transition.
         """
@@ -1153,23 +1214,34 @@ class HousingStock:
 
     def calibration_market_share(self, energy_prices, market_share_ini, cost_invest=None,
                                  consumption='conventional', subsidies=None, option=0):
-        """
-        Returns intangible costs by calibrating market_share.
+        """Calculate intangible costs by calibrating market_share.
 
-        Intangible costs are calibrated so that the observed market shares are reproduced in the initial year.
-        Intangible costs are calibrated so that the life-cycle cost model, fed with the investment costs,
-        matches the observed market shares.
+        Solving the equations system:
+        Intangible costs are calibrated so that the life-cycle cost model, fed with the investment costs, matches the
+        observed market shares in the initial year. However, infinite sets of intangible costs can be found to reproduce
+        the relative market shares. In other words the equation system is under-determined and must be solved with an
+        additional condition. Accordingly, intangible costs are calibrated by incorporating one equation controlling for
+        λ, the ratio of average intangible costs over average life cycle costs. Parameter λ is set as the minimum value
+        for which the system can be solved from 0.15 to 0.6 (exogenous limits). The equation system is independent per
+        agent and should solve for a given lambda per agent. Another constraint imposes that the agents sharing the same
+        initial performance state find the same lambda.
 
-        For each segment:
-        LCC final is calculated (depends on Occupancy status, Housing type, Income class owner,
-        Energy performance initial, Heating energy initial, transition), then Market Share.
-        transition here is Energy performance
-        NB: MS doesn't depend on Income class (tenant), so to fasten the function it can be first removed.
-        Solver finds Intangible cost for each segment to match the observed market share.
-        --> Intangible cost(Occupancy status, Housing type, Income class owner, Energy performance initial,
-        Heating energy initial, Energy performance final)
-        NB: Observed market share only depends on Energy performance initial and Energy performance final.
-        Each segment with the same performance transition need to match the same observed market shares.
+        From aggregated observed market share to agent-based:
+        Intangible costs could be calculated for every agent as LCC depends on every attributes. However, the
+        observed market share represents the average values over Energy performance initial and final dimensions.
+        Function defined various way to solve this representation issue:
+        - Each agent got its own intangible costs to match the observed market share. Regardless of the technical and
+        behavioral characteristics of the agents, their market share will be identical as long as they start and end at
+        the same level of energy performance. (option 0)
+        - Intangible cost is aggregated to reflect the average initial market share. Each agents group share the same
+        intangible costs to match the observed market share. It shows diversity among agents initial market share to
+        reflect different technical and behavioral characteristics. Concretely the aggregation of the data is done by a
+        weighted average of the distribution of the households. (option 1)
+        - Intangible cost are aggregated over the Heating energy dimension thanks a representative agent of all heating
+        energy. This solution has been implemented to match previous version of Res-IRF. (option 2)
+        - Not implemented: another way would be to calibrate the intangible cost by calculating life-cycle cost for
+        a representative agent.
+
 
         Parameters
         ----------
@@ -1187,7 +1259,6 @@ class HousingStock:
                 Each agents group share intangible costs to match the observed market share.
                 This option allows some diversity in the calculated market share between member of each group.
             2: intangible cost is aggregated on heating energy level (what was done before)
-            3:
 
         Returns
         -------
@@ -1230,8 +1301,7 @@ class HousingStock:
         market_share_objective = market_share_objective.reindex(market_share_temp.columns, axis=1)
 
         def approximate_ms_objective(ms_obj, ms):
-            """
-            Treatment of market share objective to facilitate resolution.
+            """Treatment of market share objective to facilitate resolution.
             """
             if isinstance(ms, pd.DataFrame):
                 ms = ms.loc[ms_obj.name, :]
@@ -1387,8 +1457,7 @@ class HousingStock:
         return intangible_cost, market_share_calibration
 
     def to_io_share_seg(self):
-        """
-        Calculate share of attributes by income class owner.
+        """Calculate attributes share by income class owner.
 
         Returns
         -------
@@ -1405,8 +1474,7 @@ class HousingStock:
 
     @staticmethod
     def learning_by_doing(knowledge, cost, learning_rate, cost_lim=None):
-        """
-        Decrease capital cost after considering learning-by-doing effect.
+        """Decrease capital cost after considering learning-by-doing effect.
 
         Investment costs decrease exponentially with the cumulative sum of operations so as to capture
         a “learning-by-doing” process.
@@ -1440,8 +1508,8 @@ class HousingStock:
             return lbd.reindex(idx_union) * cost.T.reindex(idx_union).T
 
     @staticmethod
-    def information_rate(knowledge, learning_rate, info_max, mode=0):
-        """Returns information rate.
+    def information_rate(knowledge, learning_rate, share):
+        """Returns information rate that capture peer effects and knowledge diffusion.
 
         More info_rate is high, more intangible_cost are low.
         Intangible renovation costs decrease according to a logistic curve with the same cumulative
@@ -1452,63 +1520,57 @@ class HousingStock:
 
         Parameters
         ----------
-        knowledge: pd.Series
-            knowledge indexes match cost columns to reach final state after transition
-        info_max: float
-        learning_rate: float
+        knowledge : pd.Series
+            Knowledge indexes match cost columns to reach final state after transition.
+        share : float
+            Share of non-fixed costs.
+        learning_rate : float
+            Rate of decrease of non-fixed share for a doubling of cumulative production.
 
         Returns
         -------
         pd.Series
         """
 
-        if mode == 0:
-            def equations(sh=info_max, alpha=learning_rate):
-                A = np.array([[1, 1], [1, 2]])
-                b = np.array([np.log(1/sh-1), np.log(1/(sh*(1-alpha))-1)])
-                param = np.linalg.solve(A, -b)
-                a = np.exp(- param[0])
-                r = param[1]
-                return a, r
+        def equations(sh=share, alpha=learning_rate):
+            A = np.array([[1, 1], [1, 2]])
+            b = np.array([np.log(1/sh-1), np.log(1/(sh*(1-alpha))-1)])
+            param = np.linalg.solve(A, -b)
+            a = np.exp(- param[0])
+            r = param[1]
+            return a, r
 
-            a, r = equations(sh=info_max, alpha=learning_rate)
-            return logistic(knowledge, a=a, r=r) + 1 - info_max
-
-        elif mode == 1:
-            def equations(p, sh=info_max, alpha=learning_rate):
-                a, r = p
-                return (1 + a * np.exp(-r)) ** -1 - sh, (1 + a * np.exp(-2 * r)) ** -1 - sh - (1 - alpha) * sh + 1
-
-            a, r = fsolve(equations, (1, -1))
-            return logistic(knowledge, a=a, r=r) + 1 - info_max
-
-        elif mode == 2:
-            a = 0.09375
-            r = - 0.9808293
-            return logistic(knowledge, a=a, r=r) + 1 - info_max
+        a, r = equations(sh=share, alpha=learning_rate)
+        return logistic(knowledge, a=a, r=r) + 1 - share
 
     @staticmethod
-    def acceleration_information(knowledge, cost_intangible, info_max, learning_rate):
+    def information_acceleration(knowledge, cost_intangible, share, learning_rate):
         """Decrease intangible cost to capture peer effects and knowledge diffusion.
 
         Intangible renovation costs decrease according to a logistic curve with the same cumulative production so as
         to capture peer effects and knowledge diffusion.
-        The rate of decrease (learning_rate) is set at 25% for a doubling of cumulative production.
+        The rate of decrease (learning_rate) is set at 25% of non-fixed share for a doubling of cumulative production.
+
+        Res-IRF splits intangible costs into a fixed share `share` mimicking hidden costs, and a variable share
+        1−`share` mimicking adoption externalities. Note that the value of `share` is fraught with uncertainty, due to
+        the upstream problem of empirically separating the different types of barriers.
 
         Parameters
         ----------
         knowledge: pd.Series
-            knowledge indexes match cost columns to reach final state after transition
+            Knowledge indexes should match cost columns.
         cost_intangible: pd.DataFrame
-        info_max: float
+        share: float
+            Share of fixed intangible costs.
         learning_rate: float
+            Rate of decrease of non-fixed share for a doubling of cumulative production.
 
         Returns
         -------
         pd.DataFrame
             cost_intangible
         """
-        info_rate = HousingStock.information_rate(knowledge, learning_rate, info_max, mode=0)
+        info_rate = HousingStock.information_rate(knowledge, learning_rate, share)
 
         temp = cost_intangible.T.copy()
         if isinstance(temp.index, pd.MultiIndex):
@@ -1557,10 +1619,9 @@ class HousingStock:
 
     @staticmethod
     def add_tenant_income(building_stock, tenant_income):
-        """
-        Add Income class level to stock using information of tenant income.
+        """Add Income class level to stock using information of tenant income.
 
-        Homeowners and Social-housing tenant and owner income class are the same.
+        Homeowners and social-housing tenant and owner income class are the same.
 
         Parameters
         ----------

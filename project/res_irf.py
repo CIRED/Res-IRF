@@ -385,7 +385,7 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
 
         if config['info_renovation'] and config['cost_intangible']['activated']:
             logging.debug('Information acceleration - renovation')
-            cost_intangible['Energy performance'] = HousingStock.acceleration_information(buildings.knowledge,
+            cost_intangible['Energy performance'] = HousingStock.information_acceleration(buildings.knowledge,
                                                                                           output['Cost intangible'][
                                                                                               buildings.calibration_year],
                                                                                           parameters[
@@ -425,7 +425,7 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
 
         if config['info_construction'] and config['cost_intangible_construction']['activated']:
             logging.debug('Information acceleration - construction')
-            cost_intangible_construction['Energy performance'] = HousingStock.acceleration_information(
+            cost_intangible_construction['Energy performance'] = HousingStock.information_acceleration(
                 buildings_constructed.knowledge,
                 output['Cost intangible construction'][buildings_constructed.calibration_year],
                 parameters['Information rate max construction'],

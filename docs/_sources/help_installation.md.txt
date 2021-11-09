@@ -1,4 +1,4 @@
-# Additional information
+# Installation help
 ## Conda environment
 
 ### Creating an environment from an environment.yml file

@@ -176,7 +176,7 @@ into TWh can also explain the differences observed in wood consumption.
 ```{eval-rst}
 .. csv-table:: Calibration of total final actual energy consumption
    :name: calibration_energy
-   :file: table/ceren_energy_consumption_2012.csv
+   :file: table/input_2012/ceren_energy_consumption_2012.csv
    :header-rows: 1
    :stub-columns: 1
 ```
@@ -259,7 +259,7 @@ by CGDD (2015) [^constructions]
 ```{eval-rst}
 .. csv-table:: Construction costs (€/m2)
    :name: cost_construction
-   :file: table/cost_construction_2012.csv
+   :file: table/input_2012/cost_construction_2012.csv
    :header-rows: 2
    :stub-columns: 1
 ```
@@ -277,7 +277,7 @@ abstract from short-term variations, the 2012 market shares are set in Res-IRF o
 ```{eval-rst}
 .. csv-table:: Distribution of heating fuels in new constructions in Res-IRF for year 2012
    :name: heating_fuel_construction
-   :file: table/heating_fuel_construction.csv
+   :file: table/input_2012/heating_fuel_construction_2012.csv
    :header-rows: 1
    :stub-columns: 1
 ```
@@ -307,7 +307,7 @@ $INV_{i,f} < INV_{i,i+k} + INV_{i+k,f}$ for all k such that $1≤k<f-i$
 ```{eval-rst}
 .. csv-table:: Renovation costs used in Res-IRF 3.0 (€/m2). Source: Expert opinion
    :name: renovation_cost
-   :file: table/cost_renovation_2012.csv
+   :file: table/input_2012/cost_renovation_2012.csv
    :header-rows: 1
    :stub-columns: 1
 ```
@@ -320,7 +320,7 @@ The same is true for the matrix of market shares used to calibrate intangible co
 ```{eval-rst}
 .. csv-table:: Market shares of energy efficiency upgrades in 2012. Source: PUCA (2015)
    :name: market_share
-   :file: table/ms_renovation_ini_2012.csv
+   :file: table/input_2012/ms_renovation_ini_2012.csv
    :header-rows: 1
    :stub-columns: 1
 ```
@@ -332,7 +332,7 @@ costs for Res-IRF 3.0 are reported in {numref}`intangible_cost`.
 ```{eval-rst}
 .. csv-table:: Averaged intangible costs in 2012 (€/m²)
    :name: intangible_cost
-   :file: table/intangible_cost_2012.csv
+   :file: table/input_2012/intangible_cost_2012.csv
    :header-rows: 1
    :stub-columns: 1
 ```
@@ -366,7 +366,7 @@ units) of the housing stock of the initial year.
 ```{eval-rst}
 .. csv-table:: Renovation share by energy performance label. Source: PUCA (2015)
    :name: renovation_share_ep
-   :file: table/renovation_share_ep_2012.csv
+   :file: table/input_2012/renovation_share_ep_2012.csv
    :header-rows: 1
    :stub-columns: 1
 ```
@@ -374,7 +374,7 @@ units) of the housing stock of the initial year.
 ```{eval-rst}
 .. csv-table:: Renovation rate by type of dwelling. Source : OPEN (2016) and USH (2017)
    :name: renovation_rate_dm
-   :file: table/renovation_rate_dm_2012.csv
+   :file: table/input_2012/renovation_rate_dm_2012.csv
    :header-rows: 1
    :stub-columns: 1
 ```
@@ -392,7 +392,7 @@ social housing, on the other hand, the discount rate is set at 4%, the value com
 ```{eval-rst}
 .. csv-table:: Discount rates. Source: Expert opinion
    :name: discount_rate_existing
-   :file: table/discount_rate_existing_2012.csv
+   :file: table/input_2012/discount_rate_existing_2012.csv
    :header-rows: 1
    :stub-columns: 1
 ```
@@ -419,7 +419,7 @@ capitalization of energy savings {numref}`investment_horizon`:
 ```{eval-rst}
 .. csv-table:: Investment horizon for improvements on the envelope (on heating systems)
    :name: investment_horizon
-   :file: table/investment_horizon_2012.csv
+   :file: table/input_2012/investment_horizon_2012.csv
    :header-rows: 1
    :stub-columns: 1
 ```

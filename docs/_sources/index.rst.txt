@@ -15,7 +15,10 @@ Welcome to Res-IRF's documentation!
    input_2012
    technical_documentation
    simulation_2012
+   policies_parameters
+   policies_assessment
    modules
+   changelog
    help_installation
    contributing
    future_development

@@ -33,7 +33,7 @@
     },
     "health_cost": {
       "type": "file",
-      "source": "project/input/abattement_curve/health_cost.csv"
+      "source": "project/input/abattement_curve/health_cost_decile.csv"
     },
     "cost_renovation": {
       "type": "file",
@@ -93,7 +93,7 @@
     },
     "health_cost": {
       "type": "file",
-      "source": "project/input/abattement_curve/health_cost.csv"
+      "source": "project/input/abattement_curve/health_cost_decile.csv"
     },
     "cost_renovation": {
       "type": "file",
@@ -153,7 +153,7 @@
     },
     "health_cost": {
       "type": "file",
-      "source": "project/input/abattement_curve/health_cost.csv"
+      "source": "project/input/abattement_curve/health_cost_decile.csv"
     },
     "cost_renovation": {
       "type": "file",
