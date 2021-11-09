@@ -202,3 +202,35 @@ we do not have sufficiently disaggregated data to perform this calibration direc
 
 Even without disaggregated data, each agent will have a different decision when calibrating. The average of the agents
 per group of the same attributes will reflect the observed decision rates.
+
+#### Evaluation
+
+```{figure} img/changelog/renovation_rate_function/flow_renovation.png
+:name: flow_renovation
+
+Flow renovations.
+```
+
+```{figure} img/changelog/renovation_rate_function/renovation_rate_decision_maker.png
+:name: renovation_rate_decision_maker
+
+Renovation rate by decision-maker.
+```
+
+```{figure} img/changelog/renovation_rate_function/renovation_rate_energy.png
+:name: renovation_rate_energy
+
+Renovation rate by heating energy.
+```
+
+```{figure} img/changelog/renovation_rate_function/renovation_rate_income_class.png
+:name: renovation_rate_income_class
+
+Renovation rate by income class.
+```
+
+```{figure} img/changelog/renovation_rate_function/renovation_rate_performance.png
+:name: renovation_rate_performance
+
+Renovation rate by energy performance certificate.
+```

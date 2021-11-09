@@ -1823,8 +1823,7 @@ class HousingStockRenovated(HousingStock):
 
     @staticmethod
     def renovate_rate_func(npv, rho, npv_min, rate_max, rate_min):
-        """
-        Calculate renovation rate for indexed pd.Series rho and indexed pd.Series npv.
+        """Calculate renovation rate for indexed pd.Series rho and indexed pd.Series npv.
 
         Parameters
         ----------
@@ -1853,8 +1852,7 @@ class HousingStockRenovated(HousingStock):
     def to_renovation_rate(self, energy_prices, transition=None, consumption='conventional', cost_invest=None,
                            cost_intangible=None, subsidies=None, rho=None):
 
-        """
-        Routine calculating renovation rate from segments for a particular yr.
+        """Routine calculating renovation rate from segments for a particular yr.
 
         Cost (energy, investment) & rho parameter are also required.
 
@@ -2319,8 +2317,7 @@ class HousingStockRenovated(HousingStock):
 
     def calibration_renovation_rate(self, energy_prices, renovation_rate_ini, consumption='conventional',
                                     cost_invest=None, cost_intangible=None, subsidies=None, option=0):
-        """
-        Calibration of the ρ parameter of the renovation rate function (logistic function of the NPV).
+        """Calibration of the ρ parameter of the renovation rate function (logistic function of the NPV).
 
         Renovation rate of dwellings attributes led is calculated as a logistic function of the NPV.
         The logistic form captures heterogeneity in heating preference and habits,
@@ -2343,8 +2340,8 @@ class HousingStockRenovated(HousingStock):
         subsidies: list
         option: int, default 0
             0: rho for each agent_mean (based on a NPV mean)
-            1: unique calibration function for all agents (rho, npv_min, rate_min, rate_max)
-            2: segmented rho for each individual agent
+            1: unique rho and so unique calibration function for all agents (rho, npv_min, rate_min, rate_max)
+            2: rho for each individual agent
             3: calculate rho mean for group of agents
 
 

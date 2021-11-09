@@ -1,99 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5a27c1bc-6d7f-41bf-89e9-22387bb7bdb3" name="Default Changelist" comment="updating documentation">
-      <change afterPath="$PROJECT_DIR$/docs/_images/agents_comparison_rate.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/_images/agents_different_rate.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/_images/agents_same_rate.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/_images/consumption_actual3.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/_images/flow_renovation3.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/_images/function_agents.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/_images/renovation_fitting_function.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/_images/renovation_rate_decision_maker.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/_images/renovation_rate_performance.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/_sources/changelog.md.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/_sources/policies_assessment.md.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/_sources/policies_parameters.md.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/changelog.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/policies_assessment.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/policies_parameters.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/documentation/source/changelog.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/documentation/source/policies_assessment.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/documentation/source/policies_parameters.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/documentation/source/table/changelog_resirf.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/documentation/source/table/policies/cumac_label_transition.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/documentation/source/table/policies/example_who_prices.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/documentation/source/table/policies/example_who_subsidy_rate.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/documentation/source/table/policies/policies_summary.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/input/abattement_curve/config_uncertainty.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/input/abattement_curve/health_cost_decile.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/input/abattement_curve/health_cost_quintile.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    <list default="true" id="5a27c1bc-6d7f-41bf-89e9-22387bb7bdb3" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/LICENSE.html" beforeDir="false" afterPath="$PROJECT_DIR$/docs/LICENSE.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/README.html" beforeDir="false" afterPath="$PROJECT_DIR$/docs/README.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/_images/consumption_actual.png" beforeDir="false" afterPath="$PROJECT_DIR$/docs/_images/consumption_actual.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/_images/consumption_actual1.png" beforeDir="false" afterPath="$PROJECT_DIR$/docs/_images/consumption_actual1.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/_images/consumption_actual2.png" beforeDir="false" afterPath="$PROJECT_DIR$/docs/_images/consumption_actual2.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/_images/flow_renovation.png" beforeDir="false" afterPath="$PROJECT_DIR$/docs/_images/flow_renovation.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/_images/flow_renovation1.png" beforeDir="false" afterPath="$PROJECT_DIR$/docs/_images/flow_renovation1.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/_images/flow_renovation2.png" beforeDir="false" afterPath="$PROJECT_DIR$/docs/_images/flow_renovation2.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/_sources/help_installation.md.txt" beforeDir="false" afterPath="$PROJECT_DIR$/docs/_sources/help_installation.md.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/_sources/index.rst.txt" beforeDir="false" afterPath="$PROJECT_DIR$/docs/_sources/index.rst.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/_sources/input_2012.md.txt" beforeDir="false" afterPath="$PROJECT_DIR$/docs/_sources/input_2012.md.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/_sources/simulation_2012.md.txt" beforeDir="false" afterPath="$PROJECT_DIR$/docs/_sources/simulation_2012.md.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/_sources/technical_documentation.md.txt" beforeDir="false" afterPath="$PROJECT_DIR$/docs/_sources/technical_documentation.md.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/contributing.html" beforeDir="false" afterPath="$PROJECT_DIR$/docs/contributing.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/future_development.html" beforeDir="false" afterPath="$PROJECT_DIR$/docs/future_development.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/genindex.html" beforeDir="false" afterPath="$PROJECT_DIR$/docs/genindex.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/help_installation.html" beforeDir="false" afterPath="$PROJECT_DIR$/docs/help_installation.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/docs/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/input_2012.html" beforeDir="false" afterPath="$PROJECT_DIR$/docs/input_2012.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/modules.html" beforeDir="false" afterPath="$PROJECT_DIR$/docs/modules.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/objects.inv" beforeDir="false" afterPath="$PROJECT_DIR$/docs/objects.inv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/py-modindex.html" beforeDir="false" afterPath="$PROJECT_DIR$/docs/py-modindex.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/search.html" beforeDir="false" afterPath="$PROJECT_DIR$/docs/search.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/searchindex.js" beforeDir="false" afterPath="$PROJECT_DIR$/docs/searchindex.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/simulation_2012.html" beforeDir="false" afterPath="$PROJECT_DIR$/docs/simulation_2012.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/technical_documentation.html" beforeDir="false" afterPath="$PROJECT_DIR$/docs/technical_documentation.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/documentation/source/help_installation.md" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/help_installation.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/documentation/source/index.rst" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/index.rst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/documentation/source/input_2012.md" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/input_2012.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/documentation/source/table/area_construction_2012.csv" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/table/input_2012/area_construction_2012.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/documentation/source/table/area_construction_elasticity_2012.csv" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/table/input_2012/area_construction_elasticity_2012.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/documentation/source/table/area_construction_max_2012.csv" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/table/input_2012/area_construction_max_2012.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/documentation/source/table/area_existing_2012.csv" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/table/input_2012/area_existing_2012.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/documentation/source/table/ceren_energy_consumption_2012.csv" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/table/input_2012/ceren_energy_consumption_2012.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/documentation/source/table/cost_construction_2012.csv" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/table/input_2012/cost_construction_2012.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/documentation/source/table/cost_construction_lim_2012.csv" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/table/input_2012/cost_construction_lim_2012.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/documentation/source/table/cost_renovation_2012.csv" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/table/input_2012/cost_renovation_2012.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/documentation/source/table/cost_switch_fuel_2012.csv" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/table/input_2012/cost_switch_fuel_2012.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/documentation/source/table/databases_overview.csv" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/table/input_2012/databases_overview_2012.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/documentation/source/table/databases_overview_content.csv" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/table/input_2012/databases_overview_content_2012.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/documentation/source/table/decision_maker_distribution.csv" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/table/input_2012/decision_maker_distribution_phebus.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/documentation/source/table/discount_rate_construction_2012.csv" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/table/input_2012/discount_rate_construction_2012.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/documentation/source/table/discount_rate_existing_2012.csv" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/table/input_2012/discount_rate_existing_2012.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/documentation/source/table/heating_fuel_construction.csv" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/table/input_2012/heating_fuel_construction_2012.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/documentation/source/table/income_2012.csv" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/table/input_2012/income_2012.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/documentation/source/table/income_categories.csv" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/table/input_2012/income_categories_phebus.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/documentation/source/table/input_list_2012.csv" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/table/input_2012/input_list_2012.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/documentation/source/table/intangible_cost_2012.csv" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/table/input_2012/intangible_cost_2012.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/documentation/source/table/investment_horizon_2012.csv" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/table/input_2012/investment_horizon_2012.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/documentation/source/table/ms_construction_ini_2012.csv" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/table/input_2012/ms_construction_ini_2012.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/documentation/source/table/ms_renovation_ini_2012.csv" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/table/input_2012/ms_renovation_ini_2012.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/documentation/source/table/renovation_rate_dm_2012.csv" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/table/input_2012/renovation_rate_dm_2012.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/documentation/source/table/renovation_share_ep_2012.csv" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/table/input_2012/renovation_share_ep_2012.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/documentation/source/table/rotation_mutation_rate_2012.csv" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/table/input_2012/rotation_mutation_rate_2012.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/documentation/source/technical_documentation.md" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/technical_documentation.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/abattement_curve.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/abattement_curve.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/documentation/source/changelog.md" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/changelog.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/buildings.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/buildings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/abattement_curve/config_phebus.json" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/abattement_curve/config_phebus.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/abattement_curve/config_phebus_social.json" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/abattement_curve/config_phebus_social.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/abattement_curve/config_sdes.json" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/abattement_curve/config_sdes.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/abattement_curve/config_sdes_social.json" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/abattement_curve/config_sdes_social.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/abattement_curve/health_cost.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/res_irf.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/res_irf.py" afterDir="false" />
     </list>
     <list id="c1475e6c-5c86-4ada-b891-0f5a944b2008" name="Revert &quot;Delete project/input/test directory&quot;" comment="Revert &quot;Delete project/input/test directory&quot;&#10;&#10;This reverts commit b2bb53ac" />
     <option name="SHOW_DIALOG" value="false" />
@@ -658,14 +569,7 @@
       <workItem from="1636130322929" duration="314000" />
       <workItem from="1636359012789" duration="25715000" />
       <workItem from="1636443988915" duration="16492000" />
-      <workItem from="1636471390233" duration="3671000" />
-    </task>
-    <task id="LOCAL-00030" summary="cleaning and organizing">
-      <created>1625750755080</created>
-      <option name="number" value="00030" />
-      <option name="presentableId" value="LOCAL-00030" />
-      <option name="project" value="LOCAL" />
-      <updated>1625750755080</updated>
+      <workItem from="1636471390233" duration="5757000" />
     </task>
     <task id="LOCAL-00031" summary="cleaning and organizing">
       <created>1626093865691</created>
@@ -1003,7 +907,14 @@
       <option name="project" value="LOCAL" />
       <updated>1636385866151</updated>
     </task>
-    <option name="localTasksCounter" value="79" />
+    <task id="LOCAL-00079" summary="updating documentation">
+      <created>1636475562219</created>
+      <option name="number" value="00079" />
+      <option name="presentableId" value="LOCAL-00079" />
+      <option name="project" value="LOCAL" />
+      <updated>1636475562219</updated>
+    </task>
+    <option name="localTasksCounter" value="80" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1077,7 +988,7 @@
     <SUITE FILE_PATH="coverage/Res_IRF$func_co2_cost.coverage" NAME="func_co2_cost Coverage Results" MODIFIED="1616424071313" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$Doctest_EnergyTaxes_price_to_taxes.coverage" NAME="Doctest EnergyTaxes.price_to_taxes Coverage Results" MODIFIED="1626337342857" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/project" />
     <SUITE FILE_PATH="coverage/Res_IRF$indicators_cite.coverage" NAME="indicators_cite Coverage Results" MODIFIED="1634720183356" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/Res_IRF$main_test.coverage" NAME="main_test Coverage Results" MODIFIED="1636469445063" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Res_IRF$main_test.coverage" NAME="main_test Coverage Results" MODIFIED="1636476755790" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$parse_input.coverage" NAME="parse_input Coverage Results" MODIFIED="1632747053810" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$buildings_class.coverage" NAME="buildings_class Coverage Results" MODIFIED="1620739724250" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Res_IRF$main_phebus2012.coverage" NAME="main_phebus2012 Coverage Results" MODIFIED="1636464407213" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
