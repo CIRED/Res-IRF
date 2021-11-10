@@ -107,6 +107,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#agents-with-the-same-observed-renovation-rate-should-get-the-same-renovation-rate-function">Agents with the same observed renovation rate should get the same renovation rate function</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#all-agents-should-get-the-same-renovation-rate-function">All agents should get the same renovation rate function</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#conclusion">Conclusion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#evaluation">Evaluation</a></li>
 </ul>
 </li>
 </ul>
@@ -397,8 +398,8 @@ maker and EPC) as follows:</p>
 <h3>Calibration segmentation</h3>
 <p>Parameter ρ is calibrated, for each type of decision-maker and each initial label, so that the NPVs calculated with the
 subsidies in effect in 2012 (version 3.0) reproduce the observed renovation rates. In general, we don’t have enough
-disaggregated data.
-<strong>How can we calibrate an individual decision function per agent with only aggregated data?</strong></p>
+disaggregated data.</p>
+<p><strong>How can we calibrate an individual decision function per agent with only aggregated data?</strong></p>
 <p>A simple solution would be to say that each agent must replicate the observed renovation rates of his group. In this
 case, we have as many decision functions as there are agents. This solution is not satisfactory because it erases all
 the specificities of the agents (discount rate, investment horizon, etc…) and is equivalent to creating a model with a
@@ -416,7 +417,7 @@ attributes.</p>
 <li><p>For example, Agent 1 and Agent 2 are both Homeowners in a Single-family dwelling, but one is living
 in high-efficient dwelling when the other is living in a low-efficient dwelling. Agent 1 should get lower incentive to
 invest than Agent 2.</p></li>
-<li><p>Another example, will be between 2 agents of 2 different owner income class. Agent 1 owner could be
+<li><p>Another example, will be between two agents of two different owner income classes. Agent 1 owner could be
 D1 with expensive investment loan when Agent 2 could become to D10.</p></li>
 </ul>
 <div class="figure align-default" id="agents-same-rate">
@@ -478,6 +479,29 @@ we do not have sufficiently disaggregated data to perform this calibration direc
 </ol>
 <p>Even without disaggregated data, each agent will have a different decision when calibrating. The average of the agents
 per group of the same attributes will reflect the observed decision rates.</p>
+</div>
+<div class="section" id="evaluation">
+<h4>Evaluation</h4>
+<div class="figure align-default" id="flow-renovation">
+<img alt="_images/flow_renovation1.png" src="_images/flow_renovation1.png" />
+<p class="caption"><span class="caption-number">Fig. 32 </span><span class="caption-text">Flow renovations.</span></p>
+</div>
+<div class="figure align-default" id="renovation-rate-decision-maker">
+<img alt="_images/renovation_rate_decision_maker1.png" src="_images/renovation_rate_decision_maker1.png" />
+<p class="caption"><span class="caption-number">Fig. 33 </span><span class="caption-text">Renovation rate by decision-maker.</span></p>
+</div>
+<div class="figure align-default" id="renovation-rate-energy">
+<img alt="_images/renovation_rate_energy.png" src="_images/renovation_rate_energy.png" />
+<p class="caption"><span class="caption-number">Fig. 34 </span><span class="caption-text">Renovation rate by heating energy.</span></p>
+</div>
+<div class="figure align-default" id="renovation-rate-income-class">
+<img alt="_images/renovation_rate_income_class.png" src="_images/renovation_rate_income_class.png" />
+<p class="caption"><span class="caption-number">Fig. 35 </span><span class="caption-text">Renovation rate by income class.</span></p>
+</div>
+<div class="figure align-default" id="renovation-rate-performance">
+<img alt="_images/renovation_rate_performance1.png" src="_images/renovation_rate_performance1.png" />
+<p class="caption"><span class="caption-number">Fig. 36 </span><span class="caption-text">Renovation rate by energy performance certificate.</span></p>
+</div>
 <hr class="footnotes docutils" />
 <dl class="footnote brackets">
 <dt class="label" id="maker"><span class="brackets"><a class="fn-backref" href="#id2">1</a></span></dt>

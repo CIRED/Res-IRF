@@ -106,6 +106,7 @@ Impact renovation rate formula on consumption actual
 Parameter ρ is calibrated, for each type of decision-maker and each initial label, so that the NPVs calculated with the
 subsidies in effect in 2012 (version 3.0) reproduce the observed renovation rates. In general, we don't have enough
 disaggregated data. 
+
 **How can we calibrate an individual decision function per agent with only aggregated data?**
 
 A simple solution would be to say that each agent must replicate the observed renovation rates of his group. In this
@@ -127,7 +128,7 @@ attributes.
 - For example, Agent 1 and Agent 2 are both Homeowners in a Single-family dwelling, but one is living
 in high-efficient dwelling when the other is living in a low-efficient dwelling. Agent 1 should get lower incentive to
 invest than Agent 2. 
-- Another example, will be between 2 agents of 2 different owner income class. Agent 1 owner could be
+- Another example, will be between two agents of two different owner income classes. Agent 1 owner could be
 D1 with expensive investment loan when Agent 2 could become to D10.
 
 ```{figure} img/changelog/renovation_rate_function/agents_same_rate.png
@@ -201,3 +202,35 @@ we do not have sufficiently disaggregated data to perform this calibration direc
 
 Even without disaggregated data, each agent will have a different decision when calibrating. The average of the agents
 per group of the same attributes will reflect the observed decision rates.
+
+#### Evaluation
+
+```{figure} img/changelog/renovation_rate_function/flow_renovation.png
+:name: flow_renovation
+
+Flow renovations.
+```
+
+```{figure} img/changelog/renovation_rate_function/renovation_rate_decision_maker.png
+:name: renovation_rate_decision_maker
+
+Renovation rate by decision-maker.
+```
+
+```{figure} img/changelog/renovation_rate_function/renovation_rate_energy.png
+:name: renovation_rate_energy
+
+Renovation rate by heating energy.
+```
+
+```{figure} img/changelog/renovation_rate_function/renovation_rate_income_class.png
+:name: renovation_rate_income_class
+
+Renovation rate by income class.
+```
+
+```{figure} img/changelog/renovation_rate_function/renovation_rate_performance.png
+:name: renovation_rate_performance
+
+Renovation rate by energy performance certificate.
+```
