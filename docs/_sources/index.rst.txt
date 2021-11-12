@@ -18,10 +18,8 @@ Welcome to Res-IRF's documentation!
    policies_parameters
    policies_assessment
    modules
-   changelog
    help_installation
    contributing
-   future_development
 
 
 

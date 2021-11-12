@@ -132,10 +132,8 @@
 <li class="toctree-l1"><a class="reference internal" href="policies_parameters.html">Setting up public policies</a></li>
 <li class="toctree-l1"><a class="reference internal" href="policies_assessment.html">Policies assessment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html">Modification from Res-IRF 3.0</a></li>
 <li class="toctree-l1"><a class="reference internal" href="help_installation.html">Installation help</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="future_development.html">Future developments</a></li>
 </ul>
 
             
@@ -234,10 +232,11 @@
 <div class="section" id="overview-of-the-model">
 <h3>Overview of the model</h3>
 <blockquote>
-<div><p>The Res-IRF model<a class="footnote-reference brackets" href="#model" id="id1">1</a> is a tool for simulating energy consumption for space heating in the French residential
-sector. Its main characteristic is to integrate a detailed description of the energy performance of the dwelling stock
-with a rich description of household behaviour. Res-IRF has been developed to improve the behavioural realism that
-integrated models of energy demand typically lack .</p>
+<div><p>The Res-IRF model<a class="footnote-reference brackets" href="#model" id="id1">1</a> is a tool for simulating energy consumption and energy efficiency improvements in the
+French residential building sector. It currently focuses on space heating as the main usage.
+The rationale for its development is to integrate a detailed description of the energy performance of the dwelling
+stock with a rich description of household behaviour. Res-IRF has been developed to improve the behavioural realism
+that is typically lacking in integrated models of energy demand.</p>
 </div></blockquote>
 <p>Fed by population growth, household income growth and energy prices as exogenous inputs, the model returns construction
 and renovation costs and flows, energy consumption and heating comfort as endogenous outputs (<a class="reference internal" href="#model-figure"><span class="std std-numref">Fig. 7</span></a>).
@@ -351,18 +350,18 @@ effect.</p>
 </table>
 <p><em>Note : The symbol * points to the reference that contains the most comprehensive description of the associated version
 of the model. The most comprehensive description of version 3.0 is to be found in the present document.</em></p>
-<p>The documentation reflects the latest version of the model. The model is intended to be input agnostic and the
-documentation tries to reflect this paradigm. However, for the sake of clarity, the explanations are sometimes
-associated with numerical examples from version 3.0. This version has been the most used in recent publications.</p>
+<p>The documentation reflects the latest version of the model. The model is intended to be input-agnostic and the
+documentation is structured to reflect this paradigm. For the sake of clarity, however, some processes are
+illustrated with numerical examples from version 3.0, which was used in several recent publications.</p>
 <div class="section" id="scilab-to-python">
 <h4>Scilab to Python</h4>
-<p>The model was previously written in Scilab. In order to facilitate the diffusion of the model, we decided to translate
-the model into Python, one of the most popular languages. The syntax of the lines of code has a certain clarity, which
-makes it easier to read and understand, even if you are not a Python expert.</p>
-<p>After evaluating the outputs of Res-IRF 3.0 in the Scilab and Python versions, we validate the switch to the Python
-version of Res-IRF. The following figures <a class="reference internal" href="#res-irf-python-comparison-comsumption"><span class="std std-numref">Fig. 8</span></a> and
-<a class="reference internal" href="#res-irf-python-comparison-renovation"><span class="std std-numref">Fig. 9</span></a> show the observed differences. These differences can be explained by
-approximations but are small enough to validate the Python version.</p>
+<p>The model was initally coded in Scilab language. It was recently re-coded in the more popular Python language to gain
+more visibility. This recoding procedure implied changes in the model structure, due for instance to errors that had not
+been detected in the previous version. To assess the importance of these changes, we ran the Scilab and Python version
+of Res-IRF 3.0 and examined the differences among them across a range of outputs. <a class="reference internal" href="#res-irf-python-comparison-comsumption"><span class="std std-numref">Fig. 8</span></a>
+and <a class="reference internal" href="#res-irf-python-comparison-renovation"><span class="std std-numref">Fig. 9</span></a> illustrate these differences for two key outputs. We find that, over
+the range of outputs considered, the difference never exceeds 1% at the 2030 horizon and 5% at the 2050 horizon. We
+conclude that the errors are negligible and therefore validate the Python version of Res-IRF 3.0.</p>
 <div class="figure align-default" id="res-irf-python-comparison-comsumption">
 <img alt="_images/res_irf_python_comparison_comsumption.png" src="_images/res_irf_python_comparison_comsumption.png" />
 <p class="caption"><span class="caption-number">Fig. 8 </span><span class="caption-text">Python/Scilab consumption output comparison.</span></p>
@@ -371,6 +370,235 @@ approximations but are small enough to validate the Python version.</p>
 <img alt="_images/res_irf_python_comparison_renovation.png" src="_images/res_irf_python_comparison_renovation.png" />
 <p class="caption"><span class="caption-number">Fig. 9 </span><span class="caption-text">Python/Scilab renovation output comparison.</span></p>
 </div>
+<table class="docutils align-default" id="comparison-scilab-python">
+<caption><span class="caption-number">Table 24 </span><span class="caption-text">Comparison Scilab/Python</span></caption>
+<colgroup>
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head stub"><p>Zero politics</p></th>
+<th class="head"></th>
+<th class="head"></th>
+<th class="head"><p>2013</p></th>
+<th class="head"><p>2015</p></th>
+<th class="head"><p>2020</p></th>
+<th class="head"><p>2025</p></th>
+<th class="head"><p>2030</p></th>
+<th class="head"><p>2035</p></th>
+<th class="head"><p>2040</p></th>
+<th class="head"><p>2045</p></th>
+<th class="head"><p>2050</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><th class="stub"><p>Consumption actual (TWh)</p></th>
+<td><p>Res-IRF Scilab - ZP</p></td>
+<td><p>TWh</p></td>
+<td><p>294</p></td>
+<td><p>296</p></td>
+<td><p>267</p></td>
+<td><p>248</p></td>
+<td><p>232</p></td>
+<td><p>220</p></td>
+<td><p>209</p></td>
+<td><p>200</p></td>
+<td><p>191</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>Consumption actual (TWh)</p></th>
+<td><p>Res-IRF Python - ZP</p></td>
+<td><p>TWh</p></td>
+<td><p>294</p></td>
+<td><p>297</p></td>
+<td><p>268</p></td>
+<td><p>250</p></td>
+<td><p>235</p></td>
+<td><p>223</p></td>
+<td><p>213</p></td>
+<td><p>203</p></td>
+<td><p>195</p></td>
+</tr>
+<tr class="row-even"><th class="stub"></th>
+<td></td>
+<td></td>
+<td><p>0.00%</p></td>
+<td><p>0.34%</p></td>
+<td><p>0.37%</p></td>
+<td><p>0.81%</p></td>
+<td><p>1.29%</p></td>
+<td><p>1.36%</p></td>
+<td><p>1.91%</p></td>
+<td><p>1.50%</p></td>
+<td><p>2.09%</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"></th>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><th class="stub"><p>Flow renovation (Thousands)</p></th>
+<td><p>Res-IRF Scilab - ZP</p></td>
+<td><p>milliers</p></td>
+<td><p>571</p></td>
+<td><p>518</p></td>
+<td><p>504</p></td>
+<td><p>476</p></td>
+<td><p>463</p></td>
+<td><p>447</p></td>
+<td><p>427</p></td>
+<td><p>404</p></td>
+<td><p>382</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>Flow renovation (Thousands)</p></th>
+<td><p>Res-IRF Python - ZP</p></td>
+<td><p>milliers</p></td>
+<td><p>571</p></td>
+<td><p>518</p></td>
+<td><p>504</p></td>
+<td><p>476</p></td>
+<td><p>463</p></td>
+<td><p>446</p></td>
+<td><p>426</p></td>
+<td><p>404</p></td>
+<td><p>382</p></td>
+</tr>
+<tr class="row-even"><th class="stub"></th>
+<td></td>
+<td></td>
+<td><p>0.07%</p></td>
+<td><p>0.07%</p></td>
+<td><p>-0.01%</p></td>
+<td><p>-0.03%</p></td>
+<td><p>-0.08%</p></td>
+<td><p>-0.17%</p></td>
+<td><p>-0.12%</p></td>
+<td><p>0.12%</p></td>
+<td><p>0.10%</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>All politics</p></th>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><th class="stub"><p>Consumption actual (TWh)</p></th>
+<td><p>Res-IRF Scilab - AP</p></td>
+<td><p>TWh</p></td>
+<td><p>292</p></td>
+<td><p>288</p></td>
+<td><p>248</p></td>
+<td><p>223</p></td>
+<td><p>201</p></td>
+<td><p>185</p></td>
+<td><p>172</p></td>
+<td><p>161</p></td>
+<td><p>151</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>Consumption actual (TWh)</p></th>
+<td><p>Res-IRF Python - AP</p></td>
+<td><p>TWh</p></td>
+<td><p>292</p></td>
+<td><p>289</p></td>
+<td><p>249</p></td>
+<td><p>225</p></td>
+<td><p>204</p></td>
+<td><p>189</p></td>
+<td><p>177</p></td>
+<td><p>167</p></td>
+<td><p>158</p></td>
+</tr>
+<tr class="row-even"><th class="stub"></th>
+<td></td>
+<td></td>
+<td><p>0.15%</p></td>
+<td><p>0.33%</p></td>
+<td><p>0.30%</p></td>
+<td><p>0.71%</p></td>
+<td><p>1.62%</p></td>
+<td><p>2.20%</p></td>
+<td><p>2.85%</p></td>
+<td><p>3.49%</p></td>
+<td><p>4.46%</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"></th>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><th class="stub"><p>Flow renovation (Thousands)</p></th>
+<td><p>Res-IRF Scilab - AP</p></td>
+<td><p>milliers</p></td>
+<td><p>687</p></td>
+<td><p>628</p></td>
+<td><p>651</p></td>
+<td><p>619</p></td>
+<td><p>594</p></td>
+<td><p>542</p></td>
+<td><p>492</p></td>
+<td><p>443</p></td>
+<td><p>398</p></td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>Flow renovation (Thousands)</p></th>
+<td><p>Res-IRF Python - AP</p></td>
+<td><p>milliers</p></td>
+<td><p>687</p></td>
+<td><p>628</p></td>
+<td><p>652</p></td>
+<td><p>618</p></td>
+<td><p>591</p></td>
+<td><p>539</p></td>
+<td><p>487</p></td>
+<td><p>439</p></td>
+<td><p>392</p></td>
+</tr>
+<tr class="row-even"><th class="stub"></th>
+<td></td>
+<td></td>
+<td><p>0.00%</p></td>
+<td><p>0.02%</p></td>
+<td><p>0.09%</p></td>
+<td><p>-0.20%</p></td>
+<td><p>-0.47%</p></td>
+<td><p>-0.61%</p></td>
+<td><p>-0.97%</p></td>
+<td><p>-0.99%</p></td>
+<td><p>-1.52%</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
@@ -393,7 +621,7 @@ the part specifically dedicated to heating. Here again, the Phébus-DPE database
 heating use, hot water use and photovoltaic production, makes it possible to estimate an average share dedicated to
 heating for each EPC band.</p>
 <table class="docutils align-default" id="conventional-energy">
-<caption><span class="caption-number">Table 24 </span><span class="caption-text">Conventional primary energy consumption</span></caption>
+<caption><span class="caption-number">Table 25 </span><span class="caption-text">Conventional primary energy consumption</span></caption>
 <colgroup>
 <col style="width: 25%" />
 <col style="width: 25%" />
@@ -465,7 +693,7 @@ on gross energy consumption, we assign a consumption of 40 kWhEP/m²/year to NZ 
 heating from the five usages covered by building code prescriptions (instead of three usages in the case of the EPC in
 existing dwellings). Note that the energy requirements of EPC band A are also net of production from renewable sources.
 Our focus on gross consumption leads us to apply a coefficient that is greater than 1. These calculations are detailed
-in <a class="reference internal" href="#conventional-energy"><span class="std std-numref">Table 24</span></a>.</p>
+in <a class="reference internal" href="#conventional-energy"><span class="std std-numref">Table 25</span></a>.</p>
 <div class="section" id="surface-area">
 <h5>Surface area</h5>
 <p>The same approach was used to set surface area parameters bases on average values estimated on Phébus data, by
@@ -499,7 +727,7 @@ produced by CEREN. These differences are due to differing scopes between the ini
 and to the adjustments needed to select the main heating fuel.</p>
 <p>To ensure consistency with the CEREN data, which is the reference commonly used in modelling exercises, Res-IRF is
 calibrated to reproduce the final energy consumption given by CEREN for each fuel in the initial year. The resulting
-conversion coefficients applied to the Phebus Building Stock are listed in <a class="reference internal" href="#calibration-energy"><span class="std std-numref">Table 25</span></a>. They indicate
+conversion coefficients applied to the Phebus Building Stock are listed in <a class="reference internal" href="#calibration-energy"><span class="std std-numref">Table 26</span></a>. They indicate
 that Res-IRF reproduces natural gas and heating oil consumption fairly accurately, with an error of around 5%. On the
 other hand, electricity consumption is clearly overestimated and fuel-wood consumption is greatly underestimated. The
 succinct documentation of the CEREN database did not allow us to clearly identify the reasons for these biases. However,
@@ -508,7 +736,7 @@ which probably implies some substitution of electricity for wood in dwellings th
 but use wood as auxiliary heating. The difficulties inherent in converting different forms of wood (logs, pellets, etc.)
 into TWh can also explain the differences observed in wood consumption.</p>
 <table class="docutils align-default" id="calibration-energy">
-<caption><span class="caption-number">Table 25 </span><span class="caption-text">Calibration of total final actual energy consumption</span></caption>
+<caption><span class="caption-number">Table 26 </span><span class="caption-text">Calibration of total final actual energy consumption</span></caption>
 <colgroup>
 <col style="width: 17%" />
 <col style="width: 17%" />
@@ -610,7 +838,7 @@ two types of behavioural data – the discount rate and the investment horizon.<
 <p>Construction costs at the LE and NZ levels have been updated in Res-IRF 3.0 based on estimates recently made available
 by CGDD (2015) <a class="footnote-reference brackets" href="#constructions" id="id16">6</a></p>
 <table class="docutils align-default" id="cost-construction">
-<caption><span class="caption-number">Table 26 </span><span class="caption-text">Construction costs (€/m2)</span></caption>
+<caption><span class="caption-number">Table 27 </span><span class="caption-text">Construction costs (€/m2)</span></caption>
 <colgroup>
 <col style="width: 11%" />
 <col style="width: 11%" />
@@ -670,9 +898,9 @@ by CGDD (2015) <a class="footnote-reference brackets" href="#constructions" id="
 <p>The market shares used to calibrate intangible costs were also updated in 3.0, based on trends provided by CEREN.</p>
 <p>The massive penetration of natural gas at the expense of electric heating observed over the past ten years in
 multi-family housing is mainly due to the anticipation and subsequent application of the 2012 building code. In order to
-abstract from short-term variations, the 2012 market shares are set in Res-IRF on the average of the years 2012-2015 <a class="reference internal" href="#heating-fuel-construction"><span class="std std-numref">Table 27</span></a>.</p>
+abstract from short-term variations, the 2012 market shares are set in Res-IRF on the average of the years 2012-2015 <a class="reference internal" href="#heating-fuel-construction"><span class="std std-numref">Table 28</span></a>.</p>
 <table class="docutils align-default" id="heating-fuel-construction">
-<caption><span class="caption-number">Table 27 </span><span class="caption-text">Distribution of heating fuels in new constructions in Res-IRF for year 2012</span></caption>
+<caption><span class="caption-number">Table 28 </span><span class="caption-text">Distribution of heating fuels in new constructions in Res-IRF for year 2012</span></caption>
 <colgroup>
 <col style="width: 17%" />
 <col style="width: 17%" />
@@ -719,7 +947,7 @@ them sequentially.</p>
 <div class="section" id="intensive-margin">
 <h4>Intensive margin</h4>
 <p>Renovation costs <span class="math notranslate nohighlight">\(INV_{i,f}\)</span> are described by an upper diagonal matrix linking the initial EPC label i of the dwelling
-to its final label f <a class="reference internal" href="#renovation-cost"><span class="std std-numref">Table 28</span></a>. Parameterization of the matrix is based on piecemeal data supplemented
+to its final label f <a class="reference internal" href="#renovation-cost"><span class="std std-numref">Table 29</span></a>. Parameterization of the matrix is based on piecemeal data supplemented
 with values interpolated according to the following principles:</p>
 <ul class="simple">
 <li><p>Decreasing returns, i.e., increasing incremental cost of renovation:
@@ -728,7 +956,7 @@ with values interpolated according to the following principles:</p>
 <span class="math notranslate nohighlight">\(INV_{i,f} &lt; INV_{i,i+k} + INV_{i+k,f}\)</span> for all k such that <span class="math notranslate nohighlight">\(1≤k&lt;f-i\)</span></p></li>
 </ul>
 <table class="docutils align-default" id="renovation-cost">
-<caption><span class="caption-number">Table 28 </span><span class="caption-text">Renovation costs used in Res-IRF 3.0 (€/m2). Source: Expert opinion</span></caption>
+<caption><span class="caption-number">Table 29 </span><span class="caption-text">Renovation costs used in Res-IRF 3.0 (€/m2). Source: Expert opinion</span></caption>
 <colgroup>
 <col style="width: 13%" />
 <col style="width: 13%" />
@@ -820,7 +1048,7 @@ with values interpolated according to the following principles:</p>
 <p>The same is true for the matrix of market shares used to calibrate intangible costs of renovation, which was based on
 <span id="id17">[<a class="reference internal" href="#id41" title="PUCA. L'habitat existant dans la lutte contre l'effet de serre – évaluer et faire progresser les performances énergétiques et environnementales des OPAH – Bilan de l'évaluation technique. 2015. URL: http://www.urbanisme-puca.gouv.fr/IMG/pdf/bilan_final_opah.pdf (visited on 2021-10-28).">PUCA, 2015</a>]</span> (Table 11).</p>
 <table class="docutils align-default" id="market-share">
-<caption><span class="caption-number">Table 29 </span><span class="caption-text">Market shares of energy efficiency upgrades in 2012. Source: PUCA (2015)</span></caption>
+<caption><span class="caption-number">Table 30 </span><span class="caption-text">Market shares of energy efficiency upgrades in 2012. Source: PUCA (2015)</span></caption>
 <colgroup>
 <col style="width: 13%" />
 <col style="width: 13%" />
@@ -909,10 +1137,10 @@ with values interpolated according to the following principles:</p>
 </tbody>
 </table>
 <p>Intangible costs are calibrated so that the life-cycle cost model, fed with the investment costs reported in
-<a class="reference internal" href="#renovation-cost"><span class="std std-numref">Table 28</span></a>, matches the market shares reported in <a class="reference internal" href="#market-share"><span class="std std-numref">Table 29</span></a>. The resulting intangible
-costs for Res-IRF 3.0 are reported in <a class="reference internal" href="#intangible-cost"><span class="std std-numref">Table 30</span></a>.</p>
+<a class="reference internal" href="#renovation-cost"><span class="std std-numref">Table 29</span></a>, matches the market shares reported in <a class="reference internal" href="#market-share"><span class="std std-numref">Table 30</span></a>. The resulting intangible
+costs for Res-IRF 3.0 are reported in <a class="reference internal" href="#intangible-cost"><span class="std std-numref">Table 31</span></a>.</p>
 <table class="docutils align-default" id="intangible-cost">
-<caption><span class="caption-number">Table 30 </span><span class="caption-text">Averaged intangible costs in 2012 (€/m²)</span></caption>
+<caption><span class="caption-number">Table 31 </span><span class="caption-text">Averaged intangible costs in 2012 (€/m²)</span></caption>
 <colgroup>
 <col style="width: 14%" />
 <col style="width: 14%" />
@@ -983,8 +1211,8 @@ costs for Res-IRF 3.0 are reported in <a class="reference internal" href="#intan
 </tr>
 </tbody>
 </table>
-<p>The costs reported in <a class="reference internal" href="#renovation-cost"><span class="std std-numref">Table 28</span></a>, weighted by the market shares reported in <a class="reference internal" href="#market-share"><span class="std std-numref">Table 29</span></a>
-and <a class="reference internal" href="#renovation-share-ep"><span class="std std-numref">Table 31</span></a>, result in an average renovation cost of 112 €/m², very close to the 110 €/m² value
+<p>The costs reported in <a class="reference internal" href="#renovation-cost"><span class="std std-numref">Table 29</span></a>, weighted by the market shares reported in <a class="reference internal" href="#market-share"><span class="std std-numref">Table 30</span></a>
+and <a class="reference internal" href="#renovation-share-ep"><span class="std std-numref">Table 32</span></a>, result in an average renovation cost of 112 €/m², very close to the 110 €/m² value
 given by OPEN (9 978 € of average expenditure compared to 91 m²). Compared to the cumulative energy savings they
 generate (assuming an average lifetime of 26 years), they correspond to an average “negawatt-hour cost” of 83 €/MWh,
 with extreme values of 25 and 446. These values are in line with those recently produced by <span id="id18">[<a class="reference internal" href="#id51" title="DG Trésor. Barrières à l’investissement dans l’efficacité énergétique : quels outils pour quelles économies ? 2017. URL: https://www.tresor.economie.gouv.fr/Ressources/File/434150.">Trésor, 2017</a>]</span>.</p>
@@ -1002,10 +1230,10 @@ of the different options f∈{i+1,…,n}, weighted by their market share:</p>
 preference and habits, assuming they are normally distributed<a class="footnote-reference brackets" href="#distributed" id="id19">7</a>. Parameter ρ is calibrated, for each type of
 decision-maker and each initial label (i.e., 6x6=36 values), so that the NPVs calculated with the subsidies in effect in
 2012 <span id="id20">[<a class="reference internal" href="#id23" title="Louis-Gaëtan Giraudet, Céline Guivarch, and Philippe Quirion. Exploring the potential for energy conservation in French households through hybrid modeling. Energy Economics, 34(2):426–445, March 2012. URL: https://www.sciencedirect.com/science/article/pii/S014098831100140X (visited on 2021-02-22), doi:10.1016/j.eneco.2011.07.010.">Giraudet, Guivarch, and Quirion, 2012</a>]</span> reproduce the renovation rates described in
-<a class="reference internal" href="#renovation-share-ep"><span class="std std-numref">Table 31</span></a> and <a class="reference internal" href="#renovation-rate-dm"><span class="std std-numref">Table 32</span></a> and their aggregation represents 3% (686,757
+<a class="reference internal" href="#renovation-share-ep"><span class="std std-numref">Table 32</span></a> and <a class="reference internal" href="#renovation-rate-dm"><span class="std std-numref">Table 33</span></a> and their aggregation represents 3% (686,757
 units) of the housing stock of the initial year.</p>
 <table class="docutils align-default" id="renovation-share-ep">
-<caption><span class="caption-number">Table 31 </span><span class="caption-text">Renovation share by energy performance label. Source: PUCA (2015)</span></caption>
+<caption><span class="caption-number">Table 32 </span><span class="caption-text">Renovation share by energy performance label. Source: PUCA (2015)</span></caption>
 <colgroup>
 <col style="width: 50%" />
 <col style="width: 50%" />
@@ -1037,7 +1265,7 @@ units) of the housing stock of the initial year.</p>
 </tbody>
 </table>
 <table class="docutils align-default" id="renovation-rate-dm">
-<caption><span class="caption-number">Table 32 </span><span class="caption-text">Renovation rate by type of dwelling. Source : OPEN (2016) and USH (2017)</span></caption>
+<caption><span class="caption-number">Table 33 </span><span class="caption-text">Renovation rate by type of dwelling. Source : OPEN (2016) and USH (2017)</span></caption>
 <colgroup>
 <col style="width: 33%" />
 <col style="width: 33%" />
@@ -1082,12 +1310,12 @@ units) of the housing stock of the initial year.</p>
 <div class="section" id="discount-rate">
 <h5>Discount rate</h5>
 <p>In private housing, discount rates are differentiated by housing type in order to capture the heterogeneous constraints
-faced by investors <a class="reference internal" href="#discount-rate-existing"><span class="std std-numref">Table 33</span></a>. Specifically, the discount rates decrease with the owner’s income to reflect
+faced by investors <a class="reference internal" href="#discount-rate-existing"><span class="std std-numref">Table 34</span></a>. Specifically, the discount rates decrease with the owner’s income to reflect
 tighter credit constraints faced by lower-income households. Discount rates are also higher in multi-family housing than
 in single-family homes to capture the difficulties associated with decision-making within homeowner associations. In
 social housing, on the other hand, the discount rate is set at 4%, the value commonly used in public decision-making.</p>
 <table class="docutils align-default" id="discount-rate-existing">
-<caption><span class="caption-number">Table 33 </span><span class="caption-text">Discount rates. Source: Expert opinion</span></caption>
+<caption><span class="caption-number">Table 34 </span><span class="caption-text">Discount rates. Source: Expert opinion</span></caption>
 <colgroup>
 <col style="width: 25%" />
 <col style="width: 25%" />
@@ -1133,7 +1361,7 @@ social housing, on the other hand, the discount rate is set at 4%, the value com
 <div class="section" id="investment-horizon">
 <h5>Investment horizon</h5>
 <p>The investment horizon is subject to different scenario variants, reflecting different intensities of market
-capitalization of energy savings <a class="reference internal" href="#investment-horizon"><span class="std std-numref">Table 34</span></a>:</p>
+capitalization of energy savings <a class="reference internal" href="#investment-horizon"><span class="std std-numref">Table 35</span></a>:</p>
 <ul class="simple">
 <li><p>In the ‘full capitalization’ scenario, the investment horizon corresponds to the entire lifetime of energy retrofits,
 i.e., 30 years for improvements on the envelope and 16 years for the improvements on heating systems. Investors enjoy
@@ -1150,7 +1378,7 @@ resale.</p></li>
 resale premium.</p></li>
 </ul>
 <table class="docutils align-default" id="investment-horizon">
-<caption><span class="caption-number">Table 34 </span><span class="caption-text">Investment horizon for improvements on the envelope (on heating systems)</span></caption>
+<caption><span class="caption-number">Table 35 </span><span class="caption-text">Investment horizon for improvements on the envelope (on heating systems)</span></caption>
 <colgroup>
 <col style="width: 25%" />
 <col style="width: 25%" />

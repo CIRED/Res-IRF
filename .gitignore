@@ -138,5 +138,6 @@ dmypy.json
 /project/nb_tutorials/
 /project/input/_old/
 /project/input/abattement_curve/data_preparation.xlsx
-/documentation/_old/
+/documentation/development/
 /project/input/phebus/data_preparation_phebus.xlsx
+/documentation/development/

@@ -159,8 +159,7 @@ def parse_subsidies(buildings, flow_renovation_label, area):
 
 def parse_output(output, buildings, buildings_constructed, energy_prices, energy_taxes, energy_taxes_detailed,
                  co2_emission, coefficient, folder_output, lbd_output=False, output_detailed=False):
-    """
-    Parse Res-IRF output to return understandable data.
+    """Format Res-IRF output to return understandable data.
 
     Main output are segmented in 2 categories (stock, and transition flow).
     1. Stock - image of the stock in year y.
@@ -421,14 +420,20 @@ def parse_output(output, buildings, buildings_constructed, energy_prices, energy
         detailed = pd.concat((detailed, temp), axis=0)
 
     detailed.to_csv(os.path.join(folder_output, 'detailed.csv'))
+
+    stock = pd.DataFrame(buildings.stock_dict)
+    stock_constructed = pd.DataFrame(buildings_constructed.stock_dict).reorder_levels(stock.index.names)
+    stock = pd.concat((stock, stock_constructed), axis=0)
+    stock.to_csv(os.path.join(folder_output, 'stock.csv'))
+
+
     if output_detailed:
         pickle.dump(output_flow_transition, open(os.path.join(folder_output, 'output_transition.pkl'), 'wb'))
     pickle.dump(output_stock, open(os.path.join(folder_output, 'output_stock.pkl'), 'wb'))
 
 
 def quick_graphs(folder_output, output_detailed):
-    """
-    Returns main comparison graphs.
+    """Returns main comparison graphs.
 
     - What could be the evolution of actual energy consumption?
     - How many renovation (of at least 1 EPC) could there be by 2050?
@@ -438,7 +443,8 @@ def quick_graphs(folder_output, output_detailed):
 
     Parameters
     ----------
-    folder_output: str
+    folder_output : str
+    output_detailed : bool
     """
 
     scenarios = [f for f in os.listdir(folder_output) if f not in ['log.txt', '.DS_Store']]

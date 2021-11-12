@@ -81,6 +81,14 @@ Python/Scilab consumption output comparison.
 Python/Scilab renovation output comparison.
 ```
 
+```{eval-rst}
+.. csv-table:: Comparison Scilab/Python
+   :name: comparison_scilab_python
+   :file: table/comparison_scilab_python.csv
+   :header-rows: 1
+   :stub-columns: 1
+```
+
 ## Energy use
 
 The model uses two metrics for energy use: the conventional consumption predicted by the EPC label of the dwelling; and

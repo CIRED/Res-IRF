@@ -4,10 +4,12 @@
 ## Context
 
 ### Overview of the model
-> The Res-IRF model[^model] is a tool for simulating energy consumption for space heating in the French residential
-sector. Its main characteristic is to integrate a detailed description of the energy performance of the dwelling stock
-with a rich description of household behaviour. Res-IRF has been developed to improve the behavioural realism that
-integrated models of energy demand typically lack .
+
+> The Res-IRF model[^model] is a tool for simulating energy consumption and energy efficiency improvements in the 
+> French residential building sector. It currently focuses on space heating as the main usage. 
+> The rationale for its development is to integrate a detailed description of the energy performance of the dwelling 
+> stock with a rich description of household behaviour. Res-IRF has been developed to improve the behavioural realism 
+> that is typically lacking in integrated models of energy demand.
 
 [^model]: The acronym Res-IRF stands for the Residential module of IMACLIM-R France. Also developed at CIRED, IMACLIM-R
 France is a general equilibrium model of the French economy {cite:ps}`sassiIMACLIMRModellingFramework2010`. The two
@@ -53,20 +55,19 @@ The development of Res-IRF has produced six peer-reviewed articles to this day, 
 *Note : The symbol * points to the reference that contains the most comprehensive description of the associated version
 of the model. The most comprehensive description of version 3.0 is to be found in the present document.*
 
-The documentation reflects the latest version of the model. The model is intended to be input agnostic and the
-documentation tries to reflect this paradigm. However, for the sake of clarity, the explanations are sometimes
-associated with numerical examples from version 3.0. This version has been the most used in recent publications.
+The documentation reflects the latest version of the model. The model is intended to be input-agnostic and the
+documentation is structured to reflect this paradigm. For the sake of clarity, however, some processes are
+illustrated with numerical examples from version 3.0, which was used in several recent publications.
 
 #### Scilab to Python
 
-The model was previously written in Scilab. In order to facilitate the diffusion of the model, we decided to translate
-the model into Python, one of the most popular languages. The syntax of the lines of code has a certain clarity, which
-makes it easier to read and understand, even if you are not a Python expert.
-
-After evaluating the outputs of Res-IRF 3.0 in the Scilab and Python versions, we validate the switch to the Python
-version of Res-IRF. The following figures {numref}`res_irf_python_comparison_comsumption` and
-{numref}`res_irf_python_comparison_renovation` show the observed differences. These differences can be explained by
-approximations but are small enough to validate the Python version.
+The model was initally coded in Scilab language. It was recently re-coded in the more popular Python language to gain
+more visibility. This recoding procedure implied changes in the model structure, due for instance to errors that had not
+been detected in the previous version. To assess the importance of these changes, we ran the Scilab and Python version
+of Res-IRF 3.0 and examined the differences among them across a range of outputs. {numref}`res_irf_python_comparison_comsumption`
+and {numref}`res_irf_python_comparison_renovation` illustrate these differences for two key outputs. We find that, over
+the range of outputs considered, the difference never exceeds 1% at the 2030 horizon and 5% at the 2050 horizon. We
+conclude that the errors are negligible and therefore validate the Python version of Res-IRF 3.0.
 
 ```{figure} img/res_irf_python_comparison_comsumption.png
 :name: res_irf_python_comparison_comsumption
@@ -78,6 +79,14 @@ Python/Scilab consumption output comparison.
 :name: res_irf_python_comparison_renovation
 
 Python/Scilab renovation output comparison.
+```
+
+```{eval-rst}
+.. csv-table:: Comparison Scilab/Python
+   :name: comparison_scilab_python
+   :file: table/comparison_scilab_python.csv
+   :header-rows: 1
+   :stub-columns: 1
 ```
 
 ## Energy use

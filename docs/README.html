@@ -107,10 +107,8 @@
 <li class="toctree-l1"><a class="reference internal" href="policies_parameters.html">Setting up public policies</a></li>
 <li class="toctree-l1"><a class="reference internal" href="policies_assessment.html">Policies assessment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html">Modification from Res-IRF 3.0</a></li>
 <li class="toctree-l1"><a class="reference internal" href="help_installation.html">Installation help</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="future_development.html">Future developments</a></li>
 </ul>
 
             
@@ -206,16 +204,19 @@
 <h1>Res-IRF</h1>
 <div class="section" id="disclaimer">
 <h2>Disclaimer</h2>
-<p><strong><em>The contents of this repository are all in-progress and should not be expected to be free of errors or to perform any specific functions. Use only with care and caution.</em></strong></p>
+<p><strong><em>The contents of this repository are all in-progress and should not be expected to be free of errors or to perform any
+specific functions. Use only with care and caution.</em></strong></p>
 </div>
 <div class="section" id="about-the-authors">
 <h2>About the authors</h2>
-<p>The development of the Res-IRF model was initiated at CIRED in 2008. Coordinated by Louis-Gaëtan Giraudet, it involved over the years, in alphabetic order, Cyril Bourgeois, Frédéric Branger, David Glotin, Céline Guivarch and Philippe Quirion.</p>
+<p>The development of the Res-IRF model was initiated at CIRED in 2008. Coordinated by Louis-Gaëtan Giraudet, it involved
+over the years, in alphabetic order, Cyril Bourgeois, Frédéric Branger, François Chabrol, David Glotin, Céline Guivarch
+and Philippe Quirion.</p>
 </div>
 <div class="section" id="overview">
 <h2>Overview</h2>
 <blockquote>
-<div><p>The Res-IRF model is a tool for <strong>simulating energy consumption for space heating</strong> in the French residential sector.  Its main characteristic is to integrate a detailed description of the energy performance of the dwelling stock with a rich description of household behaviour. Res-IRF has been developed to improve the behavioural realism that integrated models of energy demand typically lack.</p>
+<div><p>The Res-IRF model is a tool for simulating energy consumption and energy efficiency improvements in the French residential building sector. It currently focuses on space heating as the main usage. The rationale for its development is to integrate a detailed description of the energy performance of the dwelling stock with a rich description of household behaviour. Res-IRF has been developed to improve the behavioural realism that is typically lacking in integrated models of energy demand.</p>
 </div></blockquote>
 </div>
 <div class="section" id="installation">
@@ -238,7 +239,8 @@
 </ul>
 <p><strong>Step 4</strong>: <strong>Launch Res-IRF</strong></p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">main.py</span> <span class="pre">-n</span> <span class="pre">scenario.json</span></code></p></li>
+<li><p>Launch from Res-IRF root folder:</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">project/main.py</span> <span class="pre">-n</span> <span class="pre">scenario.json</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">scenario.json</span></code> is the path to the configuration file</p></li>
 </ul>
 </div>
@@ -277,7 +279,7 @@ There are 4 main notebooks:</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">policy_indicator.ipyb</span></code>: macro and micro output comparison and calculation of efficiency and effectiveness.</p></li>
 </ul>
 <p>Notebook templates are stored in <code class="docutils literal notranslate"><span class="pre">project/nb_template_analysis</span></code>.<br />
-Users should copy and paste the template notebook in another folder to launch it.</p>
+<strong>Users should copy and paste the template notebook in another folder to launch it.</strong></p>
 <p>For users that want to contribute, other notebooks are stored in <code class="docutils literal notranslate"><span class="pre">tutorials_notbook</span></code> to insist on a specific Res-IRF
 functions:</p>
 <ul class="simple">
