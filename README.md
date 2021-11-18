@@ -51,13 +51,13 @@ The Res-IRF script use Multiprocessing tool to launch multiple scenarios in the 
 
 In the `output/ddmmyyyy_hhmm` folder:
 - One folder for each scenario declared in the configuration file with detailed outputs:
-    - `summary_input.csv` summary of main input
-    - `summary.csv` summary of main output
     - `detailed.csv` detailed output readable directly with an Excel-like tool
-    - `summary_policies` results of public policies impact and cost
-    - `.pkl` files contain exhaustive output but need to be read with a programing language
-    - copy of `parameters.json` and scenario used for the run
-- `.png` graphs that compare scenarios
+    - `summary_input.csv` summary of main input
+    - `summary_policies.png` public policies costs evolution
+    - copy of `parameters.json` and `scenario` used for the run
+- `.png` graphs comparing scenarios launch in the same config file.
+
+
 
 **Step 2 : Launch one of the Jupyter Notebook analysis tool (in progress)**  
 There are 4 main notebooks:

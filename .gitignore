@@ -143,3 +143,7 @@ dmypy.json
 /documentation/development/
 /project/nb_tutorials/abattement_curve_comparison.ipynb
 /project/nb_examples/
+/project/input/sdes/
+/project/input/consumption_ceren.csv
+/project/input/backtesting/
+/project/input/abattement_curve/

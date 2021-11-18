@@ -2,31 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5a27c1bc-6d7f-41bf-89e9-22387bb7bdb3" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/project/cost_curve/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/documentation/source/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/source/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/abattement_curve.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/cost_curve/cost_curve.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/abattement_curve_comparison.ipynb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/buildings.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/buildings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/CO2_value.csv" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/policies/CO2_value.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/attributes2discount_ref.csv" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/phebus/attributes2discount_ref.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/carbon_tax.csv" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/policies/carbon_tax.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/cee_plus_subsidy.csv" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/policies/cee_plus_subsidy.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/cee_subsidy.csv" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/policies/cee_subsidy.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/cee_tax.csv" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/policies/cee_tax.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/config_policies.csv" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/policies/config_policies.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/phebus/attributes_2012.json" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/phebus/attributes_2012.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/phebus/config_files/scenario_cite.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/policies.json" beforeDir="false" afterPath="$PROJECT_DIR$/project/input/policies/policies.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/input/scenario.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/nb_template_analysis/policy_indicator.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/project/nb_template_analysis/policy_indicator.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/parse_input.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/parse_input.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/policy_indicators.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/policy_indicators.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/res_irf.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/res_irf.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/ui_abattement_curve.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/cost_curve/ui_cost_curve.py" afterDir="false" />
     </list>
     <list id="c1475e6c-5c86-4ada-b891-0f5a944b2008" name="Revert &quot;Delete project/input/test directory&quot;" comment="Revert &quot;Delete project/input/test directory&quot;&#10;&#10;This reverts commit b2bb53ac" />
     <option name="SHOW_DIALOG" value="false" />
@@ -669,14 +646,8 @@
       <workItem from="1637016295721" duration="37000" />
       <workItem from="1637052465325" duration="604000" />
       <workItem from="1637079851076" duration="4866000" />
-      <workItem from="1637226501039" duration="2102000" />
-    </task>
-    <task id="LOCAL-00035" summary="cleaning and organizing">
-      <created>1626099600540</created>
-      <option name="number" value="00035" />
-      <option name="presentableId" value="LOCAL-00035" />
-      <option name="project" value="LOCAL" />
-      <updated>1626099600540</updated>
+      <workItem from="1637226501039" duration="2209000" />
+      <workItem from="1637247536812" duration="261000" />
     </task>
     <task id="LOCAL-00036" summary="cleaning and organizing">
       <created>1626101248629</created>
@@ -1014,7 +985,14 @@
       <option name="project" value="LOCAL" />
       <updated>1636725236400</updated>
     </task>
-    <option name="localTasksCounter" value="84" />
+    <task id="LOCAL-00084" summary="updating documentation">
+      <created>1637228923671</created>
+      <option name="number" value="00084" />
+      <option name="presentableId" value="LOCAL-00084" />
+      <option name="project" value="LOCAL" />
+      <updated>1637228923672</updated>
+    </task>
+    <option name="localTasksCounter" value="85" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
