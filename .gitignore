@@ -141,3 +141,5 @@ dmypy.json
 /documentation/development/
 /project/input/phebus/data_preparation_phebus.xlsx
 /documentation/development/
+/project/nb_tutorials/abattement_curve_comparison.ipynb
+/project/nb_examples/

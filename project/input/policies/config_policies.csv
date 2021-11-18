@@ -1,12 +1,14 @@
-﻿Folder name,Eptz
-Policy name,Eptz subsidy
+﻿Folder name,cee
+Discount rate,0.04
+Lifetime,26
+Policy name,Cee subsidy
 All policies,AP
 All policies - 1,AP-1
 Zero policies,ZP
 Zero policies + 1,ZP+1
 Policy - 2013,
 Policy - 2014,
-Policy - 2015,
+Policy - 2015,AP-2015
 Policy - 2016,
 Policy - 2017,
 Policy - 2018,
@@ -21,17 +23,17 @@ Policy - 2026,
 Policy - 2027,
 Policy - 2028,
 Policy - 2029,
-Policy - 2030,AP-2030
+Policy - 2030,
 Policy - 2031,
 Policy - 2032,
 Policy - 2033,
 Policy - 2034,
-Policy - 2035,AP-2035
+Policy - 2035,
 Policy - 2036,
 Policy - 2037,
 Policy - 2038,
 Policy - 2039,
-Policy - 2040,AP-2040
+Policy - 2040,
 Policy - 2041,
 Policy - 2042,
 Policy - 2043,

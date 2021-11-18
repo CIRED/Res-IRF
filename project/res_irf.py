@@ -23,8 +23,7 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
             energy_taxes, cost_invest, cost_invest_construction, cost_switch_fuel_end, stock_ini, co2_tax, co2_emission,
             rate_renovation_ini, ms_renovation_ini, ms_construction_ini, income_tenants_construction, logging,
             output_detailed):
-    """
-    Res-IRF model main function.
+    """Res-IRF model main function.
 
     Res-IRF is a multi-agent building stock dynamic microsimulation model.
     1. Loading public policies
@@ -189,7 +188,8 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
         if total_taxes is None:
             total_taxes = val
         else:
-            total_taxes = total_taxes + val
+            yrs = total_taxes.columns.union(val.columns)
+            total_taxes = total_taxes.reindex(yrs, axis=1).fillna(0) + val.reindex(yrs, axis=1).fillna(0)
 
         energy_taxes_detailed[tax.name] = val
 

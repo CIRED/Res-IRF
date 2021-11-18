@@ -932,7 +932,7 @@ class HousingStock:
     def to_lcc_final(self, energy_prices, cost_invest=None, cost_intangible=None,
                      transition=None, consumption='conventional', subsidies=None, segments=None, energy_lcc=None):
         """
-        Calculate life-cycle-cost of home-energy retrofits for every segment and every possible transition.
+        Calculate life-cycle-cost of home-energy retrofits by agent and every possible transition.
 
         Parameters
         ----------

@@ -4,15 +4,16 @@
 **_The contents of this repository are all in-progress and should not be expected to be free of errors or to perform any
 specific functions. Use only with care and caution._**
 
-## About the authors
-
-The development of the Res-IRF model was initiated at CIRED in 2008. Coordinated by Louis-Gaëtan Giraudet, it involved
-over the years, in alphabetic order, Cyril Bourgeois, Frédéric Branger, François Chabrol, David Glotin, Céline Guivarch
-and Philippe Quirion.
-
 ## Overview
 
 > The Res-IRF model is a tool for simulating energy consumption and energy efficiency improvements in the French residential building sector. It currently focuses on space heating as the main usage. The rationale for its development is to integrate a detailed description of the energy performance of the dwelling stock with a rich description of household behaviour. Res-IRF has been developed to improve the behavioural realism that is typically lacking in integrated models of energy demand.
+
+## Resources
+
+Documentation is freely available on https://lucas-vivier.github.io/Res-IRF/
+
+A simple user interface is available on http://resirf.pythonanywhere.com/ to give an overview of Res-IRF main output.
+
 
 ## Installation
 **Step 1**: Git **clone Res-IRF folder** in your computer.
@@ -32,7 +33,7 @@ and Philippe Quirion.
    - Launch from Res-IRF root folder:
    - `python project/main.py -n scenario.json`
    - `scenario.json` is the path to the configuration file
-
+   
 ## Usage example
 Project includes libraries, scripts and notebooks.  
 `/project` is the folder containing scripts, notebooks, inputs and outputs.  
@@ -58,7 +59,7 @@ In the `output/ddmmyyyy_hhmm` folder:
     - copy of `parameters.json` and scenario used for the run
 - `.png` graphs that compare scenarios
 
-**Step 2 : Launch one of the Jupyter Notebook analysis tool (optional)**  
+**Step 2 : Launch one of the Jupyter Notebook analysis tool (in progress)**  
 There are 4 main notebooks:
 - `ui_unique.ipynb`: macro and micro output analysis.
 - `quick_comparison.ipyb`: macro and micro output comparison.
@@ -68,18 +69,11 @@ There are 4 main notebooks:
 Notebook templates are stored in `project/nb_template_analysis`.  
 **Users should copy and paste the template notebook in another folder to launch it.**
 
-For users that want to contribute, other notebooks are stored in `tutorials_notbook` to insist on a specific Res-IRF
-functions:
-- `demographic_variables.ipynb`
-- `heating_intensity.ipynb`
-- `information_rate.ipynb`
-- `learning_by_doing.ipynb`
-- `market_share.ipynb`
-- `renovation_dynamics.ipynb`
-- `renovation_rate.ipynb`
+## About the authors
 
-## Documentation
-Documentation is available on https://lucas-vivier.github.io/Res-IRF/
+The development of the Res-IRF model was initiated at CIRED in 2008. Coordinated by Louis-Gaëtan Giraudet, it involved
+over the years, in alphabetic order, Cyril Bourgeois, Frédéric Branger, François Chabrol, David Glotin, Céline Guivarch,
+Philippe Quirion, and Lucas Vivier.
 
 ## Meta
 

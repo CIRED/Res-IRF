@@ -301,7 +301,6 @@ def parse_exogenous_input(folder, config):
     # adding vta to cee_tax
     # to delete after test
     cee_tax.loc[:, 2013:] = cee_tax.loc[:, 2013:] * (1 + 0.2)
-    # cee_tax.loc[:, 2016:] = 0
     policies['cee_taxes']['value'] = cee_tax * (1 + 0.2)
 
     cee_subsidy = pd.read_csv(os.path.join(os.getcwd(), config['cee_subsidy_value']['source']), index_col=[0])

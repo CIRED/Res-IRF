@@ -6,15 +6,18 @@ import pandas as pd
 import ui_utils
 
 
-def run_indicators(config, folder, CO2_value, parameters=None):
-    """
-    Calculate main indicators to assess public policy.
+def run_indicators(config, folder, CO2_value, discount_rate=0.04, lifetime=26, parameters=None):
+    """Calculate main indicators to assess public policy.
 
     Parameters
     ----------
     config: dict
     folder: str
     CO2_value: pd.Series
+    discount_rate: float
+        Discount rate to extend energy and emission saving
+    lifetime : int
+        Lifetime to extend energy and emission saving
     parameters: dict
 
     Returns
@@ -27,9 +30,13 @@ def run_indicators(config, folder, CO2_value, parameters=None):
         if key in ['All policies', 'All policies - 1', 'Zero policies', 'Zero policies + 1'] or key in temp:
             config[key] = item.replace(' ', '_')
 
-        # 0 Discount factor to extend energy and emission saving
-    discount_rate = 0.04
-    lifetime = 26
+    if 'Discount rate' in config.keys():
+        discount_rate = float(config['Discount rate'])
+
+    if 'Lifetime' in config.keys():
+        lifetime = int(config['Lifetime'])
+
+    # Discount factor to extend energy and emission saving
     discount_factor = (1 - (1 + discount_rate) ** -lifetime) / discount_rate
 
     folder_output = os.path.join(os.getcwd(), 'project', 'output', folder)
@@ -195,5 +202,5 @@ if __name__ == '__main__':
 
     config_policies = pd.read_csv(os.path.join('project', args.config), squeeze=True, header=None, index_col=[0])
     config_policies = config_policies.dropna()
-    CO2_value = pd.read_csv('project/input/CO2_value.csv', index_col=[0], squeeze=True, header=None)
+    CO2_value = pd.read_csv('project/input/policies/CO2_value.csv', index_col=[0], squeeze=True, header=None)
     run_indicators(config_policies.to_dict(), config_policies['Folder name'], CO2_value)

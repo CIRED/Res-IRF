@@ -219,7 +219,7 @@
   },
   "attributes2discount": {
     "Reference": {
-      "source": "project/input/attributes2discount_ref.csv",
+      "source": "project/input/phebus/attributes2discount_ref.csv",
       "type": "file"
     },
     "No budget constraint": {
