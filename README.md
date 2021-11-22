@@ -95,4 +95,4 @@ Lucas Vivier – [@VivierLucas](https://twitter.com/VivierLucas) – vivier@cent
 
 Distributed under the GNU GENERAL PUBLIC LICENSE. See ``LICENSE`` for more information.
 
-[https://github.com/lucas-vivier/Res-IRF](https://github.com/lucas-vivier/Res-IRF)
+[https://github.com/CIRED/Res-IRF](https://github.com/CIRED/Res-IRF)
