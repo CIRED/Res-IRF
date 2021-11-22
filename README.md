@@ -10,7 +10,7 @@ specific functions. Use only with care and caution._**
 
 ## Resources
 
-Documentation is freely available on https://lucas-vivier.github.io/Res-IRF/
+Documentation is freely available on https://cired.github.io/Res-IRF/
 
 A simple user interface is available on http://resirf.pythonanywhere.com/ to give an overview of Res-IRF main output.
 
