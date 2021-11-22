@@ -146,3 +146,5 @@ dmypy.json
 /project/input/consumption_ceren.csv
 /project/input/backtesting/
 /project/input/abattement_curve/
+
+/.DS_Store/
