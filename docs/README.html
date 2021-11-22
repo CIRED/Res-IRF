@@ -92,11 +92,11 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Res-IRF</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#disclaimer">Disclaimer</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#about-the-authors">About the authors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#resources">Resources</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#usage-example">Usage example</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#documentation">Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#getting-started">Getting started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#about-the-authors">About the authors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#meta">Meta</a></li>
 </ul>
 </li>
@@ -106,7 +106,7 @@
 <li class="toctree-l1"><a class="reference internal" href="simulation_2012.html">Simulation and sensitivity analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="policies_parameters.html">Setting up public policies</a></li>
 <li class="toctree-l1"><a class="reference internal" href="policies_assessment.html">Policies assessment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules.html">Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">API reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="help_installation.html">Installation help</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
 </ul>
@@ -207,17 +207,16 @@
 <p><strong><em>The contents of this repository are all in-progress and should not be expected to be free of errors or to perform any
 specific functions. Use only with care and caution.</em></strong></p>
 </div>
-<div class="section" id="about-the-authors">
-<h2>About the authors</h2>
-<p>The development of the Res-IRF model was initiated at CIRED in 2008. Coordinated by Louis-Gaëtan Giraudet, it involved
-over the years, in alphabetic order, Cyril Bourgeois, Frédéric Branger, François Chabrol, David Glotin, Céline Guivarch,
-Philippe Quirion, and Lucas Vivier.</p>
-</div>
 <div class="section" id="overview">
 <h2>Overview</h2>
 <blockquote>
 <div><p>The Res-IRF model is a tool for simulating energy consumption and energy efficiency improvements in the French residential building sector. It currently focuses on space heating as the main usage. The rationale for its development is to integrate a detailed description of the energy performance of the dwelling stock with a rich description of household behaviour. Res-IRF has been developed to improve the behavioural realism that is typically lacking in integrated models of energy demand.</p>
 </div></blockquote>
+</div>
+<div class="section" id="resources">
+<h2>Resources</h2>
+<p>Documentation is freely available on https://lucas-vivier.github.io/Res-IRF/</p>
+<p>A simple user interface is available on http://resirf.pythonanywhere.com/ to give an overview of Res-IRF main output.</p>
 </div>
 <div class="section" id="installation">
 <h2>Installation</h2>
@@ -240,37 +239,36 @@ Philippe Quirion, and Lucas Vivier.</p>
 <p><strong>Step 4</strong>: <strong>Launch Res-IRF</strong></p>
 <ul class="simple">
 <li><p>Launch from Res-IRF root folder:</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">project/main.py</span> <span class="pre">-n</span> <span class="pre">scenario.json</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">scenario.json</span></code> is the path to the configuration file</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">project/main.py</span> <span class="pre">-n</span> <span class="pre">project/input/phebus/config.json</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">project/input/phebus/config.json</span></code> is the path to the configuration file</p></li>
 </ul>
 </div>
-<div class="section" id="usage-example">
-<h2>Usage example</h2>
+<div class="section" id="getting-started">
+<h2>Getting started</h2>
 <p>Project includes libraries, scripts and notebooks.<br />
 <code class="docutils literal notranslate"><span class="pre">/project</span></code> is the folder containing scripts, notebooks, inputs and outputs.</p>
-<p>The standard way to launch Res-IRF:</p>
-<p><strong>Step 1: Launch Res-IRF main script.</strong><br />
+<p>The standard way to run Res-IRF:</p>
+<p><strong>Launch Res-IRF main script.</strong><br />
 The model creates results in a folder in project/output.<br />
 Folder name is by default <code class="docutils literal notranslate"><span class="pre">ddmmyyyy_hhmm</span></code> (launching date and hour).
-Results are mainly .pkl (serialize format by the pickle library), .csv file and some .png graphs.</p>
+By default, only a  selection of the most important results are available and graphs.</p>
+<p>To get a detailed view of the results add <code class="docutils literal notranslate"><span class="pre">o</span> <span class="pre">True</span></code>. Detailed results are .pkl files (serialize format by the pickle
+library).</p>
 <p>A configuration file must be declared.
-An example of configuration file is in the <code class="docutils literal notranslate"><span class="pre">input</span></code> folder under the name of <code class="docutils literal notranslate"><span class="pre">scenario.json</span></code>.
+An example of configuration file is in the <code class="docutils literal notranslate"><span class="pre">input/phebus</span></code> folder under the name of <code class="docutils literal notranslate"><span class="pre">config.json</span></code>.
 The Res-IRF script use Multiprocessing tool to launch multiple scenarios in the same time.</p>
 <p>In the <code class="docutils literal notranslate"><span class="pre">output/ddmmyyyy_hhmm</span></code> folder:</p>
 <ul class="simple">
 <li><p>One folder for each scenario declared in the configuration file with detailed outputs:</p>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">summary_input.csv</span></code> summary of main input</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">summary.csv</span></code> summary of main output</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">detailed.csv</span></code> detailed output readable directly with an Excel-like tool</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">summary_policies</span></code> results of public policies impact and cost</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">.pkl</span></code> files contain exhaustive output but need to be read with a programing language</p></li>
-<li><p>copy of <code class="docutils literal notranslate"><span class="pre">parameters.json</span></code> and scenario used for the run</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">summary_input.csv</span></code> summary of main input</p></li>
+<li><p>copy of <code class="docutils literal notranslate"><span class="pre">parameters.json</span></code> and <code class="docutils literal notranslate"><span class="pre">config.son</span></code> used for the run</p></li>
 </ul>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">.png</span></code> graphs that compare scenarios</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.png</span></code> graphs comparing scenarios launch in the same config file.</p></li>
 </ul>
-<p><strong>Step 2 : Launch one of the Jupyter Notebook analysis tool (optional)</strong><br />
+<p><strong>Launch one of the Jupyter Notebook analysis tool (work in progress)</strong><br />
 There are 4 main notebooks:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">ui_unique.ipynb</span></code>: macro and micro output analysis.</p></li>
@@ -280,24 +278,26 @@ There are 4 main notebooks:</p>
 </ul>
 <p>Notebook templates are stored in <code class="docutils literal notranslate"><span class="pre">project/nb_template_analysis</span></code>.<br />
 <strong>Users should copy and paste the template notebook in another folder to launch it.</strong></p>
-<p>For users that want to contribute, other notebooks are stored in <code class="docutils literal notranslate"><span class="pre">tutorials_notbook</span></code> to insist on a specific Res-IRF
-functions:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">demographic_variables.ipynb</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">heating_intensity.ipynb</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">information_rate.ipynb</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">learning_by_doing.ipynb</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">market_share.ipynb</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">renovation_dynamics.ipynb</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">renovation_rate.ipynb</span></code></p></li>
-</ul>
 </div>
-<div class="section" id="documentation">
-<h2>Documentation</h2>
-<p>Documentation is available on https://lucas-vivier.github.io/Res-IRF/</p>
+<div class="section" id="about-the-authors">
+<h2>About the authors</h2>
+<p>The development of the Res-IRF model was initiated at CIRED in 2008. Coordinated by Louis-Gaëtan Giraudet, it involved
+over the years, in alphabetic order, Cyril Bourgeois, Frédéric Branger, François Chabrol, David Glotin, Céline Guivarch,
+Philippe Quirion, and Lucas Vivier.</p>
 </div>
 <div class="section" id="meta">
 <h2>Meta</h2>
+<p>If you find <code class="docutils literal notranslate"><span class="pre">Res-IRF</span></code> useful, please kindly cite our last paper:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@article</span><span class="p">{</span>
+  <span class="n">author</span>  <span class="o">=</span> <span class="p">{</span><span class="n">Giraudet</span><span class="p">,</span> <span class="n">Louis</span><span class="o">-</span><span class="n">Gaëtan</span> <span class="ow">and</span> <span class="n">Bourgeois</span><span class="p">,</span> <span class="n">Cyril</span> <span class="ow">and</span> <span class="n">Quirion</span><span class="p">,</span> <span class="n">Philippe</span><span class="p">},</span>
+  <span class="n">title</span>   <span class="o">=</span> <span class="p">{</span><span class="n">Policies</span> <span class="k">for</span> <span class="n">low</span><span class="o">-</span><span class="n">carbon</span> <span class="ow">and</span> <span class="n">affordable</span> <span class="n">home</span> <span class="n">heating</span><span class="p">:</span> <span class="n">A</span> <span class="n">French</span> <span class="n">outlook</span><span class="p">},</span>
+  <span class="n">journal</span> <span class="o">=</span> <span class="p">{</span><span class="n">Energy</span> <span class="n">Policy</span><span class="p">},</span>
+  <span class="n">year</span>    <span class="o">=</span> <span class="p">{</span><span class="mi">2021</span><span class="p">},</span>
+  <span class="n">volume</span>  <span class="o">=</span> <span class="p">{</span><span class="mi">151</span><span class="p">},</span>
+  <span class="n">url</span>     <span class="o">=</span> <span class="p">{</span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">.</span><span class="n">sciencedirect</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">science</span><span class="o">/</span><span class="n">article</span><span class="o">/</span><span class="n">pii</span><span class="o">/</span><span class="n">S0301421521000094</span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 <p>Lucas Vivier – <a class="reference external" href="https://twitter.com/VivierLucas">&#64;VivierLucas</a> – vivier&#64;centre-cired.fr</p>
 <p>Distributed under the GNU GENERAL PUBLIC LICENSE. See <code class="docutils literal notranslate"><span class="pre">LICENSE</span></code> for more information.</p>
 <p><a class="reference external" href="https://github.com/lucas-vivier/Res-IRF">https://github.com/lucas-vivier/Res-IRF</a></p>
