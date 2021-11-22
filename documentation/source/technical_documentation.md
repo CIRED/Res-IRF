@@ -159,11 +159,11 @@ $$\text{Heating Intensity} =-0,191*log(\text{Income share})+0,1105$$
 
 with:
 
-$$\text{Heating Intensity} = \text{Actual energy use}/\text{Conventional energy use}$$
+$$\text{Heating Intensity} = \frac{\text{Actual energy use}}{\text{Conventional energy use}}$$
 
 and:
 
-$$\text{Income share} = (text{Energy price} * \text{Surface}* \text{Conventional energy use}/\text{Income}$$
+$$\text{Income share} =\frac{\text{Energy price} * \text{Surface}* \text{Conventional energy use}}{\text{Income}}$$
 
 #### Total energy use
 
@@ -236,7 +236,7 @@ The assumption of myopic expectation, which materializes by applying the discoun
 price, is justified by a number of econometric studies {cite:ps}`andersonWhatConsumersBelieve2011` The discount factor γ
 depends on the discount rate r and the investment horizon l according to the following relationship:
 
-$$γ(r,l)=∑_{t=0} (1+r)^{-t} = (1-(1+r)^{-l)})/r$$
+$$γ(r,l)=∑_{t=0} (1+r)^{-t} = \frac{1-(1+r)^{-l)}}{r}$$
 
 The two parameters are set in Res-IRF to capture various barriers to home renovation:
 - The discount rate captures both the tighter credit constraints facing lower-income households and the barriers to
@@ -248,7 +248,7 @@ The two parameters are set in Res-IRF to capture various barriers to home renova
 The market share $MS_{i,f}$ of upgrades from labels i to f, resulting from the aggregation of individual choices, is
 determined by their life-cycle cost from the following equation:
 
-$$MS_{i,f} = LCC_{i,f}^{-v}/(∑_{k=i+1} LCC_{i,k} ^{-v} )$$
+$$MS_{i,f} = \frac{LCC_{i,f}^{-v}}{∑_{k=i+1} LCC_{i,k} ^{-v}}$$
 
 Parameter v characterizing the heterogeneity of preferences is set to 8 in the model.[^2model]  Intangible costs are
 calibrated so that the observed market shares are reproduced in the initial year.
@@ -361,7 +361,7 @@ $$NPV_i=∑_{f>i}^n MS_{i,f} * LCC_{i,f}$$
 
 The renovation rate $τ_i$ of dwellings labelled i is then calculated as a logistic function of the NPV:
 
-$$τ_i=τ_{max}/(1+(τ_{max}/τ_{min} -1) e^{-ρ(NPV_i- NPV_{min})})$$
+$$τ_i=\frac{τ_{max}}{1+(τ_{max}/τ_{min} -1) e^{-ρ(NPV_i- NPV_{min})}}$$
 
 with $τ_{min}=0,001%$, $NPV_{min}=-1 000€$ and $τ_{max}=20%$. The logistic form captures heterogeneity in heating
 preference and habits, assuming they are normally distributed[^distributed]. Parameter ρ is calibrated, for each type of

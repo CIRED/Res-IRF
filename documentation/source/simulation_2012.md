@@ -92,7 +92,7 @@ Number of households dedicating over 10% of their income to heating
 ```{eval-rst}
 .. csv-table:: Scenario specification capitalization
    :name: scenario_specification_capitalization
-   :file: table/investment_horizon_2012.csv
+   :file: table/input_2012/investment_horizon_2012.csv
    :header-rows: 1
 ```
 

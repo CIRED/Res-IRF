@@ -753,8 +753,8 @@ class HousingStock:
 
         Parameters
         ----------
-        consumption : str, {'conventional', 'actual'}
-        transition : list, default ['Energy performance', 'Heating energy']
+        consumption: str, {'conventional', 'actual'}
+        transition  list, default ['Energy performance', 'Heating energy']
             Transition defined possible final states.
 
         Returns
@@ -778,9 +778,9 @@ class HousingStock:
 
         Parameters
         ----------
-        transition : list, default ['Energy performance', 'Heating energy']
+        transition: list, default ['Energy performance', 'Heating energy']
             Transition defined possible final states.
-        consumption : str, {'conventional', 'actual'}
+        consumption: str, {'conventional', 'actual'}
 
         Returns
         -------
@@ -808,7 +808,7 @@ class HousingStock:
 
         Parameters
         ----------
-        transition: {(Energy performance, ), (Heating energy, ), (Energy performance, Heating energy)
+        transition: (Energy performance, ), (Heating energy, ), (Energy performance, Heating energy)
             Transition defined possible final states.
         consumption: {'conventional', 'actual'}
         discount: float, default 0.04
@@ -839,7 +839,8 @@ class HousingStock:
         Parameters
         ----------
         co2_content: pd.DataFrame
-        transition: {(Energy performance, ), (Heating energy, ), (Energy performance, Heating energy)
+        transition: (Energy performance, ), (Heating energy, ), (Energy performance, Heating energy)
+            Transition defined possible final states.
         consumption: {'conventional', 'actual'}
         energy_prices: pd.DataFrame
 
@@ -873,13 +874,13 @@ class HousingStock:
 
     def to_emission_saving_lc(self, co2_content, transition=None, consumption='conventional', horizon=30, discount=0.04,
                               energy_prices=None):
-        """
-        Calculate life-cycle emission saving between initial and final state for the entire project duration.
+        """Calculate life-cycle emission saving between initial and final state for the entire project duration.
 
         Parameters
         ----------
         co2_content: pd.DataFrame
-        transition: {(Energy performance, ), (Heating energy, ), (Energy performance, Heating energy)
+        transition: (Energy performance, ), (Heating energy, ), (Energy performance, Heating energy)
+            Transition defined possible final states.
         consumption: {'conventional', 'actual'}
         horizon: int, default 30
         discount: float, default 0.04
@@ -903,9 +904,21 @@ class HousingStock:
         self.emission_saving_lc[tuple(transition)][consumption][self.year] = emission_saving_lc
         return emission_saving_lc
 
-    # TODO continue checking documentation
     def to_energy_lcc_final(self, energy_prices, transition=None, consumption='conventional', segments=None):
         """Calculate energy life-cycle cost based on transition.
+
+        Parameters
+        ----------
+        energy_prices: pd.DataFrame
+        transition: (Energy performance, ), (Heating energy, ), (Energy performance, Heating energy)
+            Transition defined possible final states.
+        consumption: {'conventional', 'actual'}
+        segments : pd.Index, optional
+            Use self.segments if input is not filled.
+
+        Returns
+        -------
+        pd.Series, or pd.DataFrame
         """
         if transition is None:
             transition = ['Energy performance']
@@ -931,8 +944,7 @@ class HousingStock:
 
     def to_lcc_final(self, energy_prices, cost_invest=None, cost_intangible=None,
                      transition=None, consumption='conventional', subsidies=None, segments=None, energy_lcc=None):
-        """
-        Calculate life-cycle-cost of home-energy retrofits by agent and every possible transition.
+        """Calculate life-cycle-cost of home-energy retrofits by agent and for every possible transition.
 
         Parameters
         ----------
@@ -954,7 +966,7 @@ class HousingStock:
         Returns
         -------
         pd.DataFrame
-            life-cycle-cost DataFrame is structured for every initial state (index) to every final state defined by transition (columns).
+            Life-cycle-cost DataFrame is structured for every initial state (index) to every final state defined by transition (columns).
         """
 
         if transition is None:
@@ -1014,11 +1026,6 @@ class HousingStock:
 
                         elif policy.unit == 'euro/kWh':
                             # energy saving is kWh/m2
-                            """
-                            energy_saving = self.to_energy_saving_lc(transition=transition, consumption=consumption)
-                            for t in transition:
-                                energy_saving = energy_saving.unstack('{} final'.format(t))
-                            """
                             energy_saving = reindex_mi(self.kwh_cumac_transition, capex.index).reindex(capex.columns,
                                                                                                        axis=1).fillna(0)
 
@@ -1047,8 +1054,6 @@ class HousingStock:
                     self.subsidies_detailed[tuple(transition)][self.year]['{} (euro/m2)'.format(policy.name)] = s
                     self.subsidies_detailed_euro[tuple(transition)][self.year]['{} (euro)'.format(policy.name)] = (self.area * s.T).T
 
-        # idx = pd.IndexSlice
-        # df = df.loc[idx['Homeowners', 'Single-family', 'C1', 'Power', 'G', 'C1'], :]
 
         if capex_total is not None:
             lcc_transition += capex_total
@@ -1061,17 +1066,12 @@ class HousingStock:
             print('lcc transition is negative')
 
         self.lcc_final[tuple(transition)][self.year] = lcc_transition
-        """
-        idx = pd.IndexSlice
-        .loc[idx['Landlords', 'Multi-family', :, 'G', 'Power', 'C1']]
-        """
 
         return lcc_transition
 
     @staticmethod
     def lcc2market_share(lcc_df, nu=8.0):
-        """
-        Returns market share for each segment based on lcc_df.
+        """Returns market share for each segment based on lcc_df.
 
         Parameters
         ----------
@@ -1080,7 +1080,7 @@ class HousingStock:
 
         Returns
         -------
-        DataFrame if lcc_df is DataFrame or Series if lcc_df is Series.
+        pd.Series, or pd.DataFrame
         """
 
         lcc_reverse_df = lcc_df.apply(lambda x: x ** -nu)
@@ -1091,8 +1091,7 @@ class HousingStock:
 
     def to_market_share(self, energy_prices, transition=None, consumption='conventional', cost_invest=None,
                         cost_intangible=None, subsidies=None, nu=8.0, segments=None):
-        """
-        Returns market share for each segment and each possible final state.
+        """Returns market share for each segment and each possible final state.
 
         Parameter nu characterizing the heterogeneity of preferences is set to 8 in the model.
         Intangible costs are calibrated so that the observed market shares are reproduced in the initial year.
@@ -1129,18 +1128,18 @@ class HousingStock:
 
     def to_market_share_energy(self, energy_prices, consumption='conventional', cost_invest=None,
                                cost_intangible=None, subsidies=None, nu=8.0, segments=None):
-        """
-        Only used for nested technology transition.
+        """Only used for nested technology transition.
 
         Parameters
         ----------
-        energy_prices
-        consumption
-        cost_invest
-        cost_intangible
-        subsidies
-        nu
-        segments
+        energy_prices: pd.DataFrame
+        cost_invest: dict, optional
+        cost_intangible: dict, optional
+        consumption: {'conventional', 'actual'}, default 'conventional
+        subsidies: list, optional
+            List of subsidies object
+        segments: pd.MultiIndex, optional
+        nu: float or int, default 8.0
 
         Returns
         -------
@@ -1174,6 +1173,28 @@ class HousingStock:
 
     def to_pv(self, energy_prices, transition=None, consumption='conventional', cost_invest=None, cost_intangible=None,
               subsidies=None, nu=8.0):
+        """Calculate present value of home-energy retrofits by agent.
+
+        Parameters
+        ----------
+        energy_prices: pd.DataFrame
+            index are heating energy and columns are years.
+        cost_invest: dict, optional
+            keys are transition (cost_invest['Energy performance']) and item are pd.DataFrame
+        cost_intangible: dict, optional
+            keys are transition (cost_intangible['Energy performance']) and item are pd.DataFrame
+        consumption: {'conventional', 'actual'}, default 'conventional
+        transition: list, default ['Energy performance']
+            define transition. Transition can be defined as attributes transition, energy transition, or attributes-energy transition.
+        subsidies: list, optional
+            list of subsidies object
+        nu: float or int, default 8.0
+
+        Returns
+        -------
+        pd.Series
+            Present value is structured by agent.
+        """
 
         if transition is None:
             transition = ['Energy performance']
@@ -1192,7 +1213,28 @@ class HousingStock:
 
     def to_npv(self, energy_prices, transition=None, consumption='conventional', cost_invest=None, cost_intangible=None,
                subsidies=None, nu=8.0):
+        """Calculate net present value of home-energy retrofits by agent.
 
+        Parameters
+        ----------
+        energy_prices: pd.DataFrame
+            index are heating energy and columns are years.
+        cost_invest: dict, optional
+            keys are transition (cost_invest['Energy performance']) and item are pd.DataFrame
+        cost_intangible: dict, optional
+            keys are transition (cost_intangible['Energy performance']) and item are pd.DataFrame
+        consumption: {'conventional', 'actual'}, default 'conventional
+        transition: list, default ['Energy performance']
+            define transition. Transition can be defined as attributes transition, energy transition, or attributes-energy transition.
+        subsidies: list, optional
+            list of subsidies object
+        nu: float or int, default 8.0
+
+        Returns
+        -------
+        pd.Series
+            Net present value is structured by agent.
+        """
         if transition is None:
             transition = ['Energy performance']
 
@@ -1230,17 +1272,19 @@ class HousingStock:
         Intangible costs could be calculated for every agent as LCC depends on every attributes. However, the
         observed market share represents the average values over Energy performance initial and final dimensions.
         Function defined various way to solve this representation issue:
-        - Each agent got its own intangible costs to match the observed market share. Regardless of the technical and
-        behavioral characteristics of the agents, their market share will be identical as long as they start and end at
-        the same level of energy performance. (option 0)
-        - Intangible cost is aggregated to reflect the average initial market share. Each agents group share the same
-        intangible costs to match the observed market share. It shows diversity among agents initial market share to
-        reflect different technical and behavioral characteristics. Concretely the aggregation of the data is done by a
-        weighted average of the distribution of the households. (option 1)
-        - Intangible cost are aggregated over the Heating energy dimension thanks a representative agent of all heating
-        energy. This solution has been implemented to match previous version of Res-IRF. (option 2)
+
+
+        - Option 0: Each agent got its own intangible costs to match the observed market share. Regardless of the technical and
+          behavioral characteristics of the agents, their market share will be identical as long as they start and end at
+          the same level of energy performance.
+        - Option 1: Intangible cost is aggregated to reflect the average initial market share. Each agents group share the same
+          intangible costs to match the observed market share. It shows diversity among agents initial market share to
+          reflect different technical and behavioral characteristics. Concretely the aggregation of the data is done by a
+          weighted average of the distribution of the households.
+        - Option 2: Intangible cost are aggregated over the Heating energy dimension thanks a representative agent of all heating
+          energy. This solution has been implemented to match previous version of Res-IRF.
         - Not implemented: another way would be to calibrate the intangible cost by calculating life-cycle cost for
-        a representative agent.
+          a representative agent.
 
 
         Parameters
@@ -1252,13 +1296,14 @@ class HousingStock:
         consumption: {'conventional', 'actual'}, default 'conventional'
         subsidies: list, optional
             subsidies to consider in the market share
-        option: int, default 0
-            0: intangible cost is segmented
+        option: {0, 1, 2}, default 0
+            0: intangible cost is segmented by agent
                 Each agent got its own intangible costs to match the observed market share.
             1: intangible cost is aggregated based on initial market share attributes
                 Each agents group share intangible costs to match the observed market share.
                 This option allows some diversity in the calculated market share between member of each group.
-            2: intangible cost is aggregated on heating energy level (what was done before)
+            2: intangible cost is aggregated on heating energy level
+                Used in Res-IRF 3.0
 
         Returns
         -------
@@ -1348,25 +1393,6 @@ class HousingStock:
 
         idx_list, lambda_list, intangible_list = [], [], []
         num_certificate = list(lcc_final.index.names).index('Energy performance')
-
-        """
-        for idx in lcc_useful.index:
-            num_ini = self.attributes_values['Energy performance'].index(idx[num_certificate])
-            certificate_final = self.attributes_values['Energy performance'][num_ini + 1:]
-            print(certificate_final)
-            # intangible cost would be for index = idx, and certificate_final.
-            for lambda_current in range(int(lambda_min * 100), int(lambda_max * 100), int(step * 100)):
-                lambda_current = lambda_current / 100
-                lcc_row_np = lcc_final.loc[idx, certificate_final].to_numpy()
-                ms_obj_np = ms_obj_approx.loc[idx, certificate_final].to_numpy()
-                ier, root = solve_intangible_cost(lambda_current, lcc_row_np, ms_obj_np)
-                if ier == 1:
-                    lambda_list += [lambda_current]
-                    idx_list += [idx]
-                    intangible_list += [pd.Series(root ** 2, index=certificate_final)]
-                    # func(root, lcc_row_np, ms_obj_np, lambda_current)
-                    break
-        """
 
         temp = lcc_final.droplevel('Energy performance')
         temp = temp.index[~temp.index.duplicated()]
@@ -1584,8 +1610,8 @@ class HousingStock:
         For instance budget_share only depends on energy_price, and income that are exogenous variables.
         So does, heating_intensity and consumption_actual.
 
-        List of attribute initialized:
-        Initialized by launching self.to_consumption_actual(energy_price)
+        List of attribute initialized by launching self.to_consumption_actual(energy_price):
+
         - buildings.area: pd.Series (doesn't depend on time)
         - buildings.budget_share: pd.DataFrame (depends on energy_price and income so depend on time)
         - buildings.heating_intensity: pd.DataFrame (depends on energy_price and income so depend on time)
@@ -1951,6 +1977,21 @@ class HousingStockRenovated(HousingStock):
         Functions only useful if a subsidy_tax is declared. Run a dichotomy to find the subsidy rate that recycle energy
         tax revenue.
 
+        Parameters
+        ----------
+        energy_prices: pd.DataFrame
+        cost_invest: dict, optional
+        cost_intangible: dict, optional
+        consumption: str, default 'conventional'
+        subsidies: dict, optional
+        renovation_obligation: RenovationObligation, optional
+        mutation: pd.Series or float, default 0.0
+        rotation: pd.Series or float, default 0.0
+        error: int, default 1
+
+        Returns
+        -------
+        pd.DataFrame
         """
 
         flow_renovation_ep = self.flow_renovation_ep(energy_prices,
@@ -2009,7 +2050,6 @@ class HousingStockRenovated(HousingStock):
 
         1. Flow renovation returns number of renovation by final energy performance.
         2. Heating energy technology market-share is then calculated based on flow renovation.
-        What will be the choice of building owner to change their building if the building performance is ...?
 
         Parameters
         ----------
@@ -2025,24 +2065,6 @@ class HousingStockRenovated(HousingStock):
         Returns
         -------
         pd.DataFrame
-        """
-
-
-        """
-        market_share_energy = self.to_market_share(energy_prices,
-                                                   transition=['Heating energy'],
-                                                   cost_invest=cost_invest,
-                                                   consumption=consumption,
-                                                   subsidies=subsidies)[0]
-        
-        names_final = list(market_share_energy.index.names)
-        names_final[names_final.index('Energy performance')] = 'Energy performance final'
-        market_share_energy.index.names = names_final
-        
-        flow_renovation_temp = flow_renovation.stack()
-        market_share_energy_re = reindex_mi(market_share_energy, flow_renovation_temp.index)
-        flow_renovation_label_energy = (flow_renovation_temp * market_share_energy_re.T).T
-        flow_renovation_label_energy = flow_renovation_label_energy.unstack('Energy performance final')
         """
 
         market_share_energy = self.to_market_share_energy(energy_prices,
@@ -2132,7 +2154,13 @@ class HousingStockRenovated(HousingStock):
         return flow_remained_seg, flow_area_renovation_seg
 
     def update_stock(self, flow_remained_seg, flow_area_renovation_seg=None):
+        """Update HousingStock.
 
+        Parameters
+        ----------
+        flow_remained_seg: pd.Series
+        flow_area_renovation_seg: pd.Series, pd.DataFrame
+        """
         # update segmented stock  considering renovation
         self.add_flow(flow_remained_seg)
 
@@ -2564,8 +2592,7 @@ class HousingStockConstructed(HousingStock):
         return self._knowledge
 
     def to_share_housing_type(self):
-        """
-        Returns share of Housing type ('Multi-family', 'Single-family') in the new constructed housings.
+        """Returns share of Housing type ('Multi-family', 'Single-family') in the new constructed housings.
 
         Share of multi-family in the total stock to reflect urbanization effects.
         Demolition dynamic is made endogenously and therefore construction should reflect the evolution..
@@ -2593,8 +2620,7 @@ class HousingStockConstructed(HousingStock):
         return ht_share_tot_construction
 
     def to_flow_constructed_dm(self):
-        """
-        Returns flow of constructed buildings segmented by decision-maker (dm) (Housing type, Occupancy status).
+        """Returns flow of constructed buildings segmented by decision-maker (dm) (Housing type, Occupancy status).
 
         1. Increase in the share of multi-family housing in the total stock.
         2. The share of owner-occupied and rented dwellings is held constant.
@@ -2610,8 +2636,7 @@ class HousingStockConstructed(HousingStock):
 
     def to_flow_constructed_dm_he_ep(self, energy_price, cost_intangible=None, cost_invest=None,
                                      consumption='conventional', nu=8.0, subsidies=None):
-        """
-        Returns flow of constructed buildings segmented.
+        """Returns flow of constructed buildings segmented.
 
         1. Calculate construction flow segmented by decision-maker:
         2. Calculate the market-share of Heating energy and Energy performance type by decision-maker: market_share_dm;
@@ -2657,8 +2682,7 @@ class HousingStockConstructed(HousingStock):
 
     def to_flow_constructed_seg(self, energy_price, cost_intangible=None, cost_invest=None,
                                 consumption=None, nu=8.0, subsidies=None):
-        """
-        Add Income class and Income class owner levels to flow_constructed.
+        """Add Income class and Income class owner levels to flow_constructed.
 
         io_share_seg: pd.DataFrame
             for each segment (rows) distribution of income class owner decile (columns)
@@ -2701,8 +2725,7 @@ class HousingStockConstructed(HousingStock):
 
     def update_flow_constructed_seg(self, energy_price, cost_intangible=None, cost_invest=None,
                                     consumption='conventional', nu=8.0, subsidies=None):
-        """
-        Update HousingConstructed object flow_constructed_seg attribute.
+        """Update HousingConstructed object flow_constructed_seg attribute.
 
         Parameters
         ----------
@@ -2814,8 +2837,7 @@ class HousingStockConstructed(HousingStock):
     @staticmethod
     def evolution_area_construction(area_construction_prev, area_construction_ini, area_construction_max,
                                     elasticity_area, available_income_ratio):
-        """
-        Evolution of new buildings area based on total available income. Function represents growth.
+        """Evolution of new buildings area based on total available income. Function represents growth.
 
         Parameters
         ----------
@@ -2843,8 +2865,7 @@ class HousingStockConstructed(HousingStock):
         return area_construction
 
     def update_area_construction(self, elasticity_area_new_ini, available_income_real_pop_ds, area_max_construction):
-        """
-        Every year, average area of new buildings increase with available income.
+        """Every year, average area of new buildings increase with available income.
 
         Trend is based on elasticity area / income.
         eps_area_new decrease over time and reduce elasticity while average area converge towards area_max.
@@ -2873,8 +2894,7 @@ class HousingStockConstructed(HousingStock):
         self._area_construction_dict[self.year] = self.attributes2area
 
     def to_flow_area_constructed_ini(self, stock_area_existing):
-        """
-        Initialize construction knowledge.
+        """Initialize construction knowledge.
         """
 
         if self.calibration_year >= 2012:

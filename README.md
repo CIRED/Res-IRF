@@ -14,8 +14,8 @@ Documentation is freely available on https://lucas-vivier.github.io/Res-IRF/
 
 A simple user interface is available on http://resirf.pythonanywhere.com/ to give an overview of Res-IRF main output.
 
-
 ## Installation
+
 **Step 1**: Git **clone Res-IRF folder** in your computer.
    - Use your terminal and go to a location where you want to store the Res-IRF project.
    - `git clone https://github.com/lucas-vivier/Res-IRF.git`
@@ -31,35 +31,36 @@ A simple user interface is available on http://resirf.pythonanywhere.com/ to giv
 
 **Step 4**: **Launch Res-IRF**
    - Launch from Res-IRF root folder:
-   - `python project/main.py -n scenario.json`
-   - `scenario.json` is the path to the configuration file
+   - `python project/main.py -n project/input/phebus/config.json`
+   - `project/input/phebus/config.json` is the path to the configuration file
    
-## Usage example
+## Getting started
+
 Project includes libraries, scripts and notebooks.  
 `/project` is the folder containing scripts, notebooks, inputs and outputs.  
 
-The standard way to launch Res-IRF:  
+The standard way to run Res-IRF:  
 
-**Step 1: Launch Res-IRF main script.**  
+**Launch Res-IRF main script.**  
 The model creates results in a folder in project/output.  
 Folder name is by default `ddmmyyyy_hhmm` (launching date and hour).
-Results are mainly .pkl (serialize format by the pickle library), .csv file and some .png graphs.
+By default, only a  selection of the most important results are available and graphs.
+
+To get a detailed view of the results add `o True`. Detailed results are .pkl files (serialize format by the pickle
+library).
 
 A configuration file must be declared.
-An example of configuration file is in the `input` folder under the name of `scenario.json`.
+An example of configuration file is in the `input/phebus` folder under the name of `config.json`.
 The Res-IRF script use Multiprocessing tool to launch multiple scenarios in the same time. 
 
 In the `output/ddmmyyyy_hhmm` folder:
 - One folder for each scenario declared in the configuration file with detailed outputs:
     - `detailed.csv` detailed output readable directly with an Excel-like tool
     - `summary_input.csv` summary of main input
-    - `summary_policies.png` public policies costs evolution
-    - copy of `parameters.json` and `scenario` used for the run
+    - copy of `parameters.json` and `config.son` used for the run
 - `.png` graphs comparing scenarios launch in the same config file.
 
-
-
-**Step 2 : Launch one of the Jupyter Notebook analysis tool (in progress)**  
+**Launch one of the Jupyter Notebook analysis tool (work in progress)**  
 There are 4 main notebooks:
 - `ui_unique.ipynb`: macro and micro output analysis.
 - `quick_comparison.ipyb`: macro and micro output comparison.
@@ -76,6 +77,19 @@ over the years, in alphabetic order, Cyril Bourgeois, Frédéric Branger, Franç
 Philippe Quirion, and Lucas Vivier.
 
 ## Meta
+
+If you find `Res-IRF` useful, please kindly cite our last paper:
+```
+@article{
+  author  = {Giraudet, Louis-Gaëtan and Bourgeois, Cyril and Quirion, Philippe},
+  title   = {Policies for low-carbon and affordable home heating: A French outlook},
+  journal = {Energy Policy},
+  year    = {2021},
+  volume  = {151},
+  url     = {https://www.sciencedirect.com/science/article/pii/S0301421521000094}
+}
+```
+
 
 Lucas Vivier – [@VivierLucas](https://twitter.com/VivierLucas) – vivier@centre-cired.fr
 
