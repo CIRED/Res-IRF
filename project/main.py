@@ -71,7 +71,7 @@ def model_launcher(path=None):
     if not os.path.isdir(folder['output']):
         os.mkdir(folder['output'])
 
-    folder['intermediate'] = os.path.join(os.getcwd(), 'project', 'input/phebus/intermediate')
+    folder['intermediate'] = os.path.join(os.getcwd(), 'project', 'input/phebus_30/intermediate')
     if not os.path.isdir(folder['intermediate']):
         os.mkdir(folder['intermediate'])
 

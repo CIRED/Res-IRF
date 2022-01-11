@@ -278,20 +278,30 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
         name_file = config['cost_intangible']['source']
         source = config['cost_intangible']['source_type']
         if source == 'function':
-
-            cost_intangible['Energy performance'], ms_calibration = buildings.calibration_market_share(energy_prices,
-                                                                                                       ms_renovation_ini,
-                                                                                                       cost_invest=cost_invest,
-                                                                                                       consumption='conventional',
-                                                                                                       subsidies=subsidies_calibration,
-                                                                                                       option=config[
-                                                                                                           'cost_intangible'][
-                                                                                                           'option'])
+            if config['cost_intangible']['option'] is not None:
+                cost_intangible['Energy performance'], ms_calibration = buildings._calibration_market_share(
+                    energy_prices,
+                    ms_renovation_ini,
+                    cost_invest=cost_invest,
+                    consumption='conventional',
+                    subsidies=subsidies_calibration,
+                    option=config['cost_intangible']['option'])
+            else:
+                cost_intangible['Energy performance'], ms_calibration = buildings.calibration_market_share(
+                    energy_prices,
+                    ms_renovation_ini,
+                    cost_invest=cost_invest,
+                    consumption='conventional',
+                    subsidies=subsidies_calibration)
 
             logging.debug('End of calibration and dumping: {}'.format(name_file))
             cost_intangible['Energy performance'].to_pickle(name_file)
             if ms_calibration is not None:
-                ms_calibration.to_csv(os.path.join(folder['output'], 'ms_calibration.csv'))
+                ms_calibration['Objective'].to_csv(os.path.join(folder['output'], 'ms_objective.csv'))
+                ms_calibration['Mean agents'].to_csv(os.path.join(folder['output'], 'ms_mean_agents.csv'))
+                ms_calibration['Agent mean'].to_csv(os.path.join(folder['output'], 'ms_agent_mean.csv'))
+                ms_calibration['LCC agent mean'].to_csv(os.path.join(folder['output'], 'lcc_agent_mean.csv'))
+                cost_intangible['Energy performance'].to_csv(os.path.join(folder['output'], 'cost_intangible.csv'))
 
         elif source == 'file':
             logging.debug('Loading intangible_cost from {}'.format(name_file))
@@ -306,11 +316,19 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
     name_file = config['rho']['source']
     source = config['rho']['source_type']
     if source == 'function':
-        rho, renovation_rate_calibration = buildings.calibration_renovation_rate(energy_prices, rate_renovation_ini,
-                                                                                 cost_invest=cost_invest,
-                                                                                 cost_intangible=cost_intangible,
-                                                                                 subsidies=subsidies_calibration,
-                                                                                 option=config['rho']['option'])
+        if config['rho']['option'] is not None:
+            rho, renovation_rate_calibration = buildings._calibration_renovation_rate(energy_prices,
+                                                                                      rate_renovation_ini,
+                                                                                      cost_invest=cost_invest,
+                                                                                      cost_intangible=cost_intangible,
+                                                                                      subsidies=subsidies_calibration,
+                                                                                      option=config['rho']['option'])
+        else:
+            rho, renovation_rate_calibration = buildings.calibration_renovation_rate(energy_prices,
+                                                                                     rate_renovation_ini,
+                                                                                     cost_invest=cost_invest,
+                                                                                     cost_intangible=cost_intangible,
+                                                                                    subsidies=subsidies_calibration)
         logging.debug('End of calibration and dumping: {}'.format(name_file))
         rho.to_pickle(name_file)
 

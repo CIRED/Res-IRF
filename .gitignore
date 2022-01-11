@@ -133,13 +133,13 @@ dmypy.json
 /project/input/test/
 /project/input/scenarios/
 /project/nb_tutorials/_old/
-/project/input/phebus/config_files/
+/project/input/phebus_30/config_files/
 /project/input/backtesting/data_preparation_1984/
 /project/nb_tutorials/
 /project/input/_old/
 /project/input/abattement_curve/data_preparation.xlsx
 /documentation/development/
-/project/input/phebus/data_preparation_phebus.xlsx
+/project/input/phebus_30/data_preparation_phebus.xlsx
 /project/nb_tutorials/abattement_curve_comparison.ipynb
 /project/nb_examples/
 /project/input/sdes/
@@ -149,3 +149,4 @@ dmypy.json
 
 /.DS_Store/
 
+/project/input/phebus_31/

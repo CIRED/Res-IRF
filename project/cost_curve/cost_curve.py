@@ -189,11 +189,11 @@ def to_result(carbon_cost, emission_final_end, emission_trend_end, potential_emi
         ['Occupancy status', 'Housing type', 'Income class', 'Energy performance', 'Heating energy'])
     output = output.sort_values('Carbon cost (euro/tCO2)')
 
-    output['Cumulated potential emission saving (tCO2)'] = output['Potential emission saving (tCO2/yr)'].cumsum()
+    output['Cumulated potential emission saving (tCO2/yr)'] = output['Potential emission saving (tCO2/yr)'].cumsum()
     output['Cumulated potential emission saving (%)'] = output[
                                                             'Cumulated potential emission saving (tCO2)'] / emission_total_reference
 
-    output['Cumulated emission difference (tCO2)'] = output['Emission difference (tCO2/yr)'].cumsum()
+    output['Cumulated emission difference (tCO2/yr)'] = output['Emission difference (tCO2/yr)'].cumsum()
     output['Cumulated emission difference (%)'] = output[
                                                       'Cumulated emission difference (tCO2)'] / emission_total_reference
 
