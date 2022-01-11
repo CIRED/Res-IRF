@@ -15,7 +15,7 @@
 #
 # Original author Lucas Vivier <vivier@centre-cired.fr>
 # Based on a scilab program mainly by written by Someone, but fully rewritten.
-
+import math
 
 import pandas as pd
 import numpy as np
@@ -1503,7 +1503,7 @@ class HousingStock:
         return intangible_cost, market_share_calibration
 
     def calibration_market_share(self, energy_prices, market_share_ini, cost_invest=None,
-                                  consumption='conventional', subsidies=None):
+                                 consumption='conventional', subsidies=None):
         """Calculate intangible costs by calibrating market_share.
 
         Calculate intangible cost to match observed market_share with initial LCC.
@@ -1886,6 +1886,7 @@ class HousingStockRenovated(HousingStock):
         # calibration
         self.rate_renovation_ini = rate_renovation_ini
         self.rho = pd.Series()
+        self.intangible_npv = pd.Series()
         self._npv_min = npv_min
         self._rate_max = rate_max
         self._rate_min = rate_min
@@ -1968,9 +1969,10 @@ class HousingStockRenovated(HousingStock):
         return self._stock_area
 
     @staticmethod
-    def renovation_rate(npv, rho, npv_min, rate_max, rate_min):
+    def _renovation_rate(npv, rho, npv_min, rate_max, rate_min):
         """
         Renovation rate for float values.
+        Version 3.0.
 
         Parameters
         ----------
@@ -1990,8 +1992,9 @@ class HousingStockRenovated(HousingStock):
                         k=rate_max)
 
     @staticmethod
-    def renovate_rate_func(npv, rho, npv_min, rate_max, rate_min):
+    def _renovate_rate_func(npv, rho, npv_min, rate_max, rate_min):
         """Calculate renovation rate for indexed pd.Series rho and indexed pd.Series npv.
+        Version 3.0.
 
         Parameters
         ----------
@@ -2017,8 +2020,27 @@ class HousingStockRenovated(HousingStock):
         else:
             return HousingStockRenovated.renovation_rate(npv.loc[0], rho_f, npv_min, rate_max, rate_min)
 
+    @staticmethod
+    def renovation_rate(npv, rho, intangible_npv=None):
+        """Renovation rate function.
+
+        Parameters
+        ----------
+        npv: pd.Series
+        rho: float
+        intangible_npv: pd.Series, optional
+
+        Returns
+        -------
+        pd.Series
+        """
+        if intangible_npv is None:
+            return 1 / (1 + np.exp(- rho * npv))
+        else:
+            return 1 / (1 + np.exp(- rho * (npv + intangible_npv)))
+
     def to_renovation_rate(self, energy_prices, transition=None, consumption='conventional', cost_invest=None,
-                           cost_intangible=None, subsidies=None, rho=None):
+                           cost_intangible=None, subsidies=None, rho=None, intangible_npv=None):
 
         """Routine calculating renovation rate from segments for a particular yr.
 
@@ -2040,19 +2062,25 @@ class HousingStockRenovated(HousingStock):
         if rho is None:
             rho = self.rho
 
-        npv_seg = self.to_npv(energy_prices,
-                              transition=transition,
-                              consumption=consumption,
-                              cost_invest=cost_invest,
-                              cost_intangible=cost_intangible,
-                              subsidies=subsidies)
+        if intangible_npv is None:
+            intangible_npv = self.intangible_npv
 
-        renovation_rate_seg = npv_seg.reset_index().apply(HousingStockRenovated.renovate_rate_func,
+        npv = self.to_npv(energy_prices,
+                          transition=transition,
+                          consumption=consumption,
+                          cost_invest=cost_invest,
+                          cost_intangible=cost_intangible,
+                          subsidies=subsidies)
+
+        """renovation_rate_seg = npv_seg.reset_index().apply(HousingStockRenovated.renovate_rate_func,
                                                           args=[rho, self._npv_min, self._rate_max,
                                                                 self._rate_min], axis=1)
         renovation_rate_seg.index = npv_seg.index
-        self.renovation_rate_dict[tuple(transition)][self.year] = renovation_rate_seg
-        return renovation_rate_seg
+        """
+        renovation_rate = HousingStockRenovated.renovation_rate(npv, rho, intangible_npv)
+
+        self.renovation_rate_dict[tuple(transition)][self.year] = renovation_rate
+        return renovation_rate
 
     def flow_renovation_ep(self, energy_prices, consumption='conventional', cost_invest=None, cost_intangible=None,
                            subsidies=None, renovation_obligation=None, mutation=0.0, rotation=0.0):
@@ -2486,7 +2514,7 @@ class HousingStockRenovated(HousingStock):
             rate_max / renovation_rate_target - 1)) / (npv - npv_min)
 
     def _calibration_renovation_rate(self, energy_prices, renovation_rate_ini, consumption='conventional',
-                                    cost_invest=None, cost_intangible=None, subsidies=None, option=3):
+                                     cost_invest=None, cost_intangible=None, subsidies=None, option=3):
         """Calibration of the ρ parameter of the renovation rate function (logistic function of the NPV).
 
         Renovation rate of dwellings attributes led is calculated as a logistic function of the NPV.
@@ -2612,18 +2640,7 @@ class HousingStockRenovated(HousingStock):
 
     def calibration_renovation_rate(self, energy_prices, renovation_rate_ini, consumption='conventional',
                                     cost_invest=None, cost_intangible=None, subsidies=None):
-        """Calibration of the ρ parameter of the renovation rate function (logistic function of the NPV).
-
-        Renovation rate of dwellings attributes led is calculated as a logistic function of the NPV.
-        The logistic form captures heterogeneity in heating preference and habits,
-        assuming they are normally distributed.
-        Parameter ρ is calibrated, for each type of attributes. It is then aggregated or not, depending of weighted
-        parameter.
-
-        For instance, ρ was calibrated in 2012, for each type of  decision-maker and each initial certificates
-        (i.e., 6x6=36 values), so that the NPVs calculated with the subsidies in effect in 2012 (see main article)
-        reproduce the observed renovation rates.
-        Renovation rate observed depends on (Occupancy status, Housing type)
+        """Calibration of the ρ and npv_intangible parameters of the renovation rate function (logistic function of the NPV).
 
         Parameters
         ----------
@@ -2636,10 +2653,12 @@ class HousingStockRenovated(HousingStock):
 
         Returns
         -------
+        float
+            ρ parameter
         pd.Series
-            ρ parameters by segment
+            npv_intangible by decision_maker to march observed renovation rate
         pd.DataFrame
-            Concatenation of renovation_rate_ini, renovation_rate_calculated.
+            Concatenation of npv, renovation_rate_ini, renovation_rate_calculated.
         """
 
         # weight to calculate weighted average of variable
@@ -2654,71 +2673,55 @@ class HousingStockRenovated(HousingStock):
                           subsidies=subsidies)
 
         # calculate agent_mean npv
-        npv_mean = npv.unstack(weight.columns.names)
-        npv_mean = (weight * npv_mean).fillna(0).sum(axis=1)
-        # npv_mean = (weight * npv_mean).dropna(axis=1).dropna().sum(axis=1)
+        npv_agent_mean = npv.unstack(weight.columns.names)
+        npv_agent_mean = (weight * npv_agent_mean).fillna(0).sum(axis=1)
 
-        # calculate rho for each agent_mean
-        rho_agent_mean = HousingStockRenovated.calibration_rho(npv_mean, renovation_rate_ini, self._rate_max, self._rate_min,
-                                                               self._npv_min)
-        # if na find assign the value to the  closest group
-        rho_agent_mean = rho_agent_mean.sort_index()
-        idx = rho_agent_mean.index[rho_agent_mean.isna()]
-        for i in idx:
-            try:
-                rho_agent_mean.loc[i] = rho_agent_mean.iloc[list(rho_agent_mean.index).index(i) + 1]
-            except IndexError:
-                rho_agent_mean.loc[i] = rho_agent_mean.iloc[list(rho_agent_mean.index).index(i) - 1]
+        idx = pd.IndexSlice
+        # calculate rho
+        ref = ('Homeowners', 'Single-family')
+        rho_ini = - np.log(1/renovation_rate_ini.loc[ref] - 1) / npv_agent_mean[ref]
+        npv_ref = npv.loc[idx[ref]]
+        weight_ref = weight.loc[ref, :].dropna().reindex(npv_ref.index)
 
-        rho = reindex_mi(rho_agent_mean, npv.index)
+        def func(x, npv_np, weight_np, rate):
+            return rate - ((1 / (1 + np.exp(-x * npv_np))) * weight_np).sum()
 
-        # calculate unique renovation function
+        root, info_dict, ier, message = fsolve(func, np.array(rho_ini),
+                                               args=(npv_ref.to_numpy(), weight_ref.to_numpy(),
+                                                     renovation_rate_ini.loc[ref]), full_output=True)
+        rho = float(root)
 
-        df = pd.concat((npv_mean, renovation_rate_ini), axis=1).dropna()
-        df.columns = ['NPV mean calculated', 'Renovation rate observed']
-        popt, _ = curve_fit(HousingStockRenovated.renovation_rate, df.iloc[:, 0], df.iloc[:, 1],
-                            p0=[rho_agent_mean.mean(), self._npv_min, self._rate_max, self._rate_min],
-                            bounds=((0, -1000, 0.1, 10**-5), (1, npv_mean.min(), 0.5, renovation_rate_ini.min())))
+        # checking
+        renovation_rate_calculated = HousingStockRenovated.renovation_rate(npv, rho)
+        renovation_rate_mean_agents = renovation_rate_calculated.unstack(weight.columns.names)
+        renovation_rate_mean_agents = (weight * renovation_rate_mean_agents).fillna(0).sum(axis=1)
+        # renovation_rate_ini.loc[ref] == renovation_rate_ref
 
-        rho = pd.Series(popt[0], index=npv.index)
+        def func(x, npv_np, weight_np, rate, rho):
+            return rate - ((1 / (1 + np.exp(-rho * (npv_np + x)))) * weight_np).sum()
 
-        self._npv_min = popt[1]
-        self._rate_max = popt[2]
-        self._rate_min = popt[3]
-        print('NPV Min: {}'.format(self._npv_min))
-        print('Rate Max: {}'.format(self._rate_max))
-        print('Rate Min: {}'.format(self._rate_min))
+        npv_intangible = []
+        for dm in renovation_rate_ini.index:
+            npv_dm = npv.loc[dm]
+            weight_dm = weight.loc[dm, :].dropna().reindex(npv_dm.index)
 
-        renovation_rate_agent_mean = npv_mean.reset_index().apply(HousingStockRenovated.renovate_rate_func,
-                                                                  args=[pd.Series(popt[0], index=npv_mean.index),
-                                                                        self._npv_min, self._rate_max,
-                                                                        self._rate_min], axis=1)
-        renovation_rate_agent_mean.index = npv_mean.index
-        renovation_rate_agent_mean.name = 'Renovation rate agent mean'
-        df = pd.concat((df, renovation_rate_agent_mean), axis=1)
+            root, info_dict, ier, message = fsolve(func, np.array(0),
+                                                   args=(npv_dm.to_numpy(), weight_dm.to_numpy(),
+                                                         renovation_rate_ini.loc[dm], rho), full_output=True)
+            npv_intangible += [float(root)]
 
-        # verification
-        renovation_rate = self.to_renovation_rate(energy_prices, transition=['Energy performance'],
-                                                  consumption='conventional', cost_invest=cost_invest,
-                                                  cost_intangible=cost_intangible, subsidies=subsidies, rho=rho)
-        renovation_rate = renovation_rate.unstack(weight.columns.names)
-        renovation_rate_mean_agents = (renovation_rate * weight).fillna(0).sum(axis=1)
-        renovation_rate_mean_agents.name = 'Renovation rate mean agents'
-        renovation_rate_calibration = pd.concat((df, renovation_rate_mean_agents), axis=1)
-        data = renovation_rate_calibration.reset_index()
-        data['Decision maker'] = data['Occupancy status'] + '-' + data['Housing type']
-        import seaborn as sns
+        npv_intangible = pd.Series(npv_intangible, index=renovation_rate_ini.index)
 
-        sns.lmplot(x='NPV mean calculated', y='Renovation rate observed', hue='Occupancy status', data=data).savefig('test.png')
-        sns.lmplot(x='NPV mean calculated', y='Renovation rate observed', hue='Housing type', data=data).savefig('test_.png')
-        # sns.lmplot(x='NPV mean calculated', y='Renovation rate observed', hue='Energy performance', data=data).savefig('test__.png')
-        sns.lmplot(x='NPV mean calculated', y='Renovation rate observed', hue='Decision maker', data=data).savefig('test___.png')
-        sns.lmplot(x='NPV mean calculated', y='Renovation rate observed', data=data).savefig('test__.png')
+        renovation_rate_calculated = HousingStockRenovated.renovation_rate(npv, rho, intangible_npv=npv_intangible)
+        renovation_rate_mean_agents = renovation_rate_calculated.unstack(weight.columns.names)
+        renovation_rate_mean_agents = (weight * renovation_rate_mean_agents).fillna(0).sum(axis=1)
 
+        renovation_rate_calibration = pd.concat((npv_agent_mean, npv_intangible,
+                                                 renovation_rate_ini, renovation_rate_mean_agents), axis=1).dropna()
+        renovation_rate_calibration.columns = ['NPV mean calculated', 'NPV intangible', 'Renovation rate observed',
+                                               'Renovation rate calculated']
 
-        # renovation_rate_calibration.to_csv('renovation_rate.csv')
-
-        return rho, renovation_rate_calibration
+        return rho, npv_intangible, renovation_rate_calibration
 
     def to_flow_obligation(self, renovation_obligation, mutation=0.0, rotation=0.0):
         if isinstance(mutation, pd.Series):

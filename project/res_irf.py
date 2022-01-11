@@ -313,7 +313,9 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
         output['Cost intangible'][calibration_year] = cost_intangible['Energy performance']
 
     logging.debug('Calibration renovation rate >>> rho')
-    name_file = config['rho']['source']
+    name_file_rho = config['rho']['source']
+    name_file_npv_intangible = config['npv_intangible']['source']
+
     source = config['rho']['source_type']
     if source == 'function':
         if config['rho']['option'] is not None:
@@ -324,20 +326,23 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
                                                                                       subsidies=subsidies_calibration,
                                                                                       option=config['rho']['option'])
         else:
-            rho, renovation_rate_calibration = buildings.calibration_renovation_rate(energy_prices,
-                                                                                     rate_renovation_ini,
-                                                                                     cost_invest=cost_invest,
-                                                                                     cost_intangible=cost_intangible,
-                                                                                    subsidies=subsidies_calibration)
-        logging.debug('End of calibration and dumping: {}'.format(name_file))
-        rho.to_pickle(name_file)
+            rho, npv_intangible, renovation_rate_calibration = buildings.calibration_renovation_rate(energy_prices,
+                                                                                                     rate_renovation_ini,
+                                                                                                     cost_invest=cost_invest,
+                                                                                                     cost_intangible=cost_intangible,
+                                                                                                     subsidies=subsidies_calibration)
+            logging.debug('Dumping: {}'.format(name_file_npv_intangible))
+            npv_intangible.to_pickle(name_file_npv_intangible)
+
+        logging.debug('End of calibration and dumping: {}'.format(name_file_rho))
+        rho.to_pickle(name_file_rho)
 
         if renovation_rate_calibration is not None:
             renovation_rate_calibration.to_csv(os.path.join(folder['output'], 'renovation_rate_calibration.csv'))
 
     elif source == 'file':
-        logging.debug('Loading intangible_cost from {}'.format(name_file))
-        rho = pd.read_pickle(name_file)
+        logging.debug('Loading intangible_cost from {}'.format(name_file_rho))
+        rho = pd.read_pickle(name_file_rho)
     else:
         rho = None
     buildings.rho = rho
