@@ -1,6 +1,6 @@
 {
   "AP": {
-    "end": 2051,
+    "end": 2031,
     "green_value": "Reference",
     "budget_constraint": "Reference",
     "stock_buildings": {
@@ -82,7 +82,7 @@
     },
     "cee_subsidy_value": {
       "type": "file",
-      "source": "project/input/policies/cee_subsidy.csv"
+      "source": "project/input/policies/cee_subsidy_decile.csv"
     },
     "cee_taxes": {
       "activated": true,

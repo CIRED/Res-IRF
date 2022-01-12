@@ -1882,11 +1882,12 @@ class HousingStockRenovated(HousingStock):
 
         # share of decision-maker in the total stock
         self._dm_share_tot = stock.groupby(['Occupancy status', 'Housing type']).sum() / stock.sum()
+        self._wo_ep_share_tot = stock.groupby([i for i in stock.index.names if i != 'Energy performance']).sum() / stock.sum()
 
         # calibration
         self.rate_renovation_ini = rate_renovation_ini
-        self.rho = pd.Series()
-        self.intangible_npv = pd.Series()
+        self.rho = None
+        self.npv_intangible = pd.Series()
         self._npv_min = npv_min
         self._rate_max = rate_max
         self._rate_min = rate_min
@@ -1923,6 +1924,9 @@ class HousingStockRenovated(HousingStock):
         self._stock_mobile[self._stock_mobile < 0] = 0
         self._stock_mobile_dict[self.year] = self._stock_mobile
         self._stock_area = self.to_stock_area()
+
+        self._wo_ep_share_tot = new_stock.groupby(
+            [i for i in new_stock.index.names if i != 'Energy performance']).sum() / new_stock.sum()
 
     @property
     def stock_mobile(self):
@@ -2040,7 +2044,7 @@ class HousingStockRenovated(HousingStock):
             return 1 / (1 + np.exp(- rho * (npv + intangible_npv)))
 
     def to_renovation_rate(self, energy_prices, transition=None, consumption='conventional', cost_invest=None,
-                           cost_intangible=None, subsidies=None, rho=None, intangible_npv=None):
+                           cost_intangible=None, subsidies=None, rho=None, npv_intangible=None):
 
         """Routine calculating renovation rate from segments for a particular yr.
 
@@ -2054,7 +2058,8 @@ class HousingStockRenovated(HousingStock):
         cost_intangible: dict, optional
         consumption: str, default 'conventional'
         subsidies: list, optional
-        rho: pd.Series, optional
+        rho: float, optional
+        npv_intangible: pd.Series, optional
         """
         if transition is None:
             transition = ['Energy performance']
@@ -2062,8 +2067,8 @@ class HousingStockRenovated(HousingStock):
         if rho is None:
             rho = self.rho
 
-        if intangible_npv is None:
-            intangible_npv = self.intangible_npv
+        if npv_intangible is None:
+            npv_intangible = self.npv_intangible
 
         npv = self.to_npv(energy_prices,
                           transition=transition,
@@ -2077,7 +2082,7 @@ class HousingStockRenovated(HousingStock):
                                                                 self._rate_min], axis=1)
         renovation_rate_seg.index = npv_seg.index
         """
-        renovation_rate = HousingStockRenovated.renovation_rate(npv, rho, intangible_npv)
+        renovation_rate = HousingStockRenovated.renovation_rate(npv, rho, npv_intangible)
 
         self.renovation_rate_dict[tuple(transition)][self.year] = renovation_rate
         return renovation_rate
@@ -2344,8 +2349,9 @@ class HousingStockRenovated(HousingStock):
         # flow_area_demolition_seg_dm = flow_demolition_seg_dm * self.attributes2area
         return flow_demolition_dm
 
-    def to_flow_demolition_seg(self):
+    def _to_flow_demolition_seg(self):
         """ Returns stock_demolition -  segmented housing number demolition.
+        Res-IRF 3.0.
 
         Buildings to destroy are chosen in stock_mobile.
         1. type_housing_demolition is respected to match decision-maker proportion; - type_housing_demolition_reindex
@@ -2454,6 +2460,31 @@ class HousingStockRenovated(HousingStock):
         assert (stock_mobile - flow_demolition).min() >= 0, 'More demolition than mobile stock'
 
         self.flow_demolition_dict[self.year] = flow_demolition
+        return flow_demolition
+
+    def to_flow_demolition_seg(self):
+        """Demolition function from (Nauleau, 2015) PhD thesis.
+        0.1% each year for EPC E, 0.2% the EPC F and 0.34% for ECP G
+
+        Returns
+        -------
+        Flow demolition
+        """
+        stock_mobile = self.stock_mobile.copy()
+        stock_group_wo_ep = stock_mobile.groupby([i for i in stock_mobile.index.names if i != 'Energy performance']).sum()
+
+        flow_demolition_wo_ep = self._stock.sum() * self._destruction_rate * self._wo_ep_share_tot
+
+        share_demolition = pd.Series({'E': 0.156, 'F': 0.313, 'G': 0.531})
+        share_demolition = pd.concat([share_demolition] * flow_demolition_wo_ep.shape[0], axis=1).T
+        share_demolition.index = flow_demolition_wo_ep.index
+        share_demolition.columns.names = ['Energy performance']
+        flow_demolition = (flow_demolition_wo_ep * share_demolition.T).T
+        flow_demolition = flow_demolition.stack('Energy performance').reorder_levels(stock_mobile.index.names).reindex(
+            stock_mobile.index)
+
+        flow_demolition[(stock_mobile - flow_demolition) < 0] = stock_mobile[(stock_mobile - flow_demolition) < 0]
+
         return flow_demolition
 
     def to_flow_knowledge(self, flow_area_renovated_seg):

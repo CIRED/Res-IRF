@@ -325,6 +325,9 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
                                                                                       cost_intangible=cost_intangible,
                                                                                       subsidies=subsidies_calibration,
                                                                                       option=config['rho']['option'])
+            logging.debug('End of calibration and dumping: {}'.format(name_file_rho))
+            rho.to_pickle(name_file_rho)
+
         else:
             rho, npv_intangible, renovation_rate_calibration = buildings.calibration_renovation_rate(energy_prices,
                                                                                                      rate_renovation_ini,
@@ -333,9 +336,8 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
                                                                                                      subsidies=subsidies_calibration)
             logging.debug('Dumping: {}'.format(name_file_npv_intangible))
             npv_intangible.to_pickle(name_file_npv_intangible)
+            logging.debug('Rho: {:.3f}'.format(rho))
 
-        logging.debug('End of calibration and dumping: {}'.format(name_file_rho))
-        rho.to_pickle(name_file_rho)
 
         if renovation_rate_calibration is not None:
             renovation_rate_calibration.to_csv(os.path.join(folder['output'], 'renovation_rate_calibration.csv'))
@@ -343,9 +345,12 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
     elif source == 'file':
         logging.debug('Loading intangible_cost from {}'.format(name_file_rho))
         rho = pd.read_pickle(name_file_rho)
+        npv_intangible = pd.read_pickle(name_file_npv_intangible)
+
     else:
         rho = None
     buildings.rho = rho
+    buildings.npv_intangible = npv_intangible
 
     # calculate tax revenues to size recycled subsidy
     for _, tax in energy_taxes_dict.items():
