@@ -14,7 +14,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 # Original author Lucas Vivier <vivier@centre-cired.fr>
-# Based on a scilab program mainly by written by Someone, but fully rewritten.
+# Based on a scilab program mainly by written by L.G Giraudet and others, but fully rewritten.
 
 import re
 import argparse

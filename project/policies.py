@@ -14,7 +14,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 # Original author Lucas Vivier <vivier@centre-cired.fr>
-# Based on a scilab program mainly by written by Someone, but fully rewritten.
+# Based on a scilab program mainly by written by L.G Giraudet and others, but fully rewritten.
 
 from utils import reindex_mi, add_level
 import numpy as np
@@ -259,6 +259,22 @@ class Subsidies(PublicPolicy):
 
         if self.unit == 'euro':
             return value
+
+        if self.unit == 'euro/m2':
+            # subsidy apply to one target
+            if isinstance(value, pd.Series) or isinstance(value, pd.DataFrame):
+                subsidy = reindex_mi(value, cost.index, axis=0)
+            else:
+                subsidy = value
+
+            if self.subsidy_max is not None:
+                subsidy_max = reindex_mi(self.subsidy_max, subsidy.index)
+                if isinstance(cost, pd.DataFrame):
+                    subsidy_max = pd.concat([subsidy_max] * cost.shape[1], axis=1)
+                    subsidy_max.columns = cost.columns
+                subsidy[subsidy > subsidy_max] = subsidy_max
+
+            return subsidy
 
         elif self.unit == '%':
             # subsidy apply to one target

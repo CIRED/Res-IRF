@@ -14,7 +14,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 # Original author Lucas Vivier <vivier@centre-cired.fr>
-# Based on a scilab program mainly by written by Someone, but fully rewritten.
+# Based on a scilab program mainly by written by L.G Giraudet and others, but fully rewritten.
 
 import numpy as np
 import pandas as pd
@@ -80,14 +80,14 @@ def simple_plot(x, y, xlabel, ylabel, format_x=None, format_y=None, save=None):
         plt.savefig(save)
     
     
-def simple_pd_plot(df, xlabel, ylabel, colors=None, format_x=None, format_y=None, save=None, figsize='big', scatter_list=None):
+def simple_pd_plot(df, ylabel, colors=None, format_x=None, format_y=None, save=None, figsize='big', scatter_list=None):
     """Make pretty simple Line2D plot.
     
     Parameters
     ----------
     df: pd.DataFrame
-    x_label: str
-    y_label: str
+    xlabel: str
+    ylabel: str
     """
     if figsize == 'big':
         fig, ax = plt.subplots(1, 1, figsize=(12.8, 9.6))
@@ -97,14 +97,13 @@ def simple_pd_plot(df, xlabel, ylabel, colors=None, format_x=None, format_y=None
         df.plot(ax=ax)
     else:
         df.plot(ax=ax, color=colors)
-    ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
     ax.spines['bottom'].set_visible(False)
     ax.spines['left'].set_visible(False)
     ax.xaxis.set_tick_params(which=u'both', length=0)
-    ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+    ax.xaxis.set_major_locator(MaxNLocator(nbins=5, integer=True))
 
     ax.yaxis.set_tick_params(which=u'both', length=0)
     
@@ -193,8 +192,7 @@ def economic_subplots(df, suptitle, format_axtitle=lambda x: x, format_val=lambd
 
     
 def scenario_grouped_subplots(df_dict, suptitle='', n_columns=3, format_y=lambda y, _: y, rotation=0, nbins=None, save=None):
-    """
-    Plot a line for each index in a subplot.
+    """ Plot a line for each index in a subplot.
 
     Parameters
     ----------
@@ -372,14 +370,13 @@ def table_plots(df, level_x=0, level_y=1, suptitle='', format_val=lambda x: '{:.
             continue
             
 
-def table_plots_scenarios(dict_df, suptitle='', format_y=lambda y, _: y):
+def table_plots_scenarios(dict_df, suptitle='', format_y=lambda y, _: y, save=None):
     """Organized subplots key[0], key[1] values as subplot coordinate.
     
     Parameters
     ----------
     dict_df: dict
-        2 levels MultiIndex 
-
+        2 levels MultiIndex
     suptitle: str, optional
     format_y: function, optional
     """
@@ -425,7 +422,11 @@ def table_plots_scenarios(dict_df, suptitle='', format_y=lambda y, _: y):
             continue
 
     fig.legend(handles, labels, loc='upper right', frameon=False)
-    plt.show()
+    if save is not None:
+        fig.savefig(save)
+        plt.close(fig)
+    else:
+        plt.show()
 
 
 def stock_attributes_subplots(stock, dict_order={}, suptitle='Buildings stock', option='percent', dict_color=None,
@@ -661,15 +662,16 @@ def comparison_stock_attributes(stock1, stock2, dict_order={}, suptitle='Buildin
         plt.setp(ax.xaxis.get_majorticklabels(), rotation=0)
 
 
-def grouped_scenarios(output_dict, level, func='sum', weight=None):
+def grouped_scenarios(output_dict, level, func='sum', weight=None, order=None):
     """
     Parameters
     ----------
     output_dict: dict
         {scenario: pd.DataFrame(index=segments, column=years)}
-    level: str
+    level: str, list
     func: str, {'sum', 'mean', 'weighted_mean'}, default 'sum'
     weight: dict, optional
+    order: dict, optional
     
     Returns
     -------
@@ -691,7 +693,12 @@ def grouped_scenarios(output_dict, level, func='sum', weight=None):
             output[key] = ((output_dict[key] * weight[key]).groupby(level).sum() / weight[key].groupby(level).sum()).T.to_dict()
 
     output = reverse_nested_dict(output)
-    return {k: pd.DataFrame(output[k]) for k in output.keys()}
+    output = {k: pd.DataFrame(output[k]) for k in output.keys()}
+    if isinstance(level, str):
+        if level in order.keys():
+            order = [i for i in order[level] if i in output.keys()]
+            output = {k: output[k] for k in order}
+    return output
 
 
 def uncertainty_area_plot(data, idx_ref, title, xlabel, ylabel, leg=False, version='simple',

@@ -19,7 +19,6 @@
       "A"
     ],
     "Energy performance construction": [
-      "BBC",
       "BEPOS"
     ],
     "Income class": [
@@ -194,7 +193,6 @@
     },
     "type": "dict_to_parse"
   },
-  "attributes2horizon_construction": 35,
   "attributes2heater": {
     "val": {
       "G": 0.85,
@@ -291,26 +289,6 @@
     },
     "type": "dict_to_parse"
   },
-  "attributes2discount_construction": {
-    "val": {
-      "Single-family": {
-        "Homeowners": 0.07,
-        "Landlords": 0.07,
-        "Social-housing": 0.04
-      },
-      "Multi-family": {
-        "Homeowners": 0.1,
-        "Landlords": 0.1,
-        "Social-housing": 0.04
-      }
-    },
-    "index": [
-      "Housing type",
-      "Occupancy status"
-    ],
-    "type": "pd.Series",
-    "unit": "%/yr"
-  },
   "attributes2income": {
     "val": {
       "D1": 13628,
@@ -322,12 +300,7 @@
       "D7": 39888,
       "D8": 45400,
       "D9": 54309,
-      "D10": 92735,
-      "C1": 17009,
-      "C2": 25810,
-      "C3": 33159,
-      "C4": 42643,
-      "C5": 73523
+      "D10": 92735
     },
     "index": [
       "Income class"

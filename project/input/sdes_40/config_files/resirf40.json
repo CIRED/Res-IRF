@@ -1,6 +1,6 @@
 {
-  "AP": {
-    "end": 2031,
+  "AP, renovation obligation": {
+    "end": 2051,
     "green_value": "Reference",
     "budget_constraint": "Reference",
     "stock_buildings": {
@@ -25,12 +25,10 @@
     "cost_intangible_construction": {
       "activated": false,
       "source_type": "function",
-      "source": "project/input/phebus/intermediate/cost_intangible_construction_phebus2012.pkl"
+      "source": "project/input/phebus/intermediate/cost_intangible_construction_phebus2018.pkl"
     },
     "lbd_renovation": true,
     "info_renovation": true,
-    "lbd_construction": true,
-    "info_construction": true,
     "energy_prices_bt": {
       "type": "file",
       "source": "project/input/sdes_40/energy_prices_2018.csv"
@@ -52,7 +50,7 @@
     },
     "carbon_tax": {
       "activated": true,
-      "start": 2012,
+      "start": 2018,
       "end": 2051,
       "calibration": true
     },
@@ -70,13 +68,19 @@
     },
     "cite": {
       "activated": true,
-      "start": 2012,
-      "end": 2051,
+      "start": 2018,
+      "end": 2021,
       "calibration": true
+    },
+    "ma_prime_renov": {
+      "activated": true,
+      "start": 2021,
+      "end": 2051,
+      "calibration": false
     },
     "cee_subsidy": {
       "activated": true,
-      "start": 2012,
+      "start": 2018,
       "end": 2051,
       "calibration": true
     },
@@ -86,7 +90,7 @@
     },
     "cee_taxes": {
       "activated": true,
-      "start": 2012,
+      "start": 2018,
       "end": 2051,
       "calibration": true
     },
@@ -96,32 +100,26 @@
     },
     "reduced_tax": {
       "activated": true,
-      "start": 2012,
+      "start": 2018,
       "end": 2051,
       "calibration": true
     },
     "eptz_subsidy": {
       "activated": true,
-      "start": 2012,
+      "start": 2018,
       "end": 2051,
       "calibration": true
     },
-    "thermal_regulation_construction": {
-      "activated": true,
-      "start": 2012,
-      "end": 2051,
-      "calibration": false
-    },
     "renovation_obligation": {
       "activated": false,
-      "start": 2012,
+      "start": 2018,
       "end": 2040,
       "calibration": false
     },
     "rho": {
       "source_type": "function",
       "source": "project/input/sdes_40/intermediate/rho_sdes2018.pkl",
-      "option": null
+      "option": 4
     },
     "npv_intangible": {
       "source_type": "function",
@@ -135,13 +133,13 @@
       "type": "file",
       "source": "project/input/sdes_40/ms_renovation_ini_2018.csv"
     },
-    "ms_construction_ini": {
+    "ms_switch_fuel_ini": {
       "type": "file",
-      "source": "project/input/sdes_40/ms_construction_ini_2012.csv"
+      "source": "project/input/sdes_40/ms_switch_fuel_ini_2018.csv"
     },
     "cost_renovation": {
       "type": "file",
-      "source": "project/input/sdes_40/cost_renovation_2018.csv",
+      "source": "project/input/sdes_40/cost_renovation_2012.csv",
       "index_names": [
         "Energy performance"
       ],
@@ -149,18 +147,10 @@
         "Energy performance final"
       ]
     },
-    "cost_construction": {
-      "type": "file",
-      "source": "project/input/sdes_40/cost_construction_2012.csv"
-    },
     "cost_switch_fuel": {
       "type": "file",
       "source": "project/input/sdes_40/cost_switch_fuel_2012.csv"
     },
-    "Household income rate": 0.012,
-    "tenants_income_construction": {
-      "type": "file",
-      "source": "project/input/sdes_40/tenants_income_construction_2012.csv"
-    }
+    "Household income rate": 0.012
   }
 }

@@ -14,7 +14,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 # Original author Lucas Vivier <vivier@centre-cired.fr>
-# Based on a scilab program mainly by written by Someone, but fully rewritten.
+# Based on a scilab program mainly by written by L.G Giraudet and others, but fully rewritten.
 
 import pandas as pd
 import os
@@ -32,6 +32,10 @@ def dict2series(item_dict):
         ds = {(outerKey, innerKey): values for outerKey, innerDict in item_dict['val'].items() for
               innerKey, values in innerDict.items()}
         ds = pd.Series(ds)
+    elif len(item_dict['index']) == 3:
+        ds = pd.DataFrame({k: pd.DataFrame(item).stack() for k, item in item_dict['val'].items()}).stack()
+        ds.index.names = [i for i in item_dict['index'][::-1]]
+        ds = ds.reorder_levels(item_dict['index'])
     else:
         raise ValueError('More than 2 MultiIndex is not yet developed')
     ds.index.set_names(item_dict['index'], inplace=True)
@@ -217,7 +221,7 @@ def parse_building_stock(config):
     name_file = os.path.join(os.getcwd(), config['stock_buildings']['source'])
     stock_ini = pd.read_pickle(name_file)
     stock_ini = stock_ini.reorder_levels(
-        ['Occupancy status', 'Housing type', 'Income class', 'Heating energy', 'Energy performance', 'Income class owner'])
+        ['Occupancy status', 'Housing type', 'Income class owner', 'Income class', 'Heating energy', 'Energy performance'])
 
     # 2. Numerical value of stock attributes
 
@@ -270,12 +274,11 @@ def parse_building_stock(config):
     return stock_ini, attributes
 
 
-def parse_exogenous_input(folder, config):
+def parse_exogenous_input(config):
     """Parses prices and costs input to match Res-IRF input requirement.
 
     Parameters
     ----------
-    folder: str
     config: dict
 
     Returns
@@ -287,8 +290,6 @@ def parse_exogenous_input(folder, config):
     dict
         Investment cost.
         Keys are transition cost_envelope = cost_invest(tuple([Energy performance]).
-    dict
-        Construction cost.
     pd.DataFrame
         co2_tax
     pd.DataFrame
@@ -297,8 +298,7 @@ def parse_exogenous_input(folder, config):
         policies
     pd.DataFrame
         summary_input
-    pd.DataFrame
-        cost_switch_fuel_end
+
     """
 
     calibration_year = config['stock_buildings']['year']
@@ -318,13 +318,15 @@ def parse_exogenous_input(folder, config):
     cee_tax.columns = cee_tax.columns.astype('int')
     # adding vta to cee_tax
     # to delete after test
-    cee_tax.loc[:, 2013:] = cee_tax.loc[:, 2013:] * (1 + 0.2)
+    # cee_tax.loc[:, 2013:] = cee_tax.loc[:, 2013:] * (1 + 0.2)
     policies['cee_taxes']['value'] = cee_tax * (1 + 0.2)
 
     cee_subsidy = pd.read_csv(os.path.join(os.getcwd(), config['cee_subsidy_value']['source']), index_col=[0])
     cee_subsidy.index.set_names('Income class owner', inplace=True)
     cee_subsidy.columns = cee_subsidy.columns.astype('int')
     policies['cee_subsidy']['value'] = cee_subsidy
+
+    policies['ma_prime_renov']['value'] = policies['ma_prime_renov']['value'].unstack('Energy performance final').fillna(0)
 
     # cost_invest
     cost_invest = dict()
@@ -350,13 +352,6 @@ def parse_exogenous_input(folder, config):
         cost_switch_fuel_end.index.set_names('Heating energy', inplace=True)
         cost_switch_fuel_end.columns.set_names('Heating energy final', inplace=True)
         # cost_switch_fuel = cost_switch_fuel * (1 + 0.1) / (1 + 0.055)
-
-    cost_invest_construction = dict()
-    name_file = os.path.join(os.getcwd(), config['cost_construction']['source'])
-    cost_construction = pd.read_csv(os.path.join(folder, name_file), sep=',', header=[0, 1], index_col=[0])
-    cost_construction.index.set_names('Housing type', inplace=True)
-    cost_invest_construction['Energy performance'] = cost_construction
-    cost_invest_construction['Heating energy'] = None
 
     name_file = os.path.join(os.getcwd(), config['energy_prices_bt']['source'])
     energy_prices_bt = pd.read_csv(name_file, index_col=[0], header=[0]).T
@@ -434,13 +429,6 @@ def parse_exogenous_input(folder, config):
 
     summary_input = dict()
 
-    """
-    summary_input['Power prices bt (euro/kWh)'] = energy_prices_bt.loc['Power', :]
-    summary_input['Natural gas prices bt (euro/kWh)'] = energy_prices_bt.loc['Natural gas', :]
-    summary_input['Oil fuel prices bt (euro/kWh)'] = energy_prices_bt.loc['Oil fuel', :]
-    summary_input['Wood fuel prices bt (euro/kWh)'] = energy_prices_bt.loc['Wood fuel', :]
-    """
-
     summary_input['Power prices (euro/kWh)'] = energy_prices.loc['Power', :]
     summary_input['Natural gas prices (euro/kWh)'] = energy_prices.loc['Natural gas', :]
     summary_input['Oil fuel prices (euro/kWh)'] = energy_prices.loc['Oil fuel', :]
@@ -454,7 +442,7 @@ def parse_exogenous_input(folder, config):
     summary_input = pd.DataFrame(summary_input)
     summary_input = summary_input.loc[calibration_year:, :]
 
-    return energy_prices, energy_taxes, cost_invest, cost_invest_construction, co2_tax, co2_emission, policies, summary_input, cost_switch_fuel_end
+    return energy_prices, energy_taxes, cost_invest, co2_tax, co2_emission, policies, summary_input
 
 
 def parse_parameters(folder, config, stock_sum):
@@ -546,16 +534,6 @@ def parse_parameters(folder, config, stock_sum):
     # 6. Others
     parameters['Renovation rate max'] = parameters['Renovation rate max {}'.format(calibration_year)]
 
-    if parameters['Cost construction lim']['source_type'] == 'file':
-        if calibration_year == 1984:
-            parameters['Cost construction lim'] = pd.read_csv(parameters['Cost construction lim']['source'], index_col=[0], header=[0, 1])
-            parameters['Cost construction lim'].index.set_names('Housing type', inplace=True)
-            parameters['Cost construction lim'].columns.set_names(['Heating energy final', 'Energy performance final'], inplace=True)
-        elif calibration_year >= 2012:
-            parameters['Cost construction lim'] = pd.read_csv(parameters['Cost construction lim']['source'], index_col=[0], header=[0])
-            parameters['Cost construction lim'].index.set_names('Housing type', inplace=True)
-            parameters['Cost construction lim'].columns.set_names('Energy performance final', inplace=True)
-
     """
     proba_performance = parameters['Probability disease performance']
     proba_income = parameters['Probability disease income {}'.format(calibration_year)]
@@ -593,9 +571,7 @@ def parse_observed_data(config):
     pd.DataFrame
         Observed market share in calibration year for existing buildings
     pd.DataFrame
-        Observed market share in calibration year for construction
-    pd.DataFrame
-        Observed tenant income distribution in constructed building stock
+        Observed market share in calibration year for switching fuel
     """
 
     name_file = os.path.join(os.getcwd(), config['renovation_rate_ini']['source'])
@@ -608,15 +584,11 @@ def parse_observed_data(config):
     ms_renovation_ini.index.set_names(['Energy performance'], inplace=True)
     ms_renovation_ini.columns.set_names(['Energy performance final'], inplace=True)
 
-    name_file = os.path.join(os.getcwd(), config['ms_construction_ini']['source'])
-    ms_construction_ini = pd.read_csv(name_file, index_col=[0, 1], header=[0, 1])
-    ms_construction_ini.index.set_names(['Occupancy status', 'Housing type'], inplace=True)
+    name_file = os.path.join(os.getcwd(), config['ms_switch_fuel_ini']['source'])
+    ms_switch_fuel_ini = pd.read_csv(name_file, index_col=[0, 1], header=[0])
+    ms_switch_fuel_ini.index.set_names(['Housing type', 'Heating energy'], inplace=True)
+    ms_switch_fuel_ini.columns.set_names(['Heating energy final'], inplace=True)
 
-    name_file = os.path.join(os.getcwd(), config['tenants_income_construction']['source'])
-    income_tenants_construction = pd.read_csv(name_file, index_col=[0, 1], header=[0])
-    income_tenants_construction.index.set_names(['Housing type', 'Energy performance'], inplace=True)
-    income_tenants_construction.columns.set_names('Income class', inplace=True)
-
-    return renovation_rate_ini, ms_renovation_ini, ms_construction_ini, income_tenants_construction
+    return renovation_rate_ini, ms_renovation_ini, ms_switch_fuel_ini
 
 

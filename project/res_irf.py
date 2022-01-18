@@ -14,7 +14,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 # Original author Lucas Vivier <vivier@centre-cired.fr>
-# Based on a scilab program mainly by written by Someone, but fully rewritten.
+# Based on a scilab program mainly by written by L.G Giraudet and others, but fully rewritten.
 
 import os
 import time
@@ -22,6 +22,7 @@ import pandas as pd
 from copy import deepcopy
 from shutil import copyfile
 from itertools import product
+from numpy import arange
 
 from buildings import HousingStock, HousingStockRenovated, HousingStockConstructed
 from policies import EnergyTaxes, Subsidies, RegulatedLoan, RenovationObligation, SubsidiesRecyclingTax, ThermalRegulation
@@ -29,9 +30,8 @@ from parse_output import parse_output
 
 
 def res_irf(calibration_year, end_year, folder, config, parameters, policies_parameters, attributes, energy_prices_bp,
-            energy_taxes, cost_invest, cost_invest_construction, cost_switch_fuel_end, stock_ini, co2_tax, co2_emission,
-            rate_renovation_ini, ms_renovation_ini, ms_construction_ini, income_tenants_construction, logging,
-            output_detailed):
+            energy_taxes, cost_invest, stock_ini, co2_tax, co2_emission, rate_renovation_ini, ms_renovation_ini,
+            ms_switch_fuel_ini, logging, output_detailed):
     """Res-IRF model main function.
 
     Res-IRF is a multi-agent building stock dynamic microsimulation model.
@@ -68,9 +68,6 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
         Exogenous energy taxes.
     cost_invest: dict
         Investment cost for transition.
-    cost_invest_construction: dict
-        Construction cost.
-    cost_switch_fuel_end: pd.DataFrame
     stock_ini: pd.Series
         Initial stock.
     co2_tax: pd.DataFrame
@@ -81,10 +78,7 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
         Renovation rate to match during calibration year.
     ms_renovation_ini: pd.DataFrame
         Market share between renovation option to match during calibration year.
-    ms_construction_ini: pd.DataFrame
-        Market share between construction option to match during calibration year.
-    income_tenants_construction: pd.Series
-        Income tenant of agent.
+    ms_switch_fuel_ini: pd.DataFrame
     logging:
     output_detailed: bool
     """
@@ -92,6 +86,7 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
     start = time.time()
 
     logging.debug('Creation of output folder: {}'.format(folder['output']))
+    os.mkdir(os.path.join(folder['output'], 'calibration'))
 
     # copyfile(os.path.join(folder['input'], scenario_file), os.path.join(folder['output'], scenario_file))
     pd.Series(config).to_csv(os.path.join(folder['output'], 'scenario.csv'))
@@ -106,8 +101,6 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
     output['Stock needed'] = parameters['Stock needed']
     output['Cost envelope'] = dict()
     output['Cost envelope'][calibration_year] = cost_invest['Energy performance']
-    output['Cost construction'] = dict()
-    output['Cost construction'][calibration_year] = cost_invest_construction['Energy performance']
 
     logging.debug('Initialization')
 
@@ -223,53 +216,34 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
                                       npv_min=parameters['NPV min'],
                                       rate_max=parameters['Renovation rate max'],
                                       rate_min=parameters['Renovation rate min'],
-                                      kwh_cumac_transition=attributes['kwh_cumac_transition'])
+                                      kwh_cumac_transition=attributes['kwh_cumac_transition'],
+                                      ms_switch_fuel_ini=ms_switch_fuel_ini)
 
     logging.debug('Initialize energy consumption and cash-flows')
     buildings.ini_energy_cash_flows(energy_prices)
-    # io_share_seg = buildings.to_io_share_seg()
-    stock_area_existing = buildings.stock_area
 
     logging.debug('Creating HousingStockConstructed Python object')
     segments_construction = pd.MultiIndex.from_tuples(list(product(*[v for _, v in attributes['housing_stock_constructed'].items()])))
     segments_construction.names = [k for k in attributes['housing_stock_constructed'].keys()]
+
+    share_decision_maker = stock_ini.groupby(
+        ['Occupancy status', 'Housing type', 'Income class owner', 'Income class']).sum().unstack(
+        ['Occupancy status', 'Income class owner', 'Income class'])
+    share_decision_maker = (share_decision_maker.T / share_decision_maker.sum(axis=1)).T
+
     buildings_constructed = HousingStockConstructed(pd.Series(0, dtype='float64', index=segments_construction),
                                                     attributes['housing_stock_constructed'], calibration_year,
                                                     parameters['Stock needed'],
                                                     share_multi_family=parameters['Share multi-family'],
-                                                    os_share_ht=parameters['Occupancy status share housing type'],
-                                                    tenants_income=income_tenants_construction,
-                                                    stock_area_existing=stock_area_existing,
+                                                    market_share_energy=parameters['Market-share energy construction'],
+                                                    share_decision_maker=share_decision_maker,
                                                     attributes2area=attributes['attributes2area_construction'],
-                                                    attributes2horizon=attributes['attributes2horizon_construction'],
-                                                    attributes2discount=attributes['attributes2discount_construction'],
                                                     attributes2income=attributes['attributes2income'],
-                                                    attributes2consumption=attributes['attributes2consumption_construction'])
+                                                    attributes2consumption=attributes['attributes2consumption_construction']
+                                                    )
 
     # policies don't need to start and to end to be used during calibration
     subsidies_calibration = [policy for policy in subsidies if policy.calibration is True]
-
-    cost_intangible_construction = None
-    if config['cost_intangible_construction']['activated']:
-        logging.debug('Calibration market share construction --> intangible cost construction')
-        cost_intangible_construction = dict()
-        name_file = config['cost_intangible_construction']['source']
-        source = config['cost_intangible_construction']['source_type']
-        if source == 'function':
-            cost_intangible_construction['Energy performance'] = buildings_constructed.calibration_market_share(
-                energy_prices,
-                ms_construction_ini,
-                cost_invest=cost_invest_construction,
-                subsidies=subsidies_calibration)
-            logging.debug('End of calibration and dumping: {}'.format(name_file))
-            cost_intangible_construction['Energy performance'].to_pickle(name_file)
-        elif source == 'file':
-            logging.debug('Loading cost_intangible_construction from {}'.format(name_file))
-            cost_intangible_construction['Energy performance'] = pd.read_pickle(name_file)
-
-        cost_intangible_construction['Heating energy'] = None
-        output['Cost intangible construction'] = dict()
-        output['Cost intangible construction'][calibration_year] = cost_intangible_construction['Energy performance']
 
     cost_intangible = None
     if config['cost_intangible']['activated']:
@@ -297,11 +271,11 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
             logging.debug('End of calibration and dumping: {}'.format(name_file))
             cost_intangible['Energy performance'].to_pickle(name_file)
             if ms_calibration is not None:
-                ms_calibration['Objective'].to_csv(os.path.join(folder['output'], 'ms_objective.csv'))
-                ms_calibration['Mean agents'].to_csv(os.path.join(folder['output'], 'ms_mean_agents.csv'))
-                ms_calibration['Agent mean'].to_csv(os.path.join(folder['output'], 'ms_agent_mean.csv'))
-                ms_calibration['LCC agent mean'].to_csv(os.path.join(folder['output'], 'lcc_agent_mean.csv'))
-                cost_intangible['Energy performance'].to_csv(os.path.join(folder['output'], 'cost_intangible.csv'))
+                ms_calibration['Objective'].to_csv(os.path.join(folder['output'], 'calibration/ms_objective.csv'))
+                ms_calibration['Mean agents'].to_csv(os.path.join(folder['output'], 'calibration/ms_mean_agents.csv'))
+                ms_calibration['Agent mean'].to_csv(os.path.join(folder['output'], 'calibration/ms_agent_mean.csv'))
+                ms_calibration['LCC agent mean'].to_csv(os.path.join(folder['output'], 'calibration/lcc_agent_mean.csv'))
+                cost_intangible['Energy performance'].to_csv(os.path.join(folder['output'], 'calibration/cost_intangible.csv'))
 
         elif source == 'file':
             logging.debug('Loading intangible_cost from {}'.format(name_file))
@@ -312,45 +286,61 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
         output['Cost intangible'] = dict()
         output['Cost intangible'][calibration_year] = cost_intangible['Energy performance']
 
-    logging.debug('Calibration renovation rate >>> rho')
     name_file_rho = config['rho']['source']
     name_file_npv_intangible = config['npv_intangible']['source']
 
     source = config['rho']['source_type']
     if source == 'function':
+        logging.debug('Calibration renovation rate >>> rho')
         if config['rho']['option'] is not None:
-            rho, renovation_rate_calibration = buildings._calibration_renovation_rate(energy_prices,
-                                                                                      rate_renovation_ini,
-                                                                                      cost_invest=cost_invest,
-                                                                                      cost_intangible=cost_intangible,
-                                                                                      subsidies=subsidies_calibration,
-                                                                                      option=config['rho']['option'])
+            rho = buildings.calibration_renovation_rate(energy_prices,
+                                                        rate_renovation_ini,
+                                                        cost_invest=cost_invest,
+                                                        cost_intangible=cost_intangible,
+                                                        subsidies=subsidies_calibration,
+                                                        option=config['rho']['option'])
+
+            renovation_rate = buildings.to_renovation_rate(energy_prices,
+                                                           transition=['Energy performance'],
+                                                           cost_invest=cost_invest,
+                                                           cost_intangible=cost_intangible,
+                                                           subsidies=subsidies_calibration, rho=rho)
+
+            renovation_calculated = (renovation_rate * buildings.stock).groupby(
+                rate_renovation_ini.index.names).sum() / buildings.stock.groupby(rate_renovation_ini.index.names).sum()
+            to_csv = pd.concat((rate_renovation_ini, renovation_calculated), axis=1)
+            to_csv.columns = ['Renovation rate observed (%/year)', 'Renovation rate calculated (%/year)']
+            to_csv.to_csv(os.path.join(folder['output'], 'calibration/renovation_rate.csv'))
+
+            npv_range = arange(-200, 110, 10)
+            rslt = pd.DataFrame()
+            for idx, r in rho.groupby(rate_renovation_ini.index.names).mean().iteritems():
+                rslt = pd.concat((rslt, pd.Series(HousingStockRenovated.renovation_rate(npv_range, r),
+                                                  name='{}-{}'.format(idx[0], idx[1]))), axis=1)
+            rslt.index = npv_range
+            rslt.plot().get_figure().savefig(os.path.join(folder['output'], 'calibration/renovation_rate.png'))
+
             logging.debug('End of calibration and dumping: {}'.format(name_file_rho))
             rho.to_pickle(name_file_rho)
 
         else:
-            rho, npv_intangible, renovation_rate_calibration = buildings.calibration_renovation_rate(energy_prices,
-                                                                                                     rate_renovation_ini,
-                                                                                                     cost_invest=cost_invest,
-                                                                                                     cost_intangible=cost_intangible,
-                                                                                                     subsidies=subsidies_calibration)
+            rho, npv_intangible, renovation_rate_calibration = buildings._calibration_renovation_rate(energy_prices,
+                                                                                                      rate_renovation_ini,
+                                                                                                      cost_invest=cost_invest,
+                                                                                                      cost_intangible=cost_intangible,
+                                                                                                      subsidies=subsidies_calibration)
             logging.debug('Dumping: {}'.format(name_file_npv_intangible))
             npv_intangible.to_pickle(name_file_npv_intangible)
             logging.debug('Rho: {:.3f}'.format(rho))
 
-
-        if renovation_rate_calibration is not None:
-            renovation_rate_calibration.to_csv(os.path.join(folder['output'], 'renovation_rate_calibration.csv'))
-
     elif source == 'file':
         logging.debug('Loading intangible_cost from {}'.format(name_file_rho))
         rho = pd.read_pickle(name_file_rho)
-        npv_intangible = pd.read_pickle(name_file_npv_intangible)
+        # npv_intangible = pd.read_pickle(name_file_npv_intangible)
 
     else:
         rho = None
     buildings.rho = rho
-    buildings.npv_intangible = npv_intangible
 
     # calculate tax revenues to size recycled subsidy
     for _, tax in energy_taxes_dict.items():
@@ -366,10 +356,6 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
             consumption = (consumption.groupby('Heating energy').sum().T * parameters['Calibration consumption']).T
             tax.tax_revenue[calibration_year] = (consumption * val).sum()
             # add buildings_constructed.energy_expenditure(val).sum()
-
-    cost_switch_fuel_ini = None
-    if cost_switch_fuel_end is not None:
-        cost_switch_fuel_ini = cost_invest['Heating energy'].copy()
 
     years = range(calibration_year, end_year, 1)
     logging.debug('Launching iterations')
@@ -388,10 +374,6 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
         if thermal_regulation_renovation is not None:
             buildings.attributes_values = thermal_regulation_renovation.apply_regulation(
                 deepcopy(buildings.total_attributes_values), year)
-
-        if cost_switch_fuel_end is not None:
-            cost_invest['Heating energy'] = cost_switch_fuel_ini + (year - calibration_year) * (
-                        cost_switch_fuel_end - cost_switch_fuel_ini) / (2012 - 1984)
 
         flow_demolition_sum = 0
         if parameters['Destruction rate'] > 0:
@@ -454,29 +436,7 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
         logging.debug('Updating flow_constructed segmented')
         # update_flow_constructed_seg will automatically update area constructed and so construction knowledge
         if flow_constructed > 1:
-            buildings_constructed.update_flow_constructed_seg(energy_prices,
-                                                              cost_intangible=cost_intangible_construction,
-                                                              cost_invest=cost_invest_construction,
-                                                              nu=parameters['Nu construction'],
-                                                              subsidies=None)
-
-        if config['info_construction'] and config['cost_intangible_construction']['activated']:
-            logging.debug('Information acceleration - construction')
-            cost_intangible_construction['Energy performance'] = HousingStock.information_acceleration(
-                buildings_constructed.knowledge,
-                output['Cost intangible construction'][buildings_constructed.calibration_year],
-                parameters['Information rate max construction'],
-                parameters['Learning information rate construction'])
-            output['Cost intangible construction'][year] = cost_intangible_construction['Energy performance']
-
-        if config['lbd_construction']:
-            logging.debug('Learning by doing - construction')
-            cost_invest_construction['Energy performance'] = HousingStock.learning_by_doing(
-                buildings_constructed.knowledge,
-                output['Cost construction'][buildings_constructed.calibration_year],
-                parameters['Learning by doing renovation'],
-                cost_lim=parameters['Cost construction lim'])
-            output['Cost construction'][year] = cost_invest_construction['Energy performance']
+            buildings_constructed.update_flow_constructed_seg()
 
         logging.debug('Calculating tax revenue')
 
@@ -494,9 +454,9 @@ def res_irf(calibration_year, end_year, folder, config, parameters, policies_par
                 tax.tax_revenue[year] = (consumption * val).sum()
 
         logging.debug(
-            '\nSummary:\nYear: {}\nStock after demolition: {:,.0f}\nDemolition: {:,.0f}\nNeeded: {:,.0f}\nRenovation: {:,.0f}\nConstruction: {:,.0f}'.format(
+            '\nSummary:\nYear: {}\nStock after demolition: {:,.0f}\nDemolition: {:,.0f}\nNeeded: {:,.0f}\nRenovation: {:,.0f}\nFlow Construction: {:,.0f}\nTotal Construction: {:,.0f}'.format(
                 year, buildings.stock.sum(), flow_demolition_sum, parameters['Stock needed'].loc[year],
-                buildings.flow_renovation_label_energy_dict[year].sum().sum(), flow_constructed))
+                buildings.flow_renovation_label_energy_dict[year].sum().sum(), flow_constructed, buildings_constructed.stock.sum()))
 
     parse_output(output, buildings, buildings_constructed, energy_prices, energy_taxes, energy_taxes_detailed,
                  co2_emission, parameters['Calibration consumption'], folder['output'],

@@ -14,7 +14,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 # Original author Lucas Vivier <vivier@centre-cired.fr>
-# Based on a scilab program mainly by written by Someone, but fully rewritten.
+# Based on a scilab program mainly by written by L.G Giraudet and others, but fully rewritten.
 
 """
 Res-IRF is a multi-agent building stock dynamic microsimulation model.
@@ -122,9 +122,9 @@ def model_launcher(path=None):
 
         stock_ini, attributes = parse_building_stock(config)
         parameters, summary_param = parse_parameters(folder['input'], config, stock_ini.sum())
-        energy_prices, energy_taxes, cost_invest, cost_invest_construction, co2_tax, co2_emission, policies_parameters, summary_input, cost_switch_fuel_end = parse_exogenous_input(
-            folder['input'], config)
-        rate_renovation_ini, ms_renovation_ini, ms_construction_ini, income_tenants_construction = parse_observed_data(config)
+        energy_prices, energy_taxes, cost_invest, co2_tax, co2_emission, policies_parameters, summary_input = parse_exogenous_input(
+            config)
+        rate_renovation_ini, ms_renovation_ini, ms_switch_fuel_ini = parse_observed_data(config)
 
         end_year = config['end']
 
@@ -141,11 +141,10 @@ def model_launcher(path=None):
         processes_list += [Process(target=res_irf,
                                    args=(calibration_year, end_year, folder_scenario, config, parameters, 
                                          policies_parameters, attributes,
-                                         energy_prices, energy_taxes, cost_invest, cost_invest_construction,
-                                         cost_switch_fuel_end,
+                                         energy_prices, energy_taxes, cost_invest,
                                          stock_ini, co2_tax, co2_emission,
-                                         rate_renovation_ini, ms_renovation_ini, ms_construction_ini,
-                                         income_tenants_construction, logging, args.output))]
+                                         rate_renovation_ini, ms_renovation_ini, ms_switch_fuel_ini,
+                                         logging, args.output))]
 
     for p in processes_list:
         p.start()
