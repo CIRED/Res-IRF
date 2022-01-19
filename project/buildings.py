@@ -1041,7 +1041,7 @@ class HousingStock:
         total_subsidies = None
         if subsidies is not None:
             for policy in subsidies:
-                if policy.transition == transition:
+                if policy.transition == transition and policy.policy != 'subsidies_curtailment':
                     if policy.policy == 'subsidies' or policy.policy == 'subsidy_tax':
                         if policy.unit == '%':
                             s = policy.to_subsidy(self.year, cost=capex)
@@ -1081,24 +1081,33 @@ class HousingStock:
                         total_subsidies += s
 
                     self.subsidies_detailed[tuple(transition)][self.year]['{} (euro/m2)'.format(policy.name)] = s
-                    self.subsidies_detailed_euro[tuple(transition)][self.year]['{} (euro)'.format(policy.name)] = (self.area * s.T).T
+                    self.subsidies_detailed_euro[tuple(transition)][self.year]['{} (euro)'.format(policy.name)] = (
+                                self.area * s.T).T
 
         if capex_total is not None:
             lcc_transition += capex_total
         if total_subsidies is not None:
+            subsidies_curtailment = [s for s in subsidies if s.policy == 'subsidies_curtailment']
+            if subsidies_curtailment != []:
+                subsidies_curtailment = subsidies_curtailment[0]
+                a = reindex_mi(subsidies_curtailment.value, capex.index)
+
+                curtail = total_subsidies - (a * capex.T).T
+                curtail = curtail[curtail > 0].fillna(0)
+                total_subsidies -= curtail
+
+                subsidies_curtailed = subsidies_curtailment.subsidies_curtailed
+
+                self.subsidies_curtailment[tuple(transition)][self.year] = curtail
+                if curtail.sum().sum() > 0:
+                    print('Curtailment')
+                    self.subsidies_detailed[tuple(transition)][self.year][
+                        '{} (euro/m2)'.format(subsidies_curtailed)] -= curtail
+                    self.subsidies_detailed_euro[tuple(transition)][self.year]['{} (euro)'.format(subsidies_curtailed)] -= (
+                            self.area * curtail.T).T
+
             self.subsidies_total[tuple(transition)][self.year] = total_subsidies
-
-            costs_remaining = capex_total - total_subsidies
-            if (costs_remaining < 0).any().any():
-                print('subsidies curtailment')
-                self.subsidies_curtailment[tuple(transition)][self.year] = costs_remaining[costs_remaining < 0]
-                total_subsidies[costs_remaining < 0] = capex_total[costs_remaining < 0]
-
             lcc_transition -= total_subsidies
-
-        if (lcc_transition < 0).any().any():
-            # lcc_transition[lcc_transition < 0] = 0
-            print('lcc transition is negative')
 
         self.lcc_final[tuple(transition)][self.year] = lcc_transition
 
@@ -1521,6 +1530,7 @@ class HousingStock:
                                  consumption='conventional', subsidies=None):
         """Calculate intangible costs by calibrating market_share.
 
+        Intangible costs are calculated for
         Calculate intangible cost to match observed market_share with initial LCC.
         LCC represents a representative agent (mean agent).
         Normalize the minimum intangible cost to 0.
@@ -1569,7 +1579,7 @@ class HousingStock:
             ds[ds == 0] = 0.001
             ds = ds / ds.sum()
 
-        def func(intangible_cost, lcc, ms, insert, nu=8):
+        def func(intangible_cost, lcc, ms, insert, nu=7):
             """Functions of intangible_cost that are equal to 0.
 
             Parameters
@@ -1630,14 +1640,30 @@ class HousingStock:
         lcc_agent_mean.replace(0, float('nan'), inplace=True)
         market_share_agent_mean = HousingStock.lcc2market_share(lcc_agent_mean)
 
-        market_share = market_share.unstack(weight.columns.names)
-        market_share_mean_agents = (weight_re * market_share).fillna(0).stack('Energy performance final').sum(axis=1)
+        market_share_ = market_share.unstack(weight.columns.names)
+        market_share_mean_agents = (weight_re * market_share_).fillna(0).stack('Energy performance final').sum(axis=1)
         market_share_mean_agents = remove_rows(market_share_mean_agents, 'Energy performance', 'A')
         market_share_mean_agents = remove_rows(market_share_mean_agents, 'Energy performance', 'B')
         market_share_mean_agents = remove_rows(market_share_mean_agents, 'Energy performance final', 'G')
         market_share_mean_agents = market_share_mean_agents.unstack('Energy performance final')
+
+        market_share_dict = dict()
+        for type in ['Single-family', 'Multi-family']:
+            market_share_type = market_share[market_share.index.get_level_values('Housing type') == type]
+            market_share_type = market_share_type.unstack(weight.columns.names)
+            stock_single = self.stock[self.stock.index.get_level_values('Housing type') == type]
+            weight_single = val2share(stock_single, levels, option='column')
+            weight_single_re = reindex_mi(weight_single, market_share_type.columns, axis=1)
+            market_share_type = (weight_single_re * market_share_type).fillna(0).stack('Energy performance final').sum(axis=1)
+            market_share_type = remove_rows(market_share_type, 'Energy performance', 'A')
+            market_share_type = remove_rows(market_share_type, 'Energy performance', 'B')
+            market_share_type = remove_rows(market_share_type, 'Energy performance final', 'G')
+            market_share_dict[type] = market_share_type.unstack('Energy performance final')
+
         return cost_intangible, {'Objective': market_share_objective, 'Mean agents': market_share_mean_agents,
-                                 'Agent mean': market_share_agent_mean, 'LCC agent mean': _lcc_agent_mean}
+                                 'Agent mean': market_share_agent_mean, 'LCC agent mean': _lcc_agent_mean,
+                                 'Single-family': market_share_dict['Single-family'],
+                                 'Multi-family': market_share_dict['Multi-family']}
 
     def to_io_share_seg(self):
         """Calculate attributes share by income class owner.

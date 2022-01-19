@@ -23,19 +23,42 @@ import pandas as pd
 import ui_utils
 
 
-def run_indicators(config, folder, CO2_value, discount_rate=0.04, lifetime=26, parameters=None):
+def double_diff(df_ref, df_compare, discount_factor):
+    """Calculate double difference.
+
+    Double difference is a proxy of marginal flow produced by year.
+    Flow have effect during a long period of time and need to be extended during the period.
+
+    Parameters
+    ----------
+    df_ref: pd.Series
+    df_compare: pd.Series
+    discount_factor: float
+
+    Returns
+    -------
+    pd.Series
+    """
+
+    simple_diff = df_ref - df_compare
+    double_diff = simple_diff.diff()
+    double_diff.iloc[0] = simple_diff.iloc[0]
+    discounted_diff = double_diff * discount_factor
+    return discounted_diff.cumsum()
+
+
+
+def run_indicators(config, folder, discount_rate=0.04, lifetime=26):
     """Calculate main indicators to assess public policy.
 
     Parameters
     ----------
     config: dict
     folder: str
-    CO2_value: pd.Series
     discount_rate: float
         Discount rate to extend energy and emission saving
     lifetime : int
         Lifetime to extend energy and emission saving
-    parameters: dict
 
     Returns
     -------
@@ -152,10 +175,6 @@ def run_indicators(config, folder, CO2_value, discount_rate=0.04, lifetime=26, p
         emission_saving = emission_saving.cumsum()
         emission_saving.name = 'Emission difference discounted (MtCO2) {}'.format(name)
         result = pd.concat((result, emission_saving), axis=1)
-
-        # Cost emission
-        emission_cost_saved = (emission_saving * CO2_value).dropna()
-        emission_cost_saved.name = 'Emission cost difference (Meuro) {}'.format(name)
 
         # 2.2 Renovation by year
         # 2. Energy renovation of 500,000 homes per year, including 120,000 in social housing;

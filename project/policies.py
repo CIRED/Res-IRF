@@ -643,3 +643,14 @@ class ThermalRegulation(PublicPolicy):
             return attributes
 
 
+class SubsidiesCurtailment(PublicPolicy):
+    def __init__(self, name, start, end, value, subsidies_curtailed, unit='%', calibration=False):
+        super().__init__(name, start, end, 'subsidies_curtailment', calibration)
+
+        self.value = value
+        self.subsidies_curtailed = subsidies_curtailed
+        self.transition = ['Energy performance']
+
+    def curtailed(self, cost, subsidies):
+        val = reindex_mi(self.value, cost.index)
+        idx = cost.index[subsidies > val * cost]

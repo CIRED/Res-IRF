@@ -156,8 +156,7 @@ def model_launcher(path=None):
 
     if config_runs['Policies indicators']:
         logging.debug('Calculating policies indicators')
-        CO2_value = pd.read_csv(os.path.join(folder['input'], 'policies', 'CO2_value.csv'), header=None, index_col=[0], squeeze=True)
-        run_indicators(config_runs, folder['output'], CO2_value, parameters=parameters)
+        run_indicators(config_runs, folder['output'])
 
     # value_CO2 = pd.read_csv(os.path.join(folder['input'], 'value_CO2.csv'), header=None, index_col=[0], squeeze=True)
 

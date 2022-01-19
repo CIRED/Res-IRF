@@ -313,20 +313,25 @@ def parse_exogenous_input(config):
         carbon_tax.index.set_names('Heating energy', inplace=True)
         policies['carbon_tax']['value'] = carbon_tax * (1 + 0.2)
 
-    cee_tax = pd.read_csv(os.path.join(os.getcwd(), config['cee_tax_value']['source']), index_col=[0])
-    cee_tax.index.set_names('Heating energy', inplace=True)
-    cee_tax.columns = cee_tax.columns.astype('int')
-    # adding vta to cee_tax
-    # to delete after test
-    # cee_tax.loc[:, 2013:] = cee_tax.loc[:, 2013:] * (1 + 0.2)
-    policies['cee_taxes']['value'] = cee_tax * (1 + 0.2)
+    if 'cee_taxes' in policies.keys():
+        cee_tax = pd.read_csv(os.path.join(os.getcwd(), config['cee_tax_value']['source']), index_col=[0])
+        cee_tax.index.set_names('Heating energy', inplace=True)
+        cee_tax.columns = cee_tax.columns.astype('int')
+        policies['cee_taxes']['value'] = cee_tax * (1 + 0.2)
 
-    cee_subsidy = pd.read_csv(os.path.join(os.getcwd(), config['cee_subsidy_value']['source']), index_col=[0])
-    cee_subsidy.index.set_names('Income class owner', inplace=True)
-    cee_subsidy.columns = cee_subsidy.columns.astype('int')
-    policies['cee_subsidy']['value'] = cee_subsidy
+    if 'cee_subsidy' in policies.keys():
+        cee_subsidy = pd.read_csv(os.path.join(os.getcwd(), config['cee_subsidy_value']['source']), index_col=[0])
+        cee_subsidy.index.set_names('Income class owner', inplace=True)
+        cee_subsidy.columns = cee_subsidy.columns.astype('int')
+        policies['cee_subsidy']['value'] = cee_subsidy
 
-    policies['ma_prime_renov']['value'] = policies['ma_prime_renov']['value'].unstack('Energy performance final').fillna(0)
+    if 'ma_prime_renov' in policies.keys():
+        policies['ma_prime_renov']['value'] = policies['ma_prime_renov']['value'].unstack('Energy performance final').fillna(0)
+
+    if 'subsidies_curtailment' in policies.keys():
+        policies['subsidies_curtailment']['value'] = pd.read_csv(policies['subsidies_curtailment']['value'],
+                                                                 index_col=[0], header=[0], squeeze=True)
+
 
     # cost_invest
     cost_invest = dict()
@@ -337,21 +342,14 @@ def parse_exogenous_input(config):
     cost_envelope = cost_envelope * (1 + 0.1) / (1 + 0.055)
     cost_invest['Energy performance'] = cost_envelope
 
+    """
     name_file = os.path.join(os.getcwd(), config['cost_switch_fuel']['source'])
     cost_switch_fuel = pd.read_csv(name_file, index_col=[0], header=[0])
     cost_switch_fuel.index.set_names('Heating energy', inplace=True)
     cost_switch_fuel.columns.set_names('Heating energy final', inplace=True)
     # cost_switch_fuel = cost_switch_fuel * (1 + 0.1) / (1 + 0.055)
-    cost_invest['Heating energy'] = cost_switch_fuel
-
-    # only used for backtesting
-    cost_switch_fuel_end = None
-    if 'cost_switch_fuel_end' in config.keys():
-        name_file = os.path.join(os.getcwd(), config['cost_switch_fuel_end']['source'])
-        cost_switch_fuel_end = pd.read_csv(name_file, index_col=[0], header=[0])
-        cost_switch_fuel_end.index.set_names('Heating energy', inplace=True)
-        cost_switch_fuel_end.columns.set_names('Heating energy final', inplace=True)
-        # cost_switch_fuel = cost_switch_fuel * (1 + 0.1) / (1 + 0.055)
+    """
+    cost_invest['Heating energy'] = None
 
     name_file = os.path.join(os.getcwd(), config['energy_prices_bt']['source'])
     energy_prices_bt = pd.read_csv(name_file, index_col=[0], header=[0]).T
@@ -534,23 +532,19 @@ def parse_parameters(folder, config, stock_sum):
     # 6. Others
     parameters['Renovation rate max'] = parameters['Renovation rate max {}'.format(calibration_year)]
 
-    """
-    proba_performance = parameters['Probability disease performance']
-    proba_income = parameters['Probability disease income {}'.format(calibration_year)]
+    parameters['Health cost (euro)'] = pd.read_csv(config['health_cost']['source'], index_col=[0, 1], squeeze=True)
+    parameters['Carbon value (euro/tCO2)'] = pd.read_csv(config['carbon_value']['source'], index_col=[0], header=None,
+                                                         squeeze=True)
 
-    proba_performance = add_level(proba_performance, proba_income.index, axis=0)
-    proba_income = reindex_mi(proba_income, proba_performance.index)
-    parameters['Probability disease'] = proba_performance * proba_income
-    parameters['Cost disease'] = apply_linear_rate(parameters['Cost disease'], parameters['Cost disease rate'],
-                                                   index_input_year)
-    """
     # 6. Summary
 
     summary_param = dict()
+    summary_param['Sizing factor (%)'] = pd.Series(sizing_factor, index=parameters['Population'].index)
     summary_param['Total population (Millions)'] = parameters['Population'] / 10**6
     summary_param['Income (Billions euro)'] = parameters['Available income real'] * sizing_factor / 10**9
     summary_param['Buildings stock (Millions)'] = parameters['Stock needed'] / 10**6
     summary_param['Person by housing'] = parameters['Population housing']
+    summary_param['Share multi-family (%)'] = parameters['Share multi-family']
     summary_param = pd.DataFrame(summary_param)
     summary_param = summary_param.loc[calibration_year:, :]
 
@@ -574,12 +568,12 @@ def parse_observed_data(config):
         Observed market share in calibration year for switching fuel
     """
 
-    name_file = os.path.join(os.getcwd(), config['renovation_rate_ini']['source'])
+    name_file = os.path.join(os.getcwd(), config['renovation_rate']['calibration_data'])
     renovation_rate_ini = pd.read_csv(name_file, header=[0], squeeze=True)
     columns = list(renovation_rate_ini.columns[:renovation_rate_ini.shape[1] - 1])
     renovation_rate_ini = renovation_rate_ini.set_index(columns).iloc[:, 0]
 
-    name_file = os.path.join(os.getcwd(), config['ms_renovation_ini']['source'])
+    name_file = os.path.join(os.getcwd(), config['market_share']['calibration_data'])
     ms_renovation_ini = pd.read_csv(name_file, index_col=[0], header=[0])
     ms_renovation_ini.index.set_names(['Energy performance'], inplace=True)
     ms_renovation_ini.columns.set_names(['Energy performance final'], inplace=True)

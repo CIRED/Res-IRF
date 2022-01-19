@@ -82,7 +82,7 @@
   "cee_subsidy": {
     "name": "cee_subsidy",
     "policy": "subsidies",
-    "value": "project/input/cee_subsidy.csv",
+    "value": "project/input/policies/cee_subsidy.csv",
     "unit": "euro/kWh",
     "transition": [
       "Energy performance"
@@ -732,5 +732,14 @@
     "subsidy_max": null,
     "priority": false,
     "type": "dict_to_parse"
+  },
+  "subsidies_curtailment":
+  {
+    "name": "subsidies_curtailment",
+    "policy": "subsidies_curtailment",
+    "value": "project/input/policies/subsidies_max.csv",
+    "unit": "%",
+    "type": "dict_to_parse",
+    "subsidies_curtailed": "ma_prime_renov"
   }
 }

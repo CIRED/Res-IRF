@@ -25,6 +25,30 @@ from utils import reindex_mi
 from ui_utils import *
 
 
+def double_diff(df_ref, df_compare, discount_factor):
+    """Calculate double difference.
+
+    Double difference is a proxy of marginal flow produced by year.
+    Flow have effect during a long period of time and need to be extended during the period.
+
+    Parameters
+    ----------
+    df_ref: pd.Series
+    df_compare: pd.Series
+    discount_factor: float
+
+    Returns
+    -------
+    pd.Series
+    """
+
+    simple_diff = df_ref - df_compare
+    double_diff = simple_diff.diff()
+    double_diff.iloc[0] = simple_diff.iloc[0]
+    discounted_diff = double_diff * discount_factor
+    return discounted_diff.cumsum()
+
+
 def reverse_dict(data):
     flipped = defaultdict(dict)
     for key, val in data.items():
@@ -176,7 +200,7 @@ def parse_subsidies(buildings, flow_renovation_label, area):
 
 
 def parse_output(output, buildings, buildings_constructed, energy_prices, energy_taxes, energy_taxes_detailed,
-                 co2_emission, coefficient, folder_output, lbd_output=False, output_detailed=False):
+                 co2_emission, coefficient, folder_output, lbd_output=False, health_cost=None, carbon_value=None):
     """Format Res-IRF output to return understandable data.
 
     Main output are segmented in 2 categories (stock, and transition flow).
@@ -353,9 +377,10 @@ def parse_output(output, buildings, buildings_constructed, energy_prices, energy
             pickle.dump(output_subsides, open(os.path.join(folder_output, 'output_subsides.pkl'), 'wb'))
 
     detailed = dict()
-    detailed['Emission (MtCO2)'] = output_stock['Emission (gCO2)'].sum(axis=0) / 10 ** 12
+    detailed['Emission (MtCO2/an)'] = output_stock['Emission (gCO2)'].sum(axis=0) / 10 ** 12
+    detailed['Cumulated emission (MtCO2)'] = detailed['Emission (MtCO2/an)'].cumsum()
 
-    detailed['Consumption conventional (TWh)'] = (
+    detailed['Consumption conventional (TWh/an)'] = (
                                                          output_stock['Consumption conventional (kWh)'].groupby(
                                                              'Heating energy').sum().T * coefficient).T.sum(
         axis=0) / 10 ** 9
@@ -364,7 +389,7 @@ def parse_output(output, buildings, buildings_constructed, energy_prices, energy
     energy_expenditure = (df * energy_prices).dropna(axis=1).sum() / 10 ** 9
     taxes_expenditure = (df * energy_taxes).dropna(axis=1).sum() / 10 ** 9
 
-    detailed['Consumption actual (TWh)'] = df.sum() / 10 ** 9
+    detailed['Consumption actual (TWh/an)'] = df.sum() / 10 ** 9
     for energy in buildings.attributes_values['Heating energy']:
         detailed['Consumption {} (TWh)'.format(energy)] = df.loc[energy, :] / 10 ** 9
 
@@ -416,6 +441,10 @@ def parse_output(output, buildings, buildings_constructed, energy_prices, energy
     detailed['Annual energy taxes expenditure (Billions euro)'] = taxes_expenditure
     detailed['Annual subsidies (Billions euro)'] = output_flow_transition['Subsidies (euro)'].sum(axis=0) / 10 ** 9
 
+    health_cost = reindex_mi(health_cost, output_stock['Stock - Renovation'].index)
+    detailed['Annual health expenditure (Billions euro)'] = (health_cost * output_stock['Stock - Renovation'].T).T.sum(
+        axis=0) / 10 ** 9
+    detailed['Annual carbon social expenditure (Billions euro)'] = (detailed['Emission (MtCO2/an)'] * carbon_value).dropna() / 10 ** 3
 
     detailed['Energy poverty (Thousands)'] = output_stock['Stock'][output_stock['Budget share (%)'] > 0.1].sum(
         axis=0) / 10 ** 3
@@ -479,8 +508,8 @@ def quick_graphs(folder_output, output_detailed):
     folders = {scenario: os.path.join(folder_output, scenario) for scenario in scenarios}
     sns.set_palette(sns.color_palette('husl', len(scenarios)))
 
-    folder_output = os.path.join(folder_output, 'img')
-    os.mkdir(folder_output)
+    folder_img = os.path.join(folder_output, 'img')
+    os.mkdir(folder_img)
 
     detailed = {
         scenario.replace('_', ' '): pd.read_csv(os.path.join(folders[scenario], 'detailed.csv'), index_col=[0]).T for
@@ -497,56 +526,120 @@ def quick_graphs(folder_output, output_detailed):
     output_transition = {scenario: pickle.load(open(paths_transition[scenario], 'rb')) for scenario in paths_transition}
     output_transition = reverse_nested_dict(output_transition)
 
-    simple_pd_plot(detailed['Consumption actual (TWh)'], 'Consumption actual (TWh)',
-                   save=os.path.join(folder_output, 'consumption_actual.png'))
+    scenarios = [s.replace('_', ' ') for s in scenarios]
+
+    if len(scenarios) > 1:
+        ref = scenarios[0]
+
+        simple_diff_dict = {'Annual renovation expenditure (Billions euro)': 'Renovation expenditure (Billions euro)',
+                            'Annual subsidies (Billions euro)': 'Subsidies expenditure (Billions euro)',
+                            'Flow renovation (Thousands)': 'Total renovation (Thousands)'
+                            }
+
+        rslt = dict()
+        for scenario in scenarios[1:]:
+            rslt[scenario] = pd.DataFrame([detailed[k][scenario] - detailed[k][ref] for k in simple_diff_dict.keys()])
+            rslt[scenario].index = simple_diff_dict.values()
+        comparison = pd.DataFrame({scenario: rslt[scenario].sum(axis=1) for scenario in scenarios[1:]})
+        value_ref = pd.Series([detailed[k][ref].sum() for k in simple_diff_dict.keys()], index=simple_diff_dict.values(), name=ref)
+
+        discount_rate = 0.04
+        lifetime = 30
+        discount_factor = (1 - (1 + discount_rate) ** -lifetime) / discount_rate
+
+        double_diff_dict = {'Consumption actual (TWh/an)': 'Cumulated consumption (TWh)',
+                            'Emission (MtCO2/an)': 'Cumulated emission (MtCO2)',
+                            'Annual health expenditure (Billions euro)': 'Health expenditure (Billions euro)',
+                            'Annual carbon social expenditure (Billions euro)': 'Carbon social expenditure (Billions euro)',
+                            'Annual energy expenditure (Billions euro)': 'Energy expenditure (Billions euro)'
+                            }
+        temp = pd.DataFrame({scenario: pd.Series([- double_diff(detailed[k][ref], detailed[k][scenario], discount_factor).iloc[-1] for k in double_diff_dict.keys()]) for scenario in scenarios[1:]})
+        temp.index = double_diff_dict.values()
+        comparison = pd.concat((comparison, temp), axis=0)
+
+        value_ref = value_ref.append(pd.Series(
+            [double_diff(detailed[k][ref], pd.Series(0, index=detailed[k][ref].index), discount_factor).iloc[-1] for k in
+             double_diff_dict.keys()], index=temp.index, name=ref))
+
+        key_years = ['2030', '2050']
+        key_years = [y for y in key_years if y in detailed[list(detailed.keys())[0]].index]
+
+        stock_list = ['Cumulated emission (MtCO2)',
+                      'Energy poverty (Thousands)',
+                      'Stock low-efficient (Thousands)',
+                      'Stock efficient (Thousands)',
+                      'Consumption actual (TWh/an)',
+                      'Emission (MtCO2/an)'
+                      ]
+        for year in key_years:
+            temp = pd.DataFrame({scenario: [(detailed[k][scenario] - detailed[k][ref]).loc[year] for k in stock_list] for scenario in scenarios[1:]})
+            temp.index = ['{} - {}'.format(i, year) for i in stock_list]
+            comparison = pd.concat((comparison, temp), axis=0)
+            value_ref = value_ref.append(pd.Series([detailed[k][ref].loc[year] for k in stock_list], index=temp.index, name=ref))
+
+        pd.concat((value_ref, comparison), axis=1).to_csv(os.path.join(folder_output, 'comparison.csv'))
+
+    simple_pd_plot(detailed['Emission (MtCO2/an)'], 'Emission (MtCO2/an)',
+                   save=os.path.join(folder_img, 'carbon_emission.png'))
+
+    simple_pd_plot(detailed['Consumption actual (TWh/an)'], 'Consumption actual (TWh/an)',
+                   save=os.path.join(folder_img, 'consumption_actual.png'))
 
     simple_pd_plot(detailed['Heating intensity (%)'], 'Heating intensity (%)', format_y='percent',
-                   save=os.path.join(folder_output, 'heating_intensity.png'))
+                   save=os.path.join(folder_img, 'heating_intensity.png'))
 
     simple_pd_plot(detailed['Flow renovation (Thousands)'], 'Flow renovation (Thousands)',
-                   save=os.path.join(folder_output, 'flow_renovation.png'))
+                   save=os.path.join(folder_img, 'flow_renovation.png'))
 
     simple_pd_plot(detailed['Energy poverty (Thousands)'] * 10**3, 'Energy poverty (Millions)',
-                   save=os.path.join(folder_output, 'energy_poverty.png'), format_y='million')
+                   save=os.path.join(folder_img, 'energy_poverty.png'), format_y='million')
 
     simple_pd_plot(detailed['Annual renovation expenditure (Billions euro)'],
                    'Annual renovation expenditure (Billions euro)',
-                   save=os.path.join(folder_output, 'renovation_expenditure.png'))
+                   save=os.path.join(folder_img, 'renovation_expenditure.png'))
+
+    simple_pd_plot(detailed['Annual health expenditure (Billions euro)'],
+                   'Annual health expenditure (Billions euro)',
+                   save=os.path.join(folder_img, 'health_expenditure.png'))
+
+    simple_pd_plot(detailed['Annual carbon social expenditure (Billions euro)'],
+                   'Annual carbon social expenditure (Billions euro)',
+                   save=os.path.join(folder_img, 'social_carbon_expenditure.png'))
 
     simple_pd_plot(detailed['Stock low-efficient (Thousands)'] * 10**3, 'Stock low-efficient (Millions)',
-                   save=os.path.join(folder_output, 'stock_low_efficient.png'), format_y='million')
+                   save=os.path.join(folder_img, 'stock_low_efficient.png'), format_y='million')
 
     simple_pd_plot(detailed['Stock efficient (Thousands)'] * 10**3, 'Stock efficient (Millions)',
-                   save=os.path.join(folder_output, 'stock_efficient.png'), format_y='million')
+                   save=os.path.join(folder_img, 'stock_efficient.png'), format_y='million')
 
     scenario_grouped_subplots(grouped_scenarios(output_stock['Renovation'], 'Energy performance', order=order),
                               suptitle='Evolution flow renovation (Thousands)',
                               format_y=lambda y, _: '{:,.0f}'.format(y / 10 ** 3), n_columns=7, rotation=90, nbins=4,
-                              save=os.path.join(folder_output, 'renovation_performance.png'))
+                              save=os.path.join(folder_img, 'renovation_performance.png'))
 
     scenario_grouped_subplots(grouped_scenarios(output_stock['Renovation'], 'Heating energy', order=order),
                               suptitle='Evolution flow renovation (Thousands)',
                               format_y=lambda y, _: '{:,.0f}'.format(y / 10 ** 3), n_columns=4, rotation=90, nbins=4,
-                              save=os.path.join(folder_output, 'renovation_energy.png'))
+                              save=os.path.join(folder_img, 'renovation_energy.png'))
 
     scenario_grouped_subplots(grouped_scenarios(output_stock['Renovation'], 'Income class owner', order=order),
                               suptitle='Evolution flow renovation (Thousands)',
                               format_y=lambda y, _: '{:,.0f}'.format(y / 10 ** 3), n_columns=5, rotation=90, nbins=4,
-                              save=os.path.join(folder_output, 'renovation_income_class.png'))
+                              save=os.path.join(folder_img, 'renovation_income_class.png'))
 
     scenario_grouped_subplots(grouped_scenarios(output_stock['Renovation'], ['Occupancy status', 'Housing type'],
                                                 order=order),
                               suptitle='Evolution flow renovation (Thousands)',
                               format_y=lambda y, _: '{:,.0f}'.format(y / 10 ** 3), n_columns=3, rotation=90, nbins=4,
-                              save=os.path.join(folder_output, 'renovation_decision_maker.png'))
+                              save=os.path.join(folder_img, 'renovation_decision_maker.png'))
 
     simple_pd_plot(detailed['Share energy poverty (%)'], 'Share energy poverty (%)',
-                   save=os.path.join(folder_output, 'energy_poverty.png'), format_y='percent')
+                   save=os.path.join(folder_img, 'energy_poverty.png'), format_y='percent')
 
     scenario_grouped_subplots(grouped_scenarios(output_stock['Stock - Renovation'], 'Energy performance', order=order),
                               suptitle='Evolution buildings stock (Millions)',
                               format_y=lambda y, _: '{:,.0f}'.format(y / 10 ** 6), n_columns=7, rotation=90, nbins=4,
-                              save=os.path.join(folder_output, 'stock_performance.png'))
+                              save=os.path.join(folder_img, 'stock_performance.png'))
 
     weight = dict()
     for key, item in output_stock['Stock - Renovation'].items():
@@ -558,47 +651,47 @@ def quick_graphs(folder_output, output_detailed):
                                             ['Energy performance', 'Energy performance final']),
                           suptitle='Flow renovation (Thousands)',
                           format_y=lambda y, _: '{:,.0f}'.format(y / 10 ** 3),
-                          save=os.path.join(folder_output, 'flow_transition_performance.png'))
+                          save=os.path.join(folder_img, 'flow_transition_performance.png'))
 
     table_plots_scenarios(grouped_scenarios(output_transition['Flow transition'],
                                             ['Heating energy', 'Heating energy final']),
                           suptitle='Flow renovation (Thousands)',
                           format_y=lambda y, _: '{:,.0f}'.format(y / 10 ** 3),
-                          save=os.path.join(folder_output, 'flow_transition_energy.png'))
+                          save=os.path.join(folder_img, 'flow_transition_energy.png'))
 
     table_plots_scenarios(grouped_scenarios(output_transition['Capex w/ intangible (euro)'],
                                             ['Energy performance', 'Energy performance final']),
                           suptitle='Capex (Billions euros)',
                           format_y=lambda y, _: '{:,.0f}'.format(y / 10 ** 9),
-                          save=os.path.join(folder_output, 'capex.png'))
+                          save=os.path.join(folder_img, 'capex.png'))
 
     scenario_grouped_subplots(
         grouped_scenarios(output_stock['Renovation rate (%) - Renovation'], 'Energy performance', func='weighted_mean',
                           weight=weight, order=order),
         suptitle='Renovation rate (%)',
         format_y=lambda y, _: '{:.1%}'.format(y), n_columns=7, rotation=90, nbins=4,
-        save=os.path.join(folder_output, 'renovation_rate_performance.png'))
+        save=os.path.join(folder_img, 'renovation_rate_performance.png'))
 
     scenario_grouped_subplots(
         grouped_scenarios(output_stock['Renovation rate (%) - Renovation'], 'Heating energy', func='weighted_mean',
                           weight=weight, order=order),
         suptitle='Renovation rate (%)',
         format_y=lambda y, _: '{:.1%}'.format(y), n_columns=4, rotation=90, nbins=4,
-        save=os.path.join(folder_output, 'renovation_rate_energy.png'))
+        save=os.path.join(folder_img, 'renovation_rate_energy.png'))
 
     scenario_grouped_subplots(
         grouped_scenarios(output_stock['Renovation rate (%) - Renovation'], ['Occupancy status', 'Income class owner'], func='weighted_mean',
                           weight=weight, order=order),
         suptitle='Renovation rate (%)',
         format_y=lambda y, _: '{:.1%}'.format(y), n_columns=5, rotation=90, nbins=4,
-        save=os.path.join(folder_output, 'renovation_rate_income_class.png'))
+        save=os.path.join(folder_img, 'renovation_rate_income_class.png'))
 
     scenario_grouped_subplots(
         grouped_scenarios(output_stock['Renovation rate (%) - Renovation'], ['Occupancy status', 'Housing type'],
                           func='weighted_mean', weight=weight, order=order),
         suptitle='Renovation rate (%)',
         format_y=lambda y, _: '{:.1%}'.format(y), n_columns=3, rotation=90, nbins=4,
-        save=os.path.join(folder_output, 'renovation_rate_decision_maker.png'))
+        save=os.path.join(folder_img, 'renovation_rate_decision_maker.png'))
 
     if output_detailed is False:
         for _, path in paths.items():

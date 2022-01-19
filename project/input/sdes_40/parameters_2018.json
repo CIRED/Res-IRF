@@ -1,7 +1,6 @@
 {
   "Destruction rate": 0.0035,
   "Residual destruction rate": 0.05,
-  "Stock total ini 2012": 27953000,
   "Stock total ini 2018": 29037000,
   "Stock needed": {
     "type": "dict",
@@ -16,7 +15,6 @@
     "factor": 0.87,
     "source": null
   },
-  "Available income ini 2012": 1338000000000,
   "Available income ini 2018": 1421000000000,
   "Available income rate": 0.012,
   "Learning by doing renovation": -0.1,
