@@ -566,13 +566,14 @@ class RegulatedLoan(PublicPolicy):
 
 
 class RenovationObligation:
-    def __init__(self, name, start_targets, participation_rate=1.0, columns=None, calibration=False):
+    def __init__(self, name, start_targets, participation_rate=1.0, columns=None, calibration=False, final=None):
         self.name = name
         self.policy = 'renovation_obligation'
         self.start_targets = start_targets
         self.targets = self.to_targets(columns)
         self.participation_rate = participation_rate
         self.calibration = calibration
+        self.final = final
 
     def to_targets(self, columns=None):
         if columns is None:

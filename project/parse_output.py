@@ -377,10 +377,10 @@ def parse_output(output, buildings, buildings_constructed, energy_prices, energy
             pickle.dump(output_subsides, open(os.path.join(folder_output, 'output_subsides.pkl'), 'wb'))
 
     detailed = dict()
-    detailed['Emission (MtCO2/an)'] = output_stock['Emission (gCO2)'].sum(axis=0) / 10 ** 12
-    detailed['Cumulated emission (MtCO2)'] = detailed['Emission (MtCO2/an)'].cumsum()
+    detailed['Emission (MtCO2/year)'] = output_stock['Emission (gCO2)'].sum(axis=0) / 10 ** 12
+    detailed['Cumulated emission (MtCO2)'] = detailed['Emission (MtCO2/year)'].cumsum()
 
-    detailed['Consumption conventional (TWh/an)'] = (
+    detailed['Consumption conventional (TWh/year)'] = (
                                                          output_stock['Consumption conventional (kWh)'].groupby(
                                                              'Heating energy').sum().T * coefficient).T.sum(
         axis=0) / 10 ** 9
@@ -389,7 +389,7 @@ def parse_output(output, buildings, buildings_constructed, energy_prices, energy
     energy_expenditure = (df * energy_prices).dropna(axis=1).sum() / 10 ** 9
     taxes_expenditure = (df * energy_taxes).dropna(axis=1).sum() / 10 ** 9
 
-    detailed['Consumption actual (TWh/an)'] = df.sum() / 10 ** 9
+    detailed['Consumption actual (TWh/year)'] = df.sum() / 10 ** 9
     for energy in buildings.attributes_values['Heating energy']:
         detailed['Consumption {} (TWh)'.format(energy)] = df.loc[energy, :] / 10 ** 9
 
@@ -444,7 +444,7 @@ def parse_output(output, buildings, buildings_constructed, energy_prices, energy
     health_cost = reindex_mi(health_cost, output_stock['Stock - Renovation'].index)
     detailed['Annual health expenditure (Billions euro)'] = (health_cost * output_stock['Stock - Renovation'].T).T.sum(
         axis=0) / 10 ** 9
-    detailed['Annual carbon social expenditure (Billions euro)'] = (detailed['Emission (MtCO2/an)'] * carbon_value).dropna() / 10 ** 3
+    detailed['Annual carbon social expenditure (Billions euro)'] = (detailed['Emission (MtCO2/year)'] * carbon_value).dropna() / 10 ** 3
 
     detailed['Energy poverty (Thousands)'] = output_stock['Stock'][output_stock['Budget share (%)'] > 0.1].sum(
         axis=0) / 10 ** 3
@@ -547,8 +547,8 @@ def quick_graphs(folder_output, output_detailed):
         lifetime = 30
         discount_factor = (1 - (1 + discount_rate) ** -lifetime) / discount_rate
 
-        double_diff_dict = {'Consumption actual (TWh/an)': 'Cumulated consumption (TWh)',
-                            'Emission (MtCO2/an)': 'Cumulated emission (MtCO2)',
+        double_diff_dict = {'Consumption actual (TWh/year)': 'Cumulated consumption (TWh)',
+                            'Emission (MtCO2/year)': 'Cumulated emission (MtCO2)',
                             'Annual health expenditure (Billions euro)': 'Health expenditure (Billions euro)',
                             'Annual carbon social expenditure (Billions euro)': 'Carbon social expenditure (Billions euro)',
                             'Annual energy expenditure (Billions euro)': 'Energy expenditure (Billions euro)'
@@ -568,8 +568,9 @@ def quick_graphs(folder_output, output_detailed):
                       'Energy poverty (Thousands)',
                       'Stock low-efficient (Thousands)',
                       'Stock efficient (Thousands)',
-                      'Consumption actual (TWh/an)',
-                      'Emission (MtCO2/an)'
+                      'Consumption conventional (TWh/year)',
+                      'Consumption actual (TWh/year)',
+                      'Emission (MtCO2/year)'
                       ]
         for year in key_years:
             temp = pd.DataFrame({scenario: [(detailed[k][scenario] - detailed[k][ref]).loc[year] for k in stock_list] for scenario in scenarios[1:]})
@@ -579,11 +580,14 @@ def quick_graphs(folder_output, output_detailed):
 
         pd.concat((value_ref, comparison), axis=1).to_csv(os.path.join(folder_output, 'comparison.csv'))
 
-    simple_pd_plot(detailed['Emission (MtCO2/an)'], 'Emission (MtCO2/an)',
+    simple_pd_plot(detailed['Emission (MtCO2/year)'], 'Emission (MtCO2/year)',
                    save=os.path.join(folder_img, 'carbon_emission.png'))
 
-    simple_pd_plot(detailed['Consumption actual (TWh/an)'], 'Consumption actual (TWh/an)',
+    simple_pd_plot(detailed['Consumption actual (TWh/year)'], 'Consumption actual (TWh/year)',
                    save=os.path.join(folder_img, 'consumption_actual.png'))
+
+    simple_pd_plot(detailed['Consumption conventional (TWh/year)'], 'Consumption conventional (TWh/year)',
+                   save=os.path.join(folder_img, 'consumption_conventional.png'))
 
     simple_pd_plot(detailed['Heating intensity (%)'], 'Heating intensity (%)', format_y='percent',
                    save=os.path.join(folder_img, 'heating_intensity.png'))

@@ -42,14 +42,14 @@ from parse_output import quick_graphs
 from policy_indicators import run_indicators
 
 __author__ = "Louis-Gaëtan Giraudet, Cyril Bourgeois, Frédéric Branger, François Chabrol, David Glotin, Céline Guivarch, Philippe Quirion, Lucas Vivier"
-__copyright__ = "Copyright 2007 Free Software Foundation"
-__credits__ = ["Louis-Gaëtan Giraudet", "Cyril Bourgeois", "Frédéric Branger", "François Chabrol", "David Glotin",
-               "Céline Guivarch", "Philippe Quirion", "Lucas Vivier"]
-__license__ = "GPL"
-__version__ = "3.0"
-__maintainer__ = "Lucas Vivier"
-__email__ = "vivier@centre-cired.fr"
-__status__ = "Production"
+__copyright__ = 'Copyright 2007 Free Software Foundation'
+__credits__ = ['Louis-Gaëtan Giraudet', 'Cyril Bourgeois', 'Frédéric Branger', 'François Chabrol', 'David Glotin',
+               'Céline Guivarch', 'Philippe Quirion', 'Lucas Vivier']
+__license__ = 'GPL'
+__version__ = '4.0'
+__maintainer__ = 'Lucas Vivier'
+__email__ = 'vivier@centre-cired.fr'
+__status__ = 'Production'
 
 
 def model_launcher(path=None):
@@ -114,7 +114,6 @@ def model_launcher(path=None):
         config_runs = dict()
         config_runs['Policies indicators'] = False
 
-    parameters = None
     processes_list = []
     for key, config in config_dict.items():
 
@@ -144,7 +143,7 @@ def model_launcher(path=None):
                                          energy_prices, energy_taxes, cost_invest,
                                          stock_ini, co2_tax, co2_emission,
                                          rate_renovation_ini, ms_renovation_ini, ms_switch_fuel_ini,
-                                         logging, args.output))]
+                                         logging))]
 
     for p in processes_list:
         p.start()

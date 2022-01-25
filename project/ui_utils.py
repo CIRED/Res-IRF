@@ -89,6 +89,8 @@ def simple_pd_plot(df, ylabel, colors=None, format_x=None, format_y=None, save=N
     xlabel: str
     ylabel: str
     """
+    df.index = df.index.astype(int)
+
     if figsize == 'big':
         fig, ax = plt.subplots(1, 1, figsize=(12.8, 9.6))
     else:
@@ -103,7 +105,7 @@ def simple_pd_plot(df, ylabel, colors=None, format_x=None, format_y=None, save=N
     ax.spines['bottom'].set_visible(False)
     ax.spines['left'].set_visible(False)
     ax.xaxis.set_tick_params(which=u'both', length=0)
-    ax.xaxis.set_major_locator(MaxNLocator(nbins=5, integer=True))
+    # ax.xaxis.set_major_locator(MaxNLocator(nbins=5, integer=True))
 
     ax.yaxis.set_tick_params(which=u'both', length=0)
     

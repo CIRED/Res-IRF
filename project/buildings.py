@@ -25,7 +25,7 @@ from scipy.optimize import curve_fit
 
 from copy import deepcopy
 
-from utils import reindex_mi, val2share, logistic, get_levels_values, remove_rows, add_level
+from utils import reindex_mi, val2share, get_levels_values, remove_rows, add_level
 
 
 class HousingStock:
@@ -1134,7 +1134,7 @@ class HousingStock:
             return lcc_reverse_df / lcc_reverse_df.sum()
 
     def to_market_share(self, energy_prices, transition=None, consumption='conventional', cost_invest=None,
-                        cost_intangible=None, subsidies=None, nu=8.0, segments=None):
+                        cost_intangible=None, subsidies=None, nu=8.0, segments=None, final=None):
         """Returns market share for each segment and each possible final state.
 
         Parameter nu characterizing the heterogeneity of preferences is set to 8 in the model.
@@ -1152,6 +1152,7 @@ class HousingStock:
             List of subsidies object
         segments: pd.MultiIndex, optional
         nu: float or int, default 8.0
+        final: list, optional
 
         Returns
         -------
@@ -1164,10 +1165,14 @@ class HousingStock:
         lcc_final = self.to_lcc_final(energy_prices, cost_invest=cost_invest, cost_intangible=cost_intangible,
                                       transition=transition, consumption=consumption, subsidies=subsidies,
                                       segments=segments)
+        if final is not None:
+            lcc_final = lcc_final.loc[:, final]
 
         market_share = HousingStock.lcc2market_share(lcc_final, nu=nu)
         # ms.columns.names = ['{} final'.format(transition)]
-        self.market_share[tuple(transition)][self.year] = market_share
+
+        if final is None:
+            self.market_share[tuple(transition)][self.year] = market_share
         return market_share, lcc_final
 
     def _to_market_share_energy(self, energy_prices, consumption='conventional', cost_invest=None,
@@ -1750,7 +1755,7 @@ class HousingStock:
             return a, r
 
         a, r = equations(sh=share, alpha=learning_rate)
-        return logistic(knowledge, a=a, r=r) + 1 - share
+        return 1 / (1 + a * np.exp(- r * knowledge)) + 1 - share
 
     @staticmethod
     def information_acceleration(knowledge, cost_intangible, share, learning_rate):
@@ -1890,7 +1895,7 @@ class HousingStockRenovated(HousingStock):
     """
 
     def __init__(self, stock, attributes_values, year=2018,
-                 residual_rate=0.0, destruction_rate=0.0,
+                 residual_rate=0.0, demolition_rate=0.0,
                  rate_renovation_ini=None, learning_year=None,
                  npv_min=None, rate_max=None, rate_min=None,
                  attributes2area=None, attributes2horizon=None, attributes2discount=None, attributes2income=None,
@@ -1905,7 +1910,7 @@ class HousingStockRenovated(HousingStock):
                          kwh_cumac_transition=kwh_cumac_transition)
 
         self.residual_rate = residual_rate
-        self._destruction_rate = destruction_rate
+        self._demolition_rate = demolition_rate
 
         # slave stock of stock property
         self._stock_residual = stock * residual_rate
@@ -2009,29 +2014,6 @@ class HousingStockRenovated(HousingStock):
         return self._stock_area
 
     @staticmethod
-    def _renovation_rate(npv, rho, npv_min, rate_max, rate_min):
-        """
-        Renovation rate for float values.
-        Version 3.0.
-
-        Parameters
-        ----------
-        npv: float
-        rho: float
-        npv_min: float
-        rate_max: float
-        rate_min: float
-
-        Returns
-        -------
-        float
-        """
-        return logistic(npv - npv_min,
-                        a=rate_max / rate_min - 1,
-                        r=rho,
-                        k=rate_max)
-
-    @staticmethod
     def _renovate_rate_func(npv, rho, npv_min, rate_max, rate_min):
         """Calculate renovation rate for indexed pd.Series rho and indexed pd.Series npv.
         Version 3.0.
@@ -2061,7 +2043,8 @@ class HousingStockRenovated(HousingStock):
             return HousingStockRenovated._renovation_rate(npv.loc[0], rho_f, npv_min, rate_max, rate_min)
 
     @staticmethod
-    def renovation_rate(npv, rho, constant=890.818723):
+    def renovation_rate(npv, rho, version='version_4', constant=890.818723, rate_max=0.4,
+                        rate_min=0.2, npv_min=-1000):
         """Renovation rate function.
 
         Parameters
@@ -2074,10 +2057,16 @@ class HousingStockRenovated(HousingStock):
         -------
         pd.Series
         """
-        return 1 / (1 + np.exp(- rho * (npv - constant)))
+
+        if version == 'version_4':
+            return 1 / (1 + np.exp(- rho * (npv - constant)))
+        elif version == 'version_3':
+            return rate_max / (1 + (rate_max / rate_min - 1) * np.exp(- rho * (npv - npv_min)))
+        else:
+            raise ValueError
 
     def to_renovation_rate(self, energy_prices, transition=None, consumption='conventional', cost_invest=None,
-                           cost_intangible=None, subsidies=None, rho=None, npv_intangible=None):
+                           cost_intangible=None, subsidies=None, rho=None, version='version_4'):
 
         """Routine calculating renovation rate from segments for a particular yr.
 
@@ -2092,7 +2081,7 @@ class HousingStockRenovated(HousingStock):
         consumption: str, default 'conventional'
         subsidies: list, optional
         rho: pd.Series, optional
-        npv_intangible: pd.Series, optional
+        version: str, default 'version_4"
         """
         if transition is None:
             transition = ['Energy performance']
@@ -2107,19 +2096,15 @@ class HousingStockRenovated(HousingStock):
                           cost_intangible=cost_intangible,
                           subsidies=subsidies)
 
-        """
-        renovation_rate = npv.reset_index().apply(HousingStockRenovated.renovate_rate_func,
-                                                          args=[rho, self._npv_min, self._rate_max,
-                                                                self._rate_min], axis=1)
-        renovation_rate.index = npv.index
-        """
-        renovation_rate = HousingStockRenovated.renovation_rate(npv, rho)
+        renovation_rate = HousingStockRenovated.renovation_rate(npv, rho, version=version,
+                                                                rate_max=self._rate_max, rate_min=self._rate_min,
+                                                                npv_min=self._npv_min)
 
         self.renovation_rate_dict[self.year] = renovation_rate
         return renovation_rate
 
     def flow_renovation_ep(self, energy_prices, consumption='conventional', cost_invest=None, cost_intangible=None,
-                           subsidies=None, renovation_obligation=None, mutation=0.0, rotation=0.0):
+                           subsidies=None, renovation_obligation=None, mutation=0.0, rotation=0.0, version='version_4'):
         """Calculate flow renovation by energy performance final.
 
         Parameters
@@ -2145,7 +2130,8 @@ class HousingStockRenovated(HousingStock):
                                                   consumption=consumption,
                                                   cost_invest=cost_invest,
                                                   cost_intangible=cost_intangible,
-                                                  subsidies=subsidies)
+                                                  subsidies=subsidies,
+                                                  version=version)
 
         stock = self.stock_mobile.copy()
 
@@ -2155,12 +2141,24 @@ class HousingStockRenovated(HousingStock):
                                                                  mutation=mutation, rotation=rotation)
             stock = stock - flow_renovation_obligation
 
+            market_share_obligation_ep = self.to_market_share(energy_prices,
+                                                              transition=transition,
+                                                              consumption=consumption,
+                                                              cost_invest=cost_invest,
+                                                              cost_intangible=cost_intangible,
+                                                              subsidies=subsidies,
+                                                              final=renovation_obligation.final)[0]
+
+            flow_renovation_obligation_ep = (flow_renovation_obligation * market_share_obligation_ep.T).T
+
         flow_renovation = renovation_rate * stock
-        flow_renovation += flow_renovation_obligation
 
         # indicators
-        renovation_rate_aggr = flow_renovation.sum() / stock.sum()
-        renovation_rate_dm = flow_renovation.groupby(['Occupancy status', 'Housing type']).sum() / stock[stock.index.get_level_values('Energy performance') != 'A'].groupby(['Occupancy status', 'Housing type']).sum()
+        _flow_renovation = flow_renovation + flow_renovation_obligation
+        renovation_rate_aggr = _flow_renovation.sum() / stock.sum()
+        renovation_rate_dm = _flow_renovation.groupby(['Occupancy status', 'Housing type']).sum() / stock[
+            stock.index.get_level_values('Energy performance') != 'A'].groupby(
+            ['Occupancy status', 'Housing type']).sum()
         self.renovation_rate_dm[self.year] = renovation_rate_dm
 
         if self.year in self.market_share[tuple(transition)]:
@@ -2174,12 +2172,17 @@ class HousingStockRenovated(HousingStock):
                                                    subsidies=subsidies)[0]
 
         flow_renovation_ep = (flow_renovation * market_share_ep.T).T
+
+        if renovation_obligation is not None:
+            flow_renovation_ep += flow_renovation_obligation_ep.reindex(flow_renovation_ep.columns, axis=1).fillna(0)
+
         self.flow_renovation_label_dict[self.year] = flow_renovation_ep
 
         return flow_renovation_ep
 
     def to_flow_renovation_ep(self, energy_prices, consumption='conventional', cost_invest=None, cost_intangible=None,
-                              subsidies=None, renovation_obligation=None, mutation=0.0, rotation=0.0, error=1):
+                              subsidies=None, renovation_obligation=None, mutation=0.0, rotation=0.0, error=1,
+                              version='version_4'):
         """
         Functions only useful if a subsidy_tax is declared. Run a dichotomy to find the subsidy rate that recycle energy
         tax revenue.
@@ -2207,7 +2210,7 @@ class HousingStockRenovated(HousingStock):
                                                      cost_intangible=cost_intangible,
                                                      subsidies=subsidies,
                                                      renovation_obligation=renovation_obligation,
-                                                     mutation=mutation, rotation=rotation)
+                                                     mutation=mutation, rotation=rotation, version=version)
 
         for policy in subsidies:
             if policy.policy == 'subsidy_tax':
@@ -2252,7 +2255,7 @@ class HousingStockRenovated(HousingStock):
 
     def to_flow_renovation_ep_energy(self, energy_prices, consumption='conventional', cost_invest=None,
                                      cost_intangible=None, subsidies=None, renovation_obligation=None, mutation=0.0,
-                                     rotation=0.0):
+                                     rotation=0.0, version='version_4'):
         """De-aggregate stock_renovation_attributes by final heating energy.
 
         1. Flow renovation returns number of renovation by final energy performance.
@@ -2287,7 +2290,8 @@ class HousingStockRenovated(HousingStock):
                                                      cost_intangible=cost_intangible,
                                                      subsidies=subsidies,
                                                      renovation_obligation=renovation_obligation,
-                                                     mutation=mutation, rotation=rotation)
+                                                     mutation=mutation, rotation=rotation,
+                                                     version=version)
 
         flow_renovation_temp = flow_renovation.stack()
         market_share_energy_temp = reindex_mi(self.ms_switch_fuel_ini, flow_renovation_temp.index)
@@ -2303,7 +2307,7 @@ class HousingStockRenovated(HousingStock):
         return flow_renovation_label_energy
 
     def to_flow_remained(self, energy_prices, consumption='conventional', cost_invest=None, cost_intangible=None,
-                         subsidies=None, renovation_obligation=None, mutation=0.0, rotation=0.0):
+                         subsidies=None, renovation_obligation=None, mutation=0.0, rotation=0.0, version='version_4'):
         """Calculate flow_remained for each segment.
 
         Parameters
@@ -2332,7 +2336,8 @@ class HousingStockRenovated(HousingStock):
                                                                              cost_intangible=cost_intangible,
                                                                              subsidies=subsidies,
                                                                              renovation_obligation=renovation_obligation,
-                                                                             mutation=mutation, rotation=rotation
+                                                                             mutation=mutation, rotation=rotation,
+                                                                             version=version
                                                                              )
 
         area_seg = reindex_mi(self.attributes2area, flow_renovation_label_energy_seg.index, self.attributes2area.index.names)
@@ -2378,7 +2383,7 @@ class HousingStockRenovated(HousingStock):
             self.flow_knowledge_ep = flow_knowledge_renovation
 
     def _to_flow_demolition_dm(self):
-        flow_demolition = self._stock.sum() * self._destruction_rate
+        flow_demolition = self._stock.sum() * self._demolition_rate
         flow_demolition_dm = self._dm_share_tot * flow_demolition
         # flow_area_demolition_seg_dm = flow_demolition_seg_dm * self.attributes2area
         return flow_demolition_dm
@@ -2507,7 +2512,7 @@ class HousingStockRenovated(HousingStock):
         stock_mobile = self.stock_mobile.copy()
 
         share_demolition = pd.Series({'E': 0.333, 'F': 0.333, 'G': 0.333})
-        flow_demolition_ep = self._stock.sum() * self._destruction_rate * share_demolition
+        flow_demolition_ep = self._stock.sum() * self._demolition_rate * share_demolition
 
         flow_demolition = pd.Series()
         for ep in flow_demolition_ep.index:
@@ -2559,30 +2564,8 @@ class HousingStockRenovated(HousingStock):
         flow_knowledge_renovation.index.set_names('Energy performance final', inplace=True)
         return flow_knowledge_renovation
 
-    @staticmethod
-    def calibration_rho(npv, renovation_rate_target, rate_max, rate_min, npv_min):
-        """
-        Function that returns rho in order to match the targeted renovation rate.
-
-        Parameters
-        ----------
-        npv: pd.Series
-            Net present value calculated.
-        renovation_rate_target: pd.Series
-            Targeted renovation rate.
-        rate_max: float
-        rate_min: float
-        npv_min: float
-
-        Returns
-        -------
-        pd.Series
-        """
-        return (np.log(rate_max / rate_min - 1) - np.log(
-            rate_max / renovation_rate_target - 1)) / (npv - npv_min)
-
     def calibration_renovation_rate(self, energy_prices, renovation_rate_ini, consumption='conventional',
-                                    cost_invest=None, cost_intangible=None, subsidies=None, option=4):
+                                    cost_invest=None, cost_intangible=None, subsidies=None, version='version_4'):
         """Calibration of the ρ parameter of the renovation rate function (logistic function of the NPV).
 
         Renovation rate of dwellings attributes led is calculated as a logistic function of the NPV.
@@ -2630,14 +2613,14 @@ class HousingStockRenovated(HousingStock):
                           cost_intangible=cost_intangible,
                           subsidies=subsidies)
         rho = None
-        if option == 0:
+        if version == 'version_3':
             # calculate agent_mean npv
             npv_mean = npv.unstack(weight.columns.names)
             npv_mean = (weight * npv_mean).fillna(0).sum(axis=1)
 
-            # solution 0: calculate rho for each agent_mean
-            rho_agent_mean = HousingStockRenovated.calibration_rho(npv_mean, renovation_rate_ini, self._rate_max,
-                                                                   self._rate_min, self._npv_min)
+            rho_agent_mean = (np.log(self._rate_max / self._rate_min - 1) - np.log(
+                self._rate_max / renovation_rate_ini - 1)) / (npv_mean - self._npv_min)
+
             # if na find assign the value to the  closest group
             rho_agent_mean = rho_agent_mean.sort_index()
             idx = rho_agent_mean.index[rho_agent_mean.isna()]
@@ -2649,7 +2632,7 @@ class HousingStockRenovated(HousingStock):
 
             rho = reindex_mi(rho_agent_mean, npv.index)
 
-        if option == 4:
+        if version == 'version_4':
 
             coefficient = pd.Series([1.35, 1.39, 1.03, 0.87, 0.8, 0.86], index=['G', 'F', 'E', 'D', 'C', 'B'],
                                     name='Energy performance')
@@ -2673,87 +2656,35 @@ class HousingStockRenovated(HousingStock):
             rho.index.names = renovation_rate_ini.index.names
             rho = reindex_mi(rho, npv.index)
 
-        if option == 1:
-            # calculate agent_mean npv
-            npv_mean = npv.unstack(weight.columns.names)
-            npv_mean = (weight * npv_mean).fillna(0).sum(axis=1)
-            # npv_mean = (weight * npv_mean).dropna(axis=1).dropna().sum(axis=1)
-
-            # solution 0: calculate rho for each agent_mean
-            rho_agent_mean = HousingStockRenovated.calibration_rho(npv_mean, renovation_rate_ini, self._rate_max, self._rate_min,
-                                                                   self._npv_min)
-            # if na find assign the value to the  closest group
-            rho_agent_mean = rho_agent_mean.sort_index()
-            idx = rho_agent_mean.index[rho_agent_mean.isna()]
-            for i in idx:
-                try:
-                    rho_agent_mean.loc[i] = rho_agent_mean.iloc[list(rho_agent_mean.index).index(i) + 1]
-                except IndexError:
-                    rho_agent_mean.loc[i] = rho_agent_mean.iloc[list(rho_agent_mean.index).index(i) - 1]
-
-            rho = reindex_mi(rho_agent_mean, npv.index)
-
-            # solution 1.: calculate unique renovation function
-            from scipy.optimize import curve_fit
-
-            df = pd.concat((npv_mean, renovation_rate_ini), axis=1).dropna()
-            df.columns = ['NPV mean calculated', 'Renovation rate observed']
-            popt, _ = curve_fit(HousingStockRenovated.renovation_rate, df.iloc[:, 0], df.iloc[:, 1],
-                                p0=[rho_agent_mean.mean(), self._npv_min, self._rate_max, self._rate_min],
-                                bounds=((0, -1000, 0.1, 10**-5), (1, npv_mean.min(), 0.5, renovation_rate_ini.min())))
-
-            rho = pd.Series(popt[0], index=npv.index)
-
-            self._npv_min = popt[1]
-            self._rate_max = popt[2]
-            self._rate_min = popt[3]
-            print('NPV Min: {}'.format(self._npv_min))
-            print('Rate Max: {}'.format(self._rate_max))
-            print('Rate Min: {}'.format(self._rate_min))
-
-            renovation_rate_agent_mean = npv_mean.reset_index().apply(HousingStockRenovated.renovate_rate_func,
-                                                                      args=[pd.Series(popt[0], index=npv_mean.index),
-                                                                            self._npv_min, self._rate_max,
-                                                                            self._rate_min], axis=1)
-            renovation_rate_agent_mean.index = npv_mean.index
-            renovation_rate_agent_mean.name = 'Renovation rate agent mean'
-            df = pd.concat((df, renovation_rate_agent_mean), axis=1)
-
-            # verification
-            renovation_rate = self.to_renovation_rate(energy_prices, transition=['Energy performance'],
-                                                      consumption='conventional', cost_invest=cost_invest,
-                                                      cost_intangible=cost_intangible, subsidies=subsidies, rho=rho)
-            renovation_rate = renovation_rate.unstack(weight.columns.names)
-            renovation_rate_mean_agents = (renovation_rate * weight).fillna(0).sum(axis=1)
-            renovation_rate_mean_agents.name = 'Renovation rate mean agents'
-            renovation_rate_calibration = pd.concat((df, renovation_rate_mean_agents), axis=1)
-            renovation_rate_calibration.to_csv('renovation_rate.csv')
-
-        if option == 2:
-            # solution 2: calculate rho for each individual agent
-            renovation_rate_obj = reindex_mi(renovation_rate_ini, npv.index)
-            rho = HousingStockRenovated.calibration_rho(npv, renovation_rate_obj, self._rate_max, self._rate_min,
-                                                        self._npv_min)
-
-        if option == 3:
-            # solution 2: calculate rho for each individual agent
-            renovation_rate_obj = reindex_mi(renovation_rate_ini, npv.index)
-            rho = HousingStockRenovated.calibration_rho(npv, renovation_rate_obj, self._rate_max, self._rate_min,
-                                                        self._npv_min)
-
-            # solution 3: calculate rho_mean for group of agents
-            rho_temp = rho.unstack(weight.columns.names)
-            rho_weighted = (weight * rho_temp).fillna(0).sum(axis=1)
-            rho = reindex_mi(rho_weighted, npv.index)
-            rho.replace(to_replace=0, value=0.005, inplace=True)
-
         else:
             ValueError('option should be in [0, 1, 2, 3, 4]')
 
         return rho
 
+    @staticmethod
+    def _calibration_rho(npv, renovation_rate_target, rate_max, rate_min, npv_min):
+        """
+        Function that returns rho in order to match the targeted renovation rate.
+
+        Parameters
+        ----------
+        npv: pd.Series
+            Net present value calculated.
+        renovation_rate_target: pd.Series
+            Targeted renovation rate.
+        rate_max: float
+        rate_min: float
+        npv_min: float
+
+        Returns
+        -------
+        pd.Series
+        """
+        return (np.log(rate_max / rate_min - 1) - np.log(
+            rate_max / renovation_rate_target - 1)) / (npv - npv_min)
+
     def _calibration_renovation_rate(self, energy_prices, renovation_rate_ini, consumption='conventional',
-                                    cost_invest=None, cost_intangible=None, subsidies=None):
+                                     cost_invest=None, cost_intangible=None, subsidies=None):
         """Calibration of the ρ and npv_intangible parameters of the renovation rate function (logistic function of the NPV).
 
         Parameters
@@ -2835,16 +2766,95 @@ class HousingStockRenovated(HousingStock):
         renovation_rate_calibration.columns = ['NPV mean calculated', 'NPV intangible', 'Renovation rate observed',
                                                'Renovation rate calculated']
 
+        option = None
+
+        if option == 1:
+            # calculate agent_mean npv
+            npv_mean = npv.unstack(weight.columns.names)
+            npv_mean = (weight * npv_mean).fillna(0).sum(axis=1)
+            # npv_mean = (weight * npv_mean).dropna(axis=1).dropna().sum(axis=1)
+
+            # solution 0: calculate rho for each agent_mean
+            rho_agent_mean = HousingStockRenovated.calibration_rho(npv_mean, renovation_rate_ini, self._rate_max, self._rate_min,
+                                                                   self._npv_min)
+            # if na find assign the value to the  closest group
+            rho_agent_mean = rho_agent_mean.sort_index()
+            idx = rho_agent_mean.index[rho_agent_mean.isna()]
+            for i in idx:
+                try:
+                    rho_agent_mean.loc[i] = rho_agent_mean.iloc[list(rho_agent_mean.index).index(i) + 1]
+                except IndexError:
+                    rho_agent_mean.loc[i] = rho_agent_mean.iloc[list(rho_agent_mean.index).index(i) - 1]
+
+            rho = reindex_mi(rho_agent_mean, npv.index)
+
+            # solution 1.: calculate unique renovation function
+            from scipy.optimize import curve_fit
+
+            df = pd.concat((npv_mean, renovation_rate_ini), axis=1).dropna()
+            df.columns = ['NPV mean calculated', 'Renovation rate observed']
+            popt, _ = curve_fit(HousingStockRenovated.renovation_rate, df.iloc[:, 0], df.iloc[:, 1],
+                                p0=[rho_agent_mean.mean(), self._npv_min, self._rate_max, self._rate_min],
+                                bounds=((0, -1000, 0.1, 10**-5), (1, npv_mean.min(), 0.5, renovation_rate_ini.min())))
+
+            rho = pd.Series(popt[0], index=npv.index)
+
+            self._npv_min = popt[1]
+            self._rate_max = popt[2]
+            self._rate_min = popt[3]
+            print('NPV Min: {}'.format(self._npv_min))
+            print('Rate Max: {}'.format(self._rate_max))
+            print('Rate Min: {}'.format(self._rate_min))
+
+            renovation_rate_agent_mean = npv_mean.reset_index().apply(HousingStockRenovated.renovate_rate_func,
+                                                                      args=[pd.Series(popt[0], index=npv_mean.index),
+                                                                            self._npv_min, self._rate_max,
+                                                                            self._rate_min], axis=1)
+            renovation_rate_agent_mean.index = npv_mean.index
+            renovation_rate_agent_mean.name = 'Renovation rate agent mean'
+            df = pd.concat((df, renovation_rate_agent_mean), axis=1)
+
+            # verification
+            renovation_rate = self.to_renovation_rate(energy_prices, transition=['Energy performance'],
+                                                      consumption='conventional', cost_invest=cost_invest,
+                                                      cost_intangible=cost_intangible, subsidies=subsidies, rho=rho)
+            renovation_rate = renovation_rate.unstack(weight.columns.names)
+            renovation_rate_mean_agents = (renovation_rate * weight).fillna(0).sum(axis=1)
+            renovation_rate_mean_agents.name = 'Renovation rate mean agents'
+            renovation_rate_calibration = pd.concat((df, renovation_rate_mean_agents), axis=1)
+            renovation_rate_calibration.to_csv('renovation_rate.csv')
+
+        if option == 2:
+            # solution 2: calculate rho for each individual agent
+            renovation_rate_obj = reindex_mi(renovation_rate_ini, npv.index)
+            rho = HousingStockRenovated.calibration_rho(npv, renovation_rate_obj, self._rate_max, self._rate_min,
+                                                        self._npv_min)
+
+        if option == 3:
+            # solution 2: calculate rho for each individual agent
+            renovation_rate_obj = reindex_mi(renovation_rate_ini, npv.index)
+            rho = HousingStockRenovated.calibration_rho(npv, renovation_rate_obj, self._rate_max, self._rate_min,
+                                                        self._npv_min)
+
+            # solution 3: calculate rho_mean for group of agents
+            rho_temp = rho.unstack(weight.columns.names)
+            rho_weighted = (weight * rho_temp).fillna(0).sum(axis=1)
+            rho = reindex_mi(rho_weighted, npv.index)
+            rho.replace(to_replace=0, value=0.005, inplace=True)
+
         return rho, npv_intangible, renovation_rate_calibration
 
     def to_flow_obligation(self, renovation_obligation, mutation=0.0, rotation=0.0):
-        if isinstance(mutation, pd.Series):
-            mutation = reindex_mi(mutation, self.stock.index, mutation.index.names)
-        if isinstance(rotation, pd.Series):
-            rotation = reindex_mi(rotation, self.stock.index, rotation.index.names)
 
-        mutation_stock = self.stock * mutation
-        rotation_stock = self.stock * rotation
+        stock = self.stock_mobile.copy()
+
+        if isinstance(mutation, pd.Series):
+            mutation = reindex_mi(mutation, stock.index, mutation.index.names)
+        if isinstance(rotation, pd.Series):
+            rotation = reindex_mi(rotation, stock.index, rotation.index.names)
+
+        mutation_stock = stock* mutation
+        rotation_stock = stock * rotation
 
         target_stock = mutation_stock + rotation_stock
         target = renovation_obligation.targets.loc[:, self.year]

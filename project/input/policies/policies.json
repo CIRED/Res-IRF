@@ -312,11 +312,50 @@
     "unit": "euro/tCO2",
     "type": "dict_to_parse"
   },
+  "renovation_obligation_C": {
+    "name": "renovation_obligation_C",
+    "policy": "renovation_obligation",
+    "type": "dict_to_parse",
+    "participation_rate": 1.0,
+    "final": ["A", "B", "C"],
+    "start_targets": {
+      "val": {
+        "G": 2023,
+        "F": 2025,
+        "E": 2030,
+        "D": 2040
+      },
+      "index": [
+        "Energy performance"
+      ],
+      "type": "pd.Series"
+    }
+  },
+  "renovation_obligation_B": {
+    "name": "renovation_obligation_B",
+    "policy": "renovation_obligation",
+    "type": "dict_to_parse",
+    "participation_rate": 1.0,
+    "final": ["A", "B"],
+    "start_targets": {
+      "val": {
+        "G": 2023,
+        "F": 2025,
+        "E": 2030,
+        "D": 2040
+      },
+      "index": [
+        "Energy performance"
+      ],
+      "type": "pd.Series"
+    }
+  },
   "renovation_obligation": {
     "name": "renovation_obligation",
     "policy": "renovation_obligation",
     "type": "dict_to_parse",
     "participation_rate": 1.0,
+    "final": null,
     "start_targets": {
       "val": {
         "G": 2023,
@@ -733,8 +772,7 @@
     "priority": false,
     "type": "dict_to_parse"
   },
-  "subsidies_curtailment":
-  {
+  "subsidies_curtailment": {
     "name": "subsidies_curtailment",
     "policy": "subsidies_curtailment",
     "value": "project/input/policies/subsidies_max.csv",

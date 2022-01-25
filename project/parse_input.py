@@ -219,13 +219,11 @@ def parse_building_stock(config):
     # 1. Read building stock data
 
     name_file = os.path.join(os.getcwd(), config['stock_buildings']['source'])
-    stock_ini = pd.read_pickle(name_file)
-    stock_ini = stock_ini.reorder_levels(
-        ['Occupancy status', 'Housing type', 'Income class owner', 'Income class', 'Heating energy', 'Energy performance'])
+    stock_ini = pd.read_csv(name_file, index_col=config['stock_buildings']['levels'], squeeze=True)
+    calibration_year = config['stock_buildings']['year']
 
     # 2. Numerical value of stock attributes
 
-    calibration_year = config['stock_buildings']['year']
     # years for input time series
     # maximum investment horizon is 30 years and model horizon is 2040. Input must be extended at least to 2070.
     last_year = 2080
@@ -308,27 +306,32 @@ def parse_exogenous_input(config):
     policies = parse_json(name_file)
 
     if 'carbon_tax' in config.keys() and config['carbon_tax']['activated'] is True:
-        carbon_tax = pd.read_csv(os.path.join(os.getcwd(), config['carbon_tax_value']['source']), index_col=[0])
+        carbon_tax = pd.read_csv(os.path.join(os.getcwd(), config['carbon_tax']['value']), index_col=[0])
         carbon_tax = carbon_tax.T
         carbon_tax.index.set_names('Heating energy', inplace=True)
         policies['carbon_tax']['value'] = carbon_tax * (1 + 0.2)
 
-    if 'cee_taxes' in policies.keys():
-        cee_tax = pd.read_csv(os.path.join(os.getcwd(), config['cee_tax_value']['source']), index_col=[0])
+    if 'cee_taxes' in policies.keys() and config['cee_taxes']['activated'] is True:
+        cee_tax = pd.read_csv(os.path.join(os.getcwd(), config['cee_taxes']['value']), index_col=[0])
         cee_tax.index.set_names('Heating energy', inplace=True)
         cee_tax.columns = cee_tax.columns.astype('int')
         policies['cee_taxes']['value'] = cee_tax * (1 + 0.2)
 
-    if 'cee_subsidy' in policies.keys():
-        cee_subsidy = pd.read_csv(os.path.join(os.getcwd(), config['cee_subsidy_value']['source']), index_col=[0])
+    if 'cee_subsidy' in policies.keys() and config['cee_subsidy']['activated'] is True:
+        cee_subsidy = pd.read_csv(os.path.join(os.getcwd(), config['cee_subsidy']['value']), index_col=[0])
         cee_subsidy.index.set_names('Income class owner', inplace=True)
         cee_subsidy.columns = cee_subsidy.columns.astype('int')
         policies['cee_subsidy']['value'] = cee_subsidy
 
-    if 'ma_prime_renov' in policies.keys():
+    if 'ma_prime_renov' in policies.keys() and config['ma_prime_renov']['activated'] is True:
         policies['ma_prime_renov']['value'] = policies['ma_prime_renov']['value'].unstack('Energy performance final').fillna(0)
+        if config['stock_buildings']['income_class'] == 'quintile':
+            policies['ma_prime_renov']['value'].rename(
+                index={'D1': 'C1', 'D3': 'C2', 'D5': 'C3', 'D6': 'C4', 'D10': 'C5'}, inplace=True)
+            policies['ma_prime_renov']['value'] = policies['ma_prime_renov']['value'][policies['ma_prime_renov']['value'].index.get_level_values('Income class owner').isin(['C1', 'C2', 'C3', 'C4', 'C5'])]
 
-    if 'subsidies_curtailment' in policies.keys():
+
+    if 'subsidies_curtailment' in policies.keys() and config['subsidies_curtailment']['activated'] is True:
         policies['subsidies_curtailment']['value'] = pd.read_csv(policies['subsidies_curtailment']['value'],
                                                                  index_col=[0], header=[0], squeeze=True)
 
@@ -397,19 +400,17 @@ def parse_exogenous_input(config):
         raise ValueError("energy_prices_evolution should be 'forecast' or 'constant'")
 
     # CO2 content used for tax cost
-    co2_tax = None
-    if 'co2_tax' in config.keys():
-        name_file = os.path.join(os.getcwd(), config['co2_tax']['source'])
-        co2_tax = pd.read_csv(name_file, index_col=[0], header=[0]).T
-        co2_tax.index.set_names('Heating energy', inplace=True)
-        # extension of co2_content time series
-        last_year_prices = co2_tax.columns[-1]
-        if last_year > last_year_prices:
-            add_yrs = range(last_year_prices + 1, last_year + 1, 1)
-            temp = pd.concat([co2_tax.loc[:, last_year_prices]] * len(add_yrs), axis=1)
-            temp.columns = add_yrs
-            co2_tax = pd.concat((co2_tax, temp), axis=1)
-        co2_tax = co2_tax.loc[:, calibration_year:]
+    name_file = os.path.join(os.getcwd(), config['carbon_tax']['co2_content'])
+    co2_tax = pd.read_csv(name_file, index_col=[0], header=[0]).T
+    co2_tax.index.set_names('Heating energy', inplace=True)
+    # extension of co2_content time series
+    last_year_prices = co2_tax.columns[-1]
+    if last_year > last_year_prices:
+        add_yrs = range(last_year_prices + 1, last_year + 1, 1)
+        temp = pd.concat([co2_tax.loc[:, last_year_prices]] * len(add_yrs), axis=1)
+        temp.columns = add_yrs
+        co2_tax = pd.concat((co2_tax, temp), axis=1)
+    co2_tax = co2_tax.loc[:, calibration_year:]
 
     # CO2 content used for emission
     name_file = os.path.join(os.getcwd(), config['co2_emission']['source'])
@@ -473,7 +474,6 @@ def parse_parameters(folder, config, stock_sum):
     parameters = parse_json(name_file)
 
     # 2. Demographic variables
-    parameters['Calibration consumption'] = parameters['Aggregated consumption coefficient {}'.format(calibration_year)]
 
     name_file = os.path.join(os.getcwd(), config['population']['source'])
     parameters['Population total'] = pd.read_csv(os.path.join(folder, name_file), sep=',', header=None,
@@ -530,11 +530,14 @@ def parse_parameters(folder, config, stock_sum):
         'Population total']
 
     # 6. Others
-    parameters['Renovation rate max'] = parameters['Renovation rate max {}'.format(calibration_year)]
 
     parameters['Health cost (euro)'] = pd.read_csv(config['health_cost']['source'], index_col=[0, 1], squeeze=True)
     parameters['Carbon value (euro/tCO2)'] = pd.read_csv(config['carbon_value']['source'], index_col=[0], header=None,
                                                          squeeze=True)
+    parameters['Demolition rate'] = config['Demolition rate']
+
+    if 'Rotation rate' in config.keys():
+        parameters['Rotation rate'] = config['Rotation rate']
 
     # 6. Summary
 

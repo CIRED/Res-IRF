@@ -20,10 +20,6 @@ import pandas as pd
 import numpy as np
 
 
-def logistic(x, a=1, r=1, k=1):
-    return k / (1 + a * np.exp(- r * x))
-
-
 def apply_linear_rate(value, rate, index):
     """Apply a linear rate for a value based on years index.
 

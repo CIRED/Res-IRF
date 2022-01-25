@@ -1,6 +1,5 @@
 {
-  "Destruction rate": 0.0035,
-  "Residual destruction rate": 0.05,
+  "Residual demolition rate": 0.05,
   "Stock total ini 2018": 29037000,
   "Stock needed": {
     "type": "dict",
@@ -21,14 +20,13 @@
   "Learning years renovation": 10,
   "Learning information rate renovation": 0.25,
   "Information rate max renovation": 0.8,
-  "NPV min": -1000,
-  "Renovation rate max 2012": 0.2,
-  "Renovation rate max 2018": 0.4,
-  "Renovation rate min": 0.00001,
-  "Nu intangible cost": 8.0,
-  "Nu construction": 8.0,
-  "Nu label": 8.0,
-  "Nu energy": 8.0,
+  "Renovation rate": {
+    "NPV min": -1000,
+    "Renovation rate max": 0.4,
+    "Renovation rate min": 0.00001,
+    "type": "dict"
+  },
+  "Nu": 8.0,
   "Elasticity area construction": {
     "val": {
       "Single-family": {
@@ -69,9 +67,9 @@
   },
   "Rotation rate": {
     "val": {
-      "Landlords": 0.035,
-      "Homeowners": 0.18,
-      "Social-housing": 0.08
+      "Landlords": 0.121,
+      "Homeowners": 0.021,
+      "Social-housing": 0.052
     },
     "index": [
       "Occupancy status"
@@ -81,20 +79,20 @@
   "Mutation rate": {
     "val": {
       "Landlords": 0,
-      "Homeowners": 0.018,
-      "Social-housing": 0.003
+      "Homeowners": 0,
+      "Social-housing": 0
     },
     "index": [
       "Occupancy status"
     ],
     "type": "pd.Series"
   },
-  "Aggregated consumption coefficient 2018": {
+  "Aggregated consumption": {
     "val": {
-      "Power": 0.65,
-      "Natural gas": 0.95,
-      "Oil fuel": 0.79,
-      "Wood fuel": 3.97
+      "Power": 36,
+      "Natural gas": 120,
+      "Oil fuel": 37,
+      "Wood fuel": 71
     },
     "index": [
       "Heating energy"

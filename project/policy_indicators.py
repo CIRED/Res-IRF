@@ -47,7 +47,6 @@ def double_diff(df_ref, df_compare, discount_factor):
     return discounted_diff.cumsum()
 
 
-
 def run_indicators(config, folder, discount_rate=0.04, lifetime=26):
     """Calculate main indicators to assess public policy.
 
@@ -97,18 +96,18 @@ def run_indicators(config, folder, discount_rate=0.04, lifetime=26):
         # 1.1 Cost-effectiveness
 
         # 1.1.1 Consumption
-        df = detailed['Consumption actual (TWh)'].copy()
+        df = detailed['Consumption actual (TWh/year)'].copy()
         marginal_consumption_actual = pd.Series(
             [(df[config['All policies']] - df[config['Policy - {}'.format(year)]]).loc[year] for year in list_years],
             index=list_years) * 10**9
 
-        df = detailed['Consumption conventional (TWh)'].copy()
+        df = detailed['Consumption conventional (TWh/year)'].copy()
         marginal_consumption_conventional = pd.Series(
             [(df[config['All policies']] - df[config['Policy - {}'.format(year)]]).loc[year] for year in list_years],
             index=list_years) * 10**9
 
         # 1.1.2 Emission
-        df = detailed['Emission (MtCO2)'].copy()
+        df = detailed['Emission (MtCO2/year)'].copy()
         marginal_emission = pd.Series(
             [(df[config['All policies']] - df[config['Policy - {}'.format(year)]]).loc[year] for year in list_years],
             index=list_years) * 10**6
@@ -158,7 +157,7 @@ def run_indicators(config, folder, discount_rate=0.04, lifetime=26):
         ref = config[method[0]]
         compare = config[method[1]]
 
-        df = detailed['Consumption actual (TWh)']
+        df = detailed['Consumption actual (TWh/year)']
         simple_diff = df[ref] - df[compare]
         double_diff = simple_diff.diff()
         double_diff.iloc[0] = simple_diff.iloc[0]
@@ -167,7 +166,7 @@ def run_indicators(config, folder, discount_rate=0.04, lifetime=26):
         energy_saving.name = 'Energy difference discounted (TWh) {}'.format(name)
         result = pd.concat((result, energy_saving), axis=1)
 
-        df = detailed['Emission (MtCO2)']
+        df = detailed['Emission (MtCO2/year)']
         simple_diff = df[ref] - df[compare]
         double_diff = simple_diff.diff()
         double_diff.iloc[0] = simple_diff.iloc[0]
@@ -238,5 +237,5 @@ if __name__ == '__main__':
 
     config_policies = pd.read_csv(os.path.join('project', args.config), squeeze=True, header=None, index_col=[0])
     config_policies = config_policies.dropna()
-    CO2_value = pd.read_csv('project/input/policies/CO2_value.csv', index_col=[0], squeeze=True, header=None)
-    run_indicators(config_policies.to_dict(), config_policies['Folder name'], CO2_value)
+    carbon_value = pd.read_csv('project/input/policies/carbon_value.csv', index_col=[0], squeeze=True, header=None)
+    run_indicators(config_policies.to_dict(), config_policies['Folder name'], carbon_value)
