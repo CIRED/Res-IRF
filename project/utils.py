@@ -14,14 +14,10 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 # Original author Lucas Vivier <vivier@centre-cired.fr>
-# Based on a scilab program mainly by written by Someone, but fully rewritten.
+# Based on a scilab program mainly by written by L.G Giraudet and others, but fully rewritten.
 
 import pandas as pd
 import numpy as np
-
-
-def logistic(x, a=1, r=1, k=1):
-    return k / (1 + a * np.exp(- r * x))
 
 
 def apply_linear_rate(value, rate, index):

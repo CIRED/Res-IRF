@@ -14,7 +14,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 # Original author Lucas Vivier <vivier@centre-cired.fr>
-# Based on a scilab program mainly by written by Someone, but fully rewritten.
+# Based on a scilab program mainly by written by L.G Giraudet and others, but fully rewritten.
 
 from utils import reindex_mi, add_level
 import numpy as np
@@ -214,8 +214,13 @@ class Subsidies(PublicPolicy):
     @staticmethod
     def capex_targeted(target, cost_input):
         cost = cost_input.copy()
-        target_re = reindex_mi(target, cost.index, target.index.names)
-        target_re = reindex_mi(target_re, cost.columns, target.columns.names, axis=1)
+        target_re = reindex_mi(target, cost.index)
+        if isinstance(target_re, pd.DataFrame):
+            target_re = reindex_mi(target_re, cost.columns, target.columns.names, axis=1)
+        elif isinstance(target_re, pd.Series):
+            target_re = pd.concat([target_re] * len(cost.columns), axis=1)
+            target_re.columns = cost.columns
+
         target_re.fillna(0, inplace=True)
         cost = cost * target_re
         cost.replace(0, np.nan, inplace=True)
@@ -259,6 +264,22 @@ class Subsidies(PublicPolicy):
 
         if self.unit == 'euro':
             return value
+
+        if self.unit == 'euro/m2':
+            # subsidy apply to one target
+            if isinstance(value, pd.Series) or isinstance(value, pd.DataFrame):
+                subsidy = reindex_mi(value, cost.index, axis=0)
+            else:
+                subsidy = value
+
+            if self.subsidy_max is not None:
+                subsidy_max = reindex_mi(self.subsidy_max, subsidy.index)
+                if isinstance(cost, pd.DataFrame):
+                    subsidy_max = pd.concat([subsidy_max] * cost.shape[1], axis=1)
+                    subsidy_max.columns = cost.columns
+                subsidy[subsidy > subsidy_max] = subsidy_max
+
+            return subsidy
 
         elif self.unit == '%':
             # subsidy apply to one target
@@ -550,13 +571,14 @@ class RegulatedLoan(PublicPolicy):
 
 
 class RenovationObligation:
-    def __init__(self, name, start_targets, participation_rate=1.0, columns=None, calibration=False):
+    def __init__(self, name, start_targets, participation_rate=1.0, columns=None, calibration=False, final=None):
         self.name = name
         self.policy = 'renovation_obligation'
         self.start_targets = start_targets
         self.targets = self.to_targets(columns)
         self.participation_rate = participation_rate
         self.calibration = calibration
+        self.final = final
 
     def to_targets(self, columns=None):
         if columns is None:
@@ -627,3 +649,14 @@ class ThermalRegulation(PublicPolicy):
             return attributes
 
 
+class SubsidiesCurtailment(PublicPolicy):
+    def __init__(self, name, start, end, value, subsidies_curtailed, unit='%', calibration=False):
+        super().__init__(name, start, end, 'subsidies_curtailment', calibration)
+
+        self.value = value
+        self.subsidies_curtailed = subsidies_curtailed
+        self.transition = ['Energy performance']
+
+    def curtailed(self, cost, subsidies):
+        val = reindex_mi(self.value, cost.index)
+        idx = cost.index[subsidies > val * cost]

@@ -14,7 +14,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 # Original author Lucas Vivier <vivier@centre-cired.fr>
-# Based on a scilab program mainly by written by Someone, but fully rewritten.
+# Based on a scilab program mainly by written by L.G Giraudet and others, but fully rewritten.
 
 import pandas as pd
 import os
@@ -32,6 +32,10 @@ def dict2series(item_dict):
         ds = {(outerKey, innerKey): values for outerKey, innerDict in item_dict['val'].items() for
               innerKey, values in innerDict.items()}
         ds = pd.Series(ds)
+    elif len(item_dict['index']) == 3:
+        ds = pd.DataFrame({k: pd.DataFrame(item).stack() for k, item in item_dict['val'].items()}).stack()
+        ds.index.names = [i for i in item_dict['index'][::-1]]
+        ds = ds.reorder_levels(item_dict['index'])
     else:
         raise ValueError('More than 2 MultiIndex is not yet developed')
     ds.index.set_names(item_dict['index'], inplace=True)
@@ -158,6 +162,7 @@ def to_share_multi_family_tot(stock_needed, param):
         {2012: 0.393, 2013: 0.394, 2014: 0.395}
     """
 
+
     def func(stock, stock_ini, p):
         """Share of multi-family dwellings as a function of the growth rate of the dwelling stock.
 
@@ -215,13 +220,11 @@ def parse_building_stock(config):
     # 1. Read building stock data
 
     name_file = os.path.join(os.getcwd(), config['stock_buildings']['source'])
-    stock_ini = pd.read_pickle(name_file)
-    stock_ini = stock_ini.reorder_levels(
-        ['Occupancy status', 'Housing type', 'Income class', 'Heating energy', 'Energy performance', 'Income class owner'])
+    stock_ini = pd.read_csv(name_file, index_col=config['stock_buildings']['levels'], squeeze=True)
+    calibration_year = config['stock_buildings']['year']
 
     # 2. Numerical value of stock attributes
 
-    calibration_year = config['stock_buildings']['year']
     # years for input time series
     # maximum investment horizon is 30 years and model horizon is 2040. Input must be extended at least to 2070.
     last_year = 2080
@@ -270,12 +273,11 @@ def parse_building_stock(config):
     return stock_ini, attributes
 
 
-def parse_exogenous_input(folder, config):
+def parse_exogenous_input(config):
     """Parses prices and costs input to match Res-IRF input requirement.
 
     Parameters
     ----------
-    folder: str
     config: dict
 
     Returns
@@ -287,8 +289,6 @@ def parse_exogenous_input(folder, config):
     dict
         Investment cost.
         Keys are transition cost_envelope = cost_invest(tuple([Energy performance]).
-    dict
-        Construction cost.
     pd.DataFrame
         co2_tax
     pd.DataFrame
@@ -297,8 +297,7 @@ def parse_exogenous_input(folder, config):
         policies
     pd.DataFrame
         summary_input
-    pd.DataFrame
-        cost_switch_fuel_end
+
     """
 
     calibration_year = config['stock_buildings']['year']
@@ -308,23 +307,35 @@ def parse_exogenous_input(folder, config):
     policies = parse_json(name_file)
 
     if 'carbon_tax' in config.keys() and config['carbon_tax']['activated'] is True:
-        carbon_tax = pd.read_csv(os.path.join(os.getcwd(), config['carbon_tax_value']['source']), index_col=[0])
+        carbon_tax = pd.read_csv(os.path.join(os.getcwd(), config['carbon_tax']['value']), index_col=[0])
         carbon_tax = carbon_tax.T
         carbon_tax.index.set_names('Heating energy', inplace=True)
         policies['carbon_tax']['value'] = carbon_tax * (1 + 0.2)
 
-    cee_tax = pd.read_csv(os.path.join(os.getcwd(), config['cee_tax_value']['source']), index_col=[0])
-    cee_tax.index.set_names('Heating energy', inplace=True)
-    cee_tax.columns = cee_tax.columns.astype('int')
-    # adding vta to cee_tax
-    # to delete after test
-    cee_tax.loc[:, 2013:] = cee_tax.loc[:, 2013:] * (1 + 0.2)
-    policies['cee_taxes']['value'] = cee_tax * (1 + 0.2)
+    if 'cee_taxes' in policies.keys() and config['cee_taxes']['activated'] is True:
+        cee_tax = pd.read_csv(os.path.join(os.getcwd(), config['cee_taxes']['value']), index_col=[0])
+        cee_tax.index.set_names('Heating energy', inplace=True)
+        cee_tax.columns = cee_tax.columns.astype('int')
+        policies['cee_taxes']['value'] = cee_tax * (1 + 0.2)
 
-    cee_subsidy = pd.read_csv(os.path.join(os.getcwd(), config['cee_subsidy_value']['source']), index_col=[0])
-    cee_subsidy.index.set_names('Income class owner', inplace=True)
-    cee_subsidy.columns = cee_subsidy.columns.astype('int')
-    policies['cee_subsidy']['value'] = cee_subsidy
+    if 'cee_subsidy' in policies.keys() and config['cee_subsidy']['activated'] is True:
+        cee_subsidy = pd.read_csv(os.path.join(os.getcwd(), config['cee_subsidy']['value']), index_col=[0])
+        cee_subsidy.index.set_names('Income class owner', inplace=True)
+        cee_subsidy.columns = cee_subsidy.columns.astype('int')
+        policies['cee_subsidy']['value'] = cee_subsidy
+
+    if 'ma_prime_renov' in policies.keys() and config['ma_prime_renov']['activated'] is True:
+        policies['ma_prime_renov']['value'] = policies['ma_prime_renov']['value'].unstack('Energy performance final').fillna(0)
+        if config['stock_buildings']['income_class'] == 'quintile':
+            policies['ma_prime_renov']['value'].rename(
+                index={'D1': 'C1', 'D3': 'C2', 'D5': 'C3', 'D6': 'C4', 'D10': 'C5'}, inplace=True)
+            policies['ma_prime_renov']['value'] = policies['ma_prime_renov']['value'][policies['ma_prime_renov']['value'].index.get_level_values('Income class owner').isin(['C1', 'C2', 'C3', 'C4', 'C5'])]
+
+
+    if 'subsidies_curtailment' in policies.keys() and config['subsidies_curtailment']['activated'] is True:
+        policies['subsidies_curtailment']['value'] = pd.read_csv(policies['subsidies_curtailment']['value'],
+                                                                 index_col=[0], header=[0], squeeze=True)
+
 
     # cost_invest
     cost_invest = dict()
@@ -335,28 +346,14 @@ def parse_exogenous_input(folder, config):
     cost_envelope = cost_envelope * (1 + 0.1) / (1 + 0.055)
     cost_invest['Energy performance'] = cost_envelope
 
+    """
     name_file = os.path.join(os.getcwd(), config['cost_switch_fuel']['source'])
     cost_switch_fuel = pd.read_csv(name_file, index_col=[0], header=[0])
     cost_switch_fuel.index.set_names('Heating energy', inplace=True)
     cost_switch_fuel.columns.set_names('Heating energy final', inplace=True)
     # cost_switch_fuel = cost_switch_fuel * (1 + 0.1) / (1 + 0.055)
-    cost_invest['Heating energy'] = cost_switch_fuel
-
-    # only used for backtesting
-    cost_switch_fuel_end = None
-    if 'cost_switch_fuel_end' in config.keys():
-        name_file = os.path.join(os.getcwd(), config['cost_switch_fuel_end']['source'])
-        cost_switch_fuel_end = pd.read_csv(name_file, index_col=[0], header=[0])
-        cost_switch_fuel_end.index.set_names('Heating energy', inplace=True)
-        cost_switch_fuel_end.columns.set_names('Heating energy final', inplace=True)
-        # cost_switch_fuel = cost_switch_fuel * (1 + 0.1) / (1 + 0.055)
-
-    cost_invest_construction = dict()
-    name_file = os.path.join(os.getcwd(), config['cost_construction']['source'])
-    cost_construction = pd.read_csv(os.path.join(folder, name_file), sep=',', header=[0, 1], index_col=[0])
-    cost_construction.index.set_names('Housing type', inplace=True)
-    cost_invest_construction['Energy performance'] = cost_construction
-    cost_invest_construction['Heating energy'] = None
+    """
+    cost_invest['Heating energy'] = None
 
     name_file = os.path.join(os.getcwd(), config['energy_prices_bt']['source'])
     energy_prices_bt = pd.read_csv(name_file, index_col=[0], header=[0]).T
@@ -404,19 +401,17 @@ def parse_exogenous_input(folder, config):
         raise ValueError("energy_prices_evolution should be 'forecast' or 'constant'")
 
     # CO2 content used for tax cost
-    co2_tax = None
-    if 'co2_tax' in config.keys():
-        name_file = os.path.join(os.getcwd(), config['co2_tax']['source'])
-        co2_tax = pd.read_csv(name_file, index_col=[0], header=[0]).T
-        co2_tax.index.set_names('Heating energy', inplace=True)
-        # extension of co2_content time series
-        last_year_prices = co2_tax.columns[-1]
-        if last_year > last_year_prices:
-            add_yrs = range(last_year_prices + 1, last_year + 1, 1)
-            temp = pd.concat([co2_tax.loc[:, last_year_prices]] * len(add_yrs), axis=1)
-            temp.columns = add_yrs
-            co2_tax = pd.concat((co2_tax, temp), axis=1)
-        co2_tax = co2_tax.loc[:, calibration_year:]
+    name_file = os.path.join(os.getcwd(), config['carbon_tax']['co2_content'])
+    co2_tax = pd.read_csv(name_file, index_col=[0], header=[0]).T
+    co2_tax.index.set_names('Heating energy', inplace=True)
+    # extension of co2_content time series
+    last_year_prices = co2_tax.columns[-1]
+    if last_year > last_year_prices:
+        add_yrs = range(last_year_prices + 1, last_year + 1, 1)
+        temp = pd.concat([co2_tax.loc[:, last_year_prices]] * len(add_yrs), axis=1)
+        temp.columns = add_yrs
+        co2_tax = pd.concat((co2_tax, temp), axis=1)
+    co2_tax = co2_tax.loc[:, calibration_year:]
 
     # CO2 content used for emission
     name_file = os.path.join(os.getcwd(), config['co2_emission']['source'])
@@ -434,13 +429,6 @@ def parse_exogenous_input(folder, config):
 
     summary_input = dict()
 
-    """
-    summary_input['Power prices bt (euro/kWh)'] = energy_prices_bt.loc['Power', :]
-    summary_input['Natural gas prices bt (euro/kWh)'] = energy_prices_bt.loc['Natural gas', :]
-    summary_input['Oil fuel prices bt (euro/kWh)'] = energy_prices_bt.loc['Oil fuel', :]
-    summary_input['Wood fuel prices bt (euro/kWh)'] = energy_prices_bt.loc['Wood fuel', :]
-    """
-
     summary_input['Power prices (euro/kWh)'] = energy_prices.loc['Power', :]
     summary_input['Natural gas prices (euro/kWh)'] = energy_prices.loc['Natural gas', :]
     summary_input['Oil fuel prices (euro/kWh)'] = energy_prices.loc['Oil fuel', :]
@@ -454,7 +442,7 @@ def parse_exogenous_input(folder, config):
     summary_input = pd.DataFrame(summary_input)
     summary_input = summary_input.loc[calibration_year:, :]
 
-    return energy_prices, energy_taxes, cost_invest, cost_invest_construction, co2_tax, co2_emission, policies, summary_input, cost_switch_fuel_end
+    return energy_prices, energy_taxes, cost_invest, co2_tax, co2_emission, policies, summary_input
 
 
 def parse_parameters(folder, config, stock_sum):
@@ -487,7 +475,6 @@ def parse_parameters(folder, config, stock_sum):
     parameters = parse_json(name_file)
 
     # 2. Demographic variables
-    parameters['Calibration consumption'] = parameters['Aggregated consumption coefficient {}'.format(calibration_year)]
 
     name_file = os.path.join(os.getcwd(), config['population']['source'])
     parameters['Population total'] = pd.read_csv(os.path.join(folder, name_file), sep=',', header=None,
@@ -544,35 +531,24 @@ def parse_parameters(folder, config, stock_sum):
         'Population total']
 
     # 6. Others
-    parameters['Renovation rate max'] = parameters['Renovation rate max {}'.format(calibration_year)]
 
-    if parameters['Cost construction lim']['source_type'] == 'file':
-        if calibration_year == 1984:
-            parameters['Cost construction lim'] = pd.read_csv(parameters['Cost construction lim']['source'], index_col=[0], header=[0, 1])
-            parameters['Cost construction lim'].index.set_names('Housing type', inplace=True)
-            parameters['Cost construction lim'].columns.set_names(['Heating energy final', 'Energy performance final'], inplace=True)
-        elif calibration_year >= 2012:
-            parameters['Cost construction lim'] = pd.read_csv(parameters['Cost construction lim']['source'], index_col=[0], header=[0])
-            parameters['Cost construction lim'].index.set_names('Housing type', inplace=True)
-            parameters['Cost construction lim'].columns.set_names('Energy performance final', inplace=True)
+    parameters['Health cost (euro)'] = pd.read_csv(config['health_cost']['source'], index_col=[0, 1], squeeze=True)
+    parameters['Carbon value (euro/tCO2)'] = pd.read_csv(config['carbon_value']['source'], index_col=[0], header=None,
+                                                         squeeze=True)
+    parameters['Demolition rate'] = config['Demolition rate']
 
-    """
-    proba_performance = parameters['Probability disease performance']
-    proba_income = parameters['Probability disease income {}'.format(calibration_year)]
+    if 'Rotation rate' in config.keys():
+        parameters['Rotation rate'] = config['Rotation rate']
 
-    proba_performance = add_level(proba_performance, proba_income.index, axis=0)
-    proba_income = reindex_mi(proba_income, proba_performance.index)
-    parameters['Probability disease'] = proba_performance * proba_income
-    parameters['Cost disease'] = apply_linear_rate(parameters['Cost disease'], parameters['Cost disease rate'],
-                                                   index_input_year)
-    """
     # 6. Summary
 
     summary_param = dict()
+    summary_param['Sizing factor (%)'] = pd.Series(sizing_factor, index=parameters['Population'].index)
     summary_param['Total population (Millions)'] = parameters['Population'] / 10**6
     summary_param['Income (Billions euro)'] = parameters['Available income real'] * sizing_factor / 10**9
     summary_param['Buildings stock (Millions)'] = parameters['Stock needed'] / 10**6
     summary_param['Person by housing'] = parameters['Population housing']
+    summary_param['Share multi-family (%)'] = parameters['Share multi-family']
     summary_param = pd.DataFrame(summary_param)
     summary_param = summary_param.loc[calibration_year:, :]
 
@@ -593,30 +569,24 @@ def parse_observed_data(config):
     pd.DataFrame
         Observed market share in calibration year for existing buildings
     pd.DataFrame
-        Observed market share in calibration year for construction
-    pd.DataFrame
-        Observed tenant income distribution in constructed building stock
+        Observed market share in calibration year for switching fuel
     """
 
-    name_file = os.path.join(os.getcwd(), config['renovation_rate_ini']['source'])
+    name_file = os.path.join(os.getcwd(), config['renovation_rate']['calibration_data'])
     renovation_rate_ini = pd.read_csv(name_file, header=[0], squeeze=True)
     columns = list(renovation_rate_ini.columns[:renovation_rate_ini.shape[1] - 1])
     renovation_rate_ini = renovation_rate_ini.set_index(columns).iloc[:, 0]
 
-    name_file = os.path.join(os.getcwd(), config['ms_renovation_ini']['source'])
+    name_file = os.path.join(os.getcwd(), config['market_share']['calibration_data'])
     ms_renovation_ini = pd.read_csv(name_file, index_col=[0], header=[0])
     ms_renovation_ini.index.set_names(['Energy performance'], inplace=True)
     ms_renovation_ini.columns.set_names(['Energy performance final'], inplace=True)
 
-    name_file = os.path.join(os.getcwd(), config['ms_construction_ini']['source'])
-    ms_construction_ini = pd.read_csv(name_file, index_col=[0, 1], header=[0, 1])
-    ms_construction_ini.index.set_names(['Occupancy status', 'Housing type'], inplace=True)
+    name_file = os.path.join(os.getcwd(), config['ms_switch_fuel_ini']['source'])
+    ms_switch_fuel_ini = pd.read_csv(name_file, index_col=[0, 1], header=[0])
+    ms_switch_fuel_ini.index.set_names(['Housing type', 'Heating energy'], inplace=True)
+    ms_switch_fuel_ini.columns.set_names(['Heating energy final'], inplace=True)
 
-    name_file = os.path.join(os.getcwd(), config['tenants_income_construction']['source'])
-    income_tenants_construction = pd.read_csv(name_file, index_col=[0, 1], header=[0])
-    income_tenants_construction.index.set_names(['Housing type', 'Energy performance'], inplace=True)
-    income_tenants_construction.columns.set_names('Income class', inplace=True)
-
-    return renovation_rate_ini, ms_renovation_ini, ms_construction_ini, income_tenants_construction
+    return renovation_rate_ini, ms_renovation_ini, ms_switch_fuel_ini
 
 

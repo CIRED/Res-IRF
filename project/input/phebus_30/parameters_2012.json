@@ -75,7 +75,7 @@
   "Cost construction lim": {
     "type": "dict",
     "source_type": "file",
-    "source": "project/input/phebus/cost_construction_lim_2012.csv"
+    "source": "project/input/phebus_30/cost_construction_lim_2012.csv"
   },
   "Rotation rate": {
     "val": {

@@ -14,7 +14,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 # Original author Lucas Vivier <vivier@centre-cired.fr>
-# Based on a scilab program mainly by written by Someone, but fully rewritten.
+# Based on a scilab program mainly by written by L.G Giraudet and others, but fully rewritten.
 
 """
 Res-IRF is a multi-agent building stock dynamic microsimulation model.
@@ -42,14 +42,14 @@ from parse_output import quick_graphs
 from policy_indicators import run_indicators
 
 __author__ = "Louis-Gaëtan Giraudet, Cyril Bourgeois, Frédéric Branger, François Chabrol, David Glotin, Céline Guivarch, Philippe Quirion, Lucas Vivier"
-__copyright__ = "Copyright 2007 Free Software Foundation"
-__credits__ = ["Louis-Gaëtan Giraudet", "Cyril Bourgeois", "Frédéric Branger", "François Chabrol", "David Glotin",
-               "Céline Guivarch", "Philippe Quirion", "Lucas Vivier"]
-__license__ = "GPL"
-__version__ = "3.0"
-__maintainer__ = "Lucas Vivier"
-__email__ = "vivier@centre-cired.fr"
-__status__ = "Production"
+__copyright__ = 'Copyright 2007 Free Software Foundation'
+__credits__ = ['Louis-Gaëtan Giraudet', 'Cyril Bourgeois', 'Frédéric Branger', 'François Chabrol', 'David Glotin',
+               'Céline Guivarch', 'Philippe Quirion', 'Lucas Vivier']
+__license__ = 'GPL'
+__version__ = '4.0'
+__maintainer__ = 'Lucas Vivier'
+__email__ = 'vivier@centre-cired.fr'
+__status__ = 'Production'
 
 
 def model_launcher(path=None):
@@ -71,7 +71,7 @@ def model_launcher(path=None):
     if not os.path.isdir(folder['output']):
         os.mkdir(folder['output'])
 
-    folder['intermediate'] = os.path.join(os.getcwd(), 'project', 'input/phebus/intermediate')
+    folder['intermediate'] = os.path.join(os.getcwd(), 'project', 'input/phebus_30/intermediate')
     if not os.path.isdir(folder['intermediate']):
         os.mkdir(folder['intermediate'])
 
@@ -86,18 +86,17 @@ def model_launcher(path=None):
     if not os.path.isdir(folder['output']):
         os.mkdir(folder['output'])
 
+    log_formatter = '%(asctime)s - %(message)s'
     logging.basicConfig(filename=os.path.join(folder['output'], 'log.txt'),
                         filemode='a',
                         level=logging.DEBUG,
-                        format='%(asctime)s - (%(lineno)s) - %(message)s')
+                        format=log_formatter)
 
     logging.getLogger('matplotlib.font_manager').disabled = True
-
     root_logger = logging.getLogger("")
-    log_formatter = logging.Formatter('%(asctime)s - (%(lineno)s) - %(message)s')
     console_handler = logging.StreamHandler()
-    console_handler.setFormatter(log_formatter)
-    console_handler.setLevel('DEBUG')
+    console_handler.setFormatter(logging.Formatter(log_formatter))
+    # console_handler.setLevel('DEBUG')
     root_logger.addHandler(console_handler)
 
     if path is None:
@@ -114,7 +113,6 @@ def model_launcher(path=None):
         config_runs = dict()
         config_runs['Policies indicators'] = False
 
-    parameters = None
     processes_list = []
     for key, config in config_dict.items():
 
@@ -122,9 +120,9 @@ def model_launcher(path=None):
 
         stock_ini, attributes = parse_building_stock(config)
         parameters, summary_param = parse_parameters(folder['input'], config, stock_ini.sum())
-        energy_prices, energy_taxes, cost_invest, cost_invest_construction, co2_tax, co2_emission, policies_parameters, summary_input, cost_switch_fuel_end = parse_exogenous_input(
-            folder['input'], config)
-        rate_renovation_ini, ms_renovation_ini, ms_construction_ini, income_tenants_construction = parse_observed_data(config)
+        energy_prices, energy_taxes, cost_invest, co2_tax, co2_emission, policies_parameters, summary_input = parse_exogenous_input(
+            config)
+        rate_renovation_ini, ms_renovation_ini, ms_switch_fuel_ini = parse_observed_data(config)
 
         end_year = config['end']
 
@@ -141,11 +139,10 @@ def model_launcher(path=None):
         processes_list += [Process(target=res_irf,
                                    args=(calibration_year, end_year, folder_scenario, config, parameters, 
                                          policies_parameters, attributes,
-                                         energy_prices, energy_taxes, cost_invest, cost_invest_construction,
-                                         cost_switch_fuel_end,
+                                         energy_prices, energy_taxes, cost_invest,
                                          stock_ini, co2_tax, co2_emission,
-                                         rate_renovation_ini, ms_renovation_ini, ms_construction_ini,
-                                         income_tenants_construction, logging, args.output))]
+                                         rate_renovation_ini, ms_renovation_ini, ms_switch_fuel_ini,
+                                         logging))]
 
     for p in processes_list:
         p.start()
@@ -153,14 +150,13 @@ def model_launcher(path=None):
         p.join()
 
     logging.debug('Creating graphs')
+    console_handler.setLevel('WARNING')
     quick_graphs(folder['output'], args.output)
+    console_handler.setLevel('DEBUG')
 
     if config_runs['Policies indicators']:
         logging.debug('Calculating policies indicators')
-        CO2_value = pd.read_csv(os.path.join(folder['input'], 'policies', 'CO2_value.csv'), header=None, index_col=[0], squeeze=True)
-        run_indicators(config_runs, folder['output'], CO2_value, parameters=parameters)
-
-    # value_CO2 = pd.read_csv(os.path.join(folder['input'], 'value_CO2.csv'), header=None, index_col=[0], squeeze=True)
+        run_indicators(config_runs, folder['output'])
 
     end = time.time()
     logging.debug('Time for the module: {:,.0f} seconds.'.format(end - start))

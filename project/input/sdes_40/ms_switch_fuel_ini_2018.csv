@@ -1,0 +1,9 @@
+﻿Housing type,Heating energy,Natural gas,Oil fuel,Power,Wood fuel
+Single-family,Natural gas,0.799045209,0,0.157548537,0.043406254
+Single-family,Oil fuel,0.049707852,0.535568381,0.089558392,0.325165375
+Single-family,Power,0.028749745,0,0.731025139,0.240225116
+Single-family,Wood fuel,0.029709105,0,0.070582135,0.89970876
+Multi-family,Natural gas,1,0,0,0
+Multi-family,Oil fuel,0,1,0,
+Multi-family,Power,0,0,1,0
+Multi-family,Wood fuel,0,0,0,1

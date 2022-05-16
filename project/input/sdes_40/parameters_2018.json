@@ -1,0 +1,126 @@
+{
+  "Residual demolition rate": 0.05,
+  "Stock total ini 2018": 29037000,
+  "Stock needed": {
+    "type": "dict",
+    "source_type": "function",
+    "Population housing min": 2,
+    "Factor population housing ini": -0.007,
+    "source": null
+  },
+  "Share multi-family": {
+    "type": "dict",
+    "source_type": "function",
+    "factor": 0.87,
+    "source": null
+  },
+  "Available income ini 2018": 1421000000000,
+  "Available income rate": 0.012,
+  "Learning by doing renovation": -0.1,
+  "Learning years renovation": 10,
+  "Learning information rate renovation": 0.25,
+  "Information rate max renovation": 0.8,
+  "Renovation rate": {
+    "NPV min": -1000,
+    "Renovation rate max": 0.4,
+    "Renovation rate min": 0.00001,
+    "type": "dict"
+  },
+  "Nu": 8.0,
+  "Elasticity area construction": {
+    "val": {
+      "Single-family": {
+        "Homeowners": 0.2,
+        "Landlords": 0.2,
+        "Social-housing": 0.01
+      },
+      "Multi-family": {
+        "Homeowners": 0.01,
+        "Landlords": 0.01,
+        "Social-housing": 0.01
+      }
+    },
+    "index": [
+      "Housing type",
+      "Occupancy status"
+    ],
+    "type": "pd.Series"
+  },
+  "Area max construction": {
+    "val": {
+      "Single-family": {
+        "Homeowners": 160,
+        "Landlords": 101,
+        "Social-housing": 90
+      },
+      "Multi-family": {
+        "Homeowners": 89,
+        "Landlords": 76,
+        "Social-housing": 76
+      }
+    },
+    "index": [
+      "Housing type",
+      "Occupancy status"
+    ],
+    "type": "pd.Series"
+  },
+  "Rotation rate": {
+    "val": {
+      "Landlords": 0.121,
+      "Homeowners": 0.0,
+      "Social-housing": 0.052
+    },
+    "index": [
+      "Occupancy status"
+    ],
+    "type": "pd.Series"
+  },
+  "Mutation rate": {
+    "val": {
+      "Landlords": 0,
+      "Homeowners": 0,
+      "Social-housing": 0
+    },
+    "index": [
+      "Occupancy status"
+    ],
+    "type": "pd.Series"
+  },
+  "Aggregated consumption": {
+    "val": {
+      "Power": 36,
+      "Natural gas": 120,
+      "Oil fuel": 37,
+      "Wood fuel": 71
+    },
+    "index": [
+      "Heating energy"
+    ],
+    "type": "pd.Series"
+  },
+  "Market-share energy construction": {
+    "type": "pd.DataFrame",
+    "val": {
+      "Single-family": {
+        "Power": 0.22,
+        "Natural gas": 0.78,
+        "Oil fuel": 0,
+        "Wood fuel": 0
+      },
+      "Multi-family": {
+        "Power": 0.61,
+        "Natural gas": 0.28,
+        "Oil fuel": 0,
+        "Wood fuel": 0.11
+      }
+    },
+    "index": [
+      "Housing type",
+      "Heating energy"
+    ]
+  }
+}
+
+
+

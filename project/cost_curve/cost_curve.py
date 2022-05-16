@@ -6,11 +6,15 @@ import json
 from multiprocessing import Process
 import datetime
 from itertools import product
+import sys
+
+from graphs import cumulated_emission_cost_plot, cost_cumulated_emission_plots
+
+sys.path.append('project')
 
 from buildings import HousingStock
 from parse_input import parse_json, apply_linear_rate, final2consumption
 from utils import reindex_mi
-from ui_abattement_curve import *
 
 
 def prepare_input(config):
@@ -112,24 +116,23 @@ def select_final_state(df, energy_performance, dict_replace=None):
     return ds_status_quo
 
 
-def to_result(carbon_cost, emission_final_end, emission_trend_end, potential_emission_saving, emission_ini, stock,
+def to_result(carbon_cost, emission_scenario_end, emission_baseline, potential_emission_saving, emission_ini, stock,
               path, yr, name='', dict_replace=None, energy_performance='A', horizon=30, private_carbon_cost=None,
-              health_carbon_cost=None, lost_carbon_cost=None):
+              health_carbon_cost=None, lost_carbon_cost=None, lcc_saving=None):
     """Formatting results.
 
     Parameters
     ----------
     carbon_cost: pd.DataFrame
         Social carbon cost by agent archetype and possible final state.
-    emission_final_end: pd.DataFrame
-        Emission (tCO2) by agent archetype in the prospective scenario scenario to the horizon (final year) and
-        possible final state.
-    emission_trend_end: pd.Series
-        Emission (tCO2) by agent archetype in the trend scenario scenario to the horizon (final year).
+    emission_scenario_end: pd.DataFrame
+        Last year emission (tCO2/year) for all renovation scenario (performance final, energy final).
+    emission_baseline: pd.DataFrame
+        Emission (tCO2/year) in the baseline scenario.
     potential_emission_saving
-        Emission (tCO2) by agent archetype in the trend scenario scenario to the horizon.
+        Emission (MtCO2) by agent archetype in the trend scenario to the horizon.
     emission_ini
-        Initial Emission (tCO2) by agent archetype (first year).
+        First year emission (tCO2/year).
     stock: pd.Series
     path: str
         Scenario folder path.
@@ -142,6 +145,7 @@ def to_result(carbon_cost, emission_final_end, emission_trend_end, potential_emi
     private_carbon_cost : pd.DataFrame, optional
     health_carbon_cost : pd.DataFrame, optional
     lost_carbon_cost : pd.DataFrame, optional
+    lcc_saving : pd.DataFrame, optional
 
     Returns
     -------
@@ -151,12 +155,15 @@ def to_result(carbon_cost, emission_final_end, emission_trend_end, potential_emi
     name = '{}_{}_{}.csv'.format(energy_performance, name.lower(), yr)
     path = os.path.join(path, name)
 
-    emission_final_end = select_final_state(emission_final_end, energy_performance, dict_replace=dict_replace)
+    emission_baseline = emission_baseline / 10**6
+    emission_baseline_total = emission_baseline.sum().sum()
+
+    emission_scenario_end = select_final_state(emission_scenario_end, energy_performance, dict_replace=dict_replace)
 
     # gCO2/m2 -> tCO2
-    emission_final_end_ref = emission_final_end.sum()
-    emission_diff = (emission_ini - emission_final_end) / 10**6
-    emission_total_reference = emission_ini.sum() / 10**6
+    emission_scenario_end_ref = emission_scenario_end.sum()
+    emission_diff = (emission_ini - emission_scenario_end) / 10**6
+    emission_total_ini = emission_ini.sum() / 10**6
 
     output = dict()
     output['Carbon cost (euro/tCO2)'] = select_final_state(carbon_cost, energy_performance, dict_replace=dict_replace)
@@ -164,6 +171,8 @@ def to_result(carbon_cost, emission_final_end, emission_trend_end, potential_emi
     if private_carbon_cost is not None:
         output['Private carbon cost (euro/tCO2)'] = select_final_state(private_carbon_cost, energy_performance,
                                                                        dict_replace=dict_replace)
+        output['LCC saving (euro/m2)'] = select_final_state(lcc_saving, energy_performance,
+                                                            dict_replace=dict_replace)
 
     if health_carbon_cost is not None:
         output['Health carbon cost (euro/tCO2)'] = select_final_state(health_carbon_cost, energy_performance,
@@ -173,29 +182,33 @@ def to_result(carbon_cost, emission_final_end, emission_trend_end, potential_emi
         output['Opportunity carbon cost (euro/tCO2)'] = select_final_state(lost_carbon_cost, energy_performance,
                                                                            dict_replace=dict_replace)
 
-    output['Potential emission saving (tCO2)'] = select_final_state(potential_emission_saving, energy_performance, dict_replace=dict_replace)
-    output['Potential emission saving (tCO2/yr)'] = output['Potential emission saving (tCO2)'] / horizon
-    output['Emission difference (tCO2/yr)'] = emission_diff
-    output['Emission final horizon (tCO2/yr)'] = emission_final_end
-    output['Emission trend horizon (tCO2/yr)'] = emission_trend_end
+    output['Potential emission saving (MtCO2)'] = select_final_state(potential_emission_saving, energy_performance,
+                                                                     dict_replace=dict_replace)
+    output['Potential emission saving (MtCO2/yr)'] = output['Potential emission saving (MtCO2)'] / horizon
+    output['Emission initial (MtCO2/yr)'] = emission_ini / 10**6
+    output['Emission baseline end (MtCO2/yr)'] = emission_baseline.iloc[:, -1]
+    output['Emission scenario end (MtCO2/yr)'] = emission_scenario_end / 10**6
+    output['Emission difference (MtCO2/yr)'] = emission_diff
+
     output['Dwelling number'] = stock
 
     output = pd.DataFrame(output)
 
     # output = output[output['Potential emission saving (tCO2)'] > 0]
-    output.loc[output['Potential emission saving (tCO2)'] <= 0, 'Carbon cost (euro/tCO2)'] = float('nan')
+    output.loc[output['Potential emission saving (MtCO2)'] <= 0, 'Carbon cost (euro/tCO2)'] = float('nan')
 
     output = output.reorder_levels(
         ['Occupancy status', 'Housing type', 'Income class', 'Energy performance', 'Heating energy'])
     output = output.sort_values('Carbon cost (euro/tCO2)')
 
-    output['Cumulated potential emission saving (tCO2)'] = output['Potential emission saving (tCO2/yr)'].cumsum()
-    output['Cumulated potential emission saving (%)'] = output[
-                                                            'Cumulated potential emission saving (tCO2)'] / emission_total_reference
+    output['Cumulated potential emission saving (MtCO2/yr)'] = output['Potential emission saving (MtCO2/yr)'].cumsum()
+    output['Cumulated potential emission saving (%/2018)'] = output['Cumulated potential emission saving (MtCO2/yr)'] / emission_total_ini
 
-    output['Cumulated emission difference (tCO2)'] = output['Emission difference (tCO2/yr)'].cumsum()
-    output['Cumulated emission difference (%)'] = output[
-                                                      'Cumulated emission difference (tCO2)'] / emission_total_reference
+    output['Cumulated potential emission saving (MtCO2)'] = output['Potential emission saving (MtCO2)'].cumsum()
+    output['Cumulated potential emission saving (%/baseline)'] = output['Cumulated potential emission saving (MtCO2)'] / emission_baseline_total
+
+    output['Cumulated emission difference (MtCO2/yr)'] = output['Emission difference (MtCO2/yr)'].cumsum()
+    output['Cumulated emission difference (%/2018)'] = output['Cumulated emission difference (MtCO2/yr)'] / emission_total_ini
 
     output['Cumulated dwelling number'] = output['Dwelling number'].cumsum()
     output['Cumulated dwelling number (%)'] = output['Cumulated dwelling number'] / stock.sum()
@@ -347,12 +360,12 @@ def to_carbon_cost(config, path, calibration_year):
 
     for t in transition:
         emission_final = emission_final.stack('{} final'.format(t))
-    emission_final_end = emission_final.iloc[:, -1]
+    emission_scenario_end = emission_final.iloc[:, -1]
     for t in transition:
-        emission_final_end = emission_final_end.unstack('{} final'.format(t))
+        emission_scenario_end = emission_scenario_end.unstack('{} final'.format(t))
 
     # emission flow during last year on the baseline scenario
-    emission_trend_end = emission.iloc[:, -1] * buildings.stock * buildings.to_area()
+    emission_baseline = (emission.T * (buildings.stock * buildings.to_area())).T
 
     list_energy_transition = [
                               {'2Power': {'Natural gas': 'Power', 'Oil fuel': 'Power', 'Wood fuel': 'Power'}},
@@ -366,11 +379,11 @@ def to_carbon_cost(config, path, calibration_year):
 
         name = list(energy_transition.keys())[0]
 
-        to_result(carbon_cost, emission_final_end, emission_trend_end, potential_emission_saving, emission_ini,
+        to_result(carbon_cost, emission_scenario_end, emission_baseline, potential_emission_saving, emission_ini,
                   buildings.stock, path, calibration_year, name=name, dict_replace=energy_transition[name],
                   energy_performance=performance_transition, horizon=horizon,
                   private_carbon_cost=private_carbon_cost, health_carbon_cost=health_carbon_cost,
-                  lost_carbon_cost=lost_carbon_cost)
+                  lost_carbon_cost=lost_carbon_cost, lcc_saving=lcc_saving)
 
 
 if __name__ == '__main__':
@@ -380,11 +393,10 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    name_file = os.path.join(args.name)
-    with open(name_file) as file:
+    with open(os.path.join(args.name)) as file:
         config = json.load(file)
 
-    path = os.path.join('project/output', datetime.datetime.today().strftime('%Y%m%d_%H%M%S'))
+    path = os.path.join('project/cost_curve/output', datetime.datetime.today().strftime('%Y%m%d_%H%M%S'))
     if not os.path.isdir(path):
         os.mkdir(path)
 
@@ -409,10 +421,13 @@ if __name__ == '__main__':
 
         cost_cumulated_emission_plots(scenarios_dict,
                                       save=os.path.join(path_key, 'cost_emission_end_{}.png'.format(key.lower())),
-                                      graph='Cumulated emission difference (%)')
+                                      graph='Cumulated emission difference (%/2018)')
         cost_cumulated_emission_plots(scenarios_dict,
-                                      save=os.path.join(path_key, 'cost_potential_emission_{}.png'.format(key.lower())),
-                                      graph='Cumulated potential emission saving (%)')
+                                      save=os.path.join(path_key, 'cost_potential_emission_ini_{}.png'.format(key.lower())),
+                                      graph='Cumulated potential emission saving (%/2018)')
+        cost_cumulated_emission_plots(scenarios_dict,
+                                      save=os.path.join(path_key, 'cost_potential_emission_baseline_{}.png'.format(key.lower())),
+                                      graph='Cumulated potential emission saving (%/baseline)')
         cost_cumulated_emission_plots(scenarios_dict,
                                       save=os.path.join(path_key, 'cost_dwelling_{}.png'.format(key.lower())),
                                       graph='Cumulated dwelling number (%)')

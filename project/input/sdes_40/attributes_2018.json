@@ -19,15 +19,19 @@
       "A"
     ],
     "Energy performance construction": [
-      "BBC",
       "BEPOS"
     ],
     "Income class": [
-      "C1",
-      "C2",
-      "C3",
-      "C4",
-      "C5"
+      "D1",
+      "D2",
+      "D3",
+      "D4",
+      "D5",
+      "D6",
+      "D7",
+      "D8",
+      "D9",
+      "D10"
     ],
     "Heating energy": [
       "Power",
@@ -40,16 +44,16 @@
   "attributes2area": {
     "val": {
       "Homeowners": {
-        "Single-family": 123,
-        "Multi-family": 75.8
+        "Single-family": 109.5,
+        "Multi-family": 74.3
       },
       "Landlords": {
-        "Single-family": 90,
-        "Multi-family": 52.25
+        "Single-family": 87.1,
+        "Multi-family": 53.5
       },
       "Social-housing": {
-        "Single-family": 83.7,
-        "Multi-family": 65.85
+        "Single-family": 77.8,
+        "Multi-family": 63.3
       }
     },
     "index": [
@@ -156,9 +160,9 @@
     },
     "Reference": {
       "val": {
-        "Homeowners": 17,
+        "Homeowners": 16,
         "Landlords": 3,
-        "Social-housing": 17
+        "Social-housing": 16
       },
       "index": [
         "Occupancy status"
@@ -189,7 +193,6 @@
     },
     "type": "dict_to_parse"
   },
-  "attributes2horizon_construction": 25,
   "attributes2heater": {
     "val": {
       "G": 0.85,
@@ -219,8 +222,64 @@
   },
   "attributes2discount": {
     "Reference": {
-      "source": "project/input/phebus/attributes2discount_ref.csv",
-      "type": "file"
+      "val": {
+        "D1": {
+          "Single-family": 0.15,
+          "Multi-family": 0.37,
+          "Social-housing": 0.04
+        },
+        "D2": {
+          "Single-family": 0.15,
+          "Multi-family": 0.37,
+          "Social-housing": 0.04
+        },
+        "D3": {
+          "Single-family": 0.1,
+          "Multi-family": 0.24,
+          "Social-housing": 0.04
+        },
+        "D4": {
+          "Single-family": 0.1,
+          "Multi-family": 0.24,
+          "Social-housing": 0.04
+        },
+        "D5": {
+          "Single-family": 0.07,
+          "Multi-family": 0.15,
+          "Social-housing": 0.04
+        },
+        "D6": {
+          "Single-family": 0.07,
+          "Multi-family": 0.15,
+          "Social-housing": 0.04
+        },
+        "D7": {
+          "Single-family": 0.05,
+          "Multi-family": 0.07,
+          "Social-housing": 0.04
+        },
+        "D8": {
+          "Single-family": 0.05,
+          "Multi-family": 0.07,
+          "Social-housing": 0.04
+        },
+        "D9": {
+          "Single-family": 0.04,
+          "Multi-family": 0.05,
+          "Social-housing": 0.04
+        },
+        "D10": {
+          "Single-family": 0.04,
+          "Multi-family": 0.05,
+          "Social-housing": 0.04
+        }
+      },
+      "index": [
+        "Income class owner",
+        "Housing type"
+      ],
+      "unit": "%/yr",
+      "type": "pd.Series"
     },
     "No budget constraint": {
       "type": "int", "val": 0.07
@@ -230,33 +289,18 @@
     },
     "type": "dict_to_parse"
   },
-  "attributes2discount_construction": {
-    "val": {
-      "Single-family": {
-        "Homeowners": 0.07,
-        "Landlords": 0.07,
-        "Social-housing": 0.04
-      },
-      "Multi-family": {
-        "Homeowners": 0.1,
-        "Landlords": 0.1,
-        "Social-housing": 0.04
-      }
-    },
-    "index": [
-      "Housing type",
-      "Occupancy status"
-    ],
-    "type": "pd.Series",
-    "unit": "%/yr"
-  },
   "attributes2income": {
     "val": {
-      "C1": 14103,
-      "C2": 21002,
-      "C3": 29394,
-      "C4": 41091,
-      "C5": 61300
+      "D1": 13628,
+      "D2": 20391,
+      "D3": 24194,
+      "D4": 27426,
+      "D5": 31139,
+      "D6": 35178,
+      "D7": 39888,
+      "D8": 45400,
+      "D9": 54309,
+      "D10": 92735
     },
     "index": [
       "Income class"
@@ -335,3 +379,4 @@
     "type": "pd.DataFrame"
   }
 }
+
