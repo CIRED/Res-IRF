@@ -27,6 +27,9 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
 
 
+STYLES = ['-', '--', 's-', 'o-', '^-', '*-', ':'] * 10
+
+
 def reverse_nested_dict(data_dict):
     """
     {(outerKey, innerKey): values for outerKey, innerDict in item_dict['val'].items() for
@@ -96,9 +99,11 @@ def simple_pd_plot(df, ylabel, colors=None, format_x=None, format_y=None, save=N
     else:
         fig, ax = plt.subplots(1, 1)
     if colors is None:
-        df.plot(ax=ax)
+        df.plot(ax=ax, style=STYLES)
+
     else:
-        df.plot(ax=ax, color=colors)
+        df.plot(ax=ax, color=colors, style=STYLES)
+
     ax.set_ylabel(ylabel)
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
@@ -130,13 +135,21 @@ def simple_pd_plot(df, ylabel, colors=None, format_x=None, format_y=None, save=N
         ax.scatter(scatter_list[0], scatter_list[1])
 
     try:
-        ax.get_legend().remove()
-        fig.legend(frameon=False)
+        box = ax.get_position()
+        ax.set_position([box.x0, box.y0 + box.height * 0.1,
+                         box.width, box.height * 0.9])
+
+        # Put a legend below current axis
+        ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05),
+                  frameon=False, shadow=True, ncol=3)
+
+        # ax.get_legend().remove()
+        # fig.legend(frameon=False)
     except AttributeError:
         pass
 
     if save is not None:
-        fig.savefig(save)
+        fig.savefig(save, bbox_inches='tight')
         plt.close(fig)
     else:
         plt.show()
@@ -222,14 +235,14 @@ def scenario_grouped_subplots(df_dict, suptitle='', n_columns=3, format_y=lambda
             ax = axes[row, column]
         try:
             key = list_keys[k]
-            df_dict[key].sort_index().plot(ax=ax, linewidth=1)
+            df_dict[key].sort_index().plot(ax=ax, linewidth=1, style=STYLES, ms=3)
             
             ax.spines['top'].set_visible(False)
             ax.spines['right'].set_visible(False)
             ax.spines['left'].set_visible(False)
 
             plt.setp(ax.xaxis.get_majorticklabels(), rotation=rotation)
-            ax.xaxis.set_tick_params(which=u'both', length=0)
+            ax.xaxis.set_tick_params(which=u'both', length=0, labelsize=15)
             ax.xaxis.set_major_locator(MaxNLocator(integer=True))
             if nbins is not None:
                 plt.locator_params(axis='x', nbins=nbins)
@@ -239,9 +252,9 @@ def scenario_grouped_subplots(df_dict, suptitle='', n_columns=3, format_y=lambda
 
             # ax.get_yaxis().set_visible(False)
             if isinstance(key, tuple):
-                ax.set_title('{}-{}'.format(key[0], key[1]), fontweight='bold', fontsize=10, pad=-1.6)
+                ax.set_title('{}-{}'.format(key[0], key[1]), fontweight='bold', pad=-1.6)
             else:
-                ax.set_title(key, fontweight='bold', fontsize=10, pad=-1.6)
+                ax.set_title(key, fontweight='bold', pad=-1.6)
             if k == 0:
                 handles, labels = ax.get_legend_handles_labels()
                 labels = [l.replace('_', ' ') for l in labels]
@@ -249,11 +262,14 @@ def scenario_grouped_subplots(df_dict, suptitle='', n_columns=3, format_y=lambda
         except IndexError:
             ax.axis('off')
 
-    fig.legend(handles, labels, loc='upper right', frameon=False)
+    # fig.legend(handles, labels, loc='upper right', frameon=False)
+    fig.legend(handles, labels, loc='lower center', frameon=False, ncol=3,
+               bbox_to_anchor=(0.5, -0.05))
+    # fig.tight_layout()
     # plt.legend(frameon=False)
 
     if save is not None:
-        fig.savefig(save)
+        fig.savefig(save, bbox_inches='tight')
         plt.close(fig)
     else:
         plt.show()
@@ -328,6 +344,8 @@ def table_plots(df, level_x=0, level_y=1, suptitle='', format_val=lambda x: '{:.
     coord = list(product(range(0, len(index)), range(0, len(columns))))
 
     fig, axes = plt.subplots(len(index), len(columns), figsize=(12.8, 9.6), sharex='col', sharey='row')
+    # fig.tight_layout()
+
     fig.suptitle(suptitle, fontsize=20, fontweight='bold')
     fig.subplots_adjust(top=0.95)
 
@@ -423,9 +441,10 @@ def table_plots_scenarios(dict_df, suptitle='', format_y=lambda y, _: y, save=No
             ax.axis('off')
             continue
 
-    fig.legend(handles, labels, loc='upper right', frameon=False)
+    fig.legend(handles, labels, loc='lower center', frameon=False, ncol=5)
+
     if save is not None:
-        fig.savefig(save)
+        fig.savefig(save, bbox_inches='tight')
         plt.close(fig)
     else:
         plt.show()
@@ -806,3 +825,135 @@ def policies_stacked_plot(df, save=None):
 
     if save is not None:
         fig.savefig(save)
+
+
+def waterfall_chart(df, title='Social Economic Assessment', save=None):
+    """Make waterfall chart. Used for Social Economic Assessment.
+
+    Parameters
+    ----------
+    df: pd.Series
+    title: str, optional
+
+    Returns
+    -------
+
+    """
+
+    color = {'Investment': 'firebrick', 'Energy saving': 'darkorange', 'Emission saving': 'forestgreen',
+             'Health benefit': 'royalblue'}
+    data = df.copy()
+
+    fig, ax = plt.subplots(1, 1, figsize=(12.8, 9.6))
+
+    blank = data.cumsum().shift(1).fillna(0)
+
+    # Get the net total number for the final element in the waterfall
+    total = data.sum()
+    blank.loc["Social NPV"] = total
+    data.loc["Social NPV"] = total
+    # The steps graphically show the levels as well as used for label placement
+    step = blank.reset_index(drop=True).repeat(3).shift(-1)
+    step[1::3] = np.nan
+
+    # When plotting the last element, we want to show the full bar,
+    # Set the blank to 0
+    blank.loc["Social NPV"] = 0
+
+    # Plot and label
+    data.plot(kind='bar', stacked=True, bottom=blank, legend=None,
+              title=title, ax=ax, color=color.values(), edgecolor=None)
+    # my_plot.plot(step.index, step.values, 'k')
+
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.xaxis.set_tick_params(which=u'both', length=0, labelsize=15)
+    ax.yaxis.set_tick_params(which=u'both', length=0)
+
+    # Get the y-axis position for the labels
+    y_height = data.cumsum().shift(1).fillna(0)
+
+    # Get an offset so labels don't sit right on top of the bar
+    max = data.max()
+    neg_offset, pos_offset = max / 20, max / 50
+    plot_offset = int(max / 15)
+
+    # Start label loop
+    loop = 0
+    for index, val in data.iteritems():
+        # For the last item in the list, we don't want to double count
+        if val == total:
+            y = y_height[loop]
+        else:
+            y = y_height[loop] + val
+        # Determine if we want a neg or pos offset
+        if val > 0:
+            y += pos_offset
+        else:
+            y -= neg_offset
+        ax.annotate("{:,.0f}".format(val), (loop, y), ha="center")
+        loop += 1
+
+    ax.set_xticklabels(data.index, rotation=0)
+
+    if save is not None:
+        fig.savefig(save, bbox_inches='tight')
+        plt.close(fig)
+    else:
+        plt.show()
+
+
+def assessment_scenarios(df, save=None):
+    """Compare social NPV between scenarios and one reference.
+
+    Stacked bar chart.
+
+    Parameters
+    ----------
+    df
+    save
+
+    Returns
+    -------
+
+    """
+    fig, ax = plt.subplots(1, 1, figsize=(12.8, 9.6))
+    color = {'Investment': 'firebrick', 'Energy saving': 'darkorange', 'Emission saving': 'forestgreen',
+             'Health benefit': 'royalblue'}
+
+    total = df.sum(axis=1).reset_index()
+    total.columns = ['Scenarios', 'NPV']
+
+    pd.DataFrame(total).plot(kind='scatter', x='Scenarios', y='NPV', legend=False, zorder=10, ax=ax, color='black',
+                             s=50, xlabel=None)
+    df.plot(kind='bar', stacked=True, ax=ax, color=color)
+
+
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.xaxis.set_tick_params(which=u'both', length=0, labelsize=12)
+    ax.yaxis.set_tick_params(which=u'both', length=0)
+
+    ax.xaxis.label.set_visible(False)
+    ax.yaxis.label.set_visible(False)
+
+    for _, y in total.iterrows():
+        ax.annotate("{:,.1f} M€".format(y['NPV']), (y['Scenarios'], y['NPV'] + 1), ha="center")
+
+    box = ax.get_position()
+    ax.set_position([box.x0, box.y0 + box.height * 0.1,
+                     box.width, box.height * 0.9])
+
+    # Put a legend below current axis
+    ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05),
+              frameon=False, shadow=True, ncol=5)
+    ax.set_xticklabels(df.index, rotation=0)
+
+
+    if save is not None:
+        fig.savefig(save, bbox_inches='tight')
+        plt.close(fig)
+    else:
+        plt.show()

@@ -18,7 +18,7 @@ A simple user interface is available on http://resirf.pythonanywhere.com/ to giv
 
 **Step 1**: Git **clone Res-IRF folder** in your computer.
    - Use your terminal and go to a location where you want to store the Res-IRF project.
-   - `git clone https://github.com/lucas-vivier/Res-IRF.git`
+   - `git clone https://github.com/CIRED/Res-IRF.git`
 
 **Step 2**: **Create a conda environment** from the environment.yml file:
    - The environment.yml file is in the Res-IRF folder.

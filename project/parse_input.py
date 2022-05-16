@@ -162,6 +162,7 @@ def to_share_multi_family_tot(stock_needed, param):
         {2012: 0.393, 2013: 0.394, 2014: 0.395}
     """
 
+
     def func(stock, stock_ini, p):
         """Share of multi-family dwellings as a function of the growth rate of the dwelling stock.
 

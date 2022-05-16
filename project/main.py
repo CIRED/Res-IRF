@@ -86,18 +86,17 @@ def model_launcher(path=None):
     if not os.path.isdir(folder['output']):
         os.mkdir(folder['output'])
 
+    log_formatter = '%(asctime)s - %(message)s'
     logging.basicConfig(filename=os.path.join(folder['output'], 'log.txt'),
                         filemode='a',
                         level=logging.DEBUG,
-                        format='%(asctime)s - (%(lineno)s) - %(message)s')
+                        format=log_formatter)
 
     logging.getLogger('matplotlib.font_manager').disabled = True
-
     root_logger = logging.getLogger("")
-    log_formatter = logging.Formatter('%(asctime)s - (%(lineno)s) - %(message)s')
     console_handler = logging.StreamHandler()
-    console_handler.setFormatter(log_formatter)
-    console_handler.setLevel('DEBUG')
+    console_handler.setFormatter(logging.Formatter(log_formatter))
+    # console_handler.setLevel('DEBUG')
     root_logger.addHandler(console_handler)
 
     if path is None:
@@ -151,13 +150,13 @@ def model_launcher(path=None):
         p.join()
 
     logging.debug('Creating graphs')
+    console_handler.setLevel('WARNING')
     quick_graphs(folder['output'], args.output)
+    console_handler.setLevel('DEBUG')
 
     if config_runs['Policies indicators']:
         logging.debug('Calculating policies indicators')
         run_indicators(config_runs, folder['output'])
-
-    # value_CO2 = pd.read_csv(os.path.join(folder['input'], 'value_CO2.csv'), header=None, index_col=[0], squeeze=True)
 
     end = time.time()
     logging.debug('Time for the module: {:,.0f} seconds.'.format(end - start))

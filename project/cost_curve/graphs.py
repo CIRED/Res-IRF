@@ -22,8 +22,11 @@ def cumulated_emission_cost_plot(data, graph, add_title=''):
     fig.suptitle(title, fontweight='bold')
     fig.subplots_adjust(top=0.85)
 
-    if graph == 'Cumulated potential emission saving (%)':
+    if graph == 'Cumulated potential emission saving (%/2018)':
         xlabel = "Potentiel de réduction\n % Émission secteur résidentiel 2018"
+        x = data[graph]
+    elif graph == 'Cumulated potential emission saving (%/baseline)':
+        xlabel = "Potentiel de réduction\n % Émission secteur résidentiel"
         x = data[graph]
     elif graph == 'Cumulated dwelling number (%)':
         xlabel = 'Potentiel\n Millions logements'
@@ -50,7 +53,7 @@ def cumulated_emission_cost_plot(data, graph, add_title=''):
     plt.show()
 
 
-def cost_cumulated_emission_plots(scenarios_dict, addtitle=None, legtitle=None, save=None, xlim=(0, 2000),
+def cost_cumulated_emission_plots(scenarios_dict, addtitle='', legtitle=None, save=None, xlim=(0, 2000),
                                   graph='Cumulated emission difference (%)'):
     """
     Cumulated potential reduction of emission function of CO2 cost (sorted from lower to higher cost)
@@ -63,8 +66,8 @@ def cost_cumulated_emission_plots(scenarios_dict, addtitle=None, legtitle=None, 
     ----------
     scenarios_dict: dict
         dict that contains one pd.DataFrame by scenarios
-    graph: {'Cumulated potential emission saving (%)', 'Cumulated emission difference (%)',
-            'Cumulated dwelling number (%)'}
+    graph: {'Cumulated potential emission saving (%/2018)', 'Cumulated emission difference (%/2018)',
+            Cumulated potential emission saving (%/baseline)', 'Cumulated dwelling number (%)'}
     addtitle: str
     legtitle: str
     """
@@ -92,7 +95,8 @@ def cost_cumulated_emission_plots(scenarios_dict, addtitle=None, legtitle=None, 
     if xlim is not None:
         ax.set_xlim(xlim[0], xlim[1])
 
-    if graph in ['Cumulated potential emission saving (%)', 'Cumulated emission difference (%)']:
+    if graph in ['Cumulated potential emission saving (%/2018)', 'Cumulated emission difference (%/2018)',
+                 'Cumulated potential emission saving (%/baseline)']:
         ylabel = "Potentiel de réduction\n % Émission secteur résidentiel 2018"
     elif graph == 'Cumulated dwelling number (%)':
         ylabel = 'Potentiel\n Millions logements'

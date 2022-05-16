@@ -68,7 +68,7 @@
   "Rotation rate": {
     "val": {
       "Landlords": 0.121,
-      "Homeowners": 0.021,
+      "Homeowners": 0.0,
       "Social-housing": 0.052
     },
     "index": [

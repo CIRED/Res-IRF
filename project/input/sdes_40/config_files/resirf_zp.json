@@ -1,0 +1,568 @@
+{
+  "ZP, price constant, income constant": {
+    "end": 2031,
+    "green_value": "Reference",
+    "budget_constraint": "Reference",
+    "stock_buildings": {
+      "source": "project/input/sdes_40/building_stock_sdes2018.csv",
+      "year": 2018,
+      "type": "pd.Series",
+      "levels": ["Occupancy status", "Housing type", "Income class owner", "Income class", "Heating energy", "Energy performance"],
+      "income_class": "decile"
+    },
+    "attributes": {
+      "type": "file",
+      "source": "project/input/sdes_40/attributes_2018.json"
+    },
+    "parameters": {
+      "type": "file",
+      "source": "project/input/sdes_40/parameters_2018.json"
+    },
+    "population": {
+      "type": "file",
+      "source": "project/input/sdes_40/projection_population_2018.csv"
+    },
+    "renovation_rate": {
+      "type_calibration": "function",
+      "source_calibration": "project/input/sdes_40/intermediate/rho_sdes2018.pkl",
+      "calibration_data": "project/input/sdes_40/renovation_rate_ini_2018.csv",
+      "version": "version_3"
+    },
+    "market_share": {
+      "calibration_activated": true,
+      "type_calibration": "function",
+      "source_calibration": "project/input/sdes_40/intermediate/cost_intangible_sdes2018.pkl",
+      "calibration_data": "project/input/sdes_40/ms_renovation_ini_2018.csv"
+    },
+    "ms_switch_fuel_ini": {
+      "type": "file",
+      "source": "project/input/sdes_40/ms_switch_fuel_ini_2018.csv"
+    },
+    "cost_renovation": {
+      "type": "file",
+      "source": "project/input/sdes_40/cost_renovation.csv",
+      "index_names": [
+        "Energy performance"
+      ],
+      "columns_names": [
+        "Energy performance final"
+      ]
+    },
+    "lbd_renovation": true,
+    "info_renovation": false,
+    "energy_prices_bt": {
+      "type": "file",
+      "source": "project/input/sdes_40/energy_prices_2018.csv"
+    },
+    "energy_taxes": {
+      "activated": false,
+      "type": "file",
+      "source": "project/input/phebus/energy_taxes.csv",
+      "vta": false
+    },
+    "energy_prices_evolution": "constant",
+    "co2_emission": {
+      "type": "file",
+      "source": "project/input/sdes_40/CO2_emission_2012.csv"
+    },
+    "policies": {
+      "type": "file",
+      "source": "project/input/policies/policies.json"
+    },
+    "carbon_tax": {
+      "activated": true,
+      "start": 2018,
+      "end": 2019,
+      "calibration": true,
+      "value": "project/input/policies/carbon_tax.csv",
+      "co2_content": "project/input/sdes_40/CO2_tax_2012.csv"
+    },
+    "cite": {
+      "activated": true,
+      "start": 2018,
+      "end": 2019,
+      "calibration": true
+    },
+    "ma_prime_renov": {
+      "activated": false,
+      "start": 2021,
+      "end": 2051,
+      "calibration": false
+    },
+    "cee_subsidy": {
+      "activated": true,
+      "start": 2018,
+      "end": 2019,
+      "calibration": true,
+      "value": "project/input/policies/cee_subsidy_decile.csv"
+    },
+    "cee_taxes": {
+      "activated": true,
+      "start": 2018,
+      "end": 2019,
+      "calibration": true,
+      "value": "project/input/policies/cee_tax.csv"
+
+    },
+    "reduced_tax": {
+      "activated": true,
+      "start": 2018,
+      "end": 2019,
+      "calibration": true
+    },
+    "eptz_subsidy": {
+      "activated": true,
+      "start": 2018,
+      "end": 2019,
+      "calibration": true
+    },
+    "renovation_obligation": {
+      "activated": false,
+      "start": 2018,
+      "end": 2040,
+      "calibration": false
+    },
+    "subsidies_curtailment": {
+      "activated": true,
+      "start": 2018,
+      "end": 2051,
+      "calibration": true
+    },
+    "Household income rate": 0.0,
+    "health_cost": {
+      "type": "file",
+      "source": "project/input/policies/health_cost_decile.csv"
+    },
+    "carbon_value": {
+      "type": "file",
+      "source": "project/input/policies/carbon_value.csv"
+    },
+    "Demolition rate": 0.0035
+
+  },
+  "ZP, price constant": {
+    "end": 2031,
+    "green_value": "Reference",
+    "budget_constraint": "Reference",
+    "stock_buildings": {
+      "source": "project/input/sdes_40/building_stock_sdes2018.csv",
+      "year": 2018,
+      "type": "pd.Series",
+      "levels": ["Occupancy status", "Housing type", "Income class owner", "Income class", "Heating energy", "Energy performance"],
+      "income_class": "decile"
+    },
+    "attributes": {
+      "type": "file",
+      "source": "project/input/sdes_40/attributes_2018.json"
+    },
+    "parameters": {
+      "type": "file",
+      "source": "project/input/sdes_40/parameters_2018.json"
+    },
+    "population": {
+      "type": "file",
+      "source": "project/input/sdes_40/projection_population_2018.csv"
+    },
+    "renovation_rate": {
+      "type_calibration": "function",
+      "source_calibration": "project/input/sdes_40/intermediate/rho_sdes2018.pkl",
+      "calibration_data": "project/input/sdes_40/renovation_rate_ini_2018.csv",
+      "version": "version_3"
+    },
+    "market_share": {
+      "calibration_activated": true,
+      "type_calibration": "function",
+      "source_calibration": "project/input/sdes_40/intermediate/cost_intangible_sdes2018.pkl",
+      "calibration_data": "project/input/sdes_40/ms_renovation_ini_2018.csv"
+    },
+    "ms_switch_fuel_ini": {
+      "type": "file",
+      "source": "project/input/sdes_40/ms_switch_fuel_ini_2018.csv"
+    },
+    "cost_renovation": {
+      "type": "file",
+      "source": "project/input/sdes_40/cost_renovation.csv",
+      "index_names": [
+        "Energy performance"
+      ],
+      "columns_names": [
+        "Energy performance final"
+      ]
+    },
+    "lbd_renovation": true,
+    "info_renovation": false,
+    "energy_prices_bt": {
+      "type": "file",
+      "source": "project/input/sdes_40/energy_prices_2018.csv"
+    },
+    "energy_taxes": {
+      "activated": false,
+      "type": "file",
+      "source": "project/input/phebus/energy_taxes.csv",
+      "vta": false
+    },
+    "energy_prices_evolution": "constant",
+    "co2_emission": {
+      "type": "file",
+      "source": "project/input/sdes_40/CO2_emission_2012.csv"
+    },
+    "policies": {
+      "type": "file",
+      "source": "project/input/policies/policies.json"
+    },
+    "carbon_tax": {
+      "activated": true,
+      "start": 2018,
+      "end": 2019,
+      "calibration": true,
+      "value": "project/input/policies/carbon_tax.csv",
+      "co2_content": "project/input/sdes_40/CO2_tax_2012.csv"
+    },
+    "cite": {
+      "activated": true,
+      "start": 2018,
+      "end": 2019,
+      "calibration": true
+    },
+    "ma_prime_renov": {
+      "activated": false,
+      "start": 2021,
+      "end": 2051,
+      "calibration": false
+    },
+    "cee_subsidy": {
+      "activated": true,
+      "start": 2018,
+      "end": 2019,
+      "calibration": true,
+      "value": "project/input/policies/cee_subsidy_decile.csv"
+    },
+    "cee_taxes": {
+      "activated": true,
+      "start": 2018,
+      "end": 2019,
+      "calibration": true,
+      "value": "project/input/policies/cee_tax.csv"
+
+    },
+    "reduced_tax": {
+      "activated": true,
+      "start": 2018,
+      "end": 2019,
+      "calibration": true
+    },
+    "eptz_subsidy": {
+      "activated": true,
+      "start": 2018,
+      "end": 2019,
+      "calibration": true
+    },
+    "renovation_obligation": {
+      "activated": false,
+      "start": 2018,
+      "end": 2040,
+      "calibration": false
+    },
+    "subsidies_curtailment": {
+      "activated": true,
+      "start": 2018,
+      "end": 2051,
+      "calibration": true
+    },
+    "Household income rate": 0.012,
+    "health_cost": {
+      "type": "file",
+      "source": "project/input/policies/health_cost_decile.csv"
+    },
+    "carbon_value": {
+      "type": "file",
+      "source": "project/input/policies/carbon_value.csv"
+    },
+    "Demolition rate": 0.0035
+
+  },
+  "ZP": {
+    "end": 2031,
+    "green_value": "Reference",
+    "budget_constraint": "Reference",
+    "stock_buildings": {
+      "source": "project/input/sdes_40/building_stock_sdes2018.csv",
+      "year": 2018,
+      "type": "pd.Series",
+      "levels": ["Occupancy status", "Housing type", "Income class owner", "Income class", "Heating energy", "Energy performance"],
+      "income_class": "decile"
+    },
+    "attributes": {
+      "type": "file",
+      "source": "project/input/sdes_40/attributes_2018.json"
+    },
+    "parameters": {
+      "type": "file",
+      "source": "project/input/sdes_40/parameters_2018.json"
+    },
+    "population": {
+      "type": "file",
+      "source": "project/input/sdes_40/projection_population_2018.csv"
+    },
+    "renovation_rate": {
+      "type_calibration": "function",
+      "source_calibration": "project/input/sdes_40/intermediate/rho_sdes2018.pkl",
+      "calibration_data": "project/input/sdes_40/renovation_rate_ini_2018.csv",
+      "version": "version_3"
+    },
+    "market_share": {
+      "calibration_activated": true,
+      "type_calibration": "function",
+      "source_calibration": "project/input/sdes_40/intermediate/cost_intangible_sdes2018.pkl",
+      "calibration_data": "project/input/sdes_40/ms_renovation_ini_2018.csv"
+    },
+    "ms_switch_fuel_ini": {
+      "type": "file",
+      "source": "project/input/sdes_40/ms_switch_fuel_ini_2018.csv"
+    },
+    "cost_renovation": {
+      "type": "file",
+      "source": "project/input/sdes_40/cost_renovation.csv",
+      "index_names": [
+        "Energy performance"
+      ],
+      "columns_names": [
+        "Energy performance final"
+      ]
+    },
+    "lbd_renovation": true,
+    "info_renovation": false,
+    "energy_prices_bt": {
+      "type": "file",
+      "source": "project/input/sdes_40/energy_prices_2018.csv"
+    },
+    "energy_taxes": {
+      "activated": false,
+      "type": "file",
+      "source": "project/input/phebus/energy_taxes.csv",
+      "vta": false
+    },
+    "energy_prices_evolution": "forecast",
+    "co2_emission": {
+      "type": "file",
+      "source": "project/input/sdes_40/CO2_emission_2012.csv"
+    },
+    "policies": {
+      "type": "file",
+      "source": "project/input/policies/policies.json"
+    },
+    "carbon_tax": {
+      "activated": true,
+      "start": 2018,
+      "end": 2019,
+      "calibration": true,
+      "value": "project/input/policies/carbon_tax.csv",
+      "co2_content": "project/input/sdes_40/CO2_tax_2012.csv"
+    },
+    "cite": {
+      "activated": true,
+      "start": 2018,
+      "end": 2019,
+      "calibration": true
+    },
+    "ma_prime_renov": {
+      "activated": false,
+      "start": 2021,
+      "end": 2051,
+      "calibration": false
+    },
+    "cee_subsidy": {
+      "activated": true,
+      "start": 2018,
+      "end": 2019,
+      "calibration": true,
+      "value": "project/input/policies/cee_subsidy_decile.csv"
+    },
+    "cee_taxes": {
+      "activated": true,
+      "start": 2018,
+      "end": 2019,
+      "calibration": true,
+      "value": "project/input/policies/cee_tax.csv"
+
+    },
+    "reduced_tax": {
+      "activated": true,
+      "start": 2018,
+      "end": 2019,
+      "calibration": true
+    },
+    "eptz_subsidy": {
+      "activated": true,
+      "start": 2018,
+      "end": 2019,
+      "calibration": true
+    },
+    "renovation_obligation": {
+      "activated": false,
+      "start": 2018,
+      "end": 2040,
+      "calibration": false
+    },
+    "subsidies_curtailment": {
+      "activated": true,
+      "start": 2018,
+      "end": 2051,
+      "calibration": true
+    },
+    "Household income rate": 0.012,
+    "health_cost": {
+      "type": "file",
+      "source": "project/input/policies/health_cost_decile.csv"
+    },
+    "carbon_value": {
+      "type": "file",
+      "source": "project/input/policies/carbon_value.csv"
+    },
+    "Demolition rate": 0.0035
+
+  },
+  "ZP, energy taxes": {
+    "end": 2031,
+    "green_value": "Reference",
+    "budget_constraint": "Reference",
+    "stock_buildings": {
+      "source": "project/input/sdes_40/building_stock_sdes2018.csv",
+      "year": 2018,
+      "type": "pd.Series",
+      "levels": ["Occupancy status", "Housing type", "Income class owner", "Income class", "Heating energy", "Energy performance"],
+      "income_class": "decile"
+    },
+    "attributes": {
+      "type": "file",
+      "source": "project/input/sdes_40/attributes_2018.json"
+    },
+    "parameters": {
+      "type": "file",
+      "source": "project/input/sdes_40/parameters_2018.json"
+    },
+    "population": {
+      "type": "file",
+      "source": "project/input/sdes_40/projection_population_2018.csv"
+    },
+    "renovation_rate": {
+      "type_calibration": "function",
+      "source_calibration": "project/input/sdes_40/intermediate/rho_sdes2018.pkl",
+      "calibration_data": "project/input/sdes_40/renovation_rate_ini_2018.csv",
+      "version": "version_3"
+    },
+    "market_share": {
+      "calibration_activated": true,
+      "type_calibration": "function",
+      "source_calibration": "project/input/sdes_40/intermediate/cost_intangible_sdes2018.pkl",
+      "calibration_data": "project/input/sdes_40/ms_renovation_ini_2018.csv"
+    },
+    "ms_switch_fuel_ini": {
+      "type": "file",
+      "source": "project/input/sdes_40/ms_switch_fuel_ini_2018.csv"
+    },
+    "cost_renovation": {
+      "type": "file",
+      "source": "project/input/sdes_40/cost_renovation.csv",
+      "index_names": [
+        "Energy performance"
+      ],
+      "columns_names": [
+        "Energy performance final"
+      ]
+    },
+    "lbd_renovation": true,
+    "info_renovation": false,
+    "energy_prices_bt": {
+      "type": "file",
+      "source": "project/input/sdes_40/energy_prices_2018.csv"
+    },
+    "energy_taxes": {
+      "activated": false,
+      "type": "file",
+      "source": "project/input/phebus/energy_taxes.csv",
+      "vta": false
+    },
+    "energy_prices_evolution": "forecast",
+    "co2_emission": {
+      "type": "file",
+      "source": "project/input/sdes_40/CO2_emission_2012.csv"
+    },
+    "policies": {
+      "type": "file",
+      "source": "project/input/policies/policies.json"
+    },
+    "carbon_tax": {
+      "activated": true,
+      "start": 2018,
+      "end": 2051,
+      "calibration": true,
+      "value": "project/input/policies/carbon_tax.csv",
+      "co2_content": "project/input/sdes_40/CO2_tax_2012.csv"
+    },
+    "cite": {
+      "activated": true,
+      "start": 2018,
+      "end": 2019,
+      "calibration": true
+    },
+    "ma_prime_renov": {
+      "activated": false,
+      "start": 2021,
+      "end": 2051,
+      "calibration": false
+    },
+    "cee_subsidy": {
+      "activated": true,
+      "start": 2018,
+      "end": 2019,
+      "calibration": true,
+      "value": "project/input/policies/cee_subsidy_decile.csv"
+    },
+    "cee_taxes": {
+      "activated": true,
+      "start": 2018,
+      "end": 2051,
+      "calibration": true,
+      "value": "project/input/policies/cee_tax.csv"
+
+    },
+    "reduced_tax": {
+      "activated": true,
+      "start": 2018,
+      "end": 2019,
+      "calibration": true
+    },
+    "eptz_subsidy": {
+      "activated": true,
+      "start": 2018,
+      "end": 2019,
+      "calibration": true
+    },
+    "renovation_obligation": {
+      "activated": false,
+      "start": 2018,
+      "end": 2040,
+      "calibration": false
+    },
+    "subsidies_curtailment": {
+      "activated": true,
+      "start": 2018,
+      "end": 2051,
+      "calibration": true
+    },
+    "Household income rate": 0.012,
+    "health_cost": {
+      "type": "file",
+      "source": "project/input/policies/health_cost_decile.csv"
+    },
+    "carbon_value": {
+      "type": "file",
+      "source": "project/input/policies/carbon_value.csv"
+    },
+    "Demolition rate": 0.0035
+
+  }
+
+}
+

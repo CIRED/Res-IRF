@@ -20,8 +20,7 @@ import re
 import argparse
 import os
 import pandas as pd
-import ui_utils
-
+import graphs
 
 def double_diff(df_ref, df_compare, discount_factor):
     """Calculate double difference.
@@ -84,7 +83,7 @@ def run_indicators(config, folder, discount_rate=0.04, lifetime=26):
 
     detailed = {scenario: pd.read_csv(os.path.join(folders[scenario], 'detailed.csv'), index_col=[0]).T for scenario in
                 scenarios}
-    detailed = ui_utils.reverse_nested_dict(detailed)
+    detailed = graphs.reverse_nested_dict(detailed)
     detailed = {key: pd.DataFrame(item) for key, item in detailed.items()}
 
     for _, df in detailed.items():

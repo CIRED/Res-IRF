@@ -214,8 +214,13 @@ class Subsidies(PublicPolicy):
     @staticmethod
     def capex_targeted(target, cost_input):
         cost = cost_input.copy()
-        target_re = reindex_mi(target, cost.index, target.index.names)
-        target_re = reindex_mi(target_re, cost.columns, target.columns.names, axis=1)
+        target_re = reindex_mi(target, cost.index)
+        if isinstance(target_re, pd.DataFrame):
+            target_re = reindex_mi(target_re, cost.columns, target.columns.names, axis=1)
+        elif isinstance(target_re, pd.Series):
+            target_re = pd.concat([target_re] * len(cost.columns), axis=1)
+            target_re.columns = cost.columns
+
         target_re.fillna(0, inplace=True)
         cost = cost * target_re
         cost.replace(0, np.nan, inplace=True)

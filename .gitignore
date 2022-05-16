@@ -137,7 +137,7 @@ dmypy.json
 /project/input/backtesting/data_preparation_1984/
 /project/nb_tutorials/
 /project/input/_old/
-/project/input/abattement_curve/data_preparation.xlsx
+/project/cost_curve/input/data_preparation.xlsx
 /documentation/development/
 /project/input/phebus_30/data_preparation_phebus.xlsx
 /project/nb_tutorials/abattement_curve_comparison.ipynb
@@ -145,7 +145,7 @@ dmypy.json
 /project/input/sdes/
 /project/input/consumption_ceren.csv
 /project/input/backtesting/
-/project/input/abattement_curve/
+/project/cost_curve/input/
 
 /.DS_Store/
 

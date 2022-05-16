@@ -2134,12 +2134,14 @@ class HousingStockRenovated(HousingStock):
                                                   version=version)
 
         stock = self.stock_mobile.copy()
+        flow_renovation = renovation_rate * stock
+        stock_obligation = stock - flow_renovation
 
         flow_renovation_obligation = 0
         if renovation_obligation is not None:
-            flow_renovation_obligation = self.to_flow_obligation(renovation_obligation,
+            flow_renovation_obligation = self.to_flow_obligation(renovation_obligation, stock=stock_obligation,
                                                                  mutation=mutation, rotation=rotation)
-            stock = stock - flow_renovation_obligation
+            # stock = stock - flow_renovation_obligation
 
             market_share_obligation_ep = self.to_market_share(energy_prices,
                                                               transition=transition,
@@ -2150,8 +2152,6 @@ class HousingStockRenovated(HousingStock):
                                                               final=renovation_obligation.final)[0]
 
             flow_renovation_obligation_ep = (flow_renovation_obligation * market_share_obligation_ep.T).T
-
-        flow_renovation = renovation_rate * stock
 
         # indicators
         _flow_renovation = flow_renovation + flow_renovation_obligation
@@ -2175,6 +2175,7 @@ class HousingStockRenovated(HousingStock):
 
         if renovation_obligation is not None:
             flow_renovation_ep += flow_renovation_obligation_ep.reindex(flow_renovation_ep.columns, axis=1).fillna(0)
+
 
         self.flow_renovation_label_dict[self.year] = flow_renovation_ep
 
@@ -2844,16 +2845,17 @@ class HousingStockRenovated(HousingStock):
 
         return rho, npv_intangible, renovation_rate_calibration
 
-    def to_flow_obligation(self, renovation_obligation, mutation=0.0, rotation=0.0):
+    def to_flow_obligation(self, renovation_obligation, stock=None, mutation=0.0, rotation=0.0):
 
-        stock = self.stock_mobile.copy()
+        if stock is None:
+            stock = self.stock_mobile.copy()
 
         if isinstance(mutation, pd.Series):
             mutation = reindex_mi(mutation, stock.index, mutation.index.names)
         if isinstance(rotation, pd.Series):
             rotation = reindex_mi(rotation, stock.index, rotation.index.names)
 
-        mutation_stock = stock* mutation
+        mutation_stock = stock * mutation
         rotation_stock = stock * rotation
 
         target_stock = mutation_stock + rotation_stock
@@ -2977,7 +2979,8 @@ class HousingStockConstructed(HousingStock):
         flow_constructed = (flow_constructed * market_share_energy.T).T.stack()
         flow_constructed = flow_constructed[flow_constructed > 0]
 
-        flow_constructed = add_level(flow_constructed, pd.Index(self.attributes_values['Energy performance'], name='Energy performance'))
+        flow_constructed = add_level(flow_constructed,
+                                     pd.Index(self.attributes_values['Energy performance'], name='Energy performance'))
         flow_constructed = flow_constructed.reorder_levels(self.attributes_values.keys())
 
         self.flow_constructed_seg = flow_constructed

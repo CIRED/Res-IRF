@@ -350,6 +350,25 @@
       "type": "pd.Series"
     }
   },
+  "renovation_obligation_A": {
+    "name": "renovation_obligation_A",
+    "policy": "renovation_obligation",
+    "type": "dict_to_parse",
+    "participation_rate": 1.0,
+    "final": ["A"],
+    "start_targets": {
+      "val": {
+        "G": 2023,
+        "F": 2025,
+        "E": 2030,
+        "D": 2040
+      },
+      "index": [
+        "Energy performance"
+      ],
+      "type": "pd.Series"
+    }
+  },
   "renovation_obligation": {
     "name": "renovation_obligation",
     "policy": "renovation_obligation",
@@ -779,5 +798,87 @@
     "unit": "%",
     "type": "dict_to_parse",
     "subsidies_curtailed": "ma_prime_renov"
+  },
+  "ccc_very_low_income": {
+    "name": "ccc_very_low_income",
+    "policy": "subsidies",
+    "value": 0.9,
+    "unit": "%",
+    "transition": [
+      "Energy performance"
+    ],
+    "targets": {
+      "val": {
+        "D1": 1,
+        "D2": 1
+      },
+      "index": [
+        "Income class owner"
+      ],
+      "type": "pd.Series"
+    },
+    "time_dependent": false,
+    "cost_min": null,
+    "cost_max": null,
+    "priority": false,
+        "subsidy_max": null,
+
+    "type": "dict_to_parse"
+  },
+  "ccc_low_income": {
+    "name": "ccc_low_income",
+    "policy": "subsidies",
+    "value": 0.7,
+    "unit": "%",
+    "transition": [
+      "Energy performance"
+    ],
+    "targets": {
+      "val": {
+        "D3": 1,
+        "D4": 1
+      },
+      "index": [
+        "Income class owner"
+      ],
+      "type": "pd.Series"
+    },
+    "time_dependent": false,
+    "cost_min": null,
+    "cost_max": null,
+    "priority": false,
+            "subsidy_max": null,
+
+    "type": "dict_to_parse"
+  },
+  "ccc_other_income": {
+    "name": "ccc_other_income",
+    "policy": "subsidies",
+    "value": 0.3,
+    "unit": "%",
+    "transition": [
+      "Energy performance"
+    ],
+    "targets": {
+      "val": {
+        "D5": 1,
+        "D6": 1,
+        "D7": 1,
+        "D8": 1,
+        "D9": 1,
+        "D10": 1
+      },
+      "index": [
+        "Income class owner"
+      ],
+      "type": "pd.Series"
+    },
+    "time_dependent": false,
+    "cost_min": null,
+    "cost_max": null,
+    "priority": false,
+            "subsidy_max": null,
+
+    "type": "dict_to_parse"
   }
 }
