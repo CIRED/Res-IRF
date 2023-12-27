@@ -12,9 +12,9 @@ from graphs import cumulated_emission_cost_plot, cost_cumulated_emission_plots
 
 sys.path.append('project')
 
-from buildings import HousingStock
-from parse_input import parse_json, apply_linear_rate, final2consumption
-from utils import reindex_mi
+from project.buildings import HousingStock
+from project.parse_input import parse_json, apply_linear_rate, final2consumption
+from project.utils import reindex_mi
 
 
 def prepare_input(config):

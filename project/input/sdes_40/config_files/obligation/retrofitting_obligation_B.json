@@ -1,5 +1,5 @@
 {
-  "Reference": {
+  "REF": {
     "end": 2051,
     "green_value": "Reference",
     "budget_constraint": "Reference",
@@ -145,7 +145,7 @@
     },
     "Demolition rate": 0.0035
   },
-  "AP, retrofitting obligation B": {
+  "OBLIG": {
     "end": 2051,
     "green_value": "Reference",
     "budget_constraint": "Reference",
@@ -286,7 +286,7 @@
     "Demolition rate": 0.0035
 
   },
-  "CCC": {
+  "SUBS": {
     "end": 2051,
     "green_value": "Reference",
     "budget_constraint": "Reference",
@@ -450,7 +450,7 @@
       "calibration": false
     }
   },
-  "CCC, retrofitting obligation B": {
+  "OBLIG and SUBS": {
     "end": 2051,
     "green_value": "Reference",
     "budget_constraint": "Reference",

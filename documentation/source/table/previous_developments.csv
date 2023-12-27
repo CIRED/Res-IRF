@@ -6,5 +6,6 @@
 3,"Giraudet et al., working paper, 2018",Policy analysis,Policy interactions imply a 10% variation in policy effectiveness,Phébus (2013),Comprehensive updating of model parameters; calibration on base year 2012 ; disaggregation of households by income categories.
 ,"Bourgeois et al., ECEEE proceedings, 2019",Policy analysis,"Carbon tax generates more environmental, social and economic benefits when its revenue is recycled as energy efficiency subsidies than as a lump-sum transfer",,
 3.1,"Glotin et al., Energy Economics, 2019*",Backtesting,"Model reproduces past energy consumption with an average percentage error of 1.5%. Analysis reveals inaccuracies in fuel switch due to off-model, politically-driven processes ",CEREN archives,Calibration of version 3.0 on base year 1984 (instead of 2012).
-3,"Giraudet et al., Energy Policy, 2021*",Policy analysis,"Carbon tax is the most effective, yet most regressive, policy. Subsidy programmes save energy at a cost of €0.05–0.08",Phébus (2013),
-3,"Bourgeois et al., Ecological Economics, 2021",Policy analysis,Subsidy recycling saves energy and increases comfort more cost-effectively than lump-sum,Phébus (2013),
+3.1,"Giraudet et al., Energy Policy, 2021*",Policy analysis,"Carbon tax is the most effective, yet most regressive, policy. Subsidy programmes save energy at a cost of €0.05–0.08",Phébus (2013),
+3.1,"Bourgeois et al., Ecological Economics, 2021",Policy analysis,Subsidy recycling saves energy and increases comfort more cost-effectively than lump-sum,Phébus (2013),
+3.2,"Vivier and Giraudet, ECEEE Proceedings, 2022",Policy analysis,A retrofitting obligation for French dwellings – A modelling assessment,Phébus (2013),Python version.

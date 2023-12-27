@@ -562,8 +562,8 @@ def quick_graphs(folder_output, output_detailed=False):
 
     if len(scenarios) > 1:
 
-        if 'Reference' in scenarios:
-            ref = 'Reference'
+        if 'REF' in scenarios:
+            ref = 'REF'
         else:
             ref = scenarios[0]
 
@@ -624,7 +624,7 @@ def quick_graphs(folder_output, output_detailed=False):
         pd.concat((value_ref, comparison), axis=1).to_csv(os.path.join(folder_output, 'comparison.csv'))
 
 
-    if 'Reference' in scenarios:
+    if 'REF' in scenarios:
         data = comparison.loc[['Renovation expenditure discounted (Billions euro)',
                                'Energy expenditure discounted (Billions euro)',
                                'Carbon social expenditure discounted (Billions euro)',
@@ -633,10 +633,11 @@ def quick_graphs(folder_output, output_detailed=False):
 
         data.index = ['Investment', 'Energy saving', 'Emission saving', 'Health benefit']
 
-        assessment_scenarios(data.T, save=os.path.join(folder_img, 'assessment_scenarios.png'))
+        assessment_scenarios(data.T, save=os.path.join(folder_img, 'assessment_scenarios.png'),
+                             figsize=(8.0, 6.0))
 
         for index, df in data.T.iterrows():
-            waterfall_chart(df, title='Social NPV - {} (Billions euros)'.format(index),
+            waterfall_chart(df, title=None, figsize=(8.0, 6.0),
                             save=os.path.join(folder_img,
                                               'assessment_{}.png'.format(index.replace(',', '_').replace(' ', '_'))))
 

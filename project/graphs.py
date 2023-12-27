@@ -104,6 +104,8 @@ def simple_pd_plot(df, ylabel, colors=None, format_x=None, format_y=None, save=N
     else:
         df.plot(ax=ax, color=colors, style=STYLES)
 
+    ax.set_ylim(ymin=0)
+
     ax.set_ylabel(ylabel)
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
@@ -827,7 +829,7 @@ def policies_stacked_plot(df, save=None):
         fig.savefig(save)
 
 
-def waterfall_chart(df, title='Social Economic Assessment', save=None):
+def waterfall_chart(df, title=None, save=None, figsize=(12.8, 9.6)):
     """Make waterfall chart. Used for Social Economic Assessment.
 
     Parameters
@@ -841,10 +843,15 @@ def waterfall_chart(df, title='Social Economic Assessment', save=None):
     """
 
     color = {'Investment': 'firebrick', 'Energy saving': 'darkorange', 'Emission saving': 'forestgreen',
-             'Health benefit': 'royalblue'}
+             'Health benefit': 'royalblue', 'Total': 'black'}
+
+    df.rename(index={'Energy saving': 'Energy',
+                     'Emission saving': 'Emission',
+                     'Health benefit': 'Health'
+                       }, inplace=True)
     data = df.copy()
 
-    fig, ax = plt.subplots(1, 1, figsize=(12.8, 9.6))
+    fig, ax = plt.subplots(1, 1, figsize=figsize)
 
     blank = data.cumsum().shift(1).fillna(0)
 
@@ -865,11 +872,13 @@ def waterfall_chart(df, title='Social Economic Assessment', save=None):
               title=title, ax=ax, color=color.values(), edgecolor=None)
     # my_plot.plot(step.index, step.values, 'k')
 
+    plt.axhline(y=0, color='black', linestyle='--')
+
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
     ax.spines['left'].set_visible(False)
-    ax.xaxis.set_tick_params(which=u'both', length=0, labelsize=15)
-    ax.yaxis.set_tick_params(which=u'both', length=0)
+    ax.xaxis.set_tick_params(which=u'both', length=0, labelsize=16)
+    ax.yaxis.set_tick_params(which=u'both', length=0, labelsize=16)
 
     # Get the y-axis position for the labels
     y_height = data.cumsum().shift(1).fillna(0)
@@ -904,7 +913,7 @@ def waterfall_chart(df, title='Social Economic Assessment', save=None):
         plt.show()
 
 
-def assessment_scenarios(df, save=None):
+def assessment_scenarios(df, save=None, figsize=(12.8, 9.6)):
     """Compare social NPV between scenarios and one reference.
 
     Stacked bar chart.
@@ -918,7 +927,7 @@ def assessment_scenarios(df, save=None):
     -------
 
     """
-    fig, ax = plt.subplots(1, 1, figsize=(12.8, 9.6))
+    fig, ax = plt.subplots(1, 1, figsize=figsize)
     color = {'Investment': 'firebrick', 'Energy saving': 'darkorange', 'Emission saving': 'forestgreen',
              'Health benefit': 'royalblue'}
 
@@ -929,28 +938,26 @@ def assessment_scenarios(df, save=None):
                              s=50, xlabel=None)
     df.plot(kind='bar', stacked=True, ax=ax, color=color)
 
-
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
     ax.spines['left'].set_visible(False)
-    ax.xaxis.set_tick_params(which=u'both', length=0, labelsize=12)
-    ax.yaxis.set_tick_params(which=u'both', length=0)
+    ax.xaxis.set_tick_params(which=u'both', length=0, labelsize=16)
+    ax.yaxis.set_tick_params(which=u'both', length=0, labelsize=16)
 
     ax.xaxis.label.set_visible(False)
     ax.yaxis.label.set_visible(False)
 
     for _, y in total.iterrows():
-        ax.annotate("{:,.1f} M€".format(y['NPV']), (y['Scenarios'], y['NPV'] + 1), ha="center")
+        ax.annotate("{:,.1f} B€".format(y['NPV']), (y['Scenarios'], y['NPV'] + 3), ha="center")
 
     box = ax.get_position()
     ax.set_position([box.x0, box.y0 + box.height * 0.1,
                      box.width, box.height * 0.9])
 
     # Put a legend below current axis
-    ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05),
-              frameon=False, shadow=True, ncol=5)
+    ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.1),
+              frameon=False, shadow=True, ncol=2)
     ax.set_xticklabels(df.index, rotation=0)
-
 
     if save is not None:
         fig.savefig(save, bbox_inches='tight')

@@ -151,3 +151,5 @@ dmypy.json
 
 /project/input/phebus_31/
 /project/input/graph_adhoc/
+/project/input/sdes_40/building_stock_sdes2018.csv
+/project/input/sdes_40/building_stock_sdes2018.pkl
